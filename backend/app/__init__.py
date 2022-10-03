@@ -5,7 +5,6 @@ import firebase_admin
 from flask import Flask
 from flask.cli import ScriptInfo
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 from logging.config import dictConfig
 
 from .config import app_config

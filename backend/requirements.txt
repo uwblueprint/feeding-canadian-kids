@@ -23,6 +23,8 @@ google-cloud-storage==1.37.1
 google-crc32c==1.1.2
 google-resumable-media==1.2.0
 googleapis-common-protos==1.53.0
+graphene==3.1.1
+graphql-server==3.0.0b5
 grpcio==1.37.0
 httplib2==0.19.1
 idna==2.10
@@ -61,7 +63,7 @@ sentinels==1.0.0
 six==1.15.0
 toml==0.10.2
 typed-ast==1.4.2
-typing-extensions==3.7.4.3
+typing-extensions==4.3.0
 uritemplate==3.0.1
 urllib3==1.26.4
 Werkzeug==1.0.1

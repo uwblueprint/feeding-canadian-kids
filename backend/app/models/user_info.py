@@ -1,5 +1,6 @@
 import mongoengine as mg
 
+
 class UserInfo(mg.EmbeddedDocument):
     contact_name = mg.StringField(required=True)
     contact_email = mg.StringField(required=True)
@@ -7,6 +8,7 @@ class UserInfo(mg.EmbeddedDocument):
     role = mg.StringField(choices=["Admin", "Donor", "ASP"], required=True)
 
     meta = {"allow_inheritance": True}
+
 
 class ASPInfo(UserInfo):
     priority: mg.IntField(required=True)

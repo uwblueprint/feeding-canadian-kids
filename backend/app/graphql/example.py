@@ -65,6 +65,7 @@ class PrintGreeting(Mutation):
 
         return PrintGreeting(printed_text=text_to_print)
 
+
 class RaiseError(Mutation):
     _ = graphene.String()
 
@@ -72,12 +73,14 @@ class RaiseError(Mutation):
         # This error gets redacted on the client-side.
         raise ValueError("Something happened!")
 
+
 class RaiseClientError(Mutation):
     _ = graphene.String()
 
     def mutate(self, info):
         # This error gets shown on the client-side.
         raise ClientError("Something happened!")
+
 
 class ExampleMutations(MutationList):
     # You must use PrintGreeting.Field() rather than graphene.Field(PrintGreeting);

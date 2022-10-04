@@ -19,6 +19,8 @@ class QueryList(graphene.ObjectType, metaclass=LogErrors(graphene.ObjectType)):
 class Mutation(graphene.Mutation, metaclass=LogErrors(graphene.Mutation)):
     def mutate(self):
         pass
+
+
 delattr(Mutation, "mutate")
 
 

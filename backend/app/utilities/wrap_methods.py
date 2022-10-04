@@ -1,8 +1,10 @@
 from types import FunctionType
 
+
 def WrapMethods(wrapper, *metaclasses):
     if not metaclasses:
         metaclasses = (type,)
+
     class MetaClass(*metaclasses):
         def __new__(meta, classname, bases, cls_dict):
             new_cls_dict = {}
@@ -16,4 +18,5 @@ def WrapMethods(wrapper, *metaclasses):
                 bases,
                 new_cls_dict,
             )
+
     return MetaClass

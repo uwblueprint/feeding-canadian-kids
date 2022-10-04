@@ -10,7 +10,6 @@ class RootQuery(
     pass
 
 
-
 class RootMutation(
     # All mutations listed here will be merged.
     ExampleMutations,

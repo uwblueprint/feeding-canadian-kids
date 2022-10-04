@@ -31,9 +31,7 @@ def create_app(config_name):
                 },
             },
             "root": {"level": "ERROR", "handlers": ["wsgi"]},
-            "loggers": {
-                "app.graphql.error_handling": { "level": "INFO" }
-            },
+            "loggers": {"app.graphql.error_handling": {"level": "INFO"}},
         }
     )
 

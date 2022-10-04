@@ -8,8 +8,10 @@ from ..utilities.wrap_methods import WrapMethods
 
 logger = logging.getLogger(__name__)
 
+
 class ClientError(Exception):
     pass
+
 
 def call_and_log_errors(resolve):
     @wraps(resolve)
@@ -25,7 +27,9 @@ def call_and_log_errors(resolve):
                 )
 
             raise error
+
     return do_resolve
+
 
 def LogErrors(*bases):
     metaclasses = [type(base) for base in bases]

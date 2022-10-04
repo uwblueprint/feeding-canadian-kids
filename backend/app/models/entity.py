@@ -18,4 +18,3 @@ class Entity(Document):
         return entity_dict
 
     meta = {"collection": "entities"}
-

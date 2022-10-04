@@ -85,4 +85,3 @@ class EntityService(IEntityService):
         except Exception as error:
             self.logger.error(str(error))
             raise error
-

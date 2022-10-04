@@ -39,11 +39,14 @@ def create_app(config_name):
     if type(config_name) is not ScriptInfo:
         app.config.from_object(app_config[config_name])
 
-    app.add_url_rule("/graphql", view_func=GraphQLView.as_view(
-        "graphql",
-        schema=graphql_schema,
-        graphiql=True,
-    ))
+    app.add_url_rule(
+        "/graphql",
+        view_func=GraphQLView.as_view(
+            "graphql",
+            schema=graphql_schema,
+            graphiql=True,
+        ),
+    )
 
     app.config["CORS_ORIGINS"] = [
         "http://localhost:3000",
@@ -53,7 +56,6 @@ def create_app(config_name):
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
     CORS(app)
-
 
     firebase_admin.initialize_app(
         firebase_admin.credentials.Certificate(

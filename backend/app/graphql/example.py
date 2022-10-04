@@ -31,6 +31,7 @@ class Greeting(graphene.ObjectType):
     def resolve_text(self, info):
         return "Hello, world!"
 
+
 class ExampleQueries(graphene.ObjectType):
     greeting = graphene.Field(Greeting)
 
@@ -56,6 +57,7 @@ class PrintGreeting(graphene.Mutation):
         print(text_to_print, file=sys.stderr)
 
         return PrintGreeting(text_to_print)
+
 
 class ExampleMutations(graphene.ObjectType):
     # You must use PrintGreeting.Field() rather than graphene.Field(PrintGreeting);

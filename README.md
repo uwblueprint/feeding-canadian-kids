@@ -7,11 +7,11 @@ Starter Code is an easy to set up, flexible, and customizable bootstrap that aim
 Teams should adopt Starter Code and use it as a foundation to get their projects off the ground faster, and as a guideline for how to structure their applications. We hope Starter Code will help project teams output higher quality and maintainable code, and allow them to focus on building cool, interesting features instead of setting up and doing boilerplate work. Put simply, Starter Code is here to help us deliver more value to our NPO partners.
 
 ## Stack Choices
-**Backend Language:** TypeScript (Express.js on Node.js) or Python (with Flask)<br>
-**Backend API:** REST or GraphQL<br>
-**Database:** PostgreSQL or MongoDB<br>
-**User Auth:** Opt-in or opt-out<br>
-**File Storage:** Opt-in or opt-out<br>
+**Backend Language:** Python (with Flask)<br>
+**Backend API:** GraphQL<br>
+**Database:** MongoDB<br>
+**User Auth:** Opt-in<br>
+**File Storage:** Opt-in<br>
 
 The provided frontend is a React application written in TypeScript.
 

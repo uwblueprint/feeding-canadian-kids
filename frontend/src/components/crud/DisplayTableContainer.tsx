@@ -1,12 +1,11 @@
 /* eslint  react/jsx-props-no-spreading: 0 */ // --> OFF
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import BTable from "react-bootstrap/Table";
 import { HeaderGroup, useTable, Column } from "react-table";
 
+import { gql, useApolloClient, useQuery } from "@apollo/client";
 
-import EntityAPIClient, {
-  EntityResponse,
-} from "../../APIClients/EntityAPIClient";
+import { EntityResponse } from "../../APIClients/EntityAPIClient";
 import { downloadCSV } from "../../utils/CSVUtils";
 import { downloadFile } from "../../utils/FileUtils";
 
@@ -135,29 +134,59 @@ const DisplayTable = ({ data, downloadEntityFile }: TableProps) => {
   );
 };
 
+const ENTITIES = gql`
+  query DisplayTableContainer_Entities {
+    entities {
+      id
+      stringField
+      intField
+      enumField
+      stringArrayField
+      boolField
+      fileName
+    }
+  }
+`;
+
+const ENTITIESCSV = gql`
+  query DisplayTableContainer_EntitiesCSV {
+    entitiesCSV
+  }
+`;
+
+const FILE = gql`
+  query DisplayTableContainer_File($fileUUID: ID!) {
+    file(fileUUID: $fileUUID)
+  }
+`;
+
 const DisplayTableContainer: React.FC = (): React.ReactElement | null => {
   const [entities, setEntities] = useState<EntityData[] | null>(null);
 
-  useEffect(() => {
-    const retrieveAndUpdateData = async () => {
-      const result = await EntityAPIClient.get();
-      if (result) {
-        setEntities(result.map((r: EntityResponse) => convert(r)));
-      }
-    };
-    retrieveAndUpdateData();
-  }, []);
+  const apolloClient = useApolloClient();
+
+  useQuery(ENTITIES, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setEntities(data.entities.map((d: EntityResponse) => convert(d)));
+    },
+  });
 
   const downloadEntityFile = async (fileUUID: string) => {
+    const { data } = await apolloClient.query({
+      query: FILE,
+      variables: { fileUUID },
+    });
+    downloadFile(data.file, "file");
 
-    const data = await EntityAPIClient.getFile(fileUUID);
-    downloadFile(data, "file");
   };
 
   const downloadEntitiesCSV = async () => {
     if (entities) {
-      const csvString = await EntityAPIClient.getCSV();
-      downloadCSV(csvString, "export.csv");
+      const { data } = await apolloClient.query({
+        query: ENTITIESCSV,
+      });
+      downloadCSV(data.entitiesCSV, "export.csv");
       // Use the following lines to download CSV using frontend CSV generation instead of API
       // const csvString = await generateCSV<EntityData>({ data: entities });
       // downloadCSV(csvString, "export.csv");

@@ -1,12 +1,22 @@
 import React, { useContext } from "react";
-import authAPIClient from "../../APIClients/AuthAPIClient";
+import { gql, useMutation } from "@apollo/client";
 import AuthContext from "../../contexts/AuthContext";
+
+const RESET_PASSWORD = gql`
+  mutation ResetPassword($email: String!) {
+    resetPassword(email: $email)
+  }
+`;
 
 const ResetPassword = (): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
 
+  const [resetPassword] = useMutation<{ resetPassword: boolean }>(
+    RESET_PASSWORD,
+  );
+
   const onResetPasswordClick = async () => {
-    await authAPIClient.resetPassword(authenticatedUser?.email);
+    await resetPassword({ variables: { email: authenticatedUser?.email } });
   };
 
   return (

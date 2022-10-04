@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { decamelizeKeys } from "humps";
 import { JSONSchema7 } from "json-schema";
 import { Form } from "@rjsf/bootstrap-4";
-import EntityAPIClient, {
+import { gql, useMutation } from "@apollo/client";
+
+import {
   EntityRequest,
   EntityResponse,
 } from "../../APIClients/EntityAPIClient";
@@ -63,10 +64,32 @@ const uiSchema = {
   },
 };
 
+const UPDATE_ENTITY = gql`
+  mutation UpdateForm_UpdateEntity(
+    $id: ID!
+    $entity: EntityRequestDTO!
+    $file: Upload
+  ) {
+    updateEntity(id: $id, entity: $entity, file: $file) {
+      id
+      stringField
+      intField
+      enumField
+      stringArrayField
+      boolField
+      fileName
+    }
+  }
+`;
+
 const UpdateForm = (): React.ReactElement => {
   const [data, setData] = useState<EntityResponse | null>(null);
   const [fileField, setFileField] = useState<File | null>(null);
   const [formFields, setFormFields] = useState<EntityRequest | null>(null);
+
+  const [updateEntity] = useMutation<{ updateEntity: EntityResponse }>(
+    UPDATE_ENTITY,
+  );
 
   if (data) {
     return <p>Updated! ✔️</p>;
@@ -87,15 +110,15 @@ const UpdateForm = (): React.ReactElement => {
   const onSubmit = async ({ formData }: { formData: EntityResponse }) => {
     const { id, ...entityData } = formData;
 
-    const multipartFormData = new FormData();
-    multipartFormData.append("body", JSON.stringify(decamelizeKeys(entityData)));
-    if (fileField) {
-      multipartFormData.append("file", fileField);
-    }
-    const result = await EntityAPIClient.update(
-      formData.id,
-      { entityData: multipartFormData }
-    );
+    const graphQLResult = await updateEntity({
+      variables: {
+        id: formData.id,
+        entity: entityData as EntityRequest,
+        file: fileField,
+      },
+    });
+    const result: EntityResponse | null =
+      graphQLResult.data?.updateEntity ?? null;
     setData(result);
   };
   return (

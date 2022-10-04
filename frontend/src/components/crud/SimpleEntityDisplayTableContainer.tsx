@@ -1,11 +1,11 @@
 /* eslint  react/jsx-props-no-spreading: 0 */ // --> OFF
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import BTable from "react-bootstrap/Table";
 import { HeaderGroup, useTable, Column } from "react-table";
 
-import SimpleEntityAPIClient, {
-  SimpleEntityResponse,
-} from "../../APIClients/SimpleEntityAPIClient";
+import { gql, useApolloClient, useQuery } from "@apollo/client";
+
+import { SimpleEntityResponse } from "../../APIClients/SimpleEntityAPIClient";
 import { downloadCSV } from "../../utils/CSVUtils";
 
 type EntityData = Omit<SimpleEntityResponse, "boolField"> & {
@@ -111,23 +111,45 @@ const SimpleEntityDisplayTable = ({ data }: TableProps) => {
   );
 };
 
+const SIMPLE_ENTITIES = gql`
+  query SimpleEntityDisplayTableContainer_SimpleEntities {
+    simpleEntities {
+      id
+      stringField
+      intField
+      enumField
+      stringArrayField
+      boolField
+    }
+  }
+`;
+
+const SIMPLE_ENTITIESCSV = gql`
+  query SimpleEntityDisplayTableContainer_SimpleEntitiesCSV {
+    simpleEntitiesCSV
+  }
+`;
+
 const SimpleEntityDisplayTableContainer: React.FC = (): React.ReactElement | null => {
   const [entities, setEntities] = useState<EntityData[] | null>(null);
 
-  useEffect(() => {
-    const retrieveAndUpdateData = async () => {
-      const result = await SimpleEntityAPIClient.get();
-      if (result) {
-        setEntities(result.map((r: SimpleEntityResponse) => convert(r)));
-      }
-    };
-    retrieveAndUpdateData();
-  }, []);
+  const apolloClient = useApolloClient();
+
+  useQuery(SIMPLE_ENTITIES, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setEntities(
+        data.simpleEntities.map((d: SimpleEntityResponse) => convert(d)),
+      );
+    },
+  });
 
   const downloadEntitiesCSV = async () => {
     if (entities) {
-      const csvString = await SimpleEntityAPIClient.getCSV();
-      downloadCSV(csvString, "export.csv");
+      const { data } = await apolloClient.query({
+        query: SIMPLE_ENTITIESCSV,
+      });
+      downloadCSV(data.simpleEntitiesCSV, "export.csv");
       // Use the following lines to download CSV using frontend CSV generation instead of API
       // const csvString = await generateCSV<EntityData>({ data: entities });
       // downloadCSV(csvString, "export.csv");

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { decamelizeKeys } from "humps";
 import { JSONSchema7 } from "json-schema";
 import { Form } from "@rjsf/bootstrap-4";
-import SimpleEntityAPIClient, {
+import { gql, useMutation } from "@apollo/client";
+
+import {
   SimpleEntityRequest,
   SimpleEntityResponse,
 } from "../../APIClients/SimpleEntityAPIClient";
@@ -63,11 +64,31 @@ const uiSchema = {
   },
 };
 
+const UPDATE_SIMPLE_ENTITY = gql`
+  mutation SimpleEntityUpdateForm_UpdateSimpleEntity(
+    $id: ID!
+    $entity: SimpleEntityRequestDTO!
+  ) {
+    updateSimpleEntity(id: $id, entity: $entity) {
+      id
+      stringField
+      intField
+      enumField
+      stringArrayField
+      boolField
+    }
+  }
+`;
+
 const SimpleEntityUpdateForm = (): React.ReactElement => {
   const [data, setData] = useState<SimpleEntityResponse | null>(null);
   const [formFields, setFormFields] = useState<SimpleEntityRequest | null>(
     null,
   );
+
+  const [updateSimpleEntity] = useMutation<{
+    updateSimpleEntity: SimpleEntityResponse;
+  }>(UPDATE_SIMPLE_ENTITY);
 
   if (data) {
     return <p>Updated! ✔️</p>;
@@ -76,9 +97,11 @@ const SimpleEntityUpdateForm = (): React.ReactElement => {
   const onSubmit = async ({ formData }: { formData: SimpleEntityResponse }) => {
     const { id, ...entityData } = formData;
 
-    const result = await SimpleEntityAPIClient.update(formData.id, {
-      entityData,
+    const graphQLResult = await updateSimpleEntity({
+      variables: { id: formData.id, entity: entityData as SimpleEntityRequest },
     });
+    const result: SimpleEntityResponse | null =
+      graphQLResult.data?.updateSimpleEntity ?? null;
     setData(result);
   };
   return (

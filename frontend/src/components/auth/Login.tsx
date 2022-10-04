@@ -5,6 +5,7 @@ import {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from "react-google-login";
+import { gql, useMutation } from "@apollo/client";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
@@ -18,14 +19,49 @@ type GoogleErrorResponse = {
   details: string;
 };
 
+const LOGIN = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      id
+      firstName
+      lastName
+      email
+      role
+      accessToken
+    }
+  }
+`;
+
+const LOGIN_WITH_GOOGLE = gql`
+  mutation LoginWithGoogle($idToken: String!) {
+    loginWithGoogle(idToken: $idToken) {
+      id
+      firstName
+      lastName
+      email
+      role
+      accessToken
+    }
+  }
+`;
+
 const Login = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
 
+  const [login] = useMutation<{ login: AuthenticatedUser }>(LOGIN);
+  const [loginWithGoogle] = useMutation<{ loginWithGoogle: AuthenticatedUser }>(
+    LOGIN_WITH_GOOGLE,
+  );
+
   const onLogInClick = async () => {
-    const user: AuthenticatedUser = await authAPIClient.login(email, password);
+    const user: AuthenticatedUser = await authAPIClient.login(
+      email,
+      password,
+      login,
+    );
     setAuthenticatedUser(user);
   };
 
@@ -33,9 +69,10 @@ const Login = (): React.ReactElement => {
     history.push(SIGNUP_PAGE);
   };
 
-  const onGoogleLoginSuccess = async (tokenId: string) => {
+  const onGoogleLoginSuccess = async (idToken: string) => {
     const user: AuthenticatedUser = await authAPIClient.loginWithGoogle(
-      tokenId,
+      idToken,
+      loginWithGoogle,
     );
     setAuthenticatedUser(user);
   };

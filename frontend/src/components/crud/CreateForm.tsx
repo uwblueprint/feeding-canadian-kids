@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { decamelizeKeys } from "humps";
 import { JSONSchema7 } from "json-schema";
 import { Form } from "@rjsf/bootstrap-4";
-import EntityAPIClient, {
+import { gql, useMutation } from "@apollo/client";
+
+import {
   EntityRequest,
   EntityResponse,
 } from "../../APIClients/EntityAPIClient";
@@ -57,10 +58,28 @@ const uiSchema = {
   },
 };
 
+const CREATE_ENTITY = gql`
+  mutation CreateForm_CreateEntity($entity: EntityRequestDTO!, $file: Upload) {
+    createEntity(entity: $entity, file: $file) {
+      id
+      stringField
+      intField
+      enumField
+      stringArrayField
+      boolField
+      fileName
+    }
+  }
+`;
+
 const CreateForm = (): React.ReactElement => {
   const [data, setData] = useState<EntityResponse | null>(null);
   const [fileField, setFileField] = useState<File | null>(null);
   const [formFields, setFormFields] = useState<EntityRequest | null>(null);
+
+  const [createEntity] = useMutation<{ createEntity: EntityResponse }>(
+    CREATE_ENTITY,
+  );
 
   if (data) {
     return <p>Created! ✔️</p>;
@@ -79,12 +98,11 @@ const CreateForm = (): React.ReactElement => {
   };
 
   const onSubmit = async ({ formData }: { formData: EntityRequest }) => {
-    const multipartFormData = new FormData();
-    multipartFormData.append("body", JSON.stringify(decamelizeKeys(formData)));
-    if (fileField) {
-      multipartFormData.append("file", fileField);
-    }
-    const result = await EntityAPIClient.create({ formData: multipartFormData });
+    const graphQLResult = await createEntity({
+      variables: { entity: formData, file: fileField },
+    });
+    const result: EntityResponse | null =
+      graphQLResult.data?.createEntity ?? null;
     setData(result);
   };
   return (

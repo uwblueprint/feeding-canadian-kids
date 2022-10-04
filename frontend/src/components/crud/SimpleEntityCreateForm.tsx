@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { decamelizeKeys } from "humps";
 import { JSONSchema7 } from "json-schema";
 import { Form } from "@rjsf/bootstrap-4";
-import SimpleEntityAPIClient, {
+import { gql, useMutation } from "@apollo/client";
+
+import {
   SimpleEntityRequest,
   SimpleEntityResponse,
 } from "../../APIClients/SimpleEntityAPIClient";
@@ -57,18 +58,41 @@ const uiSchema = {
   },
 };
 
+const CREATE_SIMPLE_ENTITY = gql`
+  mutation SimpleEntityCreateForm_CreateSimpleEntity(
+    $entity: SimpleEntityRequestDTO!
+  ) {
+    createSimpleEntity(entity: $entity) {
+      id
+      stringField
+      intField
+      enumField
+      stringArrayField
+      boolField
+    }
+  }
+`;
+
 const SimpleEntityCreateForm = (): React.ReactElement => {
   const [data, setData] = useState<SimpleEntityResponse | null>(null);
   const [formFields, setFormFields] = useState<SimpleEntityRequest | null>(
     null,
   );
 
+  const [createSimpleEntity] = useMutation<{
+    createSimpleEntity: SimpleEntityResponse;
+  }>(CREATE_SIMPLE_ENTITY);
+
   if (data) {
     return <p>Created! ✔️</p>;
   }
 
   const onSubmit = async ({ formData }: { formData: SimpleEntityRequest }) => {
-    const result = await SimpleEntityAPIClient.create({ formData });
+    const graphQLResult = await createSimpleEntity({
+      variables: { entity: formData },
+    });
+    const result: SimpleEntityResponse | null =
+      graphQLResult.data?.createSimpleEntity ?? null;
     setData(result);
   };
   return (

@@ -7,6 +7,10 @@ import Default from "../Default";
 // https://jestjs.io/docs/tutorial-react
 // https://reactjs.org/docs/testing.html
 
+jest.mock("@apollo/client", () => ({
+  gql: () => {},
+  useMutation: () => [],
+}));
 
 describe("Default page", () => {
   it("Should render Create Entity button", () => {

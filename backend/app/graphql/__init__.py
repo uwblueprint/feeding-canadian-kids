@@ -3,14 +3,15 @@ import graphene
 from .example import ExampleQueries, ExampleMutations
 
 
-class Query(
+class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
 ):
     pass
 
 
-class Mutation(
+
+class RootMutation(
     # All mutations listed here will be merged.
     ExampleMutations,
 ):
@@ -18,6 +19,6 @@ class Mutation(
 
 
 schema = graphene.Schema(
-    query=Query,
-    mutation=Mutation,
+    query=RootQuery,
+    mutation=RootMutation,
 )

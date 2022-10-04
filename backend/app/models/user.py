@@ -1,11 +1,11 @@
-from mongoengine import Document, StringField
+import mongoengine as mg
+
+from .user_info import UserInfo
 
 
-class User(Document):
-    first_name = StringField(required=True)
-    last_name = StringField(required=True)
-    auth_id = StringField(required=True)
-    role = StringField(choices=["User", "Admin"], required=True)
+class User(mg.Document):
+    auth_id = mg.StringField(required=True)
+    info = mg.EmbeddedDocumentField(UserInfo, required=True)
 
     def to_serializable_dict(self):
         """

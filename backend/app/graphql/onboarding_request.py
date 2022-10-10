@@ -1,4 +1,7 @@
 import graphene
+
+from ..services.implementations.onboarding_request_service import OnboardingRequestService
+
 from .error_handling import ClientError
 from .types import (
     Query,
@@ -7,30 +10,53 @@ from .types import (
     MutationList,
 )
 
+# Object Types
+class UserInfoInput(graphene.InputObjectType):
+    contact_name = graphene.String(required=True)
+    contact_email = graphene.String(required=True)
+    contact_phone = graphene.String()
+    role = graphene.String(required=True)
+
+class UserInfo(graphene.ObjectType):
+    contact_name = graphene.String()
+    contact_email = graphene.String()
+    contact_phone = graphene.String()
+    role = graphene.String()
+
+class OnboardingRequest(graphene.ObjectType):
+    info = graphene.Field(UserInfo)
+    date_submitted = graphene.DateTime()
+    status = graphene.String()
+
+
+# To test:
+# mutation myFirstMutation {
+#   createOnboardingRequest(userInfo: {contactName: "Jessie Peng", contactEmail: "jpeng@gmail.com",
+#   contactPhone: "647641", role: "Admin"}) {
+#     onboardingRequest {
+#       info {
+#         contactName,
+#         contactEmail,
+#         contactPhone,
+#         role
+#       }
+#     }
+#   }
+# }
+
 # Mutations
 class CreateOnboardingRequest(Mutation):
-    # class Arguments:
-
+    class Arguments:
+        userInfo = UserInfoInput()
+    onboardingRequest = graphene.Field(lambda: OnboardingRequest)
     
-    # def mutate(self):
+    def mutate(self, userInfo):
+        newOnboardingRequest = OnboardingRequestService.create_onboarding_request(userInfo=userInfo)
+        return CreateOnboardingRequest(onboardingRequest=newOnboardingRequest)
 
-
-# class PrintGreeting(Mutation):
-#     class Arguments:
-#         text = graphene.String()
-
-#     printed_text = graphene.String()
-
-#     def mutate(self, info, text):
-#         text_to_print = f"Greeting: {text}"
-
-#         print(text_to_print)
-
-#         return PrintGreeting(printed_text=text_to_print)
-
-    
     
 class OnboardingRequestMutations(MutationList):
+    createOnboardingRequest = CreateOnboardingRequest.Field()
 
     
 

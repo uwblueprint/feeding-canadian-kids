@@ -1,11 +1,11 @@
 import firebase_admin.auth
 
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
-from ...models.OnboardingRequest import OnboardingRequest
-from ...models.UserInfo import UserInfo
+from ...models.onboarding_request import OnboardingRequest
+from ...models.user_info import UserInfo
 from ...resources.onboarding_request_dto import OnboardingRequestDTO # TODO
 
-class OnboardingRequest(IOnboardingRequestService):
+class OnboardingRequestService(IOnboardingRequestService):
     def __init__(self, logger):
         """
         Create an instance of OnboardingRequestService

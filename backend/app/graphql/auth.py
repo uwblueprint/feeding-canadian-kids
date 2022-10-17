@@ -48,7 +48,7 @@ class Login(Mutation):
     email = graphene.String()
     role = graphene.String()
 
-    def mutate(self, info, email, password):
+    def mutate(self, info, code, email, password):
 
         auth_dto = None
         if "id_token" in request.json:
@@ -57,13 +57,26 @@ class Login(Mutation):
             auth_dto = auth_service.generate_token(request.json["email"], request.json["password"])
 
         # middleware for set cookie
+        info.context.set_cookie = code
 
         return Login(access_token=auth_dto.access_token, id=auth_dto.id, first_name=auth_dto.first_name, last_name=auth_dto.last_name, email=auth_dto.email, role=auth_dto.role)
 
 
 class Register(Mutation):
-    def mutate(self, info):
+    def mutate(self, info, code, email, password):
         request.json["role"] = "User"
+        user = CreateUserDTO(**request.json)
+        user_service.create_user(user)
+        auth_dto = auth_service.generate_token(
+            request.json["email"], request.json["password"]
+        )
+
+        auth_service.send_email_verification_link(request.json["email"])
+
+        info.context.set_cookie = code
+
+        return Login(access_token=auth_dto.access_token, id=auth_dto.id, first_name=auth_dto.first_name, last_name=auth_dto.last_name, email=auth_dto.email, role=auth_dto.role)
+
 
 
 class Refresh(Mutation):
@@ -72,9 +85,10 @@ class Refresh(Mutation):
 
     access_token = graphene.String()
 
-    def mutate(self, info, user_id):
+    def mutate(self, info, code, user_id):
         token = auth_service.renew_token(request.cookies.get("refreshToken"))
         # middleware for set cookie
+        info.context.set_cookie = code
         return Refresh(access_token=token)
 
 

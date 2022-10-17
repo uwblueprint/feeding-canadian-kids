@@ -1,7 +1,8 @@
 import graphene
 
 from .example import ExampleQueries, ExampleMutations
-from .auth import Login, Register, Refresh, Logout, ResetPassword
+from .auth import AuthMutations
+
 
 class RootQuery(
     # All queries listed here will be merged.
@@ -13,11 +14,7 @@ class RootQuery(
 class RootMutation(
     # All mutations listed here will be merged.
     ExampleMutations,
-    Login,
-    Register,
-    Refresh,
-    Logout,
-    ResetPassword,
+    AuthMutations,
 ):
     pass
 

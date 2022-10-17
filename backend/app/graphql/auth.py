@@ -2,7 +2,7 @@ import os
 import graphene
 
 from flask import Blueprint, current_app, jsonify, request
-from .types import Mutation
+from .types import Mutation, MutationList
 
 from ..middlewares.auth import (
     require_authorization_by_user_id,
@@ -143,3 +143,10 @@ class ResetPassword(Mutation):
             error_message = getattr(e, "message", None)
             return jsonify({"error": (error_message if error_message else str(e))}), 500
 
+
+class AuthMutations(MutationList):
+    login = Login.Field()
+    register = Register.Field()
+    refresh = Refresh.Field()
+    logout = Logout.Field()
+    reset_password = ResetPassword.Field()

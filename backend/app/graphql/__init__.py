@@ -1,7 +1,9 @@
 import graphene
 
+from flask import current_app
 from .example import ExampleQueries, ExampleMutations
 
+from .services import services
 
 class RootQuery(
     # All queries listed here will be merged.
@@ -21,3 +23,8 @@ schema = graphene.Schema(
     query=RootQuery,
     mutation=RootMutation,
 )
+
+def init_app(app):
+    with app.app_context():
+        # Add your services here: services["service_name"] = ...
+        pass

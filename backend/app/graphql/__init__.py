@@ -14,12 +14,14 @@ from ..services.implementations.onboarding_request_service import (
     OnboardingRequestService,
 )
 from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQueries
+from all_users import AllUsersQuery
 
 
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
     OnboardingRequestQueries,
+    AllUsersQuery
 ):
     pass
 

@@ -28,22 +28,6 @@ class OnboardingRequest(graphene.ObjectType):
     date_submitted = graphene.DateTime()
     status = graphene.String()
 
-
-# To test:
-# mutation myFirstMutation {
-#   createOnboardingRequest(userInfo: {contactName: "Jessie Peng", contactEmail: "jpeng@gmail.com",
-#   contactPhone: "647641", role: "Admin"}) {
-#     onboardingRequest {
-#       info {
-#         contactName,
-#         contactEmail,
-#         contactPhone,
-#         role
-#       }
-#     }
-#   }
-# }
-
 # Mutations
 class CreateOnboardingRequest(Mutation):
     class Arguments:

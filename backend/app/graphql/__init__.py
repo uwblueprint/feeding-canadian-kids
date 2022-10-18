@@ -3,6 +3,7 @@ import os
 
 from flask import current_app
 from .example import ExampleQueries, ExampleMutations
+<<<<<<< HEAD
 from .services import services
 from ..services.implementations.user_service import UserService
 from ..services.implementations.email_service import EmailService
@@ -15,23 +16,34 @@ from ..services.implementations.onboarding_request_service import (
 )
 from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQueries
 from all_users import AllUsersQuery
+=======
+from .all_users import AllUsersQuery
+>>>>>>> 9bb4a0d (Added GraphQL API for fetching all users)
 
 
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
+<<<<<<< HEAD
     OnboardingRequestQueries,
     AllUsersQuery
+=======
+    AllUsersQuery,
+>>>>>>> 9bb4a0d (Added GraphQL API for fetching all users)
 ):
     pass
 
 
 class RootMutation(
     # All mutations listed here will be merged.
+<<<<<<< HEAD
     ExampleMutations,
     AuthMutations,
     OnboardingRequestMutations,
     FoodRequestMutations,
+=======
+    ExampleMutations
+>>>>>>> 9bb4a0d (Added GraphQL API for fetching all users)
 ):
     pass
 

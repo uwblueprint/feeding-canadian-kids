@@ -1,18 +1,20 @@
 import graphene
 
 from .example import ExampleQueries, ExampleMutations
+from .all_users import AllUsersQuery
 
 
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
+    AllUsersQuery,
 ):
     pass
 
 
 class RootMutation(
     # All mutations listed here will be merged.
-    ExampleMutations,
+    ExampleMutations
 ):
     pass
 

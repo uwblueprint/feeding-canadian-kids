@@ -17,13 +17,14 @@ class OnboardingRequestService(IOnboardingRequestService):
 
     def create_onboarding_request(self, userInfo):
         try:
+            # Create initial UserInfo object
             user_info = UserInfo(
                     contact_name=userInfo.contact_name,
                     contact_email=userInfo.contact_email,
                     contact_phone=userInfo.contact_phone,
                     role=userInfo.role,
                 )
- 
+            # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(
                 user_info=user_info,
                 status="Pending",

@@ -28,6 +28,7 @@ class CreateFoodRequestGroupResponse(graphene.ObjectType):
     id = graphene.ID()
     description = graphene.String()
     requests = graphene.List(CreateFoodRequestResponse)
+    status = graphene.String()
 
 # Mutations
 class CreateFoodRequestGroup(Mutation):
@@ -35,9 +36,6 @@ class CreateFoodRequestGroup(Mutation):
         description = graphene.String(required=True)
         requestor = graphene.ID(required=True)
         commitments = graphene.List(CreateFoodRequestDatesInput, required=True)
-
-        # TBD
-        # location = graphene.String(required=True)
 
 	# return values
     food_request_group = graphene.Field(CreateFoodRequestGroupResponse)

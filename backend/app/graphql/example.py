@@ -1,4 +1,3 @@
-from this import d
 import graphene
 
 from .error_handling import ClientError

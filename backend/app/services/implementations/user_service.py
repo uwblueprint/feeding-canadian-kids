@@ -120,9 +120,8 @@ class UserService(IUserService):
                 user_dtos.append(UserDTO(**user_dict))
             except Exception as e:
                 self.logger.error(
-                    "User with auth_id {auth_id} could not be fetched from Firebase".format(
-                        auth_id=user.auth_id
-                    )
+                    f"User with auth_id {user.auth_id} could not be fetched "
+                    + "from Firebase"
                 )
                 raise e
 
@@ -138,7 +137,7 @@ class UserService(IUserService):
                     email=user.email, password=user.password
                 )
             elif signup_method == "GOOGLE":
-                # If they signup with Google OAuth, a Firebase user is automatically created
+                # If they signup with Google OAuth, a Firebase user is auto-created
                 firebase_user = firebase_admin.auth.get_user(uid=auth_id)
 
             try:
@@ -155,7 +154,8 @@ class UserService(IUserService):
                 except Exception as firebase_error:
                     reason = getattr(firebase_error, "message", None)
                     error_message = [
-                        "Failed to rollback Firebase user creation after MongoDB user creation failure.",
+                        "Failed to rollback Firebase user creation after MongoDB",
+                        "user creation failure.",
                         "Reason = {reason},".format(
                             reason=(reason if reason else str(firebase_error))
                         ),
@@ -186,7 +186,7 @@ class UserService(IUserService):
             update_user_dict = user.__dict__
             email = update_user_dict.pop("email", None)
 
-            # workaround for running validations since modify() does not automatically run them
+            # workaround for running validations since modify() doesn't auto-run them
             # auth_id is a placeholder because it is not part of the UpdateUserDTO
             User(auth_id="", **update_user_dict).validate()
 
@@ -195,7 +195,8 @@ class UserService(IUserService):
             if not old_user:
                 raise Exception("user_id {user_id} not found".format(user_id=user_id))
 
-            # IMPORTANT: update_user_dict references the same instance of UpdateUserDTO as user
+            # IMPORTANT: update_user_dict references the same instance of
+            # UpdateUserDTO as user
             update_user_dict["email"] = email
 
             try:
@@ -211,13 +212,13 @@ class UserService(IUserService):
                 except Exception as mongo_error:
                     reason = getattr(mongo_error, "message", None)
                     error_message = [
-                        "Failed to rollback MongoDB user update after Firebase user update failure.",
+                        "Failed to rollback MongoDB user update after Firebase",
+                        "user update failure.",
                         "Reason = {reason},".format(
                             reason=(reason if reason else str(mongo_error))
                         ),
-                        "MongoDB user id with possibly inconsistent data = {user_id}".format(
-                            user_id=user_id
-                        ),
+                        "MongoDB user id with possibly inconsistent",
+                        "data = {user_id}".format(user_id=user_id),
                     ]
                     self.logger.error(" ".join(error_message))
 
@@ -238,7 +239,9 @@ class UserService(IUserService):
             deleted_user = User.objects(id=user_id).modify(remove=True, new=False)
 
             if not deleted_user:
-                raise Exception("user_id {user_id} not found".format(user_id=user_id))
+                raise Exception(
+                    "user_id {user_id} not found".format(user_id=user_id),
+                )
 
             try:
                 firebase_admin.auth.delete_user(deleted_user.auth_id)
@@ -254,13 +257,13 @@ class UserService(IUserService):
                 except Exception as mongo_error:
                     reason = getattr(mongo_error, "message", None)
                     error_message = [
-                        "Failed to rollback MongoDB user deletion after Firebase user deletion failure.",
+                        "Failed to rollback MongoDB user deletion after",
+                        "Firebase user deletion failure.",
                         "Reason = {reason},".format(
                             reason=(reason if reason else str(mongo_error))
                         ),
-                        "Firebase uid with non-existent MongoDB record = {auth_id}".format(
-                            auth_id=deleted_user.auth_id
-                        ),
+                        "Firebase uid with non-existent MongoDB",
+                        "record = {auth_id}".format(auth_id=deleted_user.auth_id),
                     ]
                     self.logger.error(" ".join(error_message))
 
@@ -301,13 +304,13 @@ class UserService(IUserService):
                 except Exception as mongo_error:
                     reason = getattr(mongo_error, "message", None)
                     error_message = [
-                        "Failed to rollback MongoDB user deletion after Firebase user deletion failure.",
+                        "Failed to rollback MongoDB user deletion after Firebase",
+                        "user deletion failure.",
                         "Reason = {reason},".format(
                             reason=(reason if reason else str(mongo_error))
                         ),
-                        "Firebase uid with non-existent MongoDB record = {auth_id}".format(
-                            auth_id=deleted_user.auth_id
-                        ),
+                        "Firebase uid with non-existent MongoDB",
+                        "record = {auth_id}".format(auth_id=deleted_user.auth_id),
                     ]
                     self.logger.error(" ".join(error_message))
 

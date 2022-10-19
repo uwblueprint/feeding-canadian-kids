@@ -22,7 +22,7 @@ class FirebaseRestClient:
         """
         self.logger = logger
 
-    # docs: https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-email-password
+    # docs: https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-email-password  # noqa
     def sign_in_with_password(self, email, password):
         """
         Sign-in to Firebase using a email and password
@@ -38,7 +38,7 @@ class FirebaseRestClient:
         headers = {"Content-Type": "application/json"}
         data = {"email": email, "password": password, "returnSecureToken": "true"}
 
-        # IMPORTANT: must convert data to string as otherwise the payload will get URL-encoded
+        # IMPORTANT: must convert data to string, otherwise it will get URL-encoded
         # e.g. "@" in the email address will get converted to "%40" which is incorrect
         response = requests.post(
             "{base_url}?key={api_key}".format(
@@ -63,7 +63,7 @@ class FirebaseRestClient:
 
         return Token(response_json["idToken"], response_json["refreshToken"])
 
-    # docs: https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-with-oauth-credential
+    # docs: https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-with-oauth-credential  # noqa
     def sign_in_with_google(self, id_token):
         """
         Obtain user's personal info, access token, and refresh token from Google OAuth.

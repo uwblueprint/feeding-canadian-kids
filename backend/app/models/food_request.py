@@ -1,10 +1,12 @@
 import mongoengine as mg
 from bson.objectid import ObjectId
 
+
 class MealType(mg.EmbeddedDocument):
     tags = mg.ListField(mg.StringField(required=True))
     portions = mg.IntField(required=True)
     portionsFulfilled = mg.IntField(required=True, default=0)
+
 
 class FoodRequest(mg.EmbeddedDocument):
     _id = mg.ObjectIdField(required=True, default=ObjectId)
@@ -18,10 +20,8 @@ class FoodRequest(mg.EmbeddedDocument):
     Fulfilled: All meal types have been fulfilled
     Cancelled: FoodRequest has been cancelled by the ASP
     """
-    status = mg.StringField(
-        choices=["Open", "Fulfilled", "Cancelled"], required=True
-    )
-    
+    status = mg.StringField(choices=["Open", "Fulfilled", "Cancelled"], required=True)
+
     def to_serializable_dict(self):
         """
         Returns a dict representation of the document that is JSON serializable
@@ -32,4 +32,3 @@ class FoodRequest(mg.EmbeddedDocument):
         id = food_request_dict.pop("_id", None)
         food_request_dict["id"] = str(id)
         return food_request_dict
-

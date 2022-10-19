@@ -2,6 +2,7 @@ import mongoengine as mg
 from .food_request import FoodRequest
 from datetime import datetime
 
+
 class FoodRequestGroup(mg.Document):
     description = mg.StringField(required=True)
 
@@ -17,9 +18,7 @@ class FoodRequestGroup(mg.Document):
     Fulfilled: All FoodRequests are fulfilled
     Cancelled: All FoodRequests are cancelled
     """
-    status = mg.StringField(
-        choices=["Open", "Fulfilled", "Cancelled"], required=True
-    )
+    status = mg.StringField(choices=["Open", "Fulfilled", "Cancelled"], required=True)
 
     def to_serializable_dict(self):
         """
@@ -35,7 +34,7 @@ class FoodRequestGroup(mg.Document):
 
         for food_request_dict in food_request_group_dict["requests"]:
             id = food_request_dict.pop("_id", None)
-            food_request_dict["id"] = str(id) 
+            food_request_dict["id"] = str(id)
         return food_request_group_dict
 
     meta = {"collection": "food_request_groups"}

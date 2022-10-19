@@ -1,12 +1,7 @@
 from flask import current_app, jsonify, request
 from functools import wraps
 
-from ..services.implementations.auth_service import AuthService
-from ..services.implementations.user_service import UserService
-
-user_service = UserService(current_app.logger)
-auth_service = AuthService(current_app.logger, user_service)
-
+from ..graphql.services import services
 
 def get_access_token(request):
     auth_header = request.headers.get("Authorization")
@@ -43,7 +38,7 @@ def require_authorization_by_role(roles):
         @wraps(api_func)
         def wrapper(*args, **kwargs):
             access_token = get_access_token(request)
-            authorized = auth_service.is_authorized_by_role(access_token, roles)
+            authorized = services["auth_service"].is_authorized_by_role(access_token, roles)
             if not authorized:
                 return (
                     jsonify({"error": "You are not authorized to make this request."}),
@@ -70,7 +65,7 @@ def require_authorization_by_user_id(user_id_field):
         @wraps(api_func)
         def wrapper(*args, **kwargs):
             access_token = get_access_token(request)
-            authorized = auth_service.is_authorized_by_user_id(
+            authorized = services["auth_service"].is_authorized_by_user_id(
                 access_token, request.view_args.get(user_id_field)
             )
             if not authorized:
@@ -99,7 +94,7 @@ def require_authorization_by_email(email_field):
         @wraps(api_func)
         def wrapper(*args, **kwargs):
             access_token = get_access_token(request)
-            authorized = auth_service.is_authorized_by_email(
+            authorized = services["auth_service"].is_authorized_by_email(
                 access_token, request.view_args.get(email_field)
             )
             if not authorized:

@@ -10,6 +10,7 @@ chardet==4.0.0
 click==7.1.2
 dnspython==1.16.0
 firebase-admin==4.5.3
+flake8==5.0.4
 Flask==1.1.2
 Flask-Cors==3.0.10
 Flask-Migrate==3.0.1
@@ -28,7 +29,7 @@ graphql-server==3.0.0b5
 grpcio==1.37.0
 httplib2==0.19.1
 idna==2.10
-importlib-metadata==4.4.0
+importlib-metadata==4.2.0
 iniconfig==1.1.1
 itsdangerous==1.1.0
 Jinja2==2.11.2
@@ -43,7 +44,6 @@ pathspec==0.8.1
 pluggy==0.13.1
 proto-plus==1.18.1
 protobuf==3.15.8
-psycopg2==2.8.6
 py==1.10.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8

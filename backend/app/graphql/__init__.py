@@ -6,6 +6,7 @@ from .example import ExampleQueries, ExampleMutations
 from .services import services
 from ..services.implementations.onboarding_request_service import OnboardingRequestService
 
+
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
@@ -25,6 +26,7 @@ schema = graphene.Schema(
     query=RootQuery,
     mutation=RootMutation,
 )
+
 
 def init_app(app):
     with app.app_context():

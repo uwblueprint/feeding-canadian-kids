@@ -31,4 +31,5 @@ schema = graphene.Schema(
 def init_app(app):
     with app.app_context():
         # Add your services here: services["service_name"] = ...
+        # services["auth_service"] = AuthService(logger=current_app.logger)
         pass

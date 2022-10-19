@@ -38,7 +38,8 @@ DEFAULT_CSV_OPTIONS = {
 @require_authorization_by_role({"User", "Admin"})
 def get_users():
     """
-    Get all users, optionally filter by a user_id or email query parameter to retrieve a single user
+    Get all users, optionally filter by a user_id or email query parameter to
+    retrieve a single user
     """
     user_id = request.args.get("user_id")
     email = request.args.get("email")

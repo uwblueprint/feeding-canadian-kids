@@ -14,7 +14,7 @@ class IFileStorageService(ABC):
 
         :param file_name: name of the file
         :type file_name: str
-        :param expiration_time: the lifetime of the url, defaults to timedelta(minutes=60)
+        :param expiration_time: the lifetime of the url, defaults to 60 mins
         :type expiration_time: timedelta, optional
         :return: signed url of the file
         :rtype: str or None if file is not found

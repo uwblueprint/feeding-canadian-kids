@@ -16,7 +16,7 @@ class IAuthService(ABC):
         :type email: str
         :param password: user's password
         :type password: str
-        :return: AuthDTO object containing the access token, refresh token, and user info
+        :return: AuthDTO object containing the access/refresh token and user info
         :rtype: AuthDTO
         :raises Exception: if token generation fails
         """
@@ -30,7 +30,7 @@ class IAuthService(ABC):
 
         :param id_token: user's OAuth ID token
         :type id_token: str
-        :return: AuthDTO object containing the access token, refresh token, and user info
+        :return: AuthDTO object containing the access/refresh token and user info
         :rtype: AuthDTO
         :raises Exception: if token generation fails
         """
@@ -102,7 +102,7 @@ class IAuthService(ABC):
     @abstractmethod
     def is_authorized_by_user_id(self, access_token, requested_user_id):
         """
-        Determine if the provided access token is valid and issued to the requested user
+        Determine if the provided access token is valid and issued to the requestor
 
         :param access_token: user's access token
         :type access_token: str

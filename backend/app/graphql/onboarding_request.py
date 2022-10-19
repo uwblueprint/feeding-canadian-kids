@@ -1,11 +1,8 @@
 import graphene
 
-from ..services.implementations.onboarding_request_service import OnboardingRequestService
+from ..graphql.services import services
 
-from .error_handling import ClientError
 from .types import (
-    Query,
-    QueryList,
     Mutation,
     MutationList,
 )
@@ -32,11 +29,11 @@ class OnboardingRequest(graphene.ObjectType):
 # Mutations
 class CreateOnboardingRequest(Mutation):
     class Arguments:
-        userInfo = UserInfoInput()
-    onboardingRequest = graphene.Field(lambda: OnboardingRequest)
+        userInfo = UserInfoInput(required=True)
+    onboardingRequest = graphene.Field(OnboardingRequest)
     
     def mutate(self, info, userInfo):
-        newOnboardingRequest = OnboardingRequestService.create_onboarding_request(userInfo=userInfo)
+        newOnboardingRequest = services["onboarding_request_service"].create_onboarding_request(userInfo=userInfo)
         return CreateOnboardingRequest(onboardingRequest=newOnboardingRequest)
 
     

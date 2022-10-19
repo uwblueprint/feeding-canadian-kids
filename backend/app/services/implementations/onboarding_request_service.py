@@ -26,7 +26,7 @@ class OnboardingRequestService(IOnboardingRequestService):
                 )
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(
-                user_info=user_info,
+                info=user_info,
                 status="Pending",
             ).save()
     
@@ -39,8 +39,7 @@ class OnboardingRequestService(IOnboardingRequestService):
             )
             raise e
 
-        new_onboarding_request_dict = OnboardingRequest.objects.get(id=new_onboarding_request.id).to_mongo().to_dict()
-        return OnboardingRequestDTO(**new_onboarding_request_dict)
+        return new_onboarding_request.to_serializable_dict()
         
 
         

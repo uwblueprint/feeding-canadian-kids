@@ -6,6 +6,7 @@ from .auth import AuthMutations
 from .services import services
 from ..services.implementations.auth_service import AuthService
 
+from .services import services
 
 class RootQuery(
     # All queries listed here will be merged.
@@ -29,4 +30,5 @@ schema = graphene.Schema(
 
 def init_app(app):
     with app.app_context():
+        # Add your services here: services["service_name"] = ...
         pass

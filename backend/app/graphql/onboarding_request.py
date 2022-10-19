@@ -24,6 +24,7 @@ class UserInfo(graphene.ObjectType):
     role = graphene.String()
 
 class OnboardingRequest(graphene.ObjectType):
+    id = graphene.ID()
     info = graphene.Field(UserInfo)
     date_submitted = graphene.DateTime()
     status = graphene.String()
@@ -34,7 +35,7 @@ class CreateOnboardingRequest(Mutation):
         userInfo = UserInfoInput()
     onboardingRequest = graphene.Field(lambda: OnboardingRequest)
     
-    def mutate(self, userInfo):
+    def mutate(self, info, userInfo):
         newOnboardingRequest = OnboardingRequestService.create_onboarding_request(userInfo=userInfo)
         return CreateOnboardingRequest(onboardingRequest=newOnboardingRequest)
 

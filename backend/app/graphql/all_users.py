@@ -1,14 +1,25 @@
-from backend.app.services.implementations.user_service import UserService
+from ..services.implementations.user_service import UserService
 import graphene
 from .types import (
-    Query
+    Query,
+    QueryList
 )
 
 
-class AllUsersQuery(Query):
-    all_user = graphene.List(graphene.String, first=graphene.Int(default_value=5), offset=graphene.Int(default_value=0))
+class UserType(graphene.ObjectType):
+    name = graphene.String()
+    email = graphene.String()
+    phone = graphene.String()
+    role = graphene.String()
 
-    def resolve_all_users(self, info, first, offset):
+
+class AllUsersQuery(QueryList):
+    all_user = graphene.List(UserType, first=graphene.Int(default_value=5), offset=graphene.Int(default_value=0), role=graphene.String())
+
+    def resolve_all_users(self, info, first, offset, role):
         users = UserService.get_users()
 
-        return users[first:first+offset]
+        if role:
+            return filter(lambda user: user.role == role, users)[offset:offset+first]
+
+        return users[offset:offset+first]

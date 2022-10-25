@@ -1,7 +1,6 @@
 import os
 import graphene
 
-from flask import request
 from .types import Mutation, MutationList
 from ..graphql.services import services
 from ..resources.create_user_dto import CreateUserDTO
@@ -27,7 +26,7 @@ class Login(Mutation):
 
     user = graphene.Field(User)
 
-    def mutate(self, info, code, email, password, id_token=null):
+    def mutate(self, info, code, email, password, id_token):
         auth_dto = None
         if id_token:
             auth_dto = services["auth_service"].verify_token(id_token)
@@ -86,12 +85,12 @@ class Refresh(Mutation):
     Returns access token in response body and sets refreshToken as an httpOnly cookie
     """
     class Arguments:
-        user_id = graphene.String()
+        refresh_token = graphene.String()
 
     access_token = graphene.String()
 
-    def mutate(self, info, code, user_id):
-        token = services["auth_service"].renew_token(request.cookies.get("refreshToken"))
+    def mutate(self, info, code, refresh_token):
+        token = services["auth_service"].renew_token(refresh_token)
         info.context.set_cookie = code
         return Refresh(access_token=token)
 

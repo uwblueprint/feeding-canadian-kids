@@ -23,13 +23,14 @@ class Login(Mutation):
     class Arguments:
         email = graphene.String()
         password = graphene.String()
+        id_token = graphene.String()
 
     user = graphene.Field(User)
 
-    def mutate(self, info, code, email, password):
+    def mutate(self, info, code, email, password, id_token=null):
         auth_dto = None
-        if "id_token" in request.json:
-            auth_dto = services["auth_service"].verify_token(request.json["id_token"])
+        if id_token:
+            auth_dto = services["auth_service"].verify_token(id_token)
         else:
             auth_dto = services["auth_service"].generate_token(email, password)
         info.context.set_cookie = code

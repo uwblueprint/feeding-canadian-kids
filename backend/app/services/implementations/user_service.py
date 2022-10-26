@@ -143,8 +143,8 @@ class UserService(IUserService):
 
             try:
                 new_user = User(
-                    first_name=user.first_name,
-                    last_name=user.last_name,
+                    contact_name=user.first_name + " " + user.last_name,
+                    contact_email=user.email,
                     auth_id=firebase_user.uid,
                     role=user.role,
                 ).save()

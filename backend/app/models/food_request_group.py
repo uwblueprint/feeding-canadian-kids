@@ -1,3 +1,4 @@
+from email.policy import default
 import mongoengine as mg
 from .food_request import FoodRequest
 from datetime import datetime
@@ -18,7 +19,9 @@ class FoodRequestGroup(mg.Document):
     Fulfilled: All FoodRequests are fulfilled
     Cancelled: All FoodRequests are cancelled
     """
-    status = mg.StringField(choices=["Open", "Fulfilled", "Cancelled"], required=True)
+    status = mg.StringField(
+        choices=["Open", "Fulfilled", "Cancelled"], required=True, default="Open"
+    )
 
     def to_serializable_dict(self):
         """

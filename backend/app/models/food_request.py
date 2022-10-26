@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 class MealType(mg.EmbeddedDocument):
     tags = mg.ListField(mg.StringField(required=True))
     portions = mg.IntField(required=True)
-    portionsFulfilled = mg.IntField(required=True, default=0)
+    portions_fulfilled = mg.IntField(required=True, default=0)
 
 
 class FoodRequest(mg.EmbeddedDocument):
@@ -20,7 +20,9 @@ class FoodRequest(mg.EmbeddedDocument):
     Fulfilled: All meal types have been fulfilled
     Cancelled: FoodRequest has been cancelled by the ASP
     """
-    status = mg.StringField(choices=["Open", "Fulfilled", "Cancelled"], required=True)
+    status = mg.StringField(
+        choices=["Open", "Fulfilled", "Cancelled"], required=True, default="Open"
+    )
 
     def to_serializable_dict(self):
         """

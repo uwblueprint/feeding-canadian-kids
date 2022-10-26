@@ -1,13 +1,9 @@
-import os
-import re
 import graphene
 
 from .types import Mutation, MutationList
 from ..graphql.services import services
 from ..resources.create_user_dto import CreateUserDTO
-# local host 3000
-# use the butons that exist on thepage
-# reference jessie's pr for graphql unit tests
+
 
 class User(graphene.ObjectType):
     access_token = graphene.String()
@@ -29,13 +25,12 @@ class Login(Mutation):
 
     user = graphene.Field(User)
 
-    def mutate(self, info, code, email, password, id_token):
+    def mutate(self, info, email, password, id_token):
         auth_dto = None
         if id_token:
             auth_dto = services["auth_service"].verify_token(id_token)
         else:
             auth_dto = services["auth_service"].generate_token(email, password)
-        info.context.set_cookie = code
         newUser = {
             "access_token": auth_dto.access_token,
             "id": auth_dto.id,
@@ -63,7 +58,7 @@ class Register(Mutation):
 
     user = graphene.Field(User)
 
-    def mutate(self, info, code, user_input):
+    def mutate(self, info, user_input):
         kwargs = {
             "email": user_input.email,
             "password": user_input.password,
@@ -73,9 +68,8 @@ class Register(Mutation):
         }
         user = CreateUserDTO(**kwargs)
         services["user_service"].create_user(user)
-        auth_dto = services["auth_service"].generate_token(email, password)
-        services["auth_service"].send_email_verification_link(email)
-        info.context.set_cookie = code
+        auth_dto = services["auth_service"].generate_token(user_input.email, user_input.password)
+        services["auth_service"].send_email_verification_link(user_input.email)
         newUser = {
             "access_token": auth_dto.access_token,
             "id": auth_dto.id,
@@ -96,9 +90,8 @@ class Refresh(Mutation):
 
     access_token = graphene.String()
 
-    def mutate(self, info, code, refresh_token):
+    def mutate(self, info, refresh_token):
         token = services["auth_service"].renew_token(refresh_token)
-        info.context.set_cookie = code
         return Refresh(access_token=token)
 
 

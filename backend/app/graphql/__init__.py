@@ -5,9 +5,9 @@ from flask import current_app
 from .example import ExampleQueries, ExampleMutations
 from .auth import AuthMutations
 from .services import services
-from ..services.implementations.auth_service import AuthService
-from ..services.implementations.email_service import EmailService
 from ..services.implementations.user_service import UserService
+from ..services.implementations.email_service import EmailService
+from ..services.implementations.auth_service import AuthService
 
 
 class RootQuery(

@@ -1,7 +1,12 @@
 from flask import current_app, jsonify, request
 from functools import wraps
 
-from ..graphql.services import services
+from ..services.implementations.auth_service import AuthService
+from ..services.implementations.user_service import UserService
+
+user_service = UserService(current_app.logger)
+auth_service = AuthService(current_app.logger, user_service)
+
 
 def get_access_token(request):
     auth_header = request.headers.get("Authorization")
@@ -14,7 +19,7 @@ def get_access_token(request):
 
 """
 References for creating middleware using Python decorators:
-* https://stackoverflow.com/questions/14367991/flask-before-request-add-exception-for-specific-route
+* https://stackoverflow.com/questions/14367991/flask-before-request-add-exception-for-specific-route  # noqa
 * https://stackoverflow.com/questions/5929107/decorators-with-parameters
 
 * Outermost function (i.e. require_authorization_by_role below) is the name of the decorator,
@@ -22,7 +27,8 @@ References for creating middleware using Python decorators:
   Note: this layer is NOT needed if the middleware does not require parameters.
 * Middle function (i.e. require_authorization below) wraps around the decorated function
   (an API endpoint) using the functools wraps decorator.
-* Innermost function (i.e. wrapper below) defines the actual middleware logic, like checking authorization.
+* Innermost function (i.e. wrapper below) defines the actual middleware logic,
+  like checking authorization.
 """
 
 
@@ -38,7 +44,7 @@ def require_authorization_by_role(roles):
         @wraps(api_func)
         def wrapper(*args, **kwargs):
             access_token = get_access_token(request)
-            authorized = services["auth_service"].is_authorized_by_role(access_token, roles)
+            authorized = auth_service.is_authorized_by_role(access_token, roles)
             if not authorized:
                 return (
                     jsonify({"error": "You are not authorized to make this request."}),
@@ -65,7 +71,7 @@ def require_authorization_by_user_id(user_id_field):
         @wraps(api_func)
         def wrapper(*args, **kwargs):
             access_token = get_access_token(request)
-            authorized = services["auth_service"].is_authorized_by_user_id(
+            authorized = auth_service.is_authorized_by_user_id(
                 access_token, request.view_args.get(user_id_field)
             )
             if not authorized:
@@ -94,7 +100,7 @@ def require_authorization_by_email(email_field):
         @wraps(api_func)
         def wrapper(*args, **kwargs):
             access_token = get_access_token(request)
-            authorized = services["auth_service"].is_authorized_by_email(
+            authorized = auth_service.is_authorized_by_email(
                 access_token, request.view_args.get(email_field)
             )
             if not authorized:

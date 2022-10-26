@@ -1,10 +1,13 @@
 import os
+import re
 import graphene
 
 from .types import Mutation, MutationList
 from ..graphql.services import services
 from ..resources.create_user_dto import CreateUserDTO
-
+# local host 3000
+# use the butons that exist on thepage
+# reference jessie's pr for graphql unit tests
 
 class User(graphene.ObjectType):
     access_token = graphene.String()
@@ -44,24 +47,28 @@ class Login(Mutation):
         return Login(user=newUser)
 
 
+class UserInput(graphene.InputObjectType):
+    email = graphene.String(required=True)
+    password = graphene.String(required=True)
+    first_name = graphene.String(required=True)
+    last_name = graphene.String(required=True)
+
+
 class Register(Mutation):
     """
     Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
     """
     class Arguments:
-        email = graphene.String()
-        password = graphene.String()
-        firstName = graphene.String()
-        lastName = graphene.String()
+        user_input = UserInput(required=True)
 
     user = graphene.Field(User)
 
-    def mutate(self, info, code, email, password, firstName, lastName):
+    def mutate(self, info, code, user_input):
         kwargs = {
-            "email": email,
-            "password": password,
-            "firstName": firstName,
-            "lastName": lastName,
+            "email": user_input.email,
+            "password": user_input.password,
+            "first_name": user_input.first_name,
+            "last_name": user_input.last_name,
             "role": "User"
         }
         user = CreateUserDTO(**kwargs)

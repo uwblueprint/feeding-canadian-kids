@@ -1,5 +1,6 @@
 import graphene
 
+from flask import current_app
 from .example import ExampleQueries, ExampleMutations
 from .services import services
 from .food_request import FoodRequestMutations

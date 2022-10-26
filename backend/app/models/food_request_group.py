@@ -33,8 +33,6 @@ class FoodRequestGroup(mg.Document):
         id = food_request_group_dict.pop("_id", None)
         food_request_group_dict["id"] = str(id)
 
-        print(food_request_group_dict)
-
         for food_request_dict in food_request_group_dict["requests"]:
             id = food_request_dict.pop("_id", None)
             food_request_dict["id"] = str(id)

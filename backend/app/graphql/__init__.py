@@ -30,5 +30,4 @@ schema = graphene.Schema(
 
 def init_app(app):
     with app.app_context():
-        # Add your services here: services["service_name"] = ...
         services["food_request_service"] = FoodRequestService(logger=current_app.logger)

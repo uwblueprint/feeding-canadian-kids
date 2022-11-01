@@ -20,4 +20,3 @@ class OnboardingRequest(mg.Document):
         onboarding_request_dict["id"] = str(id)
         return onboarding_request_dict
 
-    # meta = {"collection": "users"}

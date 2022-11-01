@@ -8,6 +8,8 @@ from .types import (
 )
 
 # Object Types
+
+
 class UserInfoInput(graphene.InputObjectType):
     contact_name = graphene.String(required=True)
     contact_email = graphene.String(required=True)

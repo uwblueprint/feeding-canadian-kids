@@ -1,7 +1,7 @@
 import re
 
-emailRegex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
-phoneRegex = "^[0-9]{9}$"
+emailRegex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
+phoneRegex = r"^[0-9]{9}$"
 
 
 class CreateUserInfoDTO:

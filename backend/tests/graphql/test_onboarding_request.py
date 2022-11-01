@@ -3,11 +3,11 @@ from app.graphql import schema as graphql_schema
 
 def test_create_onboarding_request():
     query_string = """mutation testCreateOnboardingRequest {
-                        createOnboardingRequest( 
-                            userInfo: 
+                        createOnboardingRequest(
+                            userInfo:
                                 {contactName: "Jane Doe",
                                 contactEmail: "janedoe@email.com",
-                                contactPhone: "12345", 
+                                contactPhone: "12345",
                                 role: "ASP"
                                 }
                         ) {

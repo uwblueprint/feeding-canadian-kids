@@ -23,6 +23,7 @@ def test_create_user():
     user = User(auth_id=auth_id, info=user_info)
     assert user.auth_id == "abc"
 
+
 def test_create_onboarding_request():
     user_info = {
         "contact_name": "Yuki Kuran",

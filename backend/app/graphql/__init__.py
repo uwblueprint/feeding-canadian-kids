@@ -4,7 +4,9 @@ from flask import current_app
 from .onboarding_request import OnboardingRequestMutations
 from .example import ExampleQueries, ExampleMutations
 from .services import services
-from ..services.implementations.onboarding_request_service import OnboardingRequestService
+from ..services.implementations.onboarding_request_service import (
+    OnboardingRequestService,
+)
 
 
 class RootQuery(
@@ -31,5 +33,7 @@ schema = graphene.Schema(
 def init_app(app):
     with app.app_context():
         # Add your services here: services["service_name"] = ...
-        services["onboarding_request_service"] = OnboardingRequestService(logger=current_app.logger)
+        services["onboarding_request_service"] = OnboardingRequestService(
+            logger=current_app.logger
+        )
         pass

@@ -14,11 +14,13 @@ class UserInfoInput(graphene.InputObjectType):
     contact_phone = graphene.String()
     role = graphene.String(required=True)
 
+
 class UserInfo(graphene.ObjectType):
     contact_name = graphene.String()
     contact_email = graphene.String()
     contact_phone = graphene.String()
     role = graphene.String()
+
 
 class OnboardingRequest(graphene.ObjectType):
     id = graphene.ID()
@@ -26,23 +28,20 @@ class OnboardingRequest(graphene.ObjectType):
     date_submitted = graphene.DateTime()
     status = graphene.String()
 
+
 # Mutations
 class CreateOnboardingRequest(Mutation):
     class Arguments:
         userInfo = UserInfoInput(required=True)
+
     onboardingRequest = graphene.Field(OnboardingRequest)
-    
+
     def mutate(self, info, userInfo):
-        newOnboardingRequest = services["onboarding_request_service"].create_onboarding_request(userInfo=userInfo)
+        newOnboardingRequest = services[
+            "onboarding_request_service"
+        ].create_onboarding_request(userInfo=userInfo)
         return CreateOnboardingRequest(onboardingRequest=newOnboardingRequest)
 
-    
+
 class OnboardingRequestMutations(MutationList):
     createOnboardingRequest = CreateOnboardingRequest.Field()
-
-    
-
-
-
-
-

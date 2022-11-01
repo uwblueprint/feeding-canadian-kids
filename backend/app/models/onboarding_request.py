@@ -6,7 +6,7 @@ from .user_info import UserInfo
 
 class OnboardingRequest(mg.Document):
     info = mg.EmbeddedDocumentField(UserInfo, required=True)
-    date_submitted = mg.DateTimeField(default=datetime.datetime.now) 
+    date_submitted = mg.DateTimeField(default=datetime.datetime.now)
     status = mg.StringField(choices=["Pending", "Approved", "Rejected"], required=True)
 
     def to_serializable_dict(self):
@@ -19,4 +19,3 @@ class OnboardingRequest(mg.Document):
         id = onboarding_request_dict.pop("_id", None)
         onboarding_request_dict["id"] = str(id)
         return onboarding_request_dict
-

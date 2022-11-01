@@ -3,7 +3,8 @@ import firebase_admin.auth
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import OnboardingRequest
 from ...models.user_info import UserInfo
-from ...resources.onboarding_request_dto import OnboardingRequestDTO # TODO
+from ...resources.onboarding_request_dto import OnboardingRequestDTO  # TODO
+
 
 class OnboardingRequestService(IOnboardingRequestService):
     def __init__(self, logger):
@@ -19,17 +20,17 @@ class OnboardingRequestService(IOnboardingRequestService):
         try:
             # Create initial UserInfo object
             user_info = UserInfo(
-                    contact_name=userInfo.contact_name,
-                    contact_email=userInfo.contact_email,
-                    contact_phone=userInfo.contact_phone,
-                    role=userInfo.role,
-                )
+                contact_name=userInfo.contact_name,
+                contact_email=userInfo.contact_email,
+                contact_phone=userInfo.contact_phone,
+                role=userInfo.role,
+            )
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(
                 info=user_info,
                 status="Pending",
             ).save()
-    
+
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -40,12 +41,3 @@ class OnboardingRequestService(IOnboardingRequestService):
             raise e
 
         return new_onboarding_request.to_serializable_dict()
-        
-
-        
-
-        
-
-    
-
-    

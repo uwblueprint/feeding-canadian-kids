@@ -2,8 +2,6 @@ from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import OnboardingRequest
 from ...models.user_info import UserInfo
 
-# from ...resources.onboarding_request_dto import OnboardingRequestDTO  # TODO
-
 
 class OnboardingRequestService(IOnboardingRequestService):
     def __init__(self, logger):

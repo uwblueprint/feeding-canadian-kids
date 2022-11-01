@@ -1,12 +1,14 @@
 import graphene
 
 from flask import current_app
-from .onboarding_request import OnboardingRequestMutations
 from .example import ExampleQueries, ExampleMutations
 from .services import services
+from .food_request import FoodRequestMutations
+from ..services.implementations.food_request_service import FoodRequestService
 from ..services.implementations.onboarding_request_service import (
     OnboardingRequestService,
 )
+from .onboarding_request import OnboardingRequestMutations
 
 
 class RootQuery(
@@ -20,6 +22,7 @@ class RootMutation(
     # All mutations listed here will be merged.
     ExampleMutations,
     OnboardingRequestMutations,
+    FoodRequestMutations,
 ):
     pass
 
@@ -36,4 +39,5 @@ def init_app(app):
         services["onboarding_request_service"] = OnboardingRequestService(
             logger=current_app.logger
         )
+        services["food_request_service"] = FoodRequestService(logger=current_app.logger)
         pass

@@ -4,4 +4,5 @@ live app loggers during __init__.py
 """
 services = {
     "onboarding_request_service": None,
+    "food_request_service": None,
 }

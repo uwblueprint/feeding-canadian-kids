@@ -1,3 +1,4 @@
+
 name: Lint codebase
 
 on:
@@ -6,15 +7,13 @@ on:
       - main
     paths:
       - "frontend/**"
-      - "backend/typescript/**"
-      - "backend/python/**"
+      - "backend/**"
   pull_request:
     branches:
       - main
     paths:
       - "frontend/**"
-      - "backend/typescript/**"
-      - "backend/python/**"
+      - "backend/**"
 
 jobs:
   run-lint:
@@ -22,7 +21,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
+
       - name: Filter changed files
         uses: dorny/paths-filter@v2
         id: changes
@@ -30,36 +29,27 @@ jobs:
           filters: |
             frontend:
               - "frontend/**"
-            typescript-backend:
-              - "backend/typescript/**"
-            python-backend:
-              - "backend/python/**"
-      
+            backend:
+              - "backend/**"
+
       - name: Set up Node.js
-        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.typescript-backend == 'true'
+        if: steps.changes.outputs.frontend == 'true'
         uses: actions/setup-node@v2
         with:
           node-version: "14.15.5"
           cache: "yarn"
-          cache-dependency-path: |
-            frontend/yarn.lock
-            backend/typescript/yarn.lock
+          cache-dependency-path: frontend/yarn.lock
 
       - name: Install Node.js dependencies
-        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.typescript-backend == 'true'
-        run: yarn --cwd ./frontend --prefer-offline && yarn --cwd ./backend/typescript --prefer-offline
+        if: steps.changes.outputs.frontend == 'true'
+        run: yarn --cwd ./frontend --prefer-offline
 
       - name: Lint frontend
         if: steps.changes.outputs.frontend == 'true'
         working-directory: ./frontend
         run: yarn lint
 
-      - name: Lint TypeScript backend
-        if: steps.changes.outputs.typescript-backend == 'true'
-        working-directory: ./backend/typescript
-        run: yarn lint
-      
       - name: Lint Python backend
-        if: steps.changes.outputs.python-backend == 'true'
-        working-directory: ./backend/python
-        run: pip install black && python -m black --check .
+        if: steps.changes.outputs.backend == 'true'
+        working-directory: ./backend
+        run: pip install black flake8 && python -m black --check . && python -m flake8 .

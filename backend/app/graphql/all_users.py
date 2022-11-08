@@ -4,6 +4,12 @@ import logging
 from .types import QueryList, UserType
 
 
+class UserType(graphene.ObjectType):
+    name = graphene.String()
+    email = graphene.String()
+    role = graphene.String()
+
+
 class AllUsersQuery(QueryList):
     all_users = graphene.List(
         UserType,
@@ -24,9 +30,9 @@ class AllUsersQuery(QueryList):
         return [
             *map(
                 lambda user: UserType(
-                    name=f"{user['first_name']} {user['last_name']}",
-                    email=user["email"],
-                    role=user["role"],
+                    name=f"{user.first_name} {user.last_name}",
+                    email=user.email,
+                    role=user.role,
                 ),
                 users[offset : offset + first],
             )

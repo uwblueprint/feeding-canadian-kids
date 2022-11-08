@@ -1,7 +1,7 @@
 from ..services.implementations.user_service import UserService
 import graphene
 import logging
-from .types import Query, QueryList
+from .types import QueryList
 
 
 class UserType(graphene.ObjectType):
@@ -27,13 +27,12 @@ class AllUsersQuery(QueryList):
                 offset: offset + first
             ]
 
-        print(users)
         return [
             *map(
                 lambda user: UserType(
-                    name=f"{user['first_name']} {user['last_name']}",
-                    email=user["email"],
-                    role=user["role"],
+                    name=f"{user.first_name} {user.last_name}",
+                    email=user.email,
+                    role=user.role,
                 ),
                 users[offset: offset + first],
             )

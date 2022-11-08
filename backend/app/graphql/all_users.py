@@ -1,13 +1,7 @@
 from ..services.implementations.user_service import UserService
 import graphene
 import logging
-from .types import Query, QueryList
-
-
-class UserType(graphene.ObjectType):
-    name = graphene.String()
-    email = graphene.String()
-    role = graphene.String()
+from .types import QueryList, UserType
 
 
 class AllUsersQuery(QueryList):
@@ -27,7 +21,6 @@ class AllUsersQuery(QueryList):
                 offset : offset + first
             ]
 
-        print(users)
         return [
             *map(
                 lambda user: UserType(

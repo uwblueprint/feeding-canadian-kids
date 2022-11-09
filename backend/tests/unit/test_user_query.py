@@ -1,35 +1,21 @@
 from app.graphql.user import UserQuery
 import graphene
 from graphene.test import Client
+from app.resources.user_dto import UserDTO
 
 
 def test_all_users(mocker):
-    mock_result = [
-        {
-            "id": "1",
-            "first_name": "John",
-            "last_name": "Doe",
-            "email": "JohnDoe@email.com",
-            "role": "Admin",
-        },
-        {
-            "id": "2",
-            "first_name": "Jane",
-            "last_name": "Doe",
-            "email": "JaneDoe@email.com",
-            "role": "ASP",
-        },
-    ]
+    mock_result = UserDTO('1', 'John', 'Doe', 'JohnDoe@email.com', 'Admin')
     mocker.patch(
-        "app.services.implementations.user_service.UserService.get_users",
+        "app.services.implementations.user_service.UserService.get_user_by_id",
         return_value=mock_result,
     )
 
-    schema = graphene.Schema(query=AllUsersQuery)
+    schema = graphene.Schema(query=UserQuery)
     client = Client(schema)
     executed = client.execute(
         """{
-        allUsers {
+        user(id:"1") {
             name
             email
             role
@@ -38,10 +24,8 @@ def test_all_users(mocker):
 
     expected_result = {
         "data": {
-            "allUsers": [
-                {"name": "John Doe", "email": "JohnDoe@email.com", "role": "Admin"},
-                {"name": "Jane Doe", "email": "JaneDoe@email.com", "role": "ASP"},
-            ]
+            "user": {"name": "John Doe", "email": "JohnDoe@email.com", "role": "Admin"}
+            
         }
     }
 

@@ -1,7 +1,7 @@
 import graphene
 
 from .types import Mutation, MutationList
-from ..graphql.services import services
+from .services import services
 from ..resources.create_user_dto import CreateUserDTO
 
 
@@ -12,6 +12,13 @@ class User(graphene.ObjectType):
     last_name = graphene.String()
     email = graphene.String()
     role = graphene.String()
+
+
+class UserInput(graphene.InputObjectType):
+    email = graphene.String(required=True)
+    password = graphene.String(required=True)
+    first_name = graphene.String(required=True)
+    last_name = graphene.String(required=True)
 
 
 class Login(Mutation):
@@ -48,13 +55,6 @@ class Login(Mutation):
         return Login(**newUser)
 
 
-class UserInput(graphene.InputObjectType):
-    email = graphene.String(required=True)
-    password = graphene.String(required=True)
-    first_name = graphene.String(required=True)
-    last_name = graphene.String(required=True)
-
-
 class Register(Mutation):
     """
     Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
@@ -78,7 +78,7 @@ class Register(Mutation):
             "role": "ASP"
         }
         userDTO = CreateUserDTO(**kwargs)
-        services["user_service"].create_user(userDTO)
+        services["user_service"].create_user(user)
         auth_dto = services["auth_service"].generate_token(user.email, user.password)
         info.context["response_cookies"]["refreshToken"] = auth_dto.refresh_token
         services["auth_service"].send_email_verification_link(user.email)

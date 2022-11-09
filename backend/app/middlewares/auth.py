@@ -19,7 +19,7 @@ def get_access_token(request):
 
 """
 References for creating middleware using Python decorators:
-* https://stackoverflow.com/questions/14367991/flask-before-request-add-exception-for-specific-route  # noqa
+* https://stackoverflow.com/questions/14367991/flask-before-request-add-exception-for-specific-route
 * https://stackoverflow.com/questions/5929107/decorators-with-parameters
 
 * Outermost function (i.e. require_authorization_by_role below) is the name of the decorator,
@@ -27,8 +27,7 @@ References for creating middleware using Python decorators:
   Note: this layer is NOT needed if the middleware does not require parameters.
 * Middle function (i.e. require_authorization below) wraps around the decorated function
   (an API endpoint) using the functools wraps decorator.
-* Innermost function (i.e. wrapper below) defines the actual middleware logic,
-  like checking authorization.
+* Innermost function (i.e. wrapper below) defines the actual middleware logic, like checking authorization.
 """
 
 

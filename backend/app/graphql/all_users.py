@@ -1,7 +1,13 @@
 from ..services.implementations.user_service import UserService
 import graphene
 import logging
-from .types import QueryList, UserType
+from .types import QueryList
+
+
+class UserType(graphene.ObjectType):
+    name = graphene.String()
+    email = graphene.String()
+    role = graphene.String()
 
 
 class AllUsersQuery(QueryList):
@@ -18,16 +24,16 @@ class AllUsersQuery(QueryList):
 
         if role != "":
             return [*filter(lambda user: user.role == role, users)][
-                offset: offset + first
+                offset : offset + first
             ]
 
         return [
             *map(
                 lambda user: UserType(
-                    name=f"{user['first_name']} {user['last_name']}",
-                    email=user["email"],
-                    role=user["role"],
+                    name=f"{user.first_name} {user.last_name}",
+                    email=user.email,
+                    role=user.role,
                 ),
-                users[offset: offset + first],
+                users[offset : offset + first],
             )
         ]

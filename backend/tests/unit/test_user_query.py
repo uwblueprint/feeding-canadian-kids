@@ -1,12 +1,25 @@
-from app.graphql.all_users import AllUsersQuery
+from app.graphql.user import UserQuery
 import graphene
 from graphene.test import Client
-from app.resources.user_dto import UserDTO
 
 
 def test_all_users(mocker):
-    mock_result = [UserDTO('1', 'John', 'Doe', 'JohnDoe@email.com', 'Admin'), UserDTO('2', 'Jane', 'Doe', 'JaneDoe@email.com', 'ASP')]
-
+    mock_result = [
+        {
+            "id": "1",
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "JohnDoe@email.com",
+            "role": "Admin",
+        },
+        {
+            "id": "2",
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "email": "JaneDoe@email.com",
+            "role": "ASP",
+        },
+    ]
     mocker.patch(
         "app.services.implementations.user_service.UserService.get_users",
         return_value=mock_result,

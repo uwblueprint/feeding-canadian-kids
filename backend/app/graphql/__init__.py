@@ -1,18 +1,18 @@
-import os
 import graphene
+import os
 
 from flask import current_app
 from .example import ExampleQueries, ExampleMutations
-from .auth import AuthMutations
+
 from .services import services
 from ..services.implementations.user_service import UserService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.auth_service import AuthService
-
+from .auth import AuthMutations
 
 class RootQuery(
     # All queries listed here will be merged.
-    ExampleQueries
+    ExampleQueries,
 ):
     pass
 
@@ -29,7 +29,6 @@ schema = graphene.Schema(
     query=RootQuery,
     mutation=RootMutation,
 )
-
 
 def init_app(app):
     with app.app_context():

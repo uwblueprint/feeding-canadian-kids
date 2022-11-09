@@ -3,6 +3,7 @@ import firebase_admin.auth
 from ..interfaces.user_service import IUserService
 from ...models.user import User
 from ...resources.user_dto import UserDTO
+from ...models.user_info import UserInfo
 
 
 class UserService(IUserService):
@@ -137,16 +138,15 @@ class UserService(IUserService):
                 firebase_user = firebase_admin.auth.create_user(
                     email=user.email, password=user.password
                 )
+                print("Created Firebase user: {user}".format(user=firebase_user.uid))
             elif signup_method == "GOOGLE":
                 # If they signup with Google OAuth, a Firebase user is automatically created
                 firebase_user = firebase_admin.auth.get_user(uid=auth_id)
 
             try:
                 new_user = User(
-                    first_name=user.first_name,
-                    last_name=user.last_name,
                     auth_id=firebase_user.uid,
-                    role=user.role,
+                    info=UserInfo(contact_name="", contact_email="", role=user.role),
                 ).save()
             except Exception as mongo_error:
                 # rollback user creation in Firebase

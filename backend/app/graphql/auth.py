@@ -30,12 +30,13 @@ class Login(Mutation):
     email = graphene.String()
     role = graphene.String()
 
-    def mutate(self, info, email, password, id_token):
+    def mutate(self, info, email, password, id_token=None):
         auth_dto = None
         if id_token:
             auth_dto = services["auth_service"].verify_token(id_token)
         else:
             auth_dto = services["auth_service"].generate_token(email, password)
+        info.context["response_cookies"]["refreshToken"] = auth_dto.refresh_token
         newUser = {
             "access_token": auth_dto.access_token,
             "id": auth_dto.id,
@@ -74,11 +75,12 @@ class Register(Mutation):
             "password": user.password,
             "first_name": user.first_name,
             "last_name": user.last_name,
-            "role": "User"
+            "role": "ASP"
         }
         userDTO = CreateUserDTO(**kwargs)
         services["user_service"].create_user(userDTO)
         auth_dto = services["auth_service"].generate_token(user.email, user.password)
+        info.context["response_cookies"]["refreshToken"] = auth_dto.refresh_token
         services["auth_service"].send_email_verification_link(user.email)
         newUser = {
             "access_token": auth_dto.access_token,
@@ -95,13 +97,10 @@ class Refresh(Mutation):
     """
     Returns access token in response body and sets refreshToken as an httpOnly cookie
     """
-    class Arguments:
-        refresh_token = graphene.String()
-
     access_token = graphene.String()
 
-    def mutate(self, info, refresh_token):
-        token = services["auth_service"].renew_token(refresh_token)
+    def mutate(self, info):
+        token = services["auth_service"].renew_token(info.context["request_cookies"]["refreshToken"])
         return Refresh(access_token=token)
 
 

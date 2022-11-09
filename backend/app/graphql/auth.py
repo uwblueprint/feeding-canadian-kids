@@ -1,3 +1,4 @@
+import os
 import graphene
 
 from .types import Mutation, MutationList
@@ -41,13 +42,11 @@ class Login(Mutation):
         }
         return Login(user=newUser)
 
-
 class UserInput(graphene.InputObjectType):
     email = graphene.String(required=True)
     password = graphene.String(required=True)
     first_name = graphene.String(required=True)
     last_name = graphene.String(required=True)
-
 
 class Register(Mutation):
     """
@@ -68,8 +67,8 @@ class Register(Mutation):
         }
         user = CreateUserDTO(**kwargs)
         services["user_service"].create_user(user)
-        auth_dto = services["auth_service"].generate_token(user_input.email, user_input.password)
-        services["auth_service"].send_email_verification_link(user_input.email)
+        auth_dto = services["auth_service"].generate_token(email, password)
+        services["auth_service"].send_email_verification_link(email)
         newUser = {
             "access_token": auth_dto.access_token,
             "id": auth_dto.id,

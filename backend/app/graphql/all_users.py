@@ -24,7 +24,7 @@ class AllUsersQuery(QueryList):
 
         if role != "":
             return [*filter(lambda user: user.role == role, users)][
-                offset: offset + first
+                offset : offset + first
             ]
 
         return [
@@ -34,6 +34,6 @@ class AllUsersQuery(QueryList):
                     email=user.email,
                     role=user.role,
                 ),
-                users[offset: offset + first],
+                users[offset : offset + first],
             )
         ]

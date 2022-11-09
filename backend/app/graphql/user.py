@@ -1,7 +1,11 @@
 from ..services.implementations.user_service import UserService
 import graphene
 import logging
-from .types import QueryList, UserType
+from .types import (
+    QueryList, 
+    UserType,
+    Mutation,
+)
 
 
 class UserQuery(QueryList):
@@ -19,3 +23,10 @@ class UserQuery(QueryList):
             email=user.email,
             role=user.role,
         )
+
+class UpdateUser(Mutation):
+    class Arguments:
+        id = graphene.String(required=True)
+    
+    
+

@@ -18,7 +18,11 @@ from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQue
 from all_users import AllUsersQuery
 =======
 from .all_users import AllUsersQuery
+<<<<<<< HEAD
 >>>>>>> 9bb4a0d (Added GraphQL API for fetching all users)
+=======
+from .user import UserQuery
+>>>>>>> 04843b5 (fix user query)
 
 
 class RootQuery(
@@ -29,7 +33,11 @@ class RootQuery(
     AllUsersQuery
 =======
     AllUsersQuery,
+<<<<<<< HEAD
 >>>>>>> 9bb4a0d (Added GraphQL API for fetching all users)
+=======
+    UserQuery
+>>>>>>> 04843b5 (fix user query)
 ):
     pass
 

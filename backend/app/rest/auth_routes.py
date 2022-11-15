@@ -74,7 +74,8 @@ def login():
 @validate_request("RegisterUserDTO")
 def register():
     """
-    Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
+    Returns access token and user info in response body and sets refreshToken
+    as an httpOnly cookie
     """
     try:
         request.json["role"] = "User"

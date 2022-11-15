@@ -49,7 +49,12 @@ jobs:
         working-directory: ./frontend
         run: yarn test
 
+      - name: Install Python dependencies
+        if: steps.changes.outputs.backend == 'true'
+        working-directory: ./backend
+        run: pip install -r requirements.txt
+
       - name: Test backend
         if: steps.changes.outputs.backend == 'true'
         working-directory: ./backend
-        run: pip install -r requirements.txt && python -m pytest
+        run: python -m pytest

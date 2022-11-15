@@ -1,5 +1,5 @@
 
-name: Lint codebase
+name: Test codebase
 
 on:
   push:
@@ -16,7 +16,7 @@ on:
       - "backend/**"
 
 jobs:
-  run-lint:
+  run-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -44,12 +44,12 @@ jobs:
         if: steps.changes.outputs.frontend == 'true'
         run: yarn --cwd ./frontend --prefer-offline
 
-      - name: Lint frontend
+      - name: Test frontend
         if: steps.changes.outputs.frontend == 'true'
         working-directory: ./frontend
-        run: yarn lint
+        run: yarn test
 
-      - name: Lint backend
+      - name: Test backend
         if: steps.changes.outputs.backend == 'true'
         working-directory: ./backend
-        run: pip install black flake8 && python -m black --check . && python -m flake8 .
+        run: pip install -r requirements.txt && python -m pytest

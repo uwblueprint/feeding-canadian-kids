@@ -37,12 +37,8 @@ class Login(Mutation):
     email = graphene.String()
     role = graphene.String()
 
-    def mutate(self, info, email, password, id_token=None):
-        auth_dto = None
-        if id_token:
-            auth_dto = services["auth_service"].verify_token(id_token)
-        else:
-            auth_dto = services["auth_service"].generate_token(email, password)
+    def mutate(self, info, email, password):
+        auth_dto = services["auth_service"].generate_token(email, password)
         info.context["response_cookies"]["refreshToken"] = auth_dto.refresh_token
         newUser = {
             "access_token": auth_dto.access_token,
@@ -78,7 +74,7 @@ class Register(Mutation):
             "role": "ASP"
         }
         userDTO = CreateUserDTO(**kwargs)
-        services["user_service"].create_user(user)
+        services["user_service"].create_user(userDTO)
         auth_dto = services["auth_service"].generate_token(user.email, user.password)
         info.context["response_cookies"]["refreshToken"] = auth_dto.refresh_token
         services["auth_service"].send_email_verification_link(user.email)

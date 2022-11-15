@@ -138,7 +138,6 @@ class UserService(IUserService):
                 firebase_user = firebase_admin.auth.create_user(
                     email=user.email, password=user.password
                 )
-                print("Created Firebase user: {user}".format(user=firebase_user.uid))
             elif signup_method == "GOOGLE":
                 # If they signup with Google OAuth, a Firebase user is automatically created
                 firebase_user = firebase_admin.auth.get_user(uid=auth_id)

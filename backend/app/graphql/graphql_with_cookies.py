@@ -1,5 +1,6 @@
 from graphql_server.flask import GraphQLView
 
+
 class GraphQLViewWithCookies(GraphQLView):
     request_context = None
 

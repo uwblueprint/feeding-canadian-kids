@@ -2,7 +2,7 @@ import os
 import graphene
 
 from .types import Mutation, MutationList
-from ..graphql.services import services
+from .services import services
 from ..resources.create_user_dto import CreateUserDTO
 
 
@@ -13,6 +13,13 @@ class User(graphene.ObjectType):
     last_name = graphene.String()
     email = graphene.String()
     role = graphene.String()
+
+
+class UserInput(graphene.InputObjectType):
+    email = graphene.String(required=True)
+    password = graphene.String(required=True)
+    first_name = graphene.String(required=True)
+    last_name = graphene.String(required=True)
 
 
 class Login(Mutation):
@@ -47,12 +54,6 @@ class Login(Mutation):
             "role": auth_dto.role
         }
         return Login(**newUser)
-
-class UserInput(graphene.InputObjectType):
-    email = graphene.String(required=True)
-    password = graphene.String(required=True)
-    first_name = graphene.String(required=True)
-    last_name = graphene.String(required=True)
 
 class Register(Mutation):
     """

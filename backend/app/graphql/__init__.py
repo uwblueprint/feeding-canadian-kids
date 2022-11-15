@@ -20,7 +20,7 @@ class RootQuery(
 class RootMutation(
     # All mutations listed here will be merged.
     ExampleMutations,
-    AuthMutations
+    AuthMutations,
 ):
     pass
 

@@ -7,6 +7,8 @@ from .types import (
 from ..graphql.services import services
 
 # Input Types
+
+
 class MealRequestTypeInput(graphene.InputObjectType):
     tags = graphene.List(graphene.String, required=True)
     portions = graphene.Int(required=True)

@@ -38,3 +38,32 @@ class OnboardingRequestService(IOnboardingRequestService):
             raise e
 
         return new_onboarding_request.to_serializable_dict()
+
+    def get_all_onboarding_requests(self):
+        onboarding_request_objects = []
+
+        try:
+            for request in OnboardingRequest.objects:
+                request_dict = request.to_serializable_dict()
+                onboarding_request_objects.append(request_dict)
+        except Exception as e:
+            self.logger.error("Could not retrieve OnboardingRequest objects")
+            raise e
+        return onboarding_request_objects
+
+    def get_onboarding_request_by_id(self, id):
+        try:
+            request = OnboardingRequest.objects(id=id).first()
+
+            if not request:
+                raise Exception("request id {id} not found".format(id=id))
+
+            return request.to_serializable_dict()
+        except Exception as e:
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                "Failed to get onboarding request. Reason = {reason}".format(
+                    reason=(reason if reason else str(e))
+                )
+            )
+            raise e

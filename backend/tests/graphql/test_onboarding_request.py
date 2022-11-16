@@ -1,4 +1,24 @@
+import datetime
+
 from app.graphql import schema as graphql_schema
+from app.models.onboarding_request import OnboardingRequest
+from app.models.user_info import UserInfo
+
+# Testing Mock Data
+
+mock_info1 = UserInfo(
+    contact_name="Jessie",
+    contact_email="jessie123@gmail.com",
+    contact_phone="123456",
+    role="ASP",
+)
+
+mock_info2 = UserInfo(
+    contact_name="Mr. Goose",
+    contact_email="goose@gmail.com",
+    contact_phone="98765",
+    role="Donor",
+)
 
 
 def test_create_onboarding_request():
@@ -35,3 +55,205 @@ def test_create_onboarding_request():
     assert user_info_result["contactPhone"] == "12345"
     assert user_info_result["role"] == "ASP"
     assert onboarding_request_result["status"] == "Pending"
+
+
+def test_get_all_requests(mocker):
+    mock_date = datetime.datetime.now()
+    mock_result = [
+        OnboardingRequest(
+            info=mock_info1, status="Pending", date_submitted=mock_date
+        ).to_serializable_dict(),
+        OnboardingRequest(
+            info=mock_info2, status="Approved", date_submitted=mock_date
+        ).to_serializable_dict(),
+    ]
+
+    mocker.patch(
+        "app.services.implementations.onboarding_request_service."
+        "OnboardingRequestService.get_all_onboarding_requests",
+        return_value=mock_result,
+    )
+
+    executed = graphql_schema.execute(
+        """ {
+             getAllOnboardingRequests {
+                contactName
+                contactEmail
+                contactPhone
+                role
+                dateSubmitted
+                status
+                }
+            }"""
+    )
+
+    expected_result = {
+        "data": {
+            "getAllOnboardingRequests": [
+                {
+                    "contactName": "Jessie",
+                    "contactEmail": "jessie123@gmail.com",
+                    "contactPhone": "123456",
+                    "role": "ASP",
+                    "dateSubmitted": mock_date.isoformat(),
+                    "status": "Pending",
+                },
+                {
+                    "contactName": "Mr. Goose",
+                    "contactEmail": "goose@gmail.com",
+                    "contactPhone": "98765",
+                    "role": "Donor",
+                    "dateSubmitted": mock_date.isoformat(),
+                    "status": "Approved",
+                },
+            ]
+        }
+    }
+
+    assert executed.data == expected_result["data"]
+
+
+def test_filter_requests_by_role(mocker):
+
+    mock_date = datetime.datetime.now()
+    mock_result = [
+        OnboardingRequest(
+            info=mock_info1, status="Pending", date_submitted=mock_date
+        ).to_serializable_dict(),
+        OnboardingRequest(
+            info=mock_info2, status="Pending", date_submitted=mock_date
+        ).to_serializable_dict(),
+    ]
+
+    mocker.patch(
+        "app.services.implementations.onboarding_request_service."
+        "OnboardingRequestService.get_all_onboarding_requests",
+        return_value=mock_result,
+    )
+
+    executed = graphql_schema.execute(
+        """ {
+             getAllOnboardingRequests(role: "Donor") {
+                contactName
+                contactEmail
+                contactPhone
+                role
+                dateSubmitted
+                status
+                }
+            }"""
+    )
+
+    expected_result = {
+        "data": {
+            "getAllOnboardingRequests": [
+                {
+                    "contactName": "Mr. Goose",
+                    "contactEmail": "goose@gmail.com",
+                    "contactPhone": "98765",
+                    "role": "Donor",
+                    "dateSubmitted": mock_date.isoformat(),
+                    "status": "Pending",
+                },
+            ]
+        }
+    }
+
+    assert executed.data == expected_result["data"]
+
+
+def test_filter_requests_by_status(mocker):
+
+    mock_date = datetime.datetime.now()
+    mock_result = [
+        OnboardingRequest(
+            info=mock_info1, status="Pending", date_submitted=mock_date
+        ).to_serializable_dict(),
+        OnboardingRequest(
+            info=mock_info2, status="Approved", date_submitted=mock_date
+        ).to_serializable_dict(),
+    ]
+
+    mocker.patch(
+        "app.services.implementations.onboarding_request_service."
+        "OnboardingRequestService.get_all_onboarding_requests",
+        return_value=mock_result,
+    )
+
+    executed = graphql_schema.execute(
+        """ {
+             getAllOnboardingRequests(status: "Approved") {
+                contactName
+                contactEmail
+                contactPhone
+                role
+                dateSubmitted
+                status
+                }
+            }"""
+    )
+
+    expected_result = {
+        "data": {
+            "getAllOnboardingRequests": [
+                {
+                    "contactName": "Mr. Goose",
+                    "contactEmail": "goose@gmail.com",
+                    "contactPhone": "98765",
+                    "role": "Donor",
+                    "dateSubmitted": mock_date.isoformat(),
+                    "status": "Approved",
+                },
+            ]
+        }
+    }
+
+    assert executed.data == expected_result["data"]
+
+
+def test_get_requests_by_id(mocker):
+
+    mock_date = datetime.datetime.now()
+    mock_result = [
+        OnboardingRequest(
+            info=mock_info1, status="Pending", date_submitted=mock_date
+        ).to_serializable_dict()
+    ]
+
+    mock_result[0]["id"] = "0"
+
+    mocker.patch(
+        "app.services.implementations.onboarding_request_service."
+        "OnboardingRequestService.get_onboarding_request_by_id",
+        return_value=mock_result,
+    )
+
+    executed = graphql_schema.execute(
+        """ {
+             getOnboardingRequestById(id: "0") {
+                contactName
+                contactEmail
+                contactPhone
+                role
+                dateSubmitted
+                status
+                }
+            }"""
+    )
+
+    expected_result = {
+        "data": {
+            "getOnboardingRequestById": [
+                {
+                    "contactName": "Jessie",
+                    "contactEmail": "jessie123@gmail.com",
+                    "contactPhone": "123456",
+                    "role": "ASP",
+                    "dateSubmitted": mock_date.isoformat(),
+                    "status": "Pending",
+                },
+            ]
+        }
+    }
+
+    assert executed.data == expected_result["data"]

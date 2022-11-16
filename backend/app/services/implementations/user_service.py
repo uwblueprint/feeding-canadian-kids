@@ -29,15 +29,15 @@ class UserService(IUserService):
 
             firebase_user = firebase_admin.auth.get_user(user.auth_id)
 
+            user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+            user_dict["email"] = firebase_user.email
             kwargs = {
-            "email": firebase_user.email,
-            "password": user.password,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "role": user.role
-        }
-            # user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
-            # user_dict["email"] = firebase_user.email
+                "id": user_dict["id"],
+                "first_name": user_dict["info"]["contact_name"],
+                "last_name": "",
+                "email": user_dict["email"],
+                "role": user_dict["info"]["role"],
+            }
 
             return UserDTO(**kwargs)
         except Exception as e:
@@ -63,8 +63,15 @@ class UserService(IUserService):
 
             user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
             user_dict["email"] = firebase_user.email
+            kwargs = {
+                "id": user_dict["id"],
+                "first_name": user_dict["info"]["contact_name"],
+                "last_name": "",
+                "email": user_dict["email"],
+                "role": user_dict["info"]["role"],
+            }
 
-            return UserDTO(**user_dict)
+            return UserDTO(**kwargs)
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -125,7 +132,14 @@ class UserService(IUserService):
             try:
                 firebase_user = firebase_admin.auth.get_user(user.auth_id)
                 user_dict["email"] = firebase_user.email
-                user_dtos.append(UserDTO(**user_dict))
+                kwargs = {
+                    "id": user_dict["id"],
+                    "first_name": user_dict["info"]["contact_name"],
+                    "last_name": "",
+                    "email": user_dict["email"],
+                    "role": user_dict["info"]["role"],
+                }
+                user_dtos.append(UserDTO(**kwargs))
             except Exception as e:
                 self.logger.error(
                     "User with auth_id {auth_id} could not be fetched from Firebase".format(
@@ -150,12 +164,10 @@ class UserService(IUserService):
                 firebase_user = firebase_admin.auth.get_user(uid=auth_id)
 
             try:
-                new_userinfo = UserInfo(contact_name=(user.first_name + user.last_name), contact_email=user.email, role=user.role)
                 new_user = User(
                     auth_id=firebase_user.uid,
-                    info=new_userinfo
-                )
-                new_user.save()
+                    info=UserInfo(contact_name=(user.first_name + user.last_name), contact_email=user.email, role=user.role),
+                ).save()
             except Exception as mongo_error:
                 # rollback user creation in Firebase
                 try:
@@ -183,16 +195,17 @@ class UserService(IUserService):
             )
             raise e
 
+        new_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
+            new_user
+        )
+        new_user_dict["email"] = firebase_user.email
         kwargs = {
-            "email": firebase_user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "role": user.role
+            "id": new_user_dict["id"],
+            "first_name": new_user_dict["info"]["contact_name"],
+            "last_name": "",
+            "email": new_user_dict["email"],
+            "role": new_user_dict["info"]["role"],
         }
-        # new_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
-        #     new_user
-        # )
-        # new_user_dict["email"] = firebase_user.email
         return UserDTO(**kwargs)
 
     def update_user_by_id(self, user_id, user):

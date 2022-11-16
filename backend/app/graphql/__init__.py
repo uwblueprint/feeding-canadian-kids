@@ -36,10 +36,10 @@ def init_app(app):
         services["user_service"] = UserService(logger=current_app.logger)
         services["email_service"] = EmailService(logger=current_app.logger,
             credentials={
-            "refresh_token": os.getenv("MAILER_REFRESH_TOKEN"),
-            "token_uri": "https://oauth2.googleapis.com/token",
-            "client_id": os.getenv("MAILER_CLIENT_ID"),
-            "client_secret": os.getenv("MAILER_CLIENT_SECRET"),
+                "refresh_token": os.getenv("MAILER_REFRESH_TOKEN"),
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "client_id": os.getenv("MAILER_CLIENT_ID"),
+                "client_secret": os.getenv("MAILER_CLIENT_SECRET"),
             },
             sender_email=os.getenv("MAILER_USER"),
             display_name="Display Name")

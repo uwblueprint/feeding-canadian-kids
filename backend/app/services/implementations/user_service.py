@@ -132,7 +132,14 @@ class UserService(IUserService):
             try:
                 firebase_user = firebase_admin.auth.get_user(user.auth_id)
                 user_dict["email"] = firebase_user.email
-                user_dtos.append(UserDTO(**user_dict))
+                kwargs = {
+                    "id": user_dict["id"],
+                    "first_name": user_dict["info"]["contact_name"],
+                    "last_name": "",
+                    "email": user_dict["email"],
+                    "role": user_dict["info"]["role"],
+                }
+                user_dtos.append(UserDTO(**kwargs))
             except Exception as e:
                 self.logger.error(
                     "User with auth_id {auth_id} could not be fetched from Firebase".format(

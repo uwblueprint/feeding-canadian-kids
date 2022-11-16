@@ -90,7 +90,6 @@ class AuthService(IAuthService):
                 (reason if reason else str(e)),
             ]
             self.logger.error(" ".join(error_message))
-            raise e
 
     def renew_token(self, refresh_token):
         try:
@@ -102,7 +101,7 @@ class AuthService(IAuthService):
     def reset_password(self, email):
         if not self.email_service:
             error_message = """
-                Attempted to call reset_password but this instance of AuthService 
+                Attempted to call reset_password but this instance of AuthService
                 does not have an EmailService instance
                 """
             self.logger.error(error_message)
@@ -113,8 +112,8 @@ class AuthService(IAuthService):
             email_body = """
                 Hello,
                 <br><br>
-                We have received a password reset request for your account. 
-                Please click the following link to reset it. 
+                We have received a password reset request for your account.
+                Please click the following link to reset it.
                 <strong>This link is only valid for 1 hour.</strong>
                 <br><br>
                 <a href={reset_link}>Reset Password</a>
@@ -134,7 +133,7 @@ class AuthService(IAuthService):
     def send_email_verification_link(self, email):
         if not self.email_service:
             error_message = """
-                Attempted to call send_email_verification_link but this instance of AuthService 
+                Attempted to call send_email_verification_link but this instance of AuthService
                 does not have an EmailService instance
                 """
             self.logger.error(error_message)

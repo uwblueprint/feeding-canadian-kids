@@ -1,4 +1,3 @@
-from email.policy import default
 import mongoengine as mg
 from .food_request import FoodRequest
 from datetime import datetime

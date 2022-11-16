@@ -16,7 +16,7 @@ class FoodRequest(mg.EmbeddedDocument):
     meal_types = mg.EmbeddedDocumentListField(MealType, default=list)
 
     """
-    Open: Request has not been completely fulfilled 
+    Open: Request has not been completely fulfilled
     Fulfilled: All meal types have been fulfilled
     Cancelled: FoodRequest has been cancelled by the ASP
     """

@@ -7,6 +7,10 @@ from .services import services
 from .food_request import FoodRequestMutations
 from ..services.implementations.food_request_service import FoodRequestService
 from ..services.implementations.user_service import UserService
+from ..services.implementations.onboarding_request_service import (
+    OnboardingRequestService,
+)
+from .onboarding_request import OnboardingRequestMutations
 
 
 class RootQuery(
@@ -20,6 +24,7 @@ class RootQuery(
 class RootMutation(
     # All mutations listed here will be merged.
     ExampleMutations,
+    OnboardingRequestMutations,
     FoodRequestMutations,
 ):
     pass
@@ -33,5 +38,9 @@ schema = graphene.Schema(
 
 def init_app(app):
     with app.app_context():
+        # Add your services here: services["service_name"] = ...
+        services["onboarding_request_service"] = OnboardingRequestService(
+            logger=current_app.logger
+        )
         services["food_request_service"] = FoodRequestService(logger=current_app.logger)
         services["user_service"] = UserService(logger=current_app.logger)

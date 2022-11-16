@@ -2,16 +2,17 @@ import graphene
 
 from flask import current_app
 from .example import ExampleQueries, ExampleMutations
-from .all_users import AllUsersQuery
+from .all_users import UserQueries
 from .services import services
 from .food_request import FoodRequestMutations
 from ..services.implementations.food_request_service import FoodRequestService
+from ..services.implementations.user_service import UserService
 
 
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
-    AllUsersQuery,
+    UserQueries,
 ):
     pass
 
@@ -33,3 +34,4 @@ schema = graphene.Schema(
 def init_app(app):
     with app.app_context():
         services["food_request_service"] = FoodRequestService(logger=current_app.logger)
+        services["user_service"] = UserService(logger=current_app.logger)

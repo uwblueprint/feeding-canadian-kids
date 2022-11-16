@@ -1,4 +1,3 @@
-
 name: Test codebase
 
 on:
@@ -58,4 +57,7 @@ jobs:
       - name: Test backend
         if: steps.changes.outputs.backend == 'true'
         working-directory: ./backend
+        env:
+          FIREBASE_SVC_ACCOUNT_PRIVATE_KEY: ${{ secrets.FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_STAGING }}
+          FIREBASE_STORAGE_DEFAULT_BUCKET: ${{ secrets.FIREBASE_STORAGE_DEFAULT_BUCKET_STAGING }}
         run: python -m pytest

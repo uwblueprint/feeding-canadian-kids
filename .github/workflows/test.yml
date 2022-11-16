@@ -1,5 +1,4 @@
-
-name: Lint codebase
+name: Test codebase
 
 on:
   push:
@@ -16,8 +15,9 @@ on:
       - "backend/**"
 
 jobs:
-  run-lint:
+  run-test:
     runs-on: ubuntu-latest
+    environment: staging
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -44,12 +44,20 @@ jobs:
         if: steps.changes.outputs.frontend == 'true'
         run: yarn --cwd ./frontend --prefer-offline
 
-      - name: Lint frontend
+      - name: Test frontend
         if: steps.changes.outputs.frontend == 'true'
         working-directory: ./frontend
-        run: yarn lint
+        run: yarn test
 
-      - name: Lint backend
+      - name: Install Python dependencies
         if: steps.changes.outputs.backend == 'true'
         working-directory: ./backend
-        run: pip install black flake8 && python -m black --check . && python -m flake8 .
+        run: pip install -r requirements.txt
+
+      - name: Test backend
+        if: steps.changes.outputs.backend == 'true'
+        working-directory: ./backend
+        env:
+          FIREBASE_SVC_ACCOUNT_PRIVATE_KEY: ${{ secrets.FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_STAGING }}
+          FIREBASE_STORAGE_DEFAULT_BUCKET: ${{ secrets.FIREBASE_STORAGE_DEFAULT_BUCKET_STAGING }}
+        run: python -m pytest

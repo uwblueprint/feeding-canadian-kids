@@ -22,8 +22,10 @@ file_storage_service = FileStorageService(current_app.logger)
 # define instance of EntityService
 entity_service = EntityService(current_app.logger, file_storage_service)
 
+
 # defines a shared URL prefix for all routes
 blueprint = Blueprint("entity", __name__, url_prefix="/entities")
+
 
 # defines GET endpoint for retrieving all entities
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
@@ -59,8 +61,8 @@ def get_entity(id):
 def create_entity():
     try:
         # create a EntityResource object instead of using the raw request body
-        # data validators and transformations are applied when constructing the resource,
-        # this allows downstream code to make safe assumptions about the data
+        # data validators and transformations are applied when constructing the
+        # resource, allowing downstream code to make safe assumptions about the data
         if request.content_type == "application/json":
             body = EntityDTO(**request.json)
         else:

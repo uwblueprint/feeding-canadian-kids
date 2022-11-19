@@ -132,7 +132,7 @@ class AuthService(IAuthService):
     def send_email_verification_link(self, email):
         if not self.email_service:
             error_message = """
-                Attempted to call send_email_verification_link but this instance 
+                Attempted to call send_email_verification_link but this instance
                 of AuthService does not have an EmailService instance
                 Attempted to call send_email_verification_link but this instance
                 of AuthService does not have an EmailService instance

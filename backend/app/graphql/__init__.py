@@ -43,7 +43,8 @@ def init_app(app):
     with app.app_context():
         # Add your services here: services["service_name"] = ...
         services["user_service"] = UserService(logger=current_app.logger)
-        services["email_service"] = EmailService(logger=current_app.logger,
+        services["email_service"] = EmailService(
+            logger=current_app.logger,
             credentials={
                 "refresh_token": os.getenv("MAILER_REFRESH_TOKEN"),
                 "token_uri": "https://oauth2.googleapis.com/token",
@@ -51,8 +52,13 @@ def init_app(app):
                 "client_secret": os.getenv("MAILER_CLIENT_SECRET"),
             },
             sender_email=os.getenv("MAILER_USER"),
-            display_name="Display Name")
-        services["auth_service"] = AuthService(logger=current_app.logger, user_service=services["user_service"], email_service=services["email_service"])
+            display_name="Display Name",
+        )
+        services["auth_service"] = AuthService(
+            logger=current_app.logger,
+            user_service=services["user_service"],
+            email_service=services["email_service"],
+        )
         services["onboarding_request_service"] = OnboardingRequestService(
             logger=current_app.logger
         )

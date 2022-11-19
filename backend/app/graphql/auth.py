@@ -26,6 +26,7 @@ class Login(Mutation):
     """
     Returns access token in response body and sets refreshToken as an httpOnly cookie
     """
+
     class Arguments:
         email = graphene.String()
         password = graphene.String()
@@ -47,7 +48,7 @@ class Login(Mutation):
             "first_name": auth_dto.first_name,
             "last_name": auth_dto.last_name,
             "email": auth_dto.email,
-            "role": auth_dto.role
+            "role": auth_dto.role,
         }
         return Login(**newUser)
 
@@ -56,6 +57,7 @@ class Register(Mutation):
     """
     Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
     """
+
     class Arguments:
         user = UserInput(required=True)
 
@@ -72,7 +74,7 @@ class Register(Mutation):
             "password": user.password,
             "first_name": user.first_name,
             "last_name": user.last_name,
-            "role": "ASP"
+            "role": "ASP",
         }
         userDTO = CreateUserDTO(**kwargs)
         services["user_service"].create_user(userDTO)
@@ -85,7 +87,7 @@ class Register(Mutation):
             "first_name": auth_dto.first_name,
             "last_name": auth_dto.last_name,
             "email": auth_dto.email,
-            "role": auth_dto.role
+            "role": auth_dto.role,
         }
         return Register(**newUser)
 
@@ -94,10 +96,13 @@ class Refresh(Mutation):
     """
     Returns access token in response body and sets refreshToken as an httpOnly cookie
     """
+
     access_token = graphene.String()
 
     def mutate(self, info):
-        token = services["auth_service"].renew_token(info.context["request_cookies"]["refreshToken"])
+        token = services["auth_service"].renew_token(
+            info.context["request_cookies"]["refreshToken"]
+        )
         return Refresh(access_token=token)
 
 
@@ -105,6 +110,7 @@ class Logout(Mutation):
     """
     Revokes all of the specified user's refresh tokens
     """
+
     class Arguments:
         user_id = graphene.String(required=True)
 
@@ -121,6 +127,7 @@ class ResetPassword(Mutation):
     """
     Triggers password reset for user with specified email (reset link will be emailed)
     """
+
     class Arguments:
         email = graphene.String()
 

@@ -165,7 +165,11 @@ class UserService(IUserService):
             try:
                 new_user = User(
                     auth_id=firebase_user.uid,
-                    info=UserInfo(contact_name=(user.first_name + user.last_name), contact_email=user.email, role=user.role),
+                    info=UserInfo(
+                        contact_name=(user.first_name + user.last_name),
+                        contact_email=user.email,
+                        role=user.role,
+                    ),
                 ).save()
             except Exception as mongo_error:
                 # rollback user creation in Firebase

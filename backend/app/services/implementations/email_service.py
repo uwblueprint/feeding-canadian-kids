@@ -45,7 +45,7 @@ class EmailService(IEmailService):
             sent_info = (
                 self.service.users()
                 .messages()
-                .send(userId=self.sender_email, body=email)
+                .send(userId="me", body=email)
                 .execute()
             )
             return sent_info

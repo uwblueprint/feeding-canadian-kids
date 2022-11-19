@@ -105,11 +105,12 @@ class Logout(Mutation):
     Revokes all of the specified user's refresh tokens
     """
     class Arguments:
-        user_id = graphene.String()
+        user_id = graphene.String(required=True)
 
     success = graphene.Boolean()
 
     def mutate(self, info, user_id):
+        print("in Logout")
         services["auth_service"].revoke_tokens(user_id)
         return Logout(success=True)
 

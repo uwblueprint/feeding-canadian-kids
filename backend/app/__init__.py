@@ -27,7 +27,7 @@ def create_app(config_name):
             },
             "formatters": {
                 "default": {
-                    "format": "%(asctime)s-%(levelname)s-%(name)s::%(module)s,%(lineno)s: %(message)s"
+                    "format": "%(asctime)s-%(levelname)s-%(name)s::%(module)s,%(lineno)s: %(message)s"  # noqa
                 },
             },
             "root": {"level": "ERROR", "handlers": ["wsgi"]},
@@ -53,7 +53,7 @@ def create_app(config_name):
         "http://localhost:3000",
         "https://uw-blueprint-starter-code.firebaseapp.com",
         "https://uw-blueprint-starter-code.web.app",
-        re.compile("^https:\/\/uw-blueprint-starter-code--pr.*\.web\.app$"),
+        re.compile(r"^https:\/\/uw-blueprint-starter-code--pr.*\.web\.app$"),
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
     CORS(app)

@@ -44,15 +44,15 @@ class AuthService(IAuthService):
     def generate_token_for_oauth(self, id_token):
         try:
             google_user = self.firebase_rest_client.sign_in_with_google(id_token)
-            # google_user["idToken"] refers to the Firebase Auth access token for the user
+            # google_user["idToken"] refers to the user's Firebase Auth access token
             token = Token(google_user["idToken"], google_user["refreshToken"])
             # If user already has a login with this email, just return the token
             try:
-                # Note: an error message will be logged from UserService if this lookup fails.
-                # You may want to silence the logger for this special OAuth user lookup case
+                # Note: an error message will be logged from UserService if this fails.
+                # You may want to silence the logger for this special OAuth lookup case
                 user = self.user_service.get_user_by_email(google_user["email"])
                 return AuthDTO(**{**token.__dict__, **user.__dict__})
-            except Exception as e:
+            except Exception:
                 pass
 
             user = self.user_service.create_user(
@@ -70,9 +70,8 @@ class AuthService(IAuthService):
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
-                "Failed to generate token for user with OAuth id token. Reason = {reason}".format(
-                    reason=(reason if reason else str(e))
-                )
+                "Failed to generate token for user with OAuth id token. "
+                + "Reason = {reason}".format(reason=(reason if reason else str(e)))
             )
             raise e
 
@@ -91,7 +90,6 @@ class AuthService(IAuthService):
                 (reason if reason else str(e)),
             ]
             self.logger.error(" ".join(error_message))
-            raise e
 
     def renew_token(self, refresh_token):
         try:
@@ -103,7 +101,7 @@ class AuthService(IAuthService):
     def reset_password(self, email):
         if not self.email_service:
             error_message = """
-                Attempted to call reset_password but this instance of AuthService 
+                Attempted to call reset_password but this instance of AuthService
                 does not have an EmailService instance
                 """
             self.logger.error(error_message)
@@ -114,8 +112,8 @@ class AuthService(IAuthService):
             email_body = """
                 Hello,
                 <br><br>
-                We have received a password reset request for your account. 
-                Please click the following link to reset it. 
+                We have received a password reset request for your account.
+                Please click the following link to reset it.
                 <strong>This link is only valid for 1 hour.</strong>
                 <br><br>
                 <a href={reset_link}>Reset Password</a>
@@ -126,17 +124,18 @@ class AuthService(IAuthService):
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
-                "Failed to send password reset link for {email}. Reason = {reason}".format(
-                    email=email, reason=(reason if reason else str(e))
-                )
+                f"Failed to send password reset link for {email}. "
+                + f"Reason = {reason if reason else str(e)}"
             )
             raise e
 
     def send_email_verification_link(self, email):
         if not self.email_service:
             error_message = """
-                Attempted to call send_email_verification_link but this instance of AuthService 
+                Attempted to call send_email_verification_link but this instance of AuthService
                 does not have an EmailService instance
+                Attempted to call send_email_verification_link but this instance
+                of AuthService does not have an EmailService instance
                 """
             self.logger.error(error_message)
             raise Exception(error_message)
@@ -148,7 +147,8 @@ class AuthService(IAuthService):
             email_body = """
                 Hello,
                 <br><br>
-                Please click the following link to verify your email and activate your account.
+                Please click the following link to verify your email and
+                activate your account.
                 <strong>This link is only valid for 1 hour.</strong>
                 <br><br>
                 <a href={verification_link}>Verify email</a>
@@ -158,9 +158,8 @@ class AuthService(IAuthService):
             self.email_service.send_email(email, "Verify your email", email_body)
         except Exception as e:
             self.logger.error(
-                "Failed to generate email verification link for user with email {email}.".format(
-                    email=email
-                )
+                "Failed to generate email verification link for user "
+                + "with email {email}.".format(email=email)
             )
             raise e
 
@@ -174,7 +173,7 @@ class AuthService(IAuthService):
             )
             firebase_user = firebase_admin.auth.get_user(decoded_id_token["uid"])
             return firebase_user.email_verified and user_role in roles
-        except:
+        except Exception:
             return False
 
     def is_authorized_by_user_id(self, access_token, requested_user_id):
@@ -187,7 +186,7 @@ class AuthService(IAuthService):
             )
             firebase_user = firebase_admin.auth.get_user(decoded_id_token["uid"])
             return firebase_user.email_verified and token_user_id == requested_user_id
-        except:
+        except Exception:
             return False
 
     def is_authorized_by_email(self, access_token, requested_email):
@@ -200,5 +199,5 @@ class AuthService(IAuthService):
                 firebase_user.email_verified
                 and decoded_id_token["email"] == requested_email
             )
-        except:
+        except Exception:
             return False

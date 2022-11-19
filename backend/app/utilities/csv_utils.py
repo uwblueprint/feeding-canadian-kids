@@ -1,6 +1,6 @@
-""" 
+"""
 Generates a csv string given a list of dictionaries
-Some Notes: 
+Some Notes:
 1. Unwind only unwinds a single level (i.e a list)
 2. CSV requires all dictionaries in the list are of the same type
 """
@@ -83,7 +83,8 @@ def transform_function(dict_list, transform):
 
 def unwind_field(list_of_dict, field):
     """
-    Unwinds lists inside dicts into multiple dictionaries, returning a new list at the end
+    Unwinds lists inside dicts into multiple dictionaries, returning a new list
+    at the end
 
     Example:
     [{'a': [1, 2, 3]}, {'a': [4, 5, 6]}]

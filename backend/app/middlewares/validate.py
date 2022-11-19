@@ -19,7 +19,8 @@ dtos = {
 
 def validate_request(dto_class_name):
     """
-    Determine if request is valid based on the types of the arguments passed in to create or update a dto
+    Determine if request is valid based on the types of the arguments passed in
+    to create or update a dto
 
     :param dto_class_name: the class name to create or update dto
     :type dto_class_name: str

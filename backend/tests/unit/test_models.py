@@ -1,4 +1,6 @@
 from app.models.user import User
+from app.models.onboarding_request import OnboardingRequest
+from app.models.user_info import UserInfo
 
 
 """
@@ -9,15 +11,31 @@ https://docs.pytest.org/en/6.2.x/reference.html
 
 
 def test_create_user():
-    user = {
-        "first_name": "Jane",
-        "last_name": "Doe",
-        "auth_id": "abc",
-        "role": "Admin",
+    user_info = {
+        "contact_name": "Yuki Kuran",
+        "contact_email": "yukikuran@email.com",
+        "contact_phone": "123456789",
+        "role": "Donor",
     }
+    user_info = UserInfo(**user_info)
+    auth_id = "abc"
 
-    user = User(**user)
-    assert user.first_name == "Jane"
-    assert user.last_name == "Doe"
+    user = User(auth_id=auth_id, info=user_info)
     assert user.auth_id == "abc"
-    assert user.role == "Admin"
+
+
+def test_create_onboarding_request():
+    user_info = {
+        "contact_name": "Yuki Kuran",
+        "contact_email": "yukikuran@email.com",
+        "contact_phone": "123456789",
+        "role": "Donor",
+    }
+    status = "Pending"
+    user_info = UserInfo(**user_info)
+    onboarding_request = OnboardingRequest(info=user_info, status=status)
+    assert onboarding_request.info.contact_name == "Yuki Kuran"
+    assert onboarding_request.info.contact_email == "yukikuran@email.com"
+    assert onboarding_request.info.contact_phone == "123456789"
+    assert onboarding_request.info.role == "Donor"
+    assert onboarding_request.status == status

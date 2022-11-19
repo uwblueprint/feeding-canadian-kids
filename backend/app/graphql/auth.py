@@ -51,6 +51,7 @@ class Login(Mutation):
         }
         return Login(**newUser)
 
+
 class Register(Mutation):
     """
     Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
@@ -112,6 +113,7 @@ class Logout(Mutation):
     def mutate(self, info, user_id):
         print("in Logout")
         services["auth_service"].revoke_tokens(user_id)
+        del info.context["response_cookies"]["refreshToken"]
         return Logout(success=True)
 
 

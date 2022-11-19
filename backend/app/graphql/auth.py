@@ -1,4 +1,3 @@
-import os
 import graphene
 
 from .types import Mutation, MutationList
@@ -55,7 +54,7 @@ class Login(Mutation):
 
 class Register(Mutation):
     """
-    Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
+    Returns access token & user info, sets refreshToken as httpOnly cookie
     """
 
     class Arguments:

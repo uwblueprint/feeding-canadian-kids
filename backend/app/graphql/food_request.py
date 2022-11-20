@@ -1,10 +1,28 @@
 import graphene
 
 from .types import (
+    Query,
+    QueryList,
     Mutation,
     MutationList,
 )
 from ..graphql.services import services
+
+# Any user can list food requests. This list should be paginated. Visible requests should differ based on the actingRole (parametrize this role for now, we'll figure out how to pass this info from the frontend later on):
+
+# ASPs can view all requests they created, and can filter by status (and potentially other things, if you think it's a good idea to add more filters).
+# Donors can list open requests near them. This list should be sorted using some combination of the priority (lower is better) and location fields on the ASP user who created the request (you can add more fields if you want). Donors can view all requests they have ever matched with, and can filter by status (and potentially other things, if you think it's a good idea to add more filters).
+# Admins can list all requests, and filter as above.
+class GetFoodRequestGroups(Query):
+
+    pass
+
+
+class FoodRequestQueries(QueryList):
+    food_request_groups = graphene.Field(GetFoodRequestGroups)
+
+    def resolve_food_requests(self, info):
+        return services["food_request_service"].get_food_request_groups()
 
 # Input Types
 class MealRequestTypeInput(graphene.InputObjectType):
@@ -36,6 +54,37 @@ class CreateFoodRequestGroupResponse(graphene.ObjectType):
     requests = graphene.List(CreateFoodRequestResponse)
     status = graphene.String()
 
+class MealTypeQueryResponse(graphene.ObjectType):
+    tags = graphene.List(graphene.String)
+    portions = graphene.Int()
+    portions_fulfilled = graphene.Int()
+
+class FoodRequestQueryResponse(graphene.ObjectType):
+    id = graphene.ID()
+    donor = graphene.ID()
+    target_fulfillment_date = graphene.DateTime()
+    actual_fulfillment_date = graphene.DateTime()
+    meal_types = graphene.List(MealTypeQueryResponse)
+    status = graphene.String()
+
+class FoodRequestGroupQueryResponse(graphene.ObjectType):
+    id = graphene.ID()
+    description = graphene.String()
+    requestor = graphene.ID()
+    requests = graphene.List(FoodRequestQueryResponse)
+    status = graphene.String()
+    date_created = graphene.DateTime()
+    date_updated = graphene.DateTime()
+
+# Querys
+class FoodRequestQueries(QueryList):
+    food_request_group_by_id = graphene.Field(
+        FoodRequestGroupQueryResponse,
+        id=graphene.ID(required=True),
+    )
+    
+    def resolve_food_request_group_by_id(self, info, user_id):
+        pass
 
 # Mutations
 class CreateFoodRequestGroup(Mutation):

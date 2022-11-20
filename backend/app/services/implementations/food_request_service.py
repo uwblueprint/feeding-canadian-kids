@@ -36,3 +36,12 @@ class FoodRequestService(IFoodRequestService):
             raise error
 
         return new_food_request_group.to_serializable_dict()
+
+    def get_food_request_groups_by_user(self):
+        pass
+
+    def get_food_request_groups(self):
+        pass
+
+    def get_food_request_by_id(self):
+        pass

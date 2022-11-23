@@ -1,6 +1,11 @@
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import OnboardingRequest
 from ...models.user_info import UserInfo
+from ...resources.create_user_dto import CreateUserDTO
+import mongoengine as mg
+
+
+
 
 
 class OnboardingRequestService(IOnboardingRequestService):
@@ -38,3 +43,40 @@ class OnboardingRequestService(IOnboardingRequestService):
             raise e
 
         return new_onboarding_request.to_serializable_dict()
+
+    def approve_onboarding_request(self, OnboardingRequest):
+
+
+        id = OnboardingRequest.id
+        # find the onboarding request object in the database by id
+        
+        
+
+
+
+        
+
+
+        try:
+            # Approve OnboardingRequest
+            id = OnboardingRequest.id
+            
+
+
+            
+
+
+            
+
+
+        except Exception as e:
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                "Failed to create onboarding request. Reason = {reason}".format(
+                    reason=(reason if reason else str(e))
+                )
+            )
+            raise e
+
+
+        return OnboardingRequest

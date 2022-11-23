@@ -8,8 +8,6 @@ from .types import (
 )
 
 # Object Types
-
-
 class UserInfoInput(graphene.InputObjectType):
     contact_name = graphene.String(required=True)
     contact_email = graphene.String(required=True)
@@ -24,11 +22,18 @@ class UserInfo(graphene.ObjectType):
     role = graphene.String()
 
 
-class OnboardingRequest(graphene.ObjectType):
+class OnboardingRequest(graphene.ObjectType): 
     id = graphene.ID()
     info = graphene.Field(UserInfo)
     date_submitted = graphene.DateTime()
     status = graphene.String()
+
+class OnboardingRequestInput(graphene.InputObjectType):
+    id = graphene.ID()
+    info = graphene.Field(UserInfoInput)
+    date_submitted = graphene.DateTime()
+    status = graphene.String()
+
 
 
 # Mutations
@@ -44,6 +49,20 @@ class CreateOnboardingRequest(Mutation):
         ].create_onboarding_request(userInfo=userInfo)
         return CreateOnboardingRequest(onboardingRequest=newOnboardingRequest)
 
+class ApproveOnboardingRequest(Mutation):
+    class Arguments:
+        OnboardingRequestObject = OnboardingRequestInput(required=True)
+
+    onboardingRequest = graphene.Field(OnboardingRequest)
+
+    def mutate(self, info, OnboardingRequestObject):
+        approvedOnboardingRequest = services[
+            "onboarding_request_service"
+        ].approve_onboarding_request(OnboardingRequest=OnboardingRequestObject)
+        return ApproveOnboardingRequest(onboardingRequest=approvedOnboardingRequest)
+
 
 class OnboardingRequestMutations(MutationList):
     createOnboardingRequest = CreateOnboardingRequest.Field()
+    approveOnboardingRequest = ApproveOnboardingRequest.Field()
+

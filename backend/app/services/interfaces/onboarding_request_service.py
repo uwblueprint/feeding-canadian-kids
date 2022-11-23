@@ -18,3 +18,15 @@ class IOnboardingRequestService(ABC):
         :raises Exception: if onboarding request creation fails
         """
         pass
+
+    @abstractmethod
+    def approve_onboarding_request(self, OnboardingRequest):
+        """
+        Approve an onboarding request
+
+        :param OnboardingRequest: the onboarding request to be approved
+        :return: the new user created from the onboarding request
+        :rtype: UserDTO
+        :raises Exception: if onboarding request approval fails
+        """
+        pass

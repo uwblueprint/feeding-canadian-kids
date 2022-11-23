@@ -20,7 +20,7 @@ class IOnboardingRequestService(ABC):
         pass
 
     @abstractmethod
-    def approve_onboarding_request(self, OnboardingRequest):
+    def approve_onboarding_request(self, request_id):
         """
         Approve an onboarding request
 

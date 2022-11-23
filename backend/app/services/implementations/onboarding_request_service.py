@@ -2,10 +2,9 @@ from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import OnboardingRequest
 from ...models.user_info import UserInfo
 from ...resources.create_user_dto import CreateUserDTO
-import mongoengine as mg
-
-
-
+from ...services.interfaces.user_service import 
+import random
+import string
 
 
 class OnboardingRequestService(IOnboardingRequestService):
@@ -44,39 +43,31 @@ class OnboardingRequestService(IOnboardingRequestService):
 
         return new_onboarding_request.to_serializable_dict()
 
-    def approve_onboarding_request(self, OnboardingRequest):
-
-
-        id = OnboardingRequest.id
-        # find the onboarding request object in the database by id
-        
-        
-
-
-
-        
-
+    def approve_onboarding_request(self, request_id):
 
         try:
-            # Approve OnboardingRequest
-            id = OnboardingRequest.id
-            
-
+        
+            referenced_onboarding_request = OnboardingRequest.objects.get(id=request_id)
 
             
+            referenced_onboarding_request.status = "Approved" #approve the onboarding request
+            referenced_onboarding_request.save()
 
+            # create a random password for the new user
+            random_password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
 
             
-
+            #create a new user from the onboarding request
 
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
-                "Failed to create onboarding request. Reason = {reason}".format(
+                "Failed to approve onboarding request. Reason = {reason}".format(
                     reason=(reason if reason else str(e))
                 )
             )
             raise e
-
-
-        return OnboardingRequest
+        
+        return referenced_onboarding_request.to_serializable_dict()
+        
+        

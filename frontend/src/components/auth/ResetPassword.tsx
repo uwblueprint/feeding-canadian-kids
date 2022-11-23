@@ -5,7 +5,7 @@ import AuthContext from "../../contexts/AuthContext";
 const RESET_PASSWORD = gql`
   mutation ResetPassword($email: String!) {
     resetPassword(email: $email) {
-        success
+      success
     }
   }
 `;
@@ -13,7 +13,7 @@ const RESET_PASSWORD = gql`
 const ResetPassword = (): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
 
-  const [resetPassword] = useMutation<{ resetPassword: {success: boolean} }>(
+  const [resetPassword] = useMutation<{ resetPassword: { success: boolean } }>(
     RESET_PASSWORD,
   );
 

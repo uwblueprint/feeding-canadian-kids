@@ -100,7 +100,7 @@ class Refresh(Mutation):
 
     def mutate(self, info):
         token = services["auth_service"].renew_token(
-            info.context["request_cookies"]["refreshToken"]
+            info.context["response_cookies"]["refreshToken"]
         )
         return Refresh(access_token=token)
 

@@ -84,6 +84,13 @@ class OnboardingRequestQueries(QueryList):
             )
         ]
 
+class OnboardingRequestInput(graphene.InputObjectType):
+    id = graphene.ID()
+    info = graphene.Field(UserInfoInput)
+    date_submitted = graphene.DateTime()
+    status = graphene.String()
+
+
 
 # Queries
 
@@ -152,14 +159,14 @@ class CreateOnboardingRequest(Mutation):
 
 class ApproveOnboardingRequest(Mutation):
     class Arguments:
-        id = graphene.ID(required=True)
-    
+        OnboardingRequestObject = OnboardingRequestInput(required=True)
+
     onboardingRequest = graphene.Field(OnboardingRequest)
 
-    def mutate(self, info, id):
+    def mutate(self, info, OnboardingRequestObject):
         approvedOnboardingRequest = services[
             "onboarding_request_service"
-        ].approve_onboarding_request(id)
+        ].approve_onboarding_request(OnboardingRequest=OnboardingRequestObject)
         return ApproveOnboardingRequest(onboardingRequest=approvedOnboardingRequest)
 
 

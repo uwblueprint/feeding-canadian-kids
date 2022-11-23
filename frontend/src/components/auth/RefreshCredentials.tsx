@@ -6,14 +6,16 @@ import AuthContext from "../../contexts/AuthContext";
 
 const REFRESH = gql`
   mutation Refresh {
-    refresh
+    refresh {
+      access_token
+    }
   }
 `;
 
 const RefreshCredentials = (): React.ReactElement => {
   const { setAuthenticatedUser } = useContext(AuthContext);
 
-  const [refresh] = useMutation<{ refresh: string }>(REFRESH);
+  const [refresh] = useMutation<{ refresh: {access_token: string} }>(REFRESH);
 
   const onRefreshClick = async () => {
     const success = await authAPIClient.refresh(refresh);

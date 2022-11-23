@@ -166,13 +166,14 @@ type RefreshFunction = (
 
 const refresh = async (refreshFunction: RefreshFunction): Promise<boolean> => {
   const result = await refreshFunction();
-  let success = false;
+  // let success = false;
   const token = result.data?.refresh;
   if (token) {
-    success = true;
+    // success = true;
     setLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "accessToken", token);
   }
-  return success;
+  // return success;
+  return token;
 };
 
 export default { login, logout, loginWithGoogle, register, refresh };

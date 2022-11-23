@@ -78,7 +78,6 @@ class AuthService(IAuthService):
     def revoke_tokens(self, user_id):
         try:
             auth_id = self.user_service.get_auth_id_by_user_id(user_id)
-            print("auth_id: ", auth_id)
             firebase_admin.auth.revoke_refresh_tokens(auth_id)
         except Exception as e:
             reason = getattr(e, "message", None)

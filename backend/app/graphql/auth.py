@@ -116,7 +116,6 @@ class Logout(Mutation):
     success = graphene.Boolean()
 
     def mutate(self, info, user_id):
-        print("in Logout")
         services["auth_service"].revoke_tokens(user_id)
         del info.context["response_cookies"]["refreshToken"]
         return Logout(success=True)

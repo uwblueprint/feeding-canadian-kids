@@ -1,10 +1,10 @@
 import graphene
 
-from .types import (
+from ..types import (
     Mutation,
     MutationList,
 )
-from ..graphql.services import services
+from ...graphql.services import services
 
 # Input Types
 

@@ -3,12 +3,16 @@ from .food_request import FoodRequest
 from datetime import datetime
 
 
+# TODO: document why we have this separation between FoodRequestGroup and FoodRequest
 class FoodRequestGroup(mg.Document):
     description = mg.StringField(required=True)
 
     # TODO: make this required=True when we have users populated
     requestor = mg.ObjectIdField()
     requests = mg.EmbeddedDocumentListField(FoodRequest, default=list)
+
+    # TODO: make note about this change in the PR 
+    donor = mg.ObjectIdField()
 
     date_created = mg.DateTimeField(required=True, default=datetime.utcnow)
     date_updated = mg.DateTimeField(required=True, default=datetime.utcnow)

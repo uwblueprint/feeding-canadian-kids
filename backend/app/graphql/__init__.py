@@ -3,7 +3,8 @@ import graphene
 from flask import current_app
 from .example import ExampleQueries, ExampleMutations
 from .services import services
-from .food_request import FoodRequestMutations
+from .queries.food_request import FoodRequestQueries
+from .mutations.food_request import FoodRequestMutations
 from ..services.implementations.food_request_service import FoodRequestService
 from ..services.implementations.onboarding_request_service import (
     OnboardingRequestService,
@@ -14,6 +15,7 @@ from .onboarding_request import OnboardingRequestMutations
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
+    FoodRequestQueries,
 ):
     pass
 

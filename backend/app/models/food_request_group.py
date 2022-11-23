@@ -2,16 +2,16 @@ import mongoengine as mg
 from .food_request import FoodRequest
 from datetime import datetime
 
-
 class FoodRequestGroup(mg.Document):
     description = mg.StringField(required=True)
+    location = mg.PointField(required=True)
 
-    # TODO: make this required=True when we have users populated
-    requestor = mg.ObjectIdField()
+    requestor = mg.ObjectIdField(required=True)
     requests = mg.EmbeddedDocumentListField(FoodRequest, default=list)
 
     date_created = mg.DateTimeField(required=True, default=datetime.utcnow)
     date_updated = mg.DateTimeField(required=True, default=datetime.utcnow)
+    notes = mg.StringField()
 
     """
     Open: At least one FoodRequest is open

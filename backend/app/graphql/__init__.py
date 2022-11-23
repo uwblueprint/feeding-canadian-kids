@@ -8,7 +8,8 @@ from ..services.implementations.user_service import UserService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.auth_service import AuthService
 from .auth import AuthMutations
-from .food_request import FoodRequestMutations
+from .queries.food_request import FoodRequestQueries
+from .mutations.food_request import FoodRequestMutations
 from ..services.implementations.food_request_service import FoodRequestService
 from ..services.implementations.onboarding_request_service import (
     OnboardingRequestService,
@@ -19,6 +20,7 @@ from .onboarding_request import OnboardingRequestMutations
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
+    FoodRequestQueries,
 ):
     pass
 

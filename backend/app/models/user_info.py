@@ -11,5 +11,9 @@ class UserInfo(mg.EmbeddedDocument):
 
 
 class ASPInfo(UserInfo):
-    priority: mg.IntField(required=True)
-    locations = mg.ListField(mg.PointField(required=True))
+    priority: mg.IntField(required=True, default=0)
+    location = mg.PointField(required=True)
+
+class DonorInfo(UserInfo):
+    location = mg.PointField(required=True)
+

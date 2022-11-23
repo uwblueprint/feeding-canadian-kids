@@ -5,14 +5,15 @@ from bson.objectid import ObjectId
 class MealType(mg.EmbeddedDocument):
     tags = mg.ListField(mg.StringField(required=True))
     portions = mg.IntField(required=True)
-    portions_fulfilled = mg.IntField(required=True, default=0)
+    portions_fulfilled = mg.IntField(required=True)
 
 
 class FoodRequest(mg.EmbeddedDocument):
     _id = mg.ObjectIdField(required=True, default=ObjectId)
-    donor = mg.ObjectIdField()
     target_fulfillment_date = mg.DateTimeField(required=True)
     actual_fulfillment_date = mg.DateTimeField()
+    donor = mg.ObjectIdField()
+
     meal_types = mg.EmbeddedDocumentListField(MealType, default=list)
 
     """

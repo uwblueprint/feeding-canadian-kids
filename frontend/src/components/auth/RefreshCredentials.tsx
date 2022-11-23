@@ -6,7 +6,9 @@ import AuthContext from "../../contexts/AuthContext";
 
 const REFRESH = gql`
   mutation Refresh {
-    refresh
+    refresh {
+      accessToken
+    }
   }
 `;
 

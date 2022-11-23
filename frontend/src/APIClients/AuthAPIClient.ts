@@ -115,7 +115,7 @@ type LogoutFunction = (
   options?:
     | MutationFunctionOptions<
         {
-          logout: null;
+          logout: { success: boolean };
         },
         OperationVariables
       >
@@ -123,7 +123,7 @@ type LogoutFunction = (
 ) => Promise<
   FetchResult<
     {
-      logout: null;
+      logout: { success: boolean };
     },
     Record<string, unknown>,
     Record<string, unknown>
@@ -137,9 +137,8 @@ const logout = async (
   const result = await logoutFunction({
     variables: { userId: authenticatedUserId },
   });
-  let success = false;
-  if (result.data?.logout === null) {
-    success = true;
+  const success = result.data?.logout.success ?? false;
+  if (success) {
     localStorage.removeItem(AUTHENTICATED_USER_KEY);
   }
   return success;

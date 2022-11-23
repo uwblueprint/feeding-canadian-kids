@@ -10,9 +10,11 @@ class MealType(mg.EmbeddedDocument):
 
 class FoodRequest(mg.EmbeddedDocument):
     _id = mg.ObjectIdField(required=True, default=ObjectId)
-    donor = mg.ObjectIdField()
     target_fulfillment_date = mg.DateTimeField(required=True)
+    # TODO: can this just be a boolean?
     actual_fulfillment_date = mg.DateTimeField()
+
+    # TODO: do we need this if all meals are the same?
     meal_types = mg.EmbeddedDocumentListField(MealType, default=list)
 
     """

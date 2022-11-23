@@ -36,3 +36,29 @@ class FoodRequestService(IFoodRequestService):
             raise error
 
         return new_food_request_group.to_serializable_dict()
+    
+    def get_food_request_groups(self, status=None, is_matched=None):
+        # TODO: how do we handle geographic proximity?
+        try:
+            result = FoodRequestGroup.objects()
+            if status is not None:
+                result = result.filter(status=status)
+            if is_matched is not None:
+                result = result.filter(donor__exists=is_matched)
+            return result
+        except Exception as e:
+            self.logger.error(str(e))
+            raise e
+
+    def get_food_request_groups_by_user(self, user_id, role, status):
+        try:
+            food_request_groups = self.get_food_request_groups(status=status)
+            if role == "ASP":
+                return food_request_groups.filter(requestor=user_id)
+            elif role == "Donor":
+                return food_request_groups.filter(donor=user_id)
+            return food_request_groups
+        except Exception as e:
+            self.logger.error(str(e))
+            raise e
+        

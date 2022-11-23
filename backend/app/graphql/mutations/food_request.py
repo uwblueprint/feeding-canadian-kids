@@ -1,30 +1,10 @@
 import graphene
 
-from .types import (
-    Query,
-    QueryList,
+from ..types import (
     Mutation,
     MutationList,
 )
-from ..graphql.services import services
-
-
-# Any user can list food requests. This list should be paginated. Visible requests should differ based on the actingRole (parametrize this role for now, we'll figure out how to pass this info from the frontend later on):
-
-# ASPs can view all requests they created, and can filter by status (and potentially other things, if you think it's a good idea to add more filters).
-# Donors can list open requests near them. This list should be sorted using some combination of the priority (lower is better) and location fields on the ASP user who created the request (you can add more fields if you want). Donors can view all requests they have ever matched with, and can filter by status (and potentially other things, if you think it's a good idea to add more filters).
-# Admins can list all requests, and filter as above.
-class GetFoodRequestGroups(Query):
-
-    pass
-
-
-class FoodRequestQueries(QueryList):
-    food_request_groups = graphene.Field(GetFoodRequestGroups)
-
-    def resolve_food_requests(self, info):
-        return services["food_request_service"].get_food_request_groups()
-
+from ...graphql.services import services
 
 # Input Types
 

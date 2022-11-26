@@ -1,7 +1,7 @@
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 import { setContext } from "@apollo/client/link/context";
@@ -74,13 +74,12 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-ReactDOM.render(
+createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ApolloProvider client={apolloClient}>
       <App />
     </ApolloProvider>
   </React.StrictMode>,
-  document.getElementById("root"),
 );
 
 // If you want to start measuring performance in your app, pass a function

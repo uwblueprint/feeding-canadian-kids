@@ -1,6 +1,10 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useReducer } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes as RouterRoutes,
+} from "react-router-dom";
 
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
@@ -32,9 +36,8 @@ const App = (): React.ReactElement => {
     AUTHENTICATED_USER_KEY,
   );
 
-  const [authenticatedUser, setAuthenticatedUser] = useState<AuthenticatedUser>(
-    currentUser,
-  );
+  const [authenticatedUser, setAuthenticatedUser] =
+    useState<AuthenticatedUser>(currentUser);
 
   // Some sort of global state. Context API replaces redux.
   // Split related states into different contexts as necessary.
@@ -53,52 +56,41 @@ const App = (): React.ReactElement => {
           value={{ authenticatedUser, setAuthenticatedUser }}
         >
           <Router>
-            <Switch>
-              <Route exact path={Routes.LOGIN_PAGE} component={Login} />
-              <Route exact path={Routes.SIGNUP_PAGE} component={Signup} />
-              <PrivateRoute exact path={Routes.HOME_PAGE} component={Default} />
+            <RouterRoutes>
+              <Route path={Routes.LOGIN_PAGE} element={<Login />} />
+              <Route path={Routes.SIGNUP_PAGE} element={<Signup />} />
+              <PrivateRoute path={Routes.HOME_PAGE} element={<Default />} />
               <PrivateRoute
-                exact
                 path={Routes.CREATE_ENTITY_PAGE}
-                component={CreatePage}
+                element={<CreatePage />}
               />
               <PrivateRoute
-                exact
                 path={Routes.UPDATE_ENTITY_PAGE}
-                component={UpdatePage}
+                element={<UpdatePage />}
               />
               <PrivateRoute
-                exact
                 path={Routes.DISPLAY_ENTITY_PAGE}
-                component={DisplayPage}
+                element={<DisplayPage />}
               />
               <PrivateRoute
-                exact
                 path={Routes.CREATE_SIMPLE_ENTITY_PAGE}
-                component={SimpleEntityCreatePage}
+                element={<SimpleEntityCreatePage />}
               />
               <PrivateRoute
-                exact
                 path={Routes.UPDATE_SIMPLE_ENTITY_PAGE}
-                component={SimpleEntityUpdatePage}
+                element={<SimpleEntityUpdatePage />}
               />
               <PrivateRoute
-                exact
                 path={Routes.DISPLAY_SIMPLE_ENTITY_PAGE}
-                component={SimpleEntityDisplayPage}
+                element={<SimpleEntityDisplayPage />}
               />
               <PrivateRoute
-                exact
                 path={Routes.EDIT_TEAM_PAGE}
-                component={EditTeamInfoPage}
+                element={<EditTeamInfoPage />}
               />
-              <PrivateRoute
-                exact
-                path={Routes.HOOKS_PAGE}
-                component={HooksDemo}
-              />
-              <Route exact path="*" component={NotFound} />
-            </Switch>
+              <PrivateRoute path={Routes.HOOKS_PAGE} element={<HooksDemo />} />
+              <Route path="*" element={<NotFound />} />
+            </RouterRoutes>
           </Router>
         </AuthContext.Provider>
       </SampleContextDispatcherContext.Provider>

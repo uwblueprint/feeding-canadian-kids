@@ -3,6 +3,8 @@ import {
   MutationFunctionOptions,
   OperationVariables,
 } from "@apollo/client";
+import { googleLogout } from "@react-oauth/google";
+
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { AuthenticatedUser } from "../types/AuthTypes";
 import { setLocalStorageObjProperty } from "../utils/LocalStorageUtils";
@@ -139,6 +141,7 @@ const logout = async (
   });
   const success = result.data?.logout.success ?? false;
   if (success) {
+    googleLogout();
     localStorage.removeItem(AUTHENTICATED_USER_KEY);
   }
   return success;

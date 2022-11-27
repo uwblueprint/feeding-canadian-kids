@@ -1,23 +1,12 @@
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import {
-  GoogleLogin,
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "@react-oauth/google";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { gql, useMutation } from "@apollo/client";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
-
-type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
-
-type GoogleErrorResponse = {
-  error: string;
-  details: string;
-};
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
@@ -111,18 +100,18 @@ const Login = (): React.ReactElement => {
           </button>
         </div>
         <GoogleLogin
-          text="Login with Google"
-          onSuccess={(response: GoogleResponse): void => {
-            if ("tokenId" in response) {
-              onGoogleLoginSuccess(response.tokenId);
+          text="continue_with"
+          onSuccess={(response: CredentialResponse): void => {
+            if (response?.credential) {
+              onGoogleLoginSuccess(response.credential);
             } else {
               // eslint-disable-next-line no-alert
               window.alert(response);
             }
           }}
-          onError={(error: GoogleErrorResponse) =>
+          onError={() =>
             // eslint-disable-next-line no-alert
-            window.alert(JSON.stringify(error))
+            window.alert("An error occurred while authenticating with Google.")
           }
         />
       </form>

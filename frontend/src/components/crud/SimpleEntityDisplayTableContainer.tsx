@@ -1,7 +1,15 @@
-/* eslint  react/jsx-props-no-spreading: 0 */ // --> OFF
 import React, { useState } from "react";
 import BTable from "react-bootstrap/Table";
-import { HeaderGroup, useTable, Column } from "react-table";
+import {
+  HeaderGroup,
+  useReactTable,
+  ColumnDef,
+  createColumnHelper,
+  getCoreRowModel,
+  flexRender,
+  Cell,
+  Row,
+} from "@tanstack/react-table";
 
 import { gql, useApolloClient, useQuery } from "@apollo/client";
 
@@ -27,85 +35,51 @@ type TableProps = {
   data: EntityData[];
 };
 
-const columns: Column<EntityData>[] = [
-  {
-    Header: "id",
-
-    accessor: "id", // accessor is the "key" in the data
-  },
-  {
-    Header: "stringField",
-
-    accessor: "stringField", // accessor is the "key" in the data
-  },
-
-  {
-    Header: "integerField",
-
-    accessor: "intField",
-  },
-  {
-    Header: "stringArrayField",
-
-    accessor: "stringArrayField",
-  },
-  {
-    Header: "enumField",
-
-    accessor: "enumField",
-  },
-  {
-    Header: "boolField",
-
-    accessor: "boolField",
-  },
+const columnHelper = createColumnHelper<EntityData>();
+const columns = [
+  columnHelper.accessor("id", { header: "id" }),
+  columnHelper.accessor("stringField", { header: "stringField" }),
+  columnHelper.accessor("intField", { header: "integerField" }),
+  columnHelper.accessor("stringArrayField", { header: "stringArrayField" }),
+  columnHelper.accessor("enumField", { header: "enumField" }),
+  columnHelper.accessor("boolField", { header: "boolField" }),
 ];
 
 const SimpleEntityDisplayTable = ({ data }: TableProps) => {
-  const {
-    getTableProps,
-
-    headerGroups,
-
-    rows,
-
-    prepareRow,
-  } = useTable<EntityData>({ columns, data });
+  const table = useReactTable<EntityData>({
+    columns,
+    data,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
-    <BTable
-      striped
-      bordered
-      hover
-      size="sm"
-      {...getTableProps()}
-      style={{ marginTop: "20px" }}
-    >
+    <BTable striped bordered hover size="sm" style={{ marginTop: "20px" }}>
       <thead>
-        {headerGroups.map((headerGroup: HeaderGroup<EntityData>) => (
-          // Key is specified in the prop getter functions
-          // eslint-disable-next-line react/jsx-key
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              // eslint-disable-next-line react/jsx-key
-              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <th key={header.id}>
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+              </th>
             ))}
           </tr>
         ))}
       </thead>
       <tbody>
-        {rows.map((row) => {
-          prepareRow(row);
-          return (
-            // eslint-disable-next-line react/jsx-key
-            <tr {...row.getRowProps()}>
-              {row.cells.map((cell) => {
-                // eslint-disable-next-line react/jsx-key
-                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
-              })}
-            </tr>
-          );
-        })}
+        {table.getRowModel().rows.map((row: Row<EntityData>) => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map((cell: Cell<EntityData, unknown>) => (
+              <td key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))}
       </tbody>
     </BTable>
   );

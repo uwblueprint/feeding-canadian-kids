@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import BTable from "react-bootstrap/Table";
 import {
-  useReactTable,
-  ColumnDef,
-  createColumnHelper,
-  getCoreRowModel,
-  flexRender,
   Cell,
+  ColumnDef,
   Row,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
 } from "@tanstack/react-table";
-
 import { gql, useApolloClient, useQuery } from "@apollo/client";
 
 import { EntityResponse } from "../../APIClients/EntityAPIClient";

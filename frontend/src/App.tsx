@@ -1,8 +1,8 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useMemo, useState, useReducer } from "react";
+import React, { useMemo, useReducer, useState } from "react";
 import {
-  BrowserRouter as Router,
   Route,
+  BrowserRouter as Router,
   Routes as RouterRoutes,
 } from "react-router-dom";
 
@@ -28,7 +28,6 @@ import sampleContextReducer from "./reducers/SampleContextReducer";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
-
 import { AuthenticatedUser } from "./types/AuthTypes";
 
 const App = (): React.ReactElement => {

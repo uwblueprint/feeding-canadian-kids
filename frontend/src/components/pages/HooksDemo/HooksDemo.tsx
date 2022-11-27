@@ -34,9 +34,9 @@
 // and retain values between renders of the component.
 // ***************************************************************
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import EmojiSection from "./EmojiSection";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
+import EmojiSection from "./EmojiSection";
 import { EMOJIS } from "./emojis";
 import "./styles.css";
 

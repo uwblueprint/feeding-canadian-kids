@@ -1,4 +1,5 @@
 import React from "react";
+
 import SimpleEntityDisplayTableContainer from "../crud/SimpleEntityDisplayTableContainer";
 import MainPageButton from "../common/MainPageButton";
 

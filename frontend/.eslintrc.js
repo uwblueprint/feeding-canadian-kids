@@ -39,6 +39,21 @@ module.exports = {
         unnamedComponents: "arrow-function",
       },
     ],
+    "sort-imports": ["error", { ignoreDeclarationSort: true }],
+    "import/order": [
+      1,
+      {
+        groups: [
+          "external",
+          "builtin",
+          "internal",
+          "sibling",
+          "parent",
+          "index",
+        ],
+        "newlines-between": "always-and-inside-groups",
+      },
+    ],
   },
   ignorePatterns: ["build/*"],
 };

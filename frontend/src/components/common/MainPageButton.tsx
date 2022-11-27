@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+
 import { HOME_PAGE } from "../../constants/Routes";
 
 const MainPageButton = (): React.ReactElement => {

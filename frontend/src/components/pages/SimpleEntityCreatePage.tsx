@@ -1,4 +1,5 @@
 import React from "react";
+
 import SimpleEntityCreateForm from "../crud/SimpleEntityCreateForm";
 import MainPageButton from "../common/MainPageButton";
 

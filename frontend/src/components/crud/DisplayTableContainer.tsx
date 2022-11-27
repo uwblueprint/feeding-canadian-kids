@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import BTable from "react-bootstrap/Table";
 import {
-  HeaderGroup,
   useReactTable,
   ColumnDef,
   createColumnHelper,

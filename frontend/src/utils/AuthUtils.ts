@@ -1,7 +1,6 @@
 import * as jwt from "jose";
-import { DecodedJWT } from "../types/AuthTypes";
 
-export const decodeJWT = (token: string | null): DecodedJWT | null => {
+export const decodeJWT = (token: string | null): jwt.JWTPayload | null => {
   if (!token) return null;
   return jwt.decodeJwt(token);
 };

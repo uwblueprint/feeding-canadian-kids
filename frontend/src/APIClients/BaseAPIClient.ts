@@ -1,7 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { DecodedJWT } from "../types/AuthTypes";
 import * as auth from "../utils/AuthUtils";
 import { setLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 

@@ -8,6 +8,7 @@ import { createRoot } from "react-dom/client";
 
 import App from "./App";
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
+import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import { AuthenticatedUser } from "./types/AuthTypes";
 import * as auth from "./utils/AuthUtils";
@@ -15,7 +16,6 @@ import {
   getLocalStorageObjProperty,
   setLocalStorageObjProperty,
 } from "./utils/LocalStorageUtils";
-import "./index.css";
 
 const REFRESH_MUTATION = `
   mutation Index_Refresh {

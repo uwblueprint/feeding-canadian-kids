@@ -4,7 +4,7 @@ import {
   GoogleLogin,
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
-} from "react-google-login";
+} from "@react-oauth/google";
 import { gql, useMutation } from "@apollo/client";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
@@ -111,8 +111,7 @@ const Login = (): React.ReactElement => {
           </button>
         </div>
         <GoogleLogin
-          clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}
-          buttonText="Login with Google"
+          text="Login with Google"
           onSuccess={(response: GoogleResponse): void => {
             if ("tokenId" in response) {
               onGoogleLoginSuccess(response.tokenId);
@@ -121,7 +120,7 @@ const Login = (): React.ReactElement => {
               window.alert(response);
             }
           }}
-          onFailure={(error: GoogleErrorResponse) =>
+          onError={(error: GoogleErrorResponse) =>
             // eslint-disable-next-line no-alert
             window.alert(JSON.stringify(error))
           }

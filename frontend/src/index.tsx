@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { createUploadLink } from "apollo-upload-client";
 import { setContext } from "@apollo/client/link/context";
 
@@ -76,9 +77,12 @@ const apolloClient = new ApolloClient({
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ApolloProvider client={apolloClient}>
-      <App />
-    </ApolloProvider>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}>
+      <ApolloProvider client={apolloClient}>
+        <App />
+      </ApolloProvider>
+    </GoogleOAuthProvider>
+    ;
   </React.StrictMode>,
 );
 

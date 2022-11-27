@@ -33,7 +33,7 @@ module.exports = {
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-static-element-interactions": "off",
     "react/function-component-definition": [
-      2,
+      "warn",
       {
         namedComponents: "arrow-function",
         unnamedComponents: "arrow-function",
@@ -41,11 +41,10 @@ module.exports = {
     ],
     "sort-imports": ["error", { ignoreDeclarationSort: true }],
     "import/order": [
-      1,
+      "error",
       {
         groups: [
-          "external",
-          "builtin",
+          ["external", "builtin"],
           "internal",
           "sibling",
           "parent",

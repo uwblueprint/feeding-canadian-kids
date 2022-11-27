@@ -52,6 +52,9 @@ module.exports = {
           "index",
         ],
         "newlines-between": "always-and-inside-groups",
+        alphabetize: {
+          order: "asc",
+        },
       },
     ],
   },

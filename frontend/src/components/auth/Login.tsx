@@ -1,7 +1,7 @@
+import { gql, useMutation } from "@apollo/client";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import { gql, useMutation } from "@apollo/client";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";

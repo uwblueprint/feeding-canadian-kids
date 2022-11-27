@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { Navigate, Route } from "react-router-dom";
 
-import AuthContext from "../../contexts/AuthContext";
 import { LOGIN_PAGE } from "../../constants/Routes";
+import AuthContext from "../../contexts/AuthContext";
 
 type PrivateRouteProps = {
   element: React.ReactNode;

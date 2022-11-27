@@ -1,7 +1,7 @@
 import React from "react";
 
-import SimpleEntityUpdateForm from "../crud/SimpleEntityUpdateForm";
 import MainPageButton from "../common/MainPageButton";
+import SimpleEntityUpdateForm from "../crud/SimpleEntityUpdateForm";
 
 const SimpleEntityUpdatePage = (): React.ReactElement => {
   return (

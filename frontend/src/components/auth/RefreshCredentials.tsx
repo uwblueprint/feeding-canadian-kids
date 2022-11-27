@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
 import { gql, useMutation } from "@apollo/client";
+import React, { useContext } from "react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AuthContext from "../../contexts/AuthContext";

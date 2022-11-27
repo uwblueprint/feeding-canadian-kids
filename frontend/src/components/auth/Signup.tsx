@@ -1,6 +1,6 @@
+import { gql, useMutation } from "@apollo/client";
 import React, { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { gql, useMutation } from "@apollo/client";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE } from "../../constants/Routes";

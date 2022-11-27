@@ -1,22 +1,21 @@
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { createUploadLink } from "apollo-upload-client";
 import axios from "axios";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { createUploadLink } from "apollo-upload-client";
-import { setContext } from "@apollo/client/link/context";
 
+import App from "./App";
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
+import reportWebVitals from "./reportWebVitals";
 import { AuthenticatedUser } from "./types/AuthTypes";
 import * as auth from "./utils/AuthUtils";
 import {
   getLocalStorageObjProperty,
   setLocalStorageObjProperty,
 } from "./utils/LocalStorageUtils";
-
 import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 
 const REFRESH_MUTATION = `
   mutation Index_Refresh {

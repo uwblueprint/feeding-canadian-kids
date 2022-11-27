@@ -1,7 +1,7 @@
 import React from "react";
 
-import SimpleEntityDisplayTableContainer from "../crud/SimpleEntityDisplayTableContainer";
 import MainPageButton from "../common/MainPageButton";
+import SimpleEntityDisplayTableContainer from "../crud/SimpleEntityDisplayTableContainer";
 
 const GetSimpleEntitiesPage = (): React.ReactElement => {
   return (

@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import BTable from "react-bootstrap/Table";
+import { gql, useApolloClient, useQuery } from "@apollo/client";
 import {
   Cell,
   Row,
@@ -8,7 +7,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { gql, useApolloClient, useQuery } from "@apollo/client";
+import React, { useState } from "react";
+import BTable from "react-bootstrap/Table";
 
 import { SimpleEntityResponse } from "../../APIClients/SimpleEntityAPIClient";
 import { downloadCSV } from "../../utils/CSVUtils";

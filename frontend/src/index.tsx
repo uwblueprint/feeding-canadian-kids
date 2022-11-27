@@ -7,7 +7,7 @@ import { createUploadLink } from "apollo-upload-client";
 import { setContext } from "@apollo/client/link/context";
 
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
-import { AuthenticatedUser, DecodedJWT } from "./types/AuthTypes";
+import { AuthenticatedUser } from "./types/AuthTypes";
 import * as auth from "./utils/AuthUtils";
 import {
   getLocalStorageObjProperty,
@@ -63,12 +63,17 @@ const authLink = setContext(async (_, { headers }) => {
 });
 
 const apolloClient = new ApolloClient({
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  link: authLink.concat(link as any),
+  link: authLink.concat(link),
   cache: new InMemoryCache(),
 });
 
-createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root");
+if (root == null) {
+  document.body.innerHTML = "Failed to load application.";
+  throw Error("Missing root element");
+}
+
+createRoot(root).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}>
       <ApolloProvider client={apolloClient}>

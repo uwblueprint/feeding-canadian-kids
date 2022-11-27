@@ -1,3 +1,5 @@
+import { JWTPayload } from "jose";
+
 export type AuthenticatedUser = {
   id: string;
   firstName: string;
@@ -7,7 +9,4 @@ export type AuthenticatedUser = {
   accessToken: string;
 } | null;
 
-export type DecodedJWT =
-  | string
-  | null
-  | { [key: string]: unknown; exp: number };
+export type DecodedJWT = JWTPayload;

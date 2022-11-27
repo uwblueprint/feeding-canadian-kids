@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig } from "axios";
-import jwt from "jsonwebtoken";
 
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { DecodedJWT } from "../types/AuthTypes";
+import * as auth from "../utils/AuthUtils";
 import { setLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 
 const baseAPIClient = axios.create({
@@ -19,13 +19,7 @@ baseAPIClient.interceptors.request.use(async (config: AxiosRequestConfig) => {
     authHeaderParts.length >= 2 &&
     authHeaderParts[0].toLowerCase() === "bearer"
   ) {
-    const decodedToken = jwt.decode(authHeaderParts[1]) as DecodedJWT;
-
-    if (
-      decodedToken &&
-      (typeof decodedToken === "string" ||
-        decodedToken.exp <= Math.round(new Date().getTime() / 1000))
-    ) {
+    if (!auth.isUnexpiredToken(authHeaderParts[1])) {
       const { data } = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/auth/refresh`,
         {},

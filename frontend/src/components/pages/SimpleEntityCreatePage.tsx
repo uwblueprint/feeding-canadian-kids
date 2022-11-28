@@ -1,6 +1,7 @@
 import React from "react";
-import SimpleEntityCreateForm from "../crud/SimpleEntityCreateForm";
+
 import MainPageButton from "../common/MainPageButton";
+import SimpleEntityCreateForm from "../crud/SimpleEntityCreateForm";
 
 const SimpleEntityCreatePage = (): React.ReactElement => {
   return (

@@ -3,6 +3,8 @@ import {
   MutationFunctionOptions,
   OperationVariables,
 } from "@apollo/client";
+import { googleLogout } from "@react-oauth/google";
+
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { AuthenticatedUser } from "../types/AuthTypes";
 import { setLocalStorageObjProperty } from "../utils/LocalStorageUtils";
@@ -139,6 +141,7 @@ const logout = async (
   });
   const success = result.data?.logout.success ?? false;
   if (success) {
+    googleLogout();
     localStorage.removeItem(AUTHENTICATED_USER_KEY);
   }
   return success;
@@ -148,7 +151,7 @@ type RefreshFunction = (
   options?:
     | MutationFunctionOptions<
         {
-          refresh: string;
+          refresh: { accessToken: string };
         },
         OperationVariables
       >
@@ -156,7 +159,7 @@ type RefreshFunction = (
 ) => Promise<
   FetchResult<
     {
-      refresh: string;
+      refresh: { accessToken: string };
     },
     Record<string, unknown>,
     Record<string, unknown>
@@ -166,7 +169,7 @@ type RefreshFunction = (
 const refresh = async (refreshFunction: RefreshFunction): Promise<boolean> => {
   const result = await refreshFunction();
   let success = false;
-  const token = result.data?.refresh;
+  const token = result.data?.refresh?.accessToken;
   if (token) {
     success = true;
     setLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "accessToken", token);

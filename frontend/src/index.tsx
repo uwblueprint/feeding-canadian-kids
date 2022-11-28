@@ -1,5 +1,6 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { ChakraProvider } from "@chakra-ui/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { createUploadLink } from "apollo-upload-client";
 import axios from "axios";
@@ -80,7 +81,9 @@ createRoot(root).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}>
       <ApolloProvider client={apolloClient}>
-        <App />
+        <ChakraProvider>
+          <App />
+        </ChakraProvider>
       </ApolloProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>,

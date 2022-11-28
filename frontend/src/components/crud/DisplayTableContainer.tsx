@@ -1,7 +1,6 @@
 import { gql, useApolloClient, useQuery } from "@apollo/client";
 import {
   Cell,
-  ColumnDef,
   Row,
   createColumnHelper,
   flexRender,
@@ -34,9 +33,7 @@ type TableProps = {
   downloadEntityFile: (fileUUID: string) => void;
 };
 
-const createColumns = (
-  downloadEntityFile: (fileUUID: string) => void,
-): ColumnDef<EntityData, any>[] => {
+const createColumns = (downloadEntityFile: (fileUUID: string) => void) => {
   const columnHelper = createColumnHelper<EntityData>();
   return [
     columnHelper.accessor("id", { header: "id" }),

@@ -6,10 +6,11 @@ import {
   Routes as RouterRoutes,
 } from "react-router-dom";
 
+import AuthWall from "./components/auth/AuthWall";
 import Login from "./components/auth/Login";
-import PrivateRoute from "./components/auth/PrivateRoute";
 import Signup from "./components/auth/Signup";
 import CreatePage from "./components/pages/CreatePage";
+import Dashboard from "./components/pages/Dashboard";
 import Default from "./components/pages/Default";
 import DisplayPage from "./components/pages/DisplayPage";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
@@ -59,38 +60,41 @@ const App = (): React.ReactElement => {
         <AuthContext.Provider value={currentAuthContext}>
           <Router>
             <RouterRoutes>
+              <Route path={Routes.HOME_PAGE} element={<Default />} />
               <Route path={Routes.LOGIN_PAGE} element={<Login />} />
               <Route path={Routes.SIGNUP_PAGE} element={<Signup />} />
-              <PrivateRoute path={Routes.HOME_PAGE} element={<Default />} />
-              <PrivateRoute
-                path={Routes.CREATE_ENTITY_PAGE}
-                element={<CreatePage />}
-              />
-              <PrivateRoute
-                path={Routes.UPDATE_ENTITY_PAGE}
-                element={<UpdatePage />}
-              />
-              <PrivateRoute
-                path={Routes.DISPLAY_ENTITY_PAGE}
-                element={<DisplayPage />}
-              />
-              <PrivateRoute
-                path={Routes.CREATE_SIMPLE_ENTITY_PAGE}
-                element={<SimpleEntityCreatePage />}
-              />
-              <PrivateRoute
-                path={Routes.UPDATE_SIMPLE_ENTITY_PAGE}
-                element={<SimpleEntityUpdatePage />}
-              />
-              <PrivateRoute
-                path={Routes.DISPLAY_SIMPLE_ENTITY_PAGE}
-                element={<SimpleEntityDisplayPage />}
-              />
-              <PrivateRoute
-                path={Routes.EDIT_TEAM_PAGE}
-                element={<EditTeamInfoPage />}
-              />
-              <PrivateRoute path={Routes.HOOKS_PAGE} element={<HooksDemo />} />
+              <Route path={Routes.DASHBOARD_PAGE} element={<AuthWall />}>
+                <Route path="" element={<Dashboard />} />
+                <Route
+                  path={Routes.CREATE_ENTITY_PAGE}
+                  element={<CreatePage />}
+                />
+                <Route
+                  path={Routes.UPDATE_ENTITY_PAGE}
+                  element={<UpdatePage />}
+                />
+                <Route
+                  path={Routes.DISPLAY_ENTITY_PAGE}
+                  element={<DisplayPage />}
+                />
+                <Route
+                  path={Routes.CREATE_SIMPLE_ENTITY_PAGE}
+                  element={<SimpleEntityCreatePage />}
+                />
+                <Route
+                  path={Routes.UPDATE_SIMPLE_ENTITY_PAGE}
+                  element={<SimpleEntityUpdatePage />}
+                />
+                <Route
+                  path={Routes.DISPLAY_SIMPLE_ENTITY_PAGE}
+                  element={<SimpleEntityDisplayPage />}
+                />
+                <Route
+                  path={Routes.EDIT_TEAM_PAGE}
+                  element={<EditTeamInfoPage />}
+                />
+                <Route path={Routes.HOOKS_PAGE} element={<HooksDemo />} />
+              </Route>
               <Route path="*" element={<NotFound />} />
             </RouterRoutes>
           </Router>

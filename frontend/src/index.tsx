@@ -74,6 +74,8 @@ if (root == null) {
   throw Error("Missing root element");
 }
 
+// Providers for library-specific state like Apollo and OAuth are here.
+// For app-specific providers like contexts, see App.tsx.
 createRoot(root).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}>
@@ -81,7 +83,6 @@ createRoot(root).render(
         <App />
       </ApolloProvider>
     </GoogleOAuthProvider>
-    ;
   </React.StrictMode>,
 );
 

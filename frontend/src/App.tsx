@@ -34,6 +34,8 @@ const App = (): React.ReactElement => {
     DEFAULT_SAMPLE_CONTEXT,
   );
 
+  // Providers for app-specific state like contexts are here.
+  // For providers for libraries like Apollo and OAuth, see index.tsx.
   return (
     <SampleContext.Provider value={sampleContext}>
       <SampleContextDispatcherContext.Provider

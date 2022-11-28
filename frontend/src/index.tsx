@@ -19,7 +19,9 @@ import {
 
 const REFRESH_MUTATION = `
   mutation Index_Refresh {
-    refresh
+    refresh {
+      accessToken
+    }
   }
 `;
 
@@ -36,14 +38,14 @@ const authLink = setContext(async (_, { headers }) => {
   >(AUTHENTICATED_USER_KEY, "accessToken");
 
   // refresh if token has expired
-  if (!auth.isUnexpiredToken(token)) {
+  if (!auth.shouldRenewToken(token)) {
     const { data } = await axios.post(
       `${process.env.REACT_APP_BACKEND_URL}/graphql`,
       { query: REFRESH_MUTATION },
       { withCredentials: true },
     );
 
-    const accessToken: string = data.data.refresh;
+    const accessToken = data.data?.refresh?.accessToken;
     setLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
       "accessToken",

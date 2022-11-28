@@ -15,7 +15,7 @@ const REFRESH = gql`
 const RefreshCredentials = (): React.ReactElement => {
   const { setAuthenticatedUser } = useContext(AuthContext);
 
-  const [refresh] = useMutation<{ refresh: string }>(REFRESH);
+  const [refresh] = useMutation<{ refresh: { accessToken: string } }>(REFRESH);
 
   const onRefreshClick = async () => {
     const success = await authAPIClient.refresh(refresh);

@@ -151,7 +151,7 @@ type RefreshFunction = (
   options?:
     | MutationFunctionOptions<
         {
-          refresh: string;
+          refresh: { accessToken: string };
         },
         OperationVariables
       >
@@ -159,7 +159,7 @@ type RefreshFunction = (
 ) => Promise<
   FetchResult<
     {
-      refresh: string;
+      refresh: { accessToken: string };
     },
     Record<string, unknown>,
     Record<string, unknown>
@@ -169,7 +169,7 @@ type RefreshFunction = (
 const refresh = async (refreshFunction: RefreshFunction): Promise<boolean> => {
   const result = await refreshFunction();
   let success = false;
-  const token = result.data?.refresh;
+  const token = result.data?.refresh?.accessToken;
   if (token) {
     success = true;
     setLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "accessToken", token);

@@ -102,7 +102,9 @@ class Refresh(Mutation):
         token = services["auth_service"].renew_token(
             info.context["response_cookies"]["refreshToken"]
         )
-        return Refresh(access_token=token)
+        # Just in case we were granted a new refresh token.
+        info.context["response_cookies"]["refreshToken"] = token.refresh_token
+        return Refresh(access_token=token.access_token)
 
 
 class Logout(Mutation):

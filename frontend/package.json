@@ -83,5 +83,9 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.2.1",
     "react-test-renderer": "^18.2.0"
+  },
+  "resolutions": {
+    "autoprefixer": "10.4.5",
+    "postcss-preset-env": "7.4.4"
   }
 }

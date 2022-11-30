@@ -119,7 +119,7 @@ class Logout(Mutation):
 
     def mutate(self, info, user_id):
         services["auth_service"].revoke_tokens(user_id)
-        del info.context["response_cookies"]["refreshToken"]
+        if ("refreshToken" in info.context["response_cookies"]): del info.context["response_cookies"]["refreshToken"]
         return Logout(success=True)
 
 

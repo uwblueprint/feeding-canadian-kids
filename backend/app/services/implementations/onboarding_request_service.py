@@ -1,6 +1,7 @@
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import OnboardingRequest
 from ...models.user_info import UserInfo
+from ...resources.onboarding_request_dto import OnboardingRequestDTO
 
 
 class OnboardingRequestService(IOnboardingRequestService):
@@ -39,17 +40,33 @@ class OnboardingRequestService(IOnboardingRequestService):
 
         return new_onboarding_request.to_serializable_dict()
 
-    def get_all_onboarding_requests(self):
-        onboarding_request_objects = []
+    def get_all_onboarding_requests(self, role = "", status = ""):
+        onboarding_request_dtos = []
 
         try:
-            for request in OnboardingRequest.objects:
+            if role and status:
+                raise Exception("Cannot filter by both role and status");
+            if role:
+                filteredRequests = OnboardingRequest.objects(info__role=role)
+            elif status:
+                filteredRequests = OnboardingRequest.objects(status=status)
+            else:
+                filteredRequests = OnboardingRequest.objects
+            for request in filteredRequests:
                 request_dict = request.to_serializable_dict()
-                onboarding_request_objects.append(request_dict)
+                kwargs = {
+                    "contact_name":request_dict["info"]["contact_name"],
+                    "contact_email":request_dict["info"]["contact_email"],
+                    "contact_phone":request_dict["info"]["contact_phone"],
+                    "role":request_dict["info"]["role"],
+                    "date_submitted":request_dict["date_submitted"],
+                    "status":request_dict["status"],
+                }
+                onboarding_request_dtos.append(OnboardingRequestDTO(**kwargs))
         except Exception as e:
             self.logger.error("Could not retrieve OnboardingRequest objects")
             raise e
-        return onboarding_request_objects
+        return onboarding_request_dtos
 
     def get_onboarding_request_by_id(self, id):
         try:
@@ -58,7 +75,17 @@ class OnboardingRequestService(IOnboardingRequestService):
             if not request:
                 raise Exception("request id {id} not found".format(id=id))
 
-            return request.to_serializable_dict()
+            request_dict = request.to_serializable_dict()
+
+            kwargs = {
+                "contact_name":request_dict["info"]["contact_name"],
+                "contact_email":request_dict["info"]["contact_email"],
+                "contact_phone":request_dict["info"]["contact_phone"],
+                "role":request_dict["info"]["role"],
+                "date_submitted":request_dict["date_submitted"],
+                "status":request_dict["status"],
+            }
+            return OnboardingRequestDTO(**kwargs)
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(

@@ -20,13 +20,16 @@ class IOnboardingRequestService(ABC):
         pass
 
     @abstractmethod
-    def get_all_onboarding_requests(self):
+    def get_all_onboarding_requests(self, role, status):
         """
         Gets all OnboardingRequest objects
 
-        :param: // incorporate filters here?
+        :param role: optional filter for type of onboarding requests
+        :type role: string
+        :param status: optional filter for status of onboarding requests
+        :type status: string 
         :return: list of OnboardingRequest object dicts
-        :rtype: list
+        :rtype: [OnboardingRequestDTO]
         :raises Exception: if OnboardingRequests could not be retrieved
         """
 
@@ -38,6 +41,6 @@ class IOnboardingRequestService(ABC):
         :param id: the OnboardingRequest object's id
         :type id: string
         :return: OnboardingRequest object dict
-        :rtype: dict
+        :rtype: OnboardingRequestDTO
         :raises Exception: if OnboardingRequest could not be retrieved
         """

@@ -1,4 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
+
+import { Box, Text } from "@chakra-ui/react";
+
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -7,8 +10,6 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
-
-import { Box } from "@chakra-ui/react";
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
@@ -73,7 +74,10 @@ const Login = (): React.ReactElement => {
   }
 
   return (
-    <Box>Test box</Box>
+    <Box>
+      Test box
+      <Text>Test text</Text>
+    </Box>
     // <div style={{ textAlign: "center" }}>
     //   <h1>Login</h1>
     //   <form>

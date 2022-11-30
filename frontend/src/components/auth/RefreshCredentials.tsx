@@ -1,19 +1,21 @@
-import React, { useContext } from "react";
 import { gql, useMutation } from "@apollo/client";
+import React, { useContext } from "react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AuthContext from "../../contexts/AuthContext";
 
 const REFRESH = gql`
   mutation Refresh {
-    refresh
+    refresh {
+      accessToken
+    }
   }
 `;
 
 const RefreshCredentials = (): React.ReactElement => {
   const { setAuthenticatedUser } = useContext(AuthContext);
 
-  const [refresh] = useMutation<{ refresh: string }>(REFRESH);
+  const [refresh] = useMutation<{ refresh: { accessToken: string } }>(REFRESH);
 
   const onRefreshClick = async () => {
     const success = await authAPIClient.refresh(refresh);

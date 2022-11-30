@@ -1,17 +1,14 @@
-import React, { useContext, useState } from "react";
-import { Redirect, useHistory } from "react-router-dom";
-import {
-  GoogleLogin,
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "react-google-login";
 import { gql, useMutation } from "@apollo/client";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import React, { useContext, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
+<<<<<<< HEAD
 import { Box } from "@chakra-ui/react";
 
 type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
@@ -21,6 +18,16 @@ type GoogleErrorResponse = {
   details: string;
 };
 
+||||||| d5a2828
+type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
+
+type GoogleErrorResponse = {
+  error: string;
+  details: string;
+};
+
+=======
+>>>>>>> main
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -51,7 +58,7 @@ const Login = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [login] = useMutation<{ login: AuthenticatedUser }>(LOGIN);
   const [loginWithGoogle] = useMutation<{ loginWithGoogle: AuthenticatedUser }>(
@@ -68,7 +75,7 @@ const Login = (): React.ReactElement => {
   };
 
   const onSignUpClick = () => {
-    history.push(SIGNUP_PAGE);
+    navigate(SIGNUP_PAGE);
   };
 
   const onGoogleLoginSuccess = async (idToken: string) => {
@@ -80,7 +87,7 @@ const Login = (): React.ReactElement => {
   };
 
   if (authenticatedUser) {
-    return <Redirect to={HOME_PAGE} />;
+    return <Navigate replace to={HOME_PAGE} />;
   }
 
   return (

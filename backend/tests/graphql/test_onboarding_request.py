@@ -21,16 +21,17 @@ mock_info2 = UserInfo(
     role="Donor",
 )
 
+
 def convert_to_dtos(mock_result):
     mock_result_dtos = []
     for request_dict in mock_result:
         kwargs = {
-            "contact_name":request_dict["info"]["contact_name"],
-            "contact_email":request_dict["info"]["contact_email"],
-            "contact_phone":request_dict["info"]["contact_phone"],
-            "role":request_dict["info"]["role"],
-            "date_submitted":request_dict["date_submitted"],
-            "status":request_dict["status"],
+            "contact_name": request_dict["info"]["contact_name"],
+            "contact_email": request_dict["info"]["contact_email"],
+            "contact_phone": request_dict["info"]["contact_phone"],
+            "role": request_dict["info"]["role"],
+            "date_submitted": request_dict["date_submitted"],
+            "status": request_dict["status"],
         }
         mock_result_dtos.append(OnboardingRequestDTO(**kwargs))
     return mock_result_dtos
@@ -273,4 +274,3 @@ def test_get_requests_by_id(mocker):
     }
 
     assert executed.data == expected_result["data"]
-    

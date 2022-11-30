@@ -56,7 +56,9 @@ class OnboardingRequestQueries(QueryList):
     )
 
     def resolve_getAllOnboardingRequests(self, info, first, offset, role, status):
-        requests = services["onboarding_request_service"].get_all_onboarding_requests(role, status)
+        requests = services["onboarding_request_service"].get_all_onboarding_requests(
+            role, status
+        )
         return [
             *map(
                 lambda request: GetOnboardingRequest(
@@ -65,7 +67,7 @@ class OnboardingRequestQueries(QueryList):
                     contact_phone=request.contact_phone,
                     role=request.role,
                     date_submitted=request.date_submitted,
-                    status=request.status
+                    status=request.status,
                 ),
                 requests[offset : offset + first],
             )
@@ -76,14 +78,16 @@ class OnboardingRequestQueries(QueryList):
         request = services["onboarding_request_service"].get_onboarding_request_by_id(
             id
         )
-        return [ GetOnboardingRequest(
-            contact_name=request.contact_name,
-            contact_email=request.contact_email,
-            contact_phone=request.contact_phone,
-            role=request.role,
-            date_submitted=request.date_submitted,
-            status=request.status
-        )]
+        return [
+            GetOnboardingRequest(
+                contact_name=request.contact_name,
+                contact_email=request.contact_email,
+                contact_phone=request.contact_phone,
+                role=request.role,
+                date_submitted=request.date_submitted,
+                status=request.status,
+            )
+        ]
 
 
 # Mutations

@@ -40,12 +40,12 @@ class OnboardingRequestService(IOnboardingRequestService):
 
         return new_onboarding_request.to_serializable_dict()
 
-    def get_all_onboarding_requests(self, role = "", status = ""):
+    def get_all_onboarding_requests(self, role="", status=""):
         onboarding_request_dtos = []
 
         try:
             if role and status:
-                raise Exception("Cannot filter by both role and status");
+                raise Exception("Cannot filter by both role and status")
             if role:
                 filteredRequests = OnboardingRequest.objects(info__role=role)
             elif status:
@@ -55,12 +55,12 @@ class OnboardingRequestService(IOnboardingRequestService):
             for request in filteredRequests:
                 request_dict = request.to_serializable_dict()
                 kwargs = {
-                    "contact_name":request_dict["info"]["contact_name"],
-                    "contact_email":request_dict["info"]["contact_email"],
-                    "contact_phone":request_dict["info"]["contact_phone"],
-                    "role":request_dict["info"]["role"],
-                    "date_submitted":request_dict["date_submitted"],
-                    "status":request_dict["status"],
+                    "contact_name": request_dict["info"]["contact_name"],
+                    "contact_email": request_dict["info"]["contact_email"],
+                    "contact_phone": request_dict["info"]["contact_phone"],
+                    "role": request_dict["info"]["role"],
+                    "date_submitted": request_dict["date_submitted"],
+                    "status": request_dict["status"],
                 }
                 onboarding_request_dtos.append(OnboardingRequestDTO(**kwargs))
         except Exception as e:
@@ -78,12 +78,12 @@ class OnboardingRequestService(IOnboardingRequestService):
             request_dict = request.to_serializable_dict()
 
             kwargs = {
-                "contact_name":request_dict["info"]["contact_name"],
-                "contact_email":request_dict["info"]["contact_email"],
-                "contact_phone":request_dict["info"]["contact_phone"],
-                "role":request_dict["info"]["role"],
-                "date_submitted":request_dict["date_submitted"],
-                "status":request_dict["status"],
+                "contact_name": request_dict["info"]["contact_name"],
+                "contact_email": request_dict["info"]["contact_email"],
+                "contact_phone": request_dict["info"]["contact_phone"],
+                "role": request_dict["info"]["role"],
+                "date_submitted": request_dict["date_submitted"],
+                "status": request_dict["status"],
             }
             return OnboardingRequestDTO(**kwargs)
         except Exception as e:

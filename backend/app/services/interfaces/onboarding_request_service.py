@@ -27,7 +27,7 @@ class IOnboardingRequestService(ABC):
         :param role: optional filter for type of onboarding requests
         :type role: string
         :param status: optional filter for status of onboarding requests
-        :type status: string 
+        :type status: string
         :return: list of OnboardingRequest object dicts
         :rtype: [OnboardingRequestDTO]
         :raises Exception: if OnboardingRequests could not be retrieved

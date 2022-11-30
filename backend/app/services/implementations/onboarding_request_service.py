@@ -5,6 +5,8 @@ from ...resources.create_user_dto import CreateUserDTO
 from ..implementations.email_service import EmailService
 from ..implementations.auth_service import AuthService
 from ...utilities.firebase_rest_client import FirebaseRestClient
+from ..interfaces.email_service import IEmailService
+from ..implementations.email_service import EmailService
 import random
 import string
 
@@ -31,7 +33,6 @@ class OnboardingRequestService(IOnboardingRequestService):
                 contact_email=userInfo.contact_email,
                 contact_phone=userInfo.contact_phone,
                 role=userInfo.role,
-                user_uid="",
             )
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(

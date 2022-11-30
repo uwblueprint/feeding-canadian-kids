@@ -31,6 +31,7 @@ class OnboardingRequestService(IOnboardingRequestService):
                 contact_email=userInfo.contact_email,
                 contact_phone=userInfo.contact_phone,
                 role=userInfo.role,
+                user_uid="",
             )
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(

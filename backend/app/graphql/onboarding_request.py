@@ -10,6 +10,7 @@ class UserInfoInput(graphene.InputObjectType):
     contact_email = graphene.String(required=True)
     contact_phone = graphene.String()
     role = graphene.String(required=True)
+    user_uid = graphene.String()
 
 
 class UserInfo(graphene.ObjectType):

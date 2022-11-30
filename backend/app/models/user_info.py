@@ -6,7 +6,7 @@ class UserInfo(mg.EmbeddedDocument):
     contact_email = mg.StringField(required=True)
     contact_phone = mg.StringField()
     role = mg.StringField(choices=["Admin", "Donor", "ASP"], required=True)
-
+    user_uid = mg.StringField(required=False)
     meta = {"allow_inheritance": True}
 
 

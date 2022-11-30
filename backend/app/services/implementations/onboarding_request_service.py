@@ -2,7 +2,6 @@ from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import OnboardingRequest
 from ...models.user_info import UserInfo
 from ...resources.create_user_dto import CreateUserDTO
-from ...services.interfaces.user_service import 
 import random
 import string
 
@@ -25,6 +24,7 @@ class OnboardingRequestService(IOnboardingRequestService):
                 contact_email=userInfo.contact_email,
                 contact_phone=userInfo.contact_phone,
                 role=userInfo.role,
+                user_uid="",
             )
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(

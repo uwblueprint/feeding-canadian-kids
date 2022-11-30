@@ -17,6 +17,7 @@ module.exports = {
     },
   },
   extends: [
+    "airbnb",
     "airbnb-typescript",
     "prettier",
     "plugin:prettier/recommended",
@@ -31,6 +32,30 @@ module.exports = {
     "react/no-array-index-key": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-static-element-interactions": "off",
+    "react/function-component-definition": [
+      "warn",
+      {
+        namedComponents: "arrow-function",
+        unnamedComponents: "arrow-function",
+      },
+    ],
+    "sort-imports": ["error", { ignoreDeclarationSort: true }],
+    "import/order": [
+      "error",
+      {
+        groups: [
+          ["external", "builtin"],
+          "internal",
+          "sibling",
+          "parent",
+          "index",
+        ],
+        "newlines-between": "always-and-inside-groups",
+        alphabetize: {
+          order: "asc",
+        },
+      },
+    ],
   },
   ignorePatterns: ["build/*"],
 };

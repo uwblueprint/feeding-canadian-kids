@@ -4,18 +4,20 @@ export const LOGIN_PAGE = "/login";
 
 export const SIGNUP_PAGE = "/signup";
 
-export const EDIT_TEAM_PAGE = "/edit-team";
+export const DASHBOARD_PAGE = "/dashboard";
 
-export const DISPLAY_ENTITY_PAGE = "/entity";
+export const EDIT_TEAM_PAGE = "/dashboard/edit-team";
 
-export const CREATE_ENTITY_PAGE = "/entity/create";
+export const DISPLAY_ENTITY_PAGE = "/dashboard/entity";
 
-export const UPDATE_ENTITY_PAGE = "/entity/update";
+export const CREATE_ENTITY_PAGE = "/dashboard/entity/create";
 
-export const DISPLAY_SIMPLE_ENTITY_PAGE = "/simpleEntity";
+export const UPDATE_ENTITY_PAGE = "/dashboard/entity/update";
 
-export const CREATE_SIMPLE_ENTITY_PAGE = "/simpleEntity/create";
+export const DISPLAY_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity";
 
-export const UPDATE_SIMPLE_ENTITY_PAGE = "/simpleEntity/update";
+export const CREATE_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity/create";
 
-export const HOOKS_PAGE = "/hooks";
+export const UPDATE_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity/update";
+
+export const HOOKS_PAGE = "/dashboard/hooks";

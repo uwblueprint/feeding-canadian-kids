@@ -1,25 +1,28 @@
-import axios from "axios";
-import jwt from "jsonwebtoken";
-import React from "react";
-import ReactDOM from "react-dom";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { createUploadLink } from "apollo-upload-client";
 import { setContext } from "@apollo/client/link/context";
+import { ChakraProvider } from "@chakra-ui/react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { createUploadLink } from "apollo-upload-client";
+import axios from "axios";
+import React from "react";
+import { createRoot } from "react-dom/client";
 
+import App from "./App";
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
-import { AuthenticatedUser, DecodedJWT } from "./types/AuthTypes";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import { AuthenticatedUser } from "./types/AuthTypes";
+import * as auth from "./utils/AuthUtils";
 import {
   getLocalStorageObjProperty,
   setLocalStorageObjProperty,
 } from "./utils/LocalStorageUtils";
 
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-
 const REFRESH_MUTATION = `
   mutation Index_Refresh {
-    refresh
+    refresh {
+      accessToken
+    }
   }
 `;
 
@@ -35,30 +38,23 @@ const authLink = setContext(async (_, { headers }) => {
     string
   >(AUTHENTICATED_USER_KEY, "accessToken");
 
-  if (token) {
-    const decodedToken = jwt.decode(token) as DecodedJWT;
+  // refresh if token has expired
+  if (!auth.shouldRenewToken(token)) {
+    const { data } = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/graphql`,
+      { query: REFRESH_MUTATION },
+      { withCredentials: true },
+    );
 
-    // refresh if decodedToken has expired
-    if (
-      decodedToken &&
-      (typeof decodedToken === "string" ||
-        decodedToken.exp <= Math.round(new Date().getTime() / 1000))
-    ) {
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/graphql`,
-        { query: REFRESH_MUTATION },
-        { withCredentials: true },
-      );
-
-      const accessToken: string = data.data.refresh;
-      setLocalStorageObjProperty(
-        AUTHENTICATED_USER_KEY,
-        "accessToken",
-        accessToken,
-      );
-      token = accessToken;
-    }
+    const accessToken = data.data?.refresh?.accessToken;
+    setLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+      accessToken,
+    );
+    token = accessToken;
   }
+
   // return the headers to the context so httpLink can read them
   return {
     headers: {
@@ -69,18 +65,28 @@ const authLink = setContext(async (_, { headers }) => {
 });
 
 const apolloClient = new ApolloClient({
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  link: authLink.concat(link as any),
+  link: authLink.concat(link),
   cache: new InMemoryCache(),
 });
 
-ReactDOM.render(
+const root = document.getElementById("root");
+if (root == null) {
+  document.body.innerHTML = "Failed to load application.";
+  throw Error("Missing root element");
+}
+
+// Providers for library-specific state like Apollo and OAuth are here.
+// For app-specific providers like contexts, see App.tsx.
+createRoot(root).render(
   <React.StrictMode>
-    <ApolloProvider client={apolloClient}>
-      <App />
-    </ApolloProvider>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}>
+      <ApolloProvider client={apolloClient}>
+        <ChakraProvider>
+          <App />
+        </ChakraProvider>
+      </ApolloProvider>
+    </GoogleOAuthProvider>
   </React.StrictMode>,
-  document.getElementById("root"),
 );
 
 // If you want to start measuring performance in your app, pass a function

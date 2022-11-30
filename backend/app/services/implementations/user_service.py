@@ -3,6 +3,7 @@ import firebase_admin.auth
 from ..interfaces.user_service import IUserService
 from ...models.user import User
 from ...resources.user_dto import UserDTO
+from ...models.user_info import UserInfo
 
 
 class UserService(IUserService):
@@ -30,8 +31,15 @@ class UserService(IUserService):
 
             user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
             user_dict["email"] = firebase_user.email
+            kwargs = {
+                "id": user_dict["id"],
+                "first_name": user_dict["info"]["contact_name"],
+                "last_name": "",
+                "email": user_dict["email"],
+                "role": user_dict["info"]["role"],
+            }
 
-            return UserDTO(**user_dict)
+            return UserDTO(**kwargs)
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -55,8 +63,15 @@ class UserService(IUserService):
 
             user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
             user_dict["email"] = firebase_user.email
+            kwargs = {
+                "id": user_dict["id"],
+                "first_name": user_dict["info"]["contact_name"],
+                "last_name": "",
+                "email": user_dict["email"],
+                "role": user_dict["info"]["role"],
+            }
 
-            return UserDTO(**user_dict)
+            return UserDTO(**kwargs)
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -117,7 +132,14 @@ class UserService(IUserService):
             try:
                 firebase_user = firebase_admin.auth.get_user(user.auth_id)
                 user_dict["email"] = firebase_user.email
-                user_dtos.append(UserDTO(**user_dict))
+                kwargs = {
+                    "id": user_dict["id"],
+                    "first_name": user_dict["info"]["contact_name"],
+                    "last_name": "",
+                    "email": user_dict["email"],
+                    "role": user_dict["info"]["role"],
+                }
+                user_dtos.append(UserDTO(**kwargs))
             except Exception as e:
                 self.logger.error(
                     f"User with auth_id {user.auth_id} could not be fetched "
@@ -142,10 +164,12 @@ class UserService(IUserService):
 
             try:
                 new_user = User(
-                    first_name=user.first_name,
-                    last_name=user.last_name,
                     auth_id=firebase_user.uid,
-                    role=user.role,
+                    info=UserInfo(
+                        contact_name=(user.first_name + user.last_name),
+                        contact_email=user.email,
+                        role=user.role,
+                    ),
                 ).save()
             except Exception as mongo_error:
                 # rollback user creation in Firebase
@@ -179,7 +203,14 @@ class UserService(IUserService):
             new_user
         )
         new_user_dict["email"] = firebase_user.email
-        return UserDTO(**new_user_dict)
+        kwargs = {
+            "id": new_user_dict["id"],
+            "first_name": new_user_dict["info"]["contact_name"],
+            "last_name": "",
+            "email": new_user_dict["email"],
+            "role": new_user_dict["info"]["role"],
+        }
+        return UserDTO(**kwargs)
 
     def update_user_by_id(self, user_id, user):
         try:

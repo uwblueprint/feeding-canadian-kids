@@ -13,7 +13,6 @@ class UserInfoInput(graphene.InputObjectType):
     contact_email = graphene.String(required=True)
     contact_phone = graphene.String()
     role = graphene.String(required=True)
-    user_uid = graphene.String()
 
 
 class UserInfo(graphene.ObjectType):
@@ -28,6 +27,7 @@ class OnboardingRequest(graphene.ObjectType):
     info = graphene.Field(UserInfo)
     date_submitted = graphene.DateTime()
     status = graphene.String()
+    user_uid = graphene.String()
 
 class OnboardingRequestInput(graphene.InputObjectType):
     id = graphene.ID()

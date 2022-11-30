@@ -8,6 +8,7 @@ class OnboardingRequest(mg.Document):
     info = mg.EmbeddedDocumentField(UserInfo, required=True)
     date_submitted = mg.DateTimeField(default=datetime.datetime.now)
     status = mg.StringField(choices=["Pending", "Approved", "Rejected"], required=True)
+    user_uid = mg.StringField(required=False)
 
     def to_serializable_dict(self):
         """

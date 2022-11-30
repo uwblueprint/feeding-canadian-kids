@@ -2,6 +2,8 @@ from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import OnboardingRequest
 from ...models.user_info import UserInfo
 from ...resources.create_user_dto import CreateUserDTO
+from ..interfaces.email_service import IEmailService
+from ..implementations.email_service import EmailService
 import random
 import string
 
@@ -24,12 +26,12 @@ class OnboardingRequestService(IOnboardingRequestService):
                 contact_email=userInfo.contact_email,
                 contact_phone=userInfo.contact_phone,
                 role=userInfo.role,
-                user_uid="",
             )
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(
                 info=user_info,
                 status="Pending",
+                user_uid = "",
             ).save()
 
         except Exception as e:
@@ -51,13 +53,22 @@ class OnboardingRequestService(IOnboardingRequestService):
 
             
             referenced_onboarding_request.status = "Approved" #approve the onboarding request
+            
+            # create a uid for the user
+            random_user_uid = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
+            
+            # set the uid for the user
+            referenced_onboarding_request.user_uid = random_user_uid
             referenced_onboarding_request.save()
 
-            # create a random password for the new user
-            random_password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-
+            # Send an email to the user with the email address. Instantiate the email service
             
-            #create a new user from the onboarding request
+            
+
+            recipient_email = referenced_onboarding_request.info.contact_email
+            email_subject = "Your account has been approved"
+            email_body = "Your account has been approved. Please reset your password"
+            
 
         except Exception as e:
             reason = getattr(e, "message", None)

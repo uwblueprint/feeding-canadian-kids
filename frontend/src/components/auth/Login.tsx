@@ -12,6 +12,8 @@ import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
+import { Box } from "@chakra-ui/react";
+
 type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
 
 type GoogleErrorResponse = {
@@ -82,61 +84,62 @@ const Login = (): React.ReactElement => {
   }
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h1>Login</h1>
-      <form>
-        <div>
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="username@domain.com"
-          />
-        </div>
-        <div>
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="password"
-          />
-        </div>
-        <div>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={onLogInClick}
-          >
-            Log In
-          </button>
-        </div>
-        <GoogleLogin
-          clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}
-          buttonText="Login with Google"
-          onSuccess={(response: GoogleResponse): void => {
-            if ("tokenId" in response) {
-              onGoogleLoginSuccess(response.tokenId);
-            } else {
-              // eslint-disable-next-line no-alert
-              window.alert(response);
-            }
-          }}
-          onFailure={(error: GoogleErrorResponse) =>
-            // eslint-disable-next-line no-alert
-            window.alert(JSON.stringify(error))
-          }
-        />
-      </form>
-      <div>
-        <button
-          className="btn btn-primary"
-          type="button"
-          onClick={onSignUpClick}
-        >
-          Sign Up
-        </button>
-      </div>
-    </div>
+    <Box>Test Box</Box>
+    // <div style={{ textAlign: "center" }}>
+    //   <h1>Login</h1>
+    //   <form>
+    //     <div>
+    //       <input
+    //         type="email"
+    //         value={email}
+    //         onChange={(event) => setEmail(event.target.value)}
+    //         placeholder="username@domain.com"
+    //       />
+    //     </div>
+    //     <div>
+    //       <input
+    //         type="password"
+    //         value={password}
+    //         onChange={(event) => setPassword(event.target.value)}
+    //         placeholder="password"
+    //       />
+    //     </div>
+    //     <div>
+    //       <button
+    //         className="btn btn-primary"
+    //         type="button"
+    //         onClick={onLogInClick}
+    //       >
+    //         Log In
+    //       </button>
+    //     </div>
+    //     <GoogleLogin
+    //       clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}
+    //       buttonText="Login with Google"
+    //       onSuccess={(response: GoogleResponse): void => {
+    //         if ("tokenId" in response) {
+    //           onGoogleLoginSuccess(response.tokenId);
+    //         } else {
+    //           // eslint-disable-next-line no-alert
+    //           window.alert(response);
+    //         }
+    //       }}
+    //       onFailure={(error: GoogleErrorResponse) =>
+    //         // eslint-disable-next-line no-alert
+    //         window.alert(JSON.stringify(error))
+    //       }
+    //     />
+    //   </form>
+    //   <div>
+    //     <button
+    //       className="btn btn-primary"
+    //       type="button"
+    //       onClick={onSignUpClick}
+    //     >
+    //       Sign Up
+    //     </button>
+    //   </div>
+    // </div>
   );
 };
 

@@ -1,4 +1,4 @@
-from app.graphql.all_users import AllUsersQuery
+from app.graphql.all_users import UserQueries
 import graphene
 from graphene.test import Client
 from app.resources.user_dto import UserDTO
@@ -15,11 +15,11 @@ def test_all_users(mocker):
         return_value=mock_result,
     )
 
-    schema = graphene.Schema(query=AllUsersQuery)
+    schema = graphene.Schema(query=UserQueries)
     client = Client(schema)
     executed = client.execute(
         """{
-        allUsers {
+        users {
             name
             email
             role
@@ -28,7 +28,7 @@ def test_all_users(mocker):
 
     expected_result = {
         "data": {
-            "allUsers": [
+            "users": [
                 {"name": "John Doe", "email": "JohnDoe@email.com", "role": "Admin"},
                 {"name": "Jane Doe", "email": "JaneDoe@email.com", "role": "ASP"},
             ]
@@ -49,11 +49,11 @@ def test_all_users_filter(mocker):
         return_value=mock_result,
     )
 
-    schema = graphene.Schema(query=AllUsersQuery)
+    schema = graphene.Schema(query=UserQueries)
     client = Client(schema)
     executed = client.execute(
         """{
-        allUsers(role: "Admin") {
+        users(role: "Admin") {
             name
             email
             role
@@ -62,7 +62,7 @@ def test_all_users_filter(mocker):
 
     expected_result = {
         "data": {
-            "allUsers": [
+            "users": [
                 {"name": "John Doe", "email": "JohnDoe@email.com", "role": "Admin"},
             ]
         }

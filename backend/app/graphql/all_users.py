@@ -1,4 +1,3 @@
-from ..services.implementations.user_service import UserService
 import graphene
 from ..graphql.services import services
 from .types import QueryList, Query
@@ -33,7 +32,7 @@ class UserQueries(QueryList):
                             role=user.role,
                         )
                     )
-            return filtered[offset: offset + first]
+            return filtered[offset : offset + first]
 
         return [
             *map(
@@ -42,6 +41,6 @@ class UserQueries(QueryList):
                     email=user.email,
                     role=user.role,
                 ),
-                users[offset: offset + first],
+                users[offset : offset + first],
             )
         ]

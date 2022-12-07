@@ -94,7 +94,7 @@ def test_get_all_requests(mocker):
 
     executed = graphql_schema.execute(
         """ {
-             getAllOnboardingRequests {
+             getAllOnboardingRequests(number: 5, offset: 1) {
                 contactName
                 contactEmail
                 contactPhone

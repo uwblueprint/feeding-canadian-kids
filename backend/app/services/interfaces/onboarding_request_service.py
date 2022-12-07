@@ -20,10 +20,14 @@ class IOnboardingRequestService(ABC):
         pass
 
     @abstractmethod
-    def get_all_onboarding_requests(self, role, status):
+    def get_all_onboarding_requests(self, number, offset, role, status):
         """
         Gets all OnboardingRequest objects
 
+        :param number: optional param to get number amount of requests back
+        :type number: number
+        :param offset: optional param to get requests back from this offset onwards
+        :type number: number
         :param role: optional filter for type of onboarding requests
         :type role: string
         :param status: optional filter for status of onboarding requests

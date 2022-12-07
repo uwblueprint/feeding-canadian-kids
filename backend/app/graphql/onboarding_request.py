@@ -43,7 +43,7 @@ class GetOnboardingRequest(Query):
 class OnboardingRequestQueries(QueryList):
     getAllOnboardingRequests = graphene.List(
         GetOnboardingRequest,
-        first=graphene.Int(default_value=5),
+        number=graphene.Int(default_value=5),
         offset=graphene.Int(default_value=0),
         role=graphene.String(default_value=""),
         status=graphene.String(default_value=""),
@@ -51,13 +51,11 @@ class OnboardingRequestQueries(QueryList):
     getOnboardingRequestById = graphene.List(
         GetOnboardingRequest,
         id=graphene.String(),
-        first=graphene.Int(default_value=5),
-        offset=graphene.Int(default_value=0),
     )
 
-    def resolve_getAllOnboardingRequests(self, info, first, offset, role, status):
+    def resolve_getAllOnboardingRequests(self, info, number, offset, role, status):
         requests = services["onboarding_request_service"].get_all_onboarding_requests(
-            role, status
+            number, offset, role, status,
         )
         return [
             *map(
@@ -69,12 +67,12 @@ class OnboardingRequestQueries(QueryList):
                     date_submitted=request.date_submitted,
                     status=request.status,
                 ),
-                requests[offset : offset + first],
+                requests,
             )
         ]
         return []
 
-    def resolve_getOnboardingRequestById(self, info, id, offset, first):
+    def resolve_getOnboardingRequestById(self, info, id):
         request = services["onboarding_request_service"].get_onboarding_request_by_id(
             id
         )

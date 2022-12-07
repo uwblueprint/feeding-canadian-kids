@@ -40,18 +40,17 @@ class OnboardingRequestService(IOnboardingRequestService):
 
         return new_onboarding_request.to_serializable_dict()
 
-    def get_all_onboarding_requests(self, role="", status=""):
+    def get_all_onboarding_requests(self, number=5, offset=0, role="", status=""):
         onboarding_request_dtos = []
 
         try:
             if role and status:
                 raise Exception("Cannot filter by both role and status")
+            filteredRequests = OnboardingRequest.objects()
             if role:
-                filteredRequests = OnboardingRequest.objects(info__role=role)
-            elif status:
-                filteredRequests = OnboardingRequest.objects(status=status)
-            else:
-                filteredRequests = OnboardingRequest.objects
+                filteredRequests = filteredRequests.filter(info__role=role)
+            if status:
+                filteredRequests = filteredRequests.filter(status=status)
             for request in filteredRequests:
                 request_dict = request.to_serializable_dict()
                 kwargs = {
@@ -66,6 +65,8 @@ class OnboardingRequestService(IOnboardingRequestService):
         except Exception as e:
             self.logger.error("Could not retrieve OnboardingRequest objects")
             raise e
+        if number > 0:
+            return onboarding_request_dtos[offset: offset+number]
         return onboarding_request_dtos
 
     def get_onboarding_request_by_id(self, id):

@@ -44,8 +44,6 @@ class OnboardingRequestService(IOnboardingRequestService):
         onboarding_request_dtos = []
 
         try:
-            if role and status:
-                raise Exception("Cannot filter by both role and status")
             filteredRequests = OnboardingRequest.objects()
             if role:
                 filteredRequests = filteredRequests.filter(info__role=role)

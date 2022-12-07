@@ -1,6 +1,14 @@
 import { gql, useMutation } from "@apollo/client";
 
-import { Box, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import React, { useContext, useState } from "react";
@@ -74,65 +82,54 @@ const Login = (): React.ReactElement => {
   }
 
   return (
-    <Box>
-      Test box
-      <Text>Test text</Text>
-    </Box>
-    // <div style={{ textAlign: "center" }}>
-    //   <h1>Login</h1>
-    //   <form>
-    //     <div>
-    //       <input
-    //         type="email"
-    //         value={email}
-    //         onChange={(event) => setEmail(event.target.value)}
-    //         placeholder="username@domain.com"
-    //       />
-    //     </div>
-    //     <div>
-    //       <input
-    //         type="password"
-    //         value={password}
-    //         onChange={(event) => setPassword(event.target.value)}
-    //         placeholder="password"
-    //       />
-    //     </div>
-    //     <div>
-    //       <button
-    //         className="btn btn-primary"
-    //         type="button"
-    //         onClick={onLogInClick}
-    //       >
-    //         Log In
-    //       </button>
-    //     </div>
-    //     <GoogleLogin
-    //       clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}
-    //       buttonText="Login with Google"
-    //       onSuccess={(response: GoogleResponse): void => {
-    //         if ("tokenId" in response) {
-    //           onGoogleLoginSuccess(response.tokenId);
-    //         } else {
-    //           // eslint-disable-next-line no-alert
-    //           window.alert(response);
-    //         }
-    //       }}
-    //       onFailure={(error: GoogleErrorResponse) =>
-    //         // eslint-disable-next-line no-alert
-    //         window.alert(JSON.stringify(error))
-    //       }
-    //     />
-    //   </form>
-    //   <div>
-    //     <button
-    //       className="btn btn-primary"
-    //       type="button"
-    //       onClick={onSignUpClick}
-    //     >
-    //       Sign Up
-    //     </button>
-    //   </div>
-    // </div>
+    <Flex
+      flexDirection="column"
+      width="100wh"
+      height="100vh"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <VStack
+      border='1px'
+      borderColor='#D6D6D6'
+      borderRadius='5%'
+      padding='5% 5% 5% 5%'>
+        <Text fontFamily="Dimbo" fontSize="3xl" as="b">Log in to account</Text>
+        <Text>Please enter your account details to log in.</Text>
+        <Flex width="100%" justifyContent="flexStart" flexDirection="column">
+        <Box>
+          <Text>Email Address</Text>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Box>
+        <Box>
+          <Text>Password</Text>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </Box>
+          <Text textDecoration="underline">Forgot Password?</Text>
+        </Flex>
+        <Button
+          onClick={onLogInClick}
+          width="100%"
+          backgroundColor="#272D77"
+        >
+          <Text color="white">
+            Log In
+          </Text>
+        </Button>
+        <HStack>
+          <Text>Don’t have an account?</Text>
+          <Text textDecoration="underline">Sign up now.</Text>
+        </HStack>
+      </VStack>
+    </Flex>
   );
 };
 

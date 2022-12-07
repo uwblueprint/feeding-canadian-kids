@@ -83,8 +83,8 @@ class FoodRequestQueries(QueryList):
         id=graphene.ID(required=True),
     )
     
-    def resolve_food_request_group_by_id(self, info, user_id):
-        pass
+    def resolve_food_request_group_by_id(self, user_id, role, food_request_group_id):
+        return services["food_request_service"].get_food_request_by_id(user_id, role, food_request_group_id)
 
 # Mutations
 class CreateFoodRequestGroup(Mutation):

@@ -43,5 +43,24 @@ class FoodRequestService(IFoodRequestService):
     def get_food_request_groups(self):
         pass
 
-    def get_food_request_by_id(self):
-        pass
+    def get_food_request_by_id(self, user_id, role, food_request_group_id):
+        permission_granted = True
+        try:
+            result = FoodRequestGroup.objects.get(id=food_request_group_id)
+            if role == "ASP":
+                permission_granted = (user_id == result.requestor)
+            elif role == "Donor":
+                permission_granted = False
+                for request in result.requests:
+                    if user_id == request.donor:
+                        permission_granted = True
+                        break
+
+            if permission_granted:
+                return result
+            else:
+                raise Exception("Invalid permission")
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error

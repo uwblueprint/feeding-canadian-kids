@@ -13,7 +13,7 @@ class GraphQLViewWithCookies(GraphQLView):
             "request"
         ].cookies.to_dict()
         response = super().dispatch_request()
-        if response.status_code == 200:
+        if not isinstance(response, str) and response.status_code == 200:
             for cookie in self.request_context["response_cookies"]:
                 response.set_cookie(
                     cookie,

@@ -2,14 +2,13 @@ from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import OnboardingRequest
 from ...models.user_info import UserInfo
 from ...resources.create_user_dto import CreateUserDTO
-from ..interfaces.email_service import IEmailService
 from ..implementations.email_service import EmailService
 import random
 import string
 
 
 class OnboardingRequestService(IOnboardingRequestService):
-    def __init__(self, logger):
+    def __init__(self, logger, email_service=None):
         """
         Create an instance of OnboardingRequestService
 
@@ -17,6 +16,9 @@ class OnboardingRequestService(IOnboardingRequestService):
         :type logger: logger
         """
         self.logger = logger
+        self.email_service = email_service
+
+
 
     def create_onboarding_request(self, userInfo):
         try:
@@ -68,6 +70,16 @@ class OnboardingRequestService(IOnboardingRequestService):
             recipient_email = referenced_onboarding_request.info.contact_email
             email_subject = "Your account has been approved"
             email_body = "Your account has been approved. Please reset your password"
+
+            #refresh the token
+            
+
+
+
+            self.email_service.send_email(recipient_email, email_subject, email_body)
+
+
+
             
 
         except Exception as e:

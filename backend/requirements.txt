@@ -5,7 +5,7 @@ black==20.8b1
 CacheControl==0.12.6
 cachetools==4.2.1
 certifi==2020.12.5
-cffi==1.14.5
+cffi==1.15.0
 chardet==4.0.0
 click==7.1.2
 dnspython==1.16.0
@@ -21,7 +21,7 @@ google-auth-httplib2==0.1.0
 google-cloud-core==1.6.0
 google-cloud-firestore==2.1.0
 google-cloud-storage==1.37.1
-google-crc32c==1.1.2
+google-crc32c==1.5.0
 google-resumable-media==1.2.0
 googleapis-common-protos==1.53.0
 graphene==3.1.1
@@ -62,7 +62,7 @@ rsa==4.7.2
 sentinels==1.0.0
 six==1.15.0
 toml==0.10.2
-typed-ast==1.4.2
+typed-ast==1.5.4
 typing-extensions==4.3.0
 uritemplate==3.0.1
 urllib3==1.26.4

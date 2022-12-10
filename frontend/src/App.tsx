@@ -1,4 +1,3 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useMemo, useReducer, useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 

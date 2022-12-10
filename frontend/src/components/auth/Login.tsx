@@ -1,4 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
+import { Button, Input } from "@chakra-ui/react";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -75,7 +76,7 @@ const Login = (): React.ReactElement => {
       <h1>Login</h1>
       <form>
         <div>
-          <input
+          <Input
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
@@ -83,7 +84,7 @@ const Login = (): React.ReactElement => {
           />
         </div>
         <div>
-          <input
+          <Input
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
@@ -91,13 +92,7 @@ const Login = (): React.ReactElement => {
           />
         </div>
         <div>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={onLogInClick}
-          >
-            Log In
-          </button>
+          <Button onClick={onLogInClick}>Log In</Button>
         </div>
         <GoogleLogin
           text="continue_with"
@@ -116,13 +111,7 @@ const Login = (): React.ReactElement => {
         />
       </form>
       <div>
-        <button
-          className="btn btn-primary"
-          type="button"
-          onClick={onSignUpClick}
-        >
-          Sign Up
-        </button>
+        <Button onClick={onSignUpClick}>Sign Up</Button>
       </div>
     </div>
   );

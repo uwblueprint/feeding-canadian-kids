@@ -1,3 +1,4 @@
+import { Button as ChakraButton, Wrap } from "@chakra-ui/react";
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,15 +12,7 @@ type ButtonProps = { text: string; path: string };
 
 const Button = ({ text, path }: ButtonProps) => {
   const navigate = useNavigate();
-  return (
-    <button
-      className="btn btn-primary"
-      onClick={() => navigate(path)}
-      type="button"
-    >
-      {text}
-    </button>
-  );
+  return <ChakraButton onClick={() => navigate(path)}>{text}</ChakraButton>;
 };
 
 const TeamInfoDisplay = () => {
@@ -44,7 +37,7 @@ const Default = (): React.ReactElement => {
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
       <h1>Default Page</h1>
-      <div className="btn-group" style={{ paddingRight: "10px" }}>
+      <Wrap>
         <Logout />
         <RefreshCredentials />
         <ResetPassword />
@@ -65,8 +58,7 @@ const Default = (): React.ReactElement => {
         />
         <Button text="Edit Team" path={Routes.EDIT_TEAM_PAGE} />
         <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
-      </div>
-
+      </Wrap>
       <div style={{ height: "2rem" }} />
 
       <TeamInfoDisplay />

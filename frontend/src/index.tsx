@@ -11,6 +11,7 @@ import App from "./App";
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
+import defaultTheme from "./theme";
 import { AuthenticatedUser } from "./types/AuthTypes";
 import * as auth from "./utils/AuthUtils";
 import {
@@ -81,7 +82,7 @@ createRoot(root).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}>
       <ApolloProvider client={apolloClient}>
-        <ChakraProvider>
+        <ChakraProvider theme={defaultTheme}>
           <App />
         </ChakraProvider>
       </ApolloProvider>

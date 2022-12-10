@@ -1,4 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
+import { Button } from "@chakra-ui/react";
 import React, { useContext } from "react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
@@ -24,11 +25,7 @@ const RefreshCredentials = (): React.ReactElement => {
     }
   };
 
-  return (
-    <button type="button" className="btn btn-primary" onClick={onRefreshClick}>
-      Refresh Credentials
-    </button>
-  );
+  return <Button onClick={onRefreshClick}>Refresh Credentials</Button>;
 };
 
 export default RefreshCredentials;

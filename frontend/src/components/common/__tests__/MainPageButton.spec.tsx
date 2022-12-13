@@ -1,5 +1,7 @@
 import React from "react";
+import { BrowserRouter } from "react-router-dom";
 import { create } from "react-test-renderer";
+
 import MainPageButton from "../MainPageButton";
 
 // Example snapshot test.
@@ -9,7 +11,11 @@ import MainPageButton from "../MainPageButton";
 
 describe("MainPageButton component", () => {
   it("should match the snapshot", () => {
-    const button = create(<MainPageButton />);
+    const button = create(
+      <BrowserRouter>
+        <MainPageButton />
+      </BrowserRouter>,
+    );
     expect(button.toJSON()).toMatchSnapshot();
   });
 });

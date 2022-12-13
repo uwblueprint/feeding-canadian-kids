@@ -1,19 +1,22 @@
-import React, { useContext } from "react";
 import { gql, useMutation } from "@apollo/client";
+import { Button } from "@chakra-ui/react";
+import React, { useContext } from "react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AuthContext from "../../contexts/AuthContext";
 
 const REFRESH = gql`
   mutation Refresh {
-    refresh
+    refresh {
+      accessToken
+    }
   }
 `;
 
 const RefreshCredentials = (): React.ReactElement => {
   const { setAuthenticatedUser } = useContext(AuthContext);
 
-  const [refresh] = useMutation<{ refresh: string }>(REFRESH);
+  const [refresh] = useMutation<{ refresh: { accessToken: string } }>(REFRESH);
 
   const onRefreshClick = async () => {
     const success = await authAPIClient.refresh(refresh);
@@ -22,11 +25,7 @@ const RefreshCredentials = (): React.ReactElement => {
     }
   };
 
-  return (
-    <button type="button" className="btn btn-primary" onClick={onRefreshClick}>
-      Refresh Credentials
-    </button>
-  );
+  return <Button onClick={onRefreshClick}>Refresh Credentials</Button>;
 };
 
 export default RefreshCredentials;

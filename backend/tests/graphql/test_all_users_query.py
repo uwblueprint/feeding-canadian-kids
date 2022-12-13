@@ -74,7 +74,10 @@ def test_all_users_filter(mocker):
 def test_user_by_id(mocker):
     mock_result = UserDTO("1", "John", "Doe", "JohnDoe@email.com", "Admin")
 
-    mocker.patch("app.services.implementations.user_service.UserService.get_user_by_id", return_value=mock_result)
+    mocker.patch(
+        "app.services.implementations.user_service.UserService.get_user_by_id",
+        return_value=mock_result,
+    )
 
     schema = graphene.Schema(query=UserQueries)
     client = Client(schema)
@@ -89,9 +92,7 @@ def test_user_by_id(mocker):
 
     expected_result = {
         "data": {
-            "user": {
-                "name": "John Doe", "email": "JohnDoe@email.com", "role": "Admin"
-            }
+            "user": {"name": "John Doe", "email": "JohnDoe@email.com", "role": "Admin"}
         }
     }
 

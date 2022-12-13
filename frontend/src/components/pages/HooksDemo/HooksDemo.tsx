@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable no-console */
 
+/* eslint-disable no-console */
 // ***************************************************************
 // This page is meant to be a hooks crash course and demo basic
 // hook functionality in React.
@@ -18,7 +18,6 @@
 // https://github.com/uwblueprint/arbitrium/blob/master/src/Hooks/usePromise.ts
 // https://github.com/uwblueprint/arbitrium/blob/master/src/Hooks/useAsyncFetch.ts
 // ***************************************************************
-
 // ***************************************************************
 // FUNCTIONAL COMPONENTS VS. CLASS COMPONENTS
 //
@@ -33,10 +32,9 @@
 // Hooks allow us to inject state into functional components,
 // and retain values between renders of the component.
 // ***************************************************************
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
 import EmojiSection from "./EmojiSection";
-
 import { EMOJIS } from "./emojis";
 import "./styles.css";
 

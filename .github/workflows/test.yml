@@ -1,0 +1,63 @@
+name: Test codebase
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+      - "backend/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+      - "backend/**"
+
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Filter changed files
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - "frontend/**"
+            backend:
+              - "backend/**"
+
+      - name: Set up Node.js
+        if: steps.changes.outputs.frontend == 'true'
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.19.3"
+          cache: "yarn"
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Install Node.js dependencies
+        if: steps.changes.outputs.frontend == 'true'
+        run: yarn --cwd ./frontend --prefer-offline
+
+      - name: Test frontend
+        if: steps.changes.outputs.frontend == 'true'
+        working-directory: ./frontend
+        run: yarn test
+
+      - name: Install Python dependencies
+        if: steps.changes.outputs.backend == 'true'
+        working-directory: ./backend
+        run: pip install -r requirements.txt
+
+      - name: Test backend
+        if: steps.changes.outputs.backend == 'true'
+        working-directory: ./backend
+        env:
+          FIREBASE_SVC_ACCOUNT_PRIVATE_KEY: ${{ secrets.FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_STAGING }}
+          FIREBASE_STORAGE_DEFAULT_BUCKET: ${{ secrets.FIREBASE_STORAGE_DEFAULT_BUCKET_STAGING }}
+        run: python -m pytest

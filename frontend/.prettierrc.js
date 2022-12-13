@@ -1,3 +1,6 @@
 module.exports = {
-    trailingComma: "all",
+  trailingComma: "all",
+  importOrder: ["^\\./", "^\\.\\./"],
+  importOrderSeparation: true,
+  importOrderSortSpecifiers: true,
 };

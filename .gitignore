@@ -10,3 +10,4 @@
 !.vscode/launch.json
 **/*.cache
 **/*.egg-info
+**/*.eslintcache

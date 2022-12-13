@@ -1,6 +1,8 @@
-import React from "react";
 import { render } from "@testing-library/react";
-import Default from "../Default";
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+
+import Dashboard from "../Dashboard";
 
 // Example React test.
 // For more information on React component testing, visit:
@@ -12,9 +14,13 @@ jest.mock("@apollo/client", () => ({
   useMutation: () => [],
 }));
 
-describe("Default page", () => {
+describe("Dashboard page", () => {
   it("Should render Create Entity button", () => {
-    const page = render(<Default />);
+    const page = render(
+      <BrowserRouter>
+        <Dashboard />
+      </BrowserRouter>,
+    );
     const button = page.queryByText("Create Entity");
     expect(button).toBeVisible();
   });

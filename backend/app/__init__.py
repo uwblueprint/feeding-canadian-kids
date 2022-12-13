@@ -5,7 +5,7 @@ import firebase_admin
 from flask import Flask
 from flask.cli import ScriptInfo
 from flask_cors import CORS
-from graphql_server.flask import GraphQLView
+from .graphql.graphql_with_cookies import GraphQLViewWithCookies
 from logging.config import dictConfig
 
 from .config import app_config
@@ -27,7 +27,7 @@ def create_app(config_name):
             },
             "formatters": {
                 "default": {
-                    "format": "%(asctime)s-%(levelname)s-%(name)s::%(module)s,%(lineno)s: %(message)s"
+                    "format": "%(asctime)s-%(levelname)s-%(name)s::%(module)s,%(lineno)s: %(message)s"  # noqa
                 },
             },
             "root": {"level": "ERROR", "handlers": ["wsgi"]},
@@ -42,7 +42,7 @@ def create_app(config_name):
 
     app.add_url_rule(
         "/graphql",
-        view_func=GraphQLView.as_view(
+        view_func=GraphQLViewWithCookies.as_view(
             "graphql",
             schema=graphql_schema,
             graphiql=True,
@@ -53,7 +53,7 @@ def create_app(config_name):
         "http://localhost:3000",
         "https://uw-blueprint-starter-code.firebaseapp.com",
         "https://uw-blueprint-starter-code.web.app",
-        re.compile("^https:\/\/uw-blueprint-starter-code--pr.*\.web\.app$"),
+        re.compile(r"^https:\/\/uw-blueprint-starter-code--pr.*\.web\.app$"),
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
     CORS(app)
@@ -82,9 +82,10 @@ def create_app(config_name):
         {"storageBucket": os.getenv("FIREBASE_STORAGE_DEFAULT_BUCKET")},
     )
 
-    from . import models, rest
+    from . import models, rest, graphql
 
     models.init_app(app)
     rest.init_app(app)
+    graphql.init_app(app)
 
     return app

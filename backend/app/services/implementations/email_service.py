@@ -43,10 +43,7 @@ class EmailService(IEmailService):
         email = {"raw": base64.urlsafe_b64encode(message.as_string().encode()).decode()}
         try:
             sent_info = (
-                self.service.users()
-                .messages()
-                .send(userId=self.sender_email, body=email)
-                .execute()
+                self.service.users().messages().send(userId="me", body=email).execute()
             )
             return sent_info
         except Exception as e:
@@ -56,4 +53,4 @@ class EmailService(IEmailService):
                     reason=(reason if reason else str(e))
                 )
             )
-            raise err
+            raise e

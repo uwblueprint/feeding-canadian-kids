@@ -1,7 +1,6 @@
 import logging
 from functools import wraps
 
-import graphene
 from graphql import GraphQLError
 
 from ..utilities.wrap_methods import WrapMethods

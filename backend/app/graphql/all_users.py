@@ -32,7 +32,7 @@ class UserQueries(QueryList):
                             role=user.role,
                         )
                     )
-            return filtered[offset : offset + first]
+            return filtered[offset : offset + first]  # noqa: E203
 
         return [
             *map(
@@ -41,6 +41,6 @@ class UserQueries(QueryList):
                     email=user.email,
                     role=user.role,
                 ),
-                users[offset : offset + first],
+                users[offset : offset + first],  # noqa: E203
             )
         ]

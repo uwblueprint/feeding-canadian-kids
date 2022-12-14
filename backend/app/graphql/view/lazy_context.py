@@ -3,7 +3,7 @@ from graphene import Context
 
 class LazyAttribute(ABC):
     @abstractmethod
-    def __call__(self):
+    def __call__(self, context):
         pass
 
 class LazyContext(Context):

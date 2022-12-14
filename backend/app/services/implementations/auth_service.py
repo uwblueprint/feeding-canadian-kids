@@ -28,7 +28,7 @@ class AuthService(IAuthService):
         self.email_service = email_service
         self.firebase_rest_client = FirebaseRestClient(logger)
 
-    def generate_token(self, email, password):
+    def generate_token(self, email, password, **_):
         try:
             token = self.firebase_rest_client.sign_in_with_password(email, password)
             user = self.user_service.get_user_by_email(email)
@@ -41,7 +41,7 @@ class AuthService(IAuthService):
             )
             raise e
 
-    def generate_token_for_oauth(self, id_token):
+    def generate_token_for_oauth(self, id_token, user_to_create=None, **_):
         try:
             google_user = self.firebase_rest_client.sign_in_with_google(id_token)
             # google_user["idToken"] refers to the user's Firebase Auth access token
@@ -53,15 +53,15 @@ class AuthService(IAuthService):
                 user = self.user_service.get_user_by_email(google_user["email"])
                 return AuthDTO(**{**token.__dict__, **user.__dict__})
             except Exception:
-                pass
+                if user_to_create is None:
+                    raise
 
             user = self.user_service.create_user(
                 CreateUserDTO(
-                    first_name=google_user["firstName"],
-                    last_name=google_user["lastName"],
-                    email=google_user["email"],
-                    role="User",
-                    password="",
+                    **{
+                        **user_to_create.__dict__,
+                        "email": google_user["email"],
+                    }
                 ),
                 auth_id=google_user["localId"],
                 signup_method="GOOGLE",
@@ -162,41 +162,47 @@ class AuthService(IAuthService):
             )
             raise e
 
-    def is_authorized_by_role(self, access_token, roles):
+    def __is_authorized_by_condition(self, context, condition):
+        return context.firebase_user.email_verified and (
+            condition or context.user.info.role == "Admin"
+        )
+
+    def is_authenticated(self, context):
         try:
-            decoded_id_token = firebase_admin.auth.verify_id_token(
-                access_token, check_revoked=True
-            )
-            user_role = self.user_service.get_user_role_by_auth_id(
-                decoded_id_token["uid"]
-            )
-            firebase_user = firebase_admin.auth.get_user(decoded_id_token["uid"])
-            return firebase_user.email_verified and user_role in roles
+            return context.firebase_user.email_verified
         except Exception:
             return False
 
-    def is_authorized_by_user_id(self, access_token, requested_user_id):
+    def is_authorized_by_role(self, context, *roles):
         try:
-            decoded_id_token = firebase_admin.auth.verify_id_token(
-                access_token, check_revoked=True
+            return self.__is_authorized_by_condition(
+                context,
+                context.user.info.role in roles,
             )
-            token_user_id = self.user_service.get_user_id_by_auth_id(
-                decoded_id_token["uid"]
-            )
-            firebase_user = firebase_admin.auth.get_user(decoded_id_token["uid"])
-            return firebase_user.email_verified and token_user_id == requested_user_id
         except Exception:
             return False
 
-    def is_authorized_by_email(self, access_token, requested_email):
+    def is_authorized_by_user_id(self, context, requested_user_id):
         try:
-            decoded_id_token = firebase_admin.auth.verify_id_token(
-                access_token, check_revoked=True
+            return self.__is_authorized_by_condition(
+                context, requested_user_id == str(context.user.id)
             )
-            firebase_user = firebase_admin.auth.get_user(decoded_id_token["uid"])
-            return (
-                firebase_user.email_verified
-                and decoded_id_token["email"] == requested_email
+        except Exception:
+            return False
+
+    def is_authorized_by_self(self, context, requested_user_id):
+        try:
+            return context.firebase_user.email_verified and requested_user_id == str(
+                context.user.id
+            )
+        except Exception:
+            return False
+
+    def is_authorized_by_email(self, context, requested_email):
+        try:
+            return self.__is_authorized_by_condition(
+                context,
+                requested_email == context.firebase_user.email,
             )
         except Exception:
             return False

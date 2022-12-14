@@ -162,41 +162,49 @@ class AuthService(IAuthService):
             )
             raise e
 
-    def is_authorized_by_role(self, access_token, roles):
+    def __is_authorized_by_condition(self, context, condition):
+        return context.firebase_user.email_verified and (
+            condition or context.user.info.role == "Admin"
+        )
+
+    def is_authenticated(self, context):
         try:
-            decoded_id_token = firebase_admin.auth.verify_id_token(
-                access_token, check_revoked=True
+            return context.firebase_user.email_verified
+        except Exception as e:
+            return False
+
+    def is_authorized_by_role(self, context, *roles):
+        try:
+            return self.__is_authorized_by_condition(
+                context,
+                context.user.info.role in roles,
             )
-            user_role = self.user_service.get_user_role_by_auth_id(
-                decoded_id_token["uid"]
+        except Exception as e:
+            return False
+
+    def is_authorized_by_user_id(self, context, requested_user_id):
+        try:
+            return self.__is_authorized_by_condition(
+                context,
+                requested_user_id == str(context.user.id)
             )
-            firebase_user = firebase_admin.auth.get_user(decoded_id_token["uid"])
-            return firebase_user.email_verified and user_role in roles
         except Exception:
             return False
 
-    def is_authorized_by_user_id(self, access_token, requested_user_id):
+    def is_authorized_by_self(self, context, requested_user_id):
         try:
-            decoded_id_token = firebase_admin.auth.verify_id_token(
-                access_token, check_revoked=True
+            return (
+                context.firebase_user.email_verified
+                and requested_user_id == str(context.user.id)
             )
-            token_user_id = self.user_service.get_user_id_by_auth_id(
-                decoded_id_token["uid"]
-            )
-            firebase_user = firebase_admin.auth.get_user(decoded_id_token["uid"])
-            return firebase_user.email_verified and token_user_id == requested_user_id
         except Exception:
             return False
 
     def is_authorized_by_email(self, access_token, requested_email):
         try:
-            decoded_id_token = firebase_admin.auth.verify_id_token(
-                access_token, check_revoked=True
-            )
-            firebase_user = firebase_admin.auth.get_user(decoded_id_token["uid"])
-            return (
-                firebase_user.email_verified
-                and decoded_id_token["email"] == requested_email
+            return self.__is_authorized_by_condition(
+                context,
+                requested_email == context.firebase_user.email,
             )
         except Exception:
             return False

@@ -82,10 +82,9 @@ def create_app(config_name):
         {"storageBucket": os.getenv("FIREBASE_STORAGE_DEFAULT_BUCKET")},
     )
 
-    from . import models, rest, graphql
+    from . import models, graphql
 
     models.init_app(app)
-    rest.init_app(app)
     graphql.init_app(app)
 
     return app

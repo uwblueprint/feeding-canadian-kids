@@ -1,4 +1,3 @@
-from flask import current_app, jsonify, request
 from functools import wraps
 from ..services import services
 from ..error_handling import ClientError
@@ -7,7 +6,8 @@ from ..error_handling import ClientError
 def make_decorator(fn_name, lookup_params=False):
     def requires_authorization(*params):
         """
-        Determine if request is authorized based on the specific provided validation method.
+        Determine if request is authorized based on the specific provided
+        validation method.
 
         :param roles: the set of authorized roles to check for
         :type roles: {str}
@@ -28,7 +28,9 @@ def make_decorator(fn_name, lookup_params=False):
             return wrapper
 
         return decorator
+
     return requires_authorization
+
 
 # Require the user to be logged in.
 requires_login = make_decorator("is_authenticated")

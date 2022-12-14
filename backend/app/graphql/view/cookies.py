@@ -10,9 +10,7 @@ class Cookies:
 
     def __setattr__(self, key, value):
         # Prevent infinite recursion in __init__.
-        if key.startswith("_Cookies__") and not hasattr(
-            self, "_Cookies__response_del"
-        ):
+        if key.startswith("_Cookies__") and not hasattr(self, "_Cookies__response_del"):
             return super().__setattr__(key, value)
 
         # Don't allow reassigning class methods.

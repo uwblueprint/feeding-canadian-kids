@@ -1,15 +1,17 @@
-import pytest
 from unittest.mock import Mock
 from app.graphql.view.lazy_context import LazyAttribute, LazyContext
 
+
 def mock_function():
     pass
+
 
 def test_normal_attributes():
     context = LazyContext(foo=1, bar=2, baz=mock_function)
     assert context.foo == 1
     assert context.bar == 2
     assert context.baz == mock_function
+
 
 def test_lazy_attribute():
     class SampleAttribute(LazyAttribute):

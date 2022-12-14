@@ -1,6 +1,5 @@
 from flask import g
 from graphql_server.flask import GraphQLView as BaseGraphQLView
-from collections.abc import MutableMapping
 from .cookies import Cookies
 from .lazy_firebase_user import LazyFirebaseUser
 from .lazy_user import LazyUser
@@ -14,7 +13,6 @@ def get_access_token(request):
         if len(auth_header_parts) >= 2 and auth_header_parts[0].lower() == "bearer":
             return auth_header_parts[1]
     return None
-
 
 
 class GraphQLView(BaseGraphQLView):

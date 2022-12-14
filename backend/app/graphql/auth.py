@@ -116,9 +116,7 @@ class Refresh(Mutation):
     access_token = graphene.String()
 
     def mutate(self, info):
-        token = services["auth_service"].renew_token(
-            info.context.cookies.refresh_token
-        )
+        token = services["auth_service"].renew_token(info.context.cookies.refresh_token)
         # Just in case we were granted a new refresh token.
         info.context.cookies.refresh_token = token.refresh_token
         return Refresh(access_token=token.access_token)

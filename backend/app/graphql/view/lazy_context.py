@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from graphene import Context
 
+
 class LazyAttribute(ABC):
     @abstractmethod
     def __call__(self, context):
         pass
+
 
 class LazyContext(Context):
     def __init__(self, **params):

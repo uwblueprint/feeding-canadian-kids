@@ -170,7 +170,7 @@ class AuthService(IAuthService):
     def is_authenticated(self, context):
         try:
             return context.firebase_user.email_verified
-        except Exception as e:
+        except Exception:
             return False
 
     def is_authorized_by_role(self, context, *roles):
@@ -179,28 +179,26 @@ class AuthService(IAuthService):
                 context,
                 context.user.info.role in roles,
             )
-        except Exception as e:
+        except Exception:
             return False
 
     def is_authorized_by_user_id(self, context, requested_user_id):
         try:
             return self.__is_authorized_by_condition(
-                context,
-                requested_user_id == str(context.user.id)
+                context, requested_user_id == str(context.user.id)
             )
         except Exception:
             return False
 
     def is_authorized_by_self(self, context, requested_user_id):
         try:
-            return (
-                context.firebase_user.email_verified
-                and requested_user_id == str(context.user.id)
+            return context.firebase_user.email_verified and requested_user_id == str(
+                context.user.id
             )
         except Exception:
             return False
 
-    def is_authorized_by_email(self, access_token, requested_email):
+    def is_authorized_by_email(self, context, requested_email):
         try:
             return self.__is_authorized_by_condition(
                 context,

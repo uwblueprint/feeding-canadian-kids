@@ -13,7 +13,7 @@ class GraphQLView(BaseGraphQLView):
     def __setup_request(self):
         # Insert the request cookies into the context.
         context = Context(**super().get_context())
-        if isinstance(context, MutableMapping) and "cookies" not in context:
+        if not hasattr(context, "cookies"):
             context.cookies = Cookies(context)
         g.context = context
 

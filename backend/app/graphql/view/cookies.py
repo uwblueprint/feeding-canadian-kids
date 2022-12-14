@@ -1,5 +1,6 @@
 from werkzeug.datastructures import MultiDict
 
+
 class Cookies:
     def __init__(self, context):
         cookies_dict = context.request.cookies
@@ -8,9 +9,8 @@ class Cookies:
 
     def __setattr__(self, key, value):
         # Prevent infinite recursion in __init__.
-        if (
-            key.startswith("_Cookies__")
-            and not hasattr(self, "_Cookies__response_dict")
+        if key.startswith("_Cookies__") and not hasattr(
+            self, "_Cookies__response_dict"
         ):
             return super().__setattr__(key, value)
 
@@ -28,10 +28,11 @@ class Cookies:
         return self.__request_dict.get(key)
 
     def __repr__(self):
-        return f"Cookies(request={self.__request_dict}, response={self.__response_dict})"
+        return (
+            f"Cookies(request={self.__request_dict}, response={self.__response_dict})"
+        )
 
     def add_to_response(self, response):
         for key, value in self.__response_dict.items():
             response.set_cookie(key, value, httponly=True)
         return response
-

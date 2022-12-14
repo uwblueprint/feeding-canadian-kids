@@ -24,7 +24,8 @@ class UserInput(graphene.InputObjectType):
 def BaseLogin(method_name):
     class LoginMutation(Mutation):
         """
-        Returns access token in response body and sets refreshToken as an httpOnly cookie
+        Returns access token in response body and sets refreshToken as an
+        httpOnly cookie
         """
 
         class Arguments:
@@ -43,7 +44,12 @@ def BaseLogin(method_name):
             method = getattr(services["auth_service"], method_name)
             auth_dto = method(email=email, password=password, id_token=id_token)
             # TODO(jfdoming): For oauth user creation, once we have onboarding requests:
-            # auth_dto = method(email=email, password=password, id_token=id_token, user_to_create=UserInfo(contact_name="John Doe", role="ASP"))
+            # auth_dto = method(
+            #     email=email,
+            #     password=password,
+            #     id_token=id_token,
+            #     user_to_create=UserInfo(contact_name="John Doe", role="ASP")
+            # )
             # first_name, last_name, and role would come from the user info
             info.context["response_cookies"]["refreshToken"] = auth_dto.refresh_token
             newUser = {
@@ -55,10 +61,13 @@ def BaseLogin(method_name):
                 "role": auth_dto.role,
             }
             return Login(**newUser)
+
     return LoginMutation
+
 
 Login = BaseLogin("generate_token")
 LoginWithGoogle = BaseLogin("generate_token_for_oauth")
+
 
 class Register(Mutation):
     """

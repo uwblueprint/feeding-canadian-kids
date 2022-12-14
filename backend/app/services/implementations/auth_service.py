@@ -28,7 +28,7 @@ class AuthService(IAuthService):
         self.email_service = email_service
         self.firebase_rest_client = FirebaseRestClient(logger)
 
-    def generate_token(self, email, password):
+    def generate_token(self, email, password, **_):
         try:
             token = self.firebase_rest_client.sign_in_with_password(email, password)
             user = self.user_service.get_user_by_email(email)
@@ -41,7 +41,7 @@ class AuthService(IAuthService):
             )
             raise e
 
-    def generate_token_for_oauth(self, id_token):
+    def generate_token_for_oauth(self, id_token, user_to_create=None, **_):
         try:
             google_user = self.firebase_rest_client.sign_in_with_google(id_token)
             # google_user["idToken"] refers to the user's Firebase Auth access token
@@ -53,15 +53,15 @@ class AuthService(IAuthService):
                 user = self.user_service.get_user_by_email(google_user["email"])
                 return AuthDTO(**{**token.__dict__, **user.__dict__})
             except Exception:
-                pass
+                if user_to_create is None:
+                    raise
 
             user = self.user_service.create_user(
                 CreateUserDTO(
-                    first_name=google_user["firstName"],
-                    last_name=google_user["lastName"],
-                    email=google_user["email"],
-                    role="User",
-                    password="",
+                    **{
+                        **user_to_create.__dict__,
+                        "email": google_user["email"],
+                    }
                 ),
                 auth_id=google_user["localId"],
                 signup_method="GOOGLE",

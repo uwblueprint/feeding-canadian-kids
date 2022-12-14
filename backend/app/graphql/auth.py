@@ -51,7 +51,7 @@ def BaseLogin(method_name):
             #     user_to_create=UserInfo(contact_name="John Doe", role="ASP")
             # )
             # first_name, last_name, and role would come from the user info
-            info.context["response_cookies"]["refreshToken"] = auth_dto.refresh_token
+            info.context.cookies.refresh_token = auth_dto.refresh_token
             newUser = {
                 "access_token": auth_dto.access_token,
                 "id": auth_dto.id,
@@ -95,7 +95,7 @@ class Register(Mutation):
         userDTO = CreateUserDTO(**kwargs)
         services["user_service"].create_user(userDTO)
         auth_dto = services["auth_service"].generate_token(user.email, user.password)
-        info.context["response_cookies"]["refreshToken"] = auth_dto.refresh_token
+        info.context.cookies.refresh_token = auth_dto.refresh_token
         services["auth_service"].send_email_verification_link(user.email)
         newUser = {
             "access_token": auth_dto.access_token,
@@ -117,10 +117,10 @@ class Refresh(Mutation):
 
     def mutate(self, info):
         token = services["auth_service"].renew_token(
-            info.context["response_cookies"]["refreshToken"]
+            info.context.cookies.refresh_token
         )
         # Just in case we were granted a new refresh token.
-        info.context["response_cookies"]["refreshToken"] = token.refresh_token
+        info.context.cookies.refresh_token = token.refresh_token
         return Refresh(access_token=token.access_token)
 
 
@@ -136,7 +136,7 @@ class Logout(Mutation):
 
     def mutate(self, info, user_id):
         services["auth_service"].revoke_tokens(user_id)
-        del info.context["response_cookies"]["refreshToken"]
+        del info.context.cookies.refresh_token
         return Logout(success=True)
 
 

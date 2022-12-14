@@ -21,35 +21,52 @@ class UserInput(graphene.InputObjectType):
     last_name = graphene.String(required=True)
 
 
-class Login(Mutation):
-    """
-    Returns access token in response body and sets refreshToken as an httpOnly cookie
-    """
+def BaseLogin(method_name):
+    class LoginMutation(Mutation):
+        """
+        Returns access token in response body and sets refreshToken as an
+        httpOnly cookie
+        """
 
-    class Arguments:
+        class Arguments:
+            email = graphene.String()
+            password = graphene.String()
+            id_token = graphene.String()
+
+        access_token = graphene.String()
+        id = graphene.ID()
+        first_name = graphene.String()
+        last_name = graphene.String()
         email = graphene.String()
-        password = graphene.String()
-        id_token = graphene.String()
+        role = graphene.String()
 
-    access_token = graphene.String()
-    id = graphene.ID()
-    first_name = graphene.String()
-    last_name = graphene.String()
-    email = graphene.String()
-    role = graphene.String()
+        def mutate(self, info, email=None, password=None, id_token=None):
+            method = getattr(services["auth_service"], method_name)
+            auth_dto = method(email=email, password=password, id_token=id_token)
+            # TODO(jfdoming): For oauth user creation, once we have onboarding requests:
+            # auth_dto = method(
+            #     email=email,
+            #     password=password,
+            #     id_token=id_token,
+            #     user_to_create=UserInfo(contact_name="John Doe", role="ASP")
+            # )
+            # first_name, last_name, and role would come from the user info
+            info.context.cookies.refresh_token = auth_dto.refresh_token
+            newUser = {
+                "access_token": auth_dto.access_token,
+                "id": auth_dto.id,
+                "first_name": auth_dto.first_name,
+                "last_name": auth_dto.last_name,
+                "email": auth_dto.email,
+                "role": auth_dto.role,
+            }
+            return Login(**newUser)
 
-    def mutate(self, info, email, password):
-        auth_dto = services["auth_service"].generate_token(email, password)
-        info.context["response_cookies"]["refreshToken"] = auth_dto.refresh_token
-        newUser = {
-            "access_token": auth_dto.access_token,
-            "id": auth_dto.id,
-            "first_name": auth_dto.first_name,
-            "last_name": auth_dto.last_name,
-            "email": auth_dto.email,
-            "role": auth_dto.role,
-        }
-        return Login(**newUser)
+    return LoginMutation
+
+
+Login = BaseLogin("generate_token")
+LoginWithGoogle = BaseLogin("generate_token_for_oauth")
 
 
 class Register(Mutation):
@@ -78,7 +95,7 @@ class Register(Mutation):
         userDTO = CreateUserDTO(**kwargs)
         services["user_service"].create_user(userDTO)
         auth_dto = services["auth_service"].generate_token(user.email, user.password)
-        info.context["response_cookies"]["refreshToken"] = auth_dto.refresh_token
+        info.context.cookies.refresh_token = auth_dto.refresh_token
         services["auth_service"].send_email_verification_link(user.email)
         newUser = {
             "access_token": auth_dto.access_token,
@@ -99,11 +116,9 @@ class Refresh(Mutation):
     access_token = graphene.String()
 
     def mutate(self, info):
-        token = services["auth_service"].renew_token(
-            info.context["response_cookies"]["refreshToken"]
-        )
+        token = services["auth_service"].renew_token(info.context.cookies.refresh_token)
         # Just in case we were granted a new refresh token.
-        info.context["response_cookies"]["refreshToken"] = token.refresh_token
+        info.context.cookies.refresh_token = token.refresh_token
         return Refresh(access_token=token.access_token)
 
 
@@ -119,7 +134,7 @@ class Logout(Mutation):
 
     def mutate(self, info, user_id):
         services["auth_service"].revoke_tokens(user_id)
-        del info.context["response_cookies"]["refreshToken"]
+        del info.context.cookies.refresh_token
         return Logout(success=True)
 
 
@@ -140,6 +155,7 @@ class ResetPassword(Mutation):
 
 class AuthMutations(MutationList):
     login = Login.Field()
+    login_with_google = LoginWithGoogle.Field()
     register = Register.Field()
     refresh = Refresh.Field()
     logout = Logout.Field()

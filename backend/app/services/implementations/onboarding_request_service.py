@@ -1,6 +1,6 @@
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import OnboardingRequest
-from ...models.user_info import UserInfo
+from ...models.user_info import UserInfo, ASPInfo, DonorInfo
 
 
 class OnboardingRequestService(IOnboardingRequestService):
@@ -16,12 +16,33 @@ class OnboardingRequestService(IOnboardingRequestService):
     def create_onboarding_request(self, userInfo):
         try:
             # Create initial UserInfo object
-            user_info = UserInfo(
-                contact_name=userInfo.contact_name,
-                contact_email=userInfo.contact_email,
-                contact_phone=userInfo.contact_phone,
-                role=userInfo.role,
-            )
+            if userInfo.role == "Donor":
+                lat, lng = userInfo.location["latitude"], userInfo.location["longitude"]
+                user_info = DonorInfo(
+                    contact_name=userInfo.contact_name,
+                    contact_email=userInfo.contact_email,
+                    contact_phone=userInfo.contact_phone,
+                    role=userInfo.role,
+                    location=[lat, lng],
+                )
+            elif userInfo.role == "ASP":
+                lat, lng = userInfo.location["latitude"], userInfo.location["longitude"]
+                user_info = ASPInfo(
+                    contact_name=userInfo.contact_name,
+                    contact_email=userInfo.contact_email,
+                    contact_phone=userInfo.contact_phone,
+                    role=userInfo.role,
+                    priority=userInfo.priority,
+                    location=[lat, lng],
+                )
+            else:
+                user_info = UserInfo(
+                    contact_name=userInfo.contact_name,
+                    contact_email=userInfo.contact_email,
+                    contact_phone=userInfo.contact_phone,
+                    role=userInfo.role,
+                )
+
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(
                 info=user_info,

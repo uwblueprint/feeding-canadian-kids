@@ -6,15 +6,16 @@ from .types import (
     Mutation,
     MutationList,
 )
+from .shared import GeoLocationInput
 
 # Object Types
-
-
 class UserInfoInput(graphene.InputObjectType):
     contact_name = graphene.String(required=True)
     contact_email = graphene.String(required=True)
     contact_phone = graphene.String()
     role = graphene.String(required=True)
+    priority = graphene.Int()
+    location = graphene.Argument(GeoLocationInput)
 
 
 class UserInfo(graphene.ObjectType):

@@ -4,61 +4,61 @@ from ..types import (
     Mutation,
     MutationList,
 )
-from ...graphql.services import services
+from ..services import services
+from ..shared import GeoLocationInput, GeoLocationResponse
 
 # Input Types
-class GeoLocationInput(graphene.InputObjectType):
-    latitude = graphene.Float(required=True)
-    longitude = graphene.Float(required=True)
-class MealRequestTypeInput(graphene.InputObjectType):
-    tags = graphene.List(graphene.String, required=True)
+class ASPContactInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+    email = graphene.String(required=True)
+    phone = graphene.String()
+
+class CreateFoodRequestInput(graphene.InputObjectType):
+    dates = graphene.List(graphene.DateTime, required=True)
+    location = graphene.Argument(GeoLocationInput, required=True)
+    requestor_id = graphene.ID(required=True)
+    contacts = graphene.List(ASPContactInput, required=True)
     portions = graphene.Int(required=True)
-
-
-class CreateFoodRequestDatesInput(graphene.InputObjectType):
-    date = graphene.DateTime(required=True)
-    meal_types = graphene.List(MealRequestTypeInput, required=True)
+    dietary_restrictions = graphene.String(required=True)
+    delivery_notes = graphene.String(required=True)
 
 
 # Response Types
-class MealRequestTypeResponse(graphene.ObjectType):
-    tags = graphene.List(graphene.String, required=True)
-    portions = graphene.Int(required=True)
-    portions_fulfilled = graphene.Int()
 
+class ASPContactResponse(graphene.ObjectType):
+    name = graphene.String(required=True)
+    email = graphene.String(required=True)
+    phone = graphene.String()
 
 class CreateFoodRequestResponse(graphene.ObjectType):
     id = graphene.ID()
-    target_fulfillment_date = graphene.DateTime()
-    meal_types = graphene.List(MealRequestTypeResponse)
-    status = graphene.String()
-
-
-class CreateFoodRequestGroupResponse(graphene.ObjectType):
-    id = graphene.ID()
-    description = graphene.String()
-    requests = graphene.List(CreateFoodRequestResponse)
-    status = graphene.String()
+    date = graphene.DateTime()
+    location = graphene.Field(GeoLocationResponse) 
+    requestor_id = graphene.ID()
+    contacts = graphene.List(ASPContactResponse)
+    portions = graphene.Int()
+    portions_fulfilled = graphene.Int()
+    dietary_restrictions = graphene.String()
+    delivery_notes = graphene.String()
+    date_created = graphene.DateTime()
+    date_updated = graphene.DateTime()
+    date_fulfilled = graphene.DateTime()
 
 
 # Mutations
-class CreateFoodRequestGroup(Mutation):
+class CreateFoodRequests(Mutation):
     class Arguments:
-        description = graphene.String(required=True)
-        location = graphene.Argument(GeoLocationInput, required=True)
-        requestor = graphene.ID(required=True)
-        commitments = graphene.List(CreateFoodRequestDatesInput, required=True)
-        notes = graphene.String()
+        food_request_data = CreateFoodRequestInput(required=True)
 
     # return values
-    food_request_group = graphene.Field(CreateFoodRequestGroupResponse)
+    food_requests = graphene.List(CreateFoodRequestResponse)
 
-    def mutate(self, info, description, location, requestor, commitments, notes):
-        result = services["food_request_service"].create_food_request_group(
-            description=description, location=location, requestor=requestor, commitments=commitments, notes=notes, 
+    def mutate(self, info, food_request_data):
+        result = services["food_request_service"].create_food_requests(
+            food_request_data
         )
-        return CreateFoodRequestGroup(food_request_group=result)
+        return CreateFoodRequests(food_requests=result)
 
 
 class FoodRequestMutations(MutationList):
-    create_food_request_group = CreateFoodRequestGroup.Field()
+    create_food_requests = CreateFoodRequests.Field()

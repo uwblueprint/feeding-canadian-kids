@@ -1,132 +1,139 @@
-from ...models.food_request_group import FoodRequestGroup
-from ...models.food_request import FoodRequest, MealType
+from datetime import datetime
+from ...models.food_request import FoodRequest
 from ..interfaces.food_request_service import IFoodRequestService
+from ...utilities.types import FoodRequestStatus
+from ...utilities.location import convert_pointfield_to_coordinates
 
-# TODO: implement get_food_requests and get_food_requests_by_user
-# - ASPs will want to see all food requests
-# TODO: modify onboarding request creation to include ASP+donor location 
-# TODO: test query
-# - create users
-# - create food request groups
-# - query food request groups (donor, admin, asp)
-# - test limit, offset
-# - test filtering by status
-# - test sorting by priority + location
 class FoodRequestService(IFoodRequestService):
     def __init__(self, logger, user_service):
         self.logger = logger
         self.user_service = user_service
 
-    def create_food_request_group(self, description, location, requestor, commitments, notes):
+    def create_food_requests(self, food_request_data: dict):
         try:
-            # Create FoodRequestGroup
-            new_food_request_group = FoodRequestGroup(
-                description=description,
-                location = location, # TODO: initialize point field?
-                requestor=requestor,
-                status="Open",
-                notes = notes if notes else "",
-            )
+            now = datetime.utcnow
+            dates = food_request_data.pop("dates")
 
-            # Create FoodRequests
-            for commitment in commitments:
-                meal_types = [
-                    MealType(tags=meal_type.tags, portions=meal_type.portions, portions_fulfilled=0)
-                    for meal_type in commitment.meal_types
-                ]
-                new_food_request = FoodRequest(
-                    target_fulfillment_date=commitment.date,
-                    status="Open",
-                    meal_types=meal_types,
-                )
-                new_food_request_group.requests.append(new_food_request)
+            # format location
+            location = food_request_data.pop("location")
+            lat, lng = location["latitude"], location["longitude"]
 
-            new_food_request_group.save()
+            # priority of the ASP
+            priority = self.__get_requestor_priority(food_request_data["requestor_id"])
+
+            requests = [FoodRequest(
+                    **food_request_data, 
+                    date=date,
+                    location=[lat, lng],
+                    portions_fulfilled=0,
+                    date_created=now,
+                    date_updated=now,
+                    is_open=True,
+                    priority=priority
+                ) for date in dates
+            ]
+            FoodRequest.objects.insert(requests)
+            return map(lambda x: {
+                **x.to_serializable_dict(),
+                "status": self.__get_food_request_status(x),
+                "location": {
+                    "latitude": lat,
+                    "longitude": lng
+                }
+            }, requests)
         except Exception as error:
             self.logger.error(str(error))
             raise error
 
-        return new_food_request_group.to_serializable_dict()
-    
-    def get_food_request_groups(self, limit, offset, status=None, is_matched=None, near_location=None):
+    def get_food_requests(self, limit, offset, status=None, near_location=None):
         try:
-            result = FoodRequestGroup.objects()
+            result = FoodRequest.objects()
+
             if status is not None:
-                result = result.filter(status=status)
-            if is_matched is not None:
-                result = result.filter(donor__exists=is_matched)
+                result = self.__filter_food_requests_by_status(result, status) 
+
             if near_location is not None:
-                # TODO: adjust max distance
-                result = result.filter(location__near=near_location, location__max_distance=15000) 
-
-                def get_asp_priority(food_request_group):
-                    requestor = self.user_service.get_user_by_id(food_request_group.requestor)
-                    return requestor.priority
+                result.aggregate([
+                    # outputs documents in order of nearest to farthest
+                    {
+                        "$geoNear": {
+                            "key": "location",
+                            "near": near_location,
+                            "distanceField": "distance",
+                            "maxDistance": 15000,
+                            "spherical": True
+                        }
+                    },
+                    # sort by priority - lower number = higher priority
+                    {
+                        "$sort": {
+                            "priority": 1
+                        }
+                    }
+                ])
                 
-                # TODO: create custom sort on priority
-                # def get_distance(food_request_group):
-                    # return food_request_group.location.distance(near_location)
-
-                sort_arr = map(lambda x: (x, get_asp_priority(x)), result)
-                sort_arr.sort(key=lambda x: x[1])
-
-            result = result[offset: offset+limit]
+            return map(lambda x: {
+                **x.to_serializable_dict(),
+                "status": self.__get_food_request_status(x),
+                "location": convert_pointfield_to_coordinates(x["location"])
+            }, result.skip(offset).limit(limit))
         except Exception as e:
             self.logger.error(str(e))
             raise e
-
-        return map(lambda x: x.to_serializable_dict(), result)
-
-    def get_food_request_groups_by_user(self, limit, offset, user_id, user_role, status):
-        try:
-            result = self.get_food_request_groups(status=status)
-            if user_role == "ASP":
-                return result.filter(requestor=user_id)
-            elif user_role == "Donor":
-                return result.filter(donor=user_id)
-
-            result = result[offset: offset+limit]
-        except Exception as e:
-            self.logger.error(str(e))
-            raise e
-
-        return map(lambda x: x.to_serializable_dict(), result)
-
-    # TODO: maybe it's better to ditch the food_request_group??
-    # - think about this
-    # - denormalizing is better than normalizing
-    def get_food_requests(self, limit, offset, status=None):
-        try:
-            food_request_groups = FoodRequestGroup.objects()
-
-            def denormalize_request_group(food_request_group):
-                requests = map(lambda x: x.to_serializable_dict(), food_request_groups.requests)
-                return map(lambda x: {**x, "food_request_group": food_request_group.to_serializable_dict()}, requests)
-
-
-            result = map(lambda x: denormalize_request_group(x), food_request_groups)
-            if status is not None:
-                result = result.filter(status=status)
-
-            result = result[offset: offset+limit]
-        except Exception as e:
-            self.logger.error(str(e))
-            raise e
-
-        return map(lambda x: x.to_serializable_dict(), result)
-    
-    def get_food_requests_by_user(self, limit, offset, user_id, user_role, status):
-        try:
-            result = self.get_food_requests(status=status)
-            if user_role == "ASP":
-                return result.filter(requestor=user_id)
-            elif user_role == "Donor":
-                return result.filter(donor=user_id)
-
-            result = result[offset: offset+limit]
-        except Exception as e:
-            self.logger.error(str(e))
-            raise e
-
-        return map(lambda x: x.to_serializable_dict(), result)
         
+    def get_food_requests_by_user(self, limit, offset, user_id, role, status):
+        try:
+            result = FoodRequest.objects()
+            if status is not None:
+                result = self.__filter_food_requests_by_status(result, status) 
+            if role == "ASP":
+                result = result.filter(requestor_id=user_id)
+            elif role == "Donor":
+                result = result.filter(donor_id=user_id)
+
+            res = map(lambda x: {
+                **x.to_serializable_dict(),
+                "status": self.__get_food_request_status(x),
+                "location": convert_pointfield_to_coordinates(x["location"])
+            }, result.skip(offset).limit(limit))
+            return res
+        except Exception as e:
+            self.logger.error(str(e))
+            raise e
+
+
+    @staticmethod
+    def __get_food_request_status(food_request):
+        if food_request.date_fulfilled is not None:
+            return FoodRequestStatus.FULFILLED.value
+        elif food_request.donor_id is not None:
+            return FoodRequestStatus.MATCHED.value
+        elif food_request.is_open:
+            return FoodRequestStatus.OPEN.value
+        else:
+            return FoodRequestStatus.CLOSED.value
+
+    @staticmethod
+    def __filter_food_requests_by_status(food_requests, status):
+        if status is None:
+            return food_requests
+        else:
+            if status == FoodRequestStatus.OPEN:
+                return food_requests.filter(is_open=True)
+            elif status == FoodRequestStatus.CLOSED:
+                return food_requests.filter(is_open=False)
+            elif status == FoodRequestStatus.MATCHED:
+                return food_requests.filter(donor_id__ne=None)
+            elif status == FoodRequestStatus.FULFILLED:
+                return food_requests.filter(date_fulfilled__ne=None)
+            else:
+                raise ValueError("Invalid status")
+
+    def __get_requestor_priority(self, requestor_id):
+        """
+        Returns the priority of the requestor. If the requestor is not an ASP, returns 0.
+        """
+        requestor = self.user_service.get_user_by_id(requestor_id)
+        if requestor.role == "ASP":
+            return requestor.priority
+        return 0

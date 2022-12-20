@@ -124,9 +124,14 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self):
+    def get_users(self, role=None):
         user_dtos = []
-        for user in User.objects:
+
+        users = User.objects()
+        if role:
+            users.filter(info__role=role)
+
+        for user in users:
             user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
 
             try:

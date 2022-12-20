@@ -20,7 +20,8 @@ def test_all_users(mocker):
     executed = client.execute(
         """{
         users {
-            name
+            firstName
+            lastName
             email
             role
         }}"""
@@ -29,8 +30,18 @@ def test_all_users(mocker):
     expected_result = {
         "data": {
             "users": [
-                {"name": "John Doe", "email": "JohnDoe@email.com", "role": "Admin"},
-                {"name": "Jane Doe", "email": "JaneDoe@email.com", "role": "ASP"},
+                {
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "email": "JohnDoe@email.com",
+                    "role": "Admin",
+                },
+                {
+                    "firstName": "Jane",
+                    "lastName": "Doe",
+                    "email": "JaneDoe@email.com",
+                    "role": "ASP",
+                },
             ]
         }
     }
@@ -54,7 +65,8 @@ def test_all_users_filter(mocker):
     executed = client.execute(
         """{
         users(role: "Admin") {
-            name
+            firstName
+            lastName
             email
             role
         }}"""
@@ -63,7 +75,12 @@ def test_all_users_filter(mocker):
     expected_result = {
         "data": {
             "users": [
-                {"name": "John Doe", "email": "JohnDoe@email.com", "role": "Admin"},
+                {
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "email": "JohnDoe@email.com",
+                    "role": "Admin",
+                },
             ]
         }
     }

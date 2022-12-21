@@ -3,6 +3,8 @@ from ...models.onboarding_request import OnboardingRequest
 from ...models.user_info import UserInfo
 from ...resources.create_user_dto import CreateUserDTO
 from ..implementations.email_service import EmailService
+from ..implementations.auth_service import AuthService
+from ...utilities.firebase_rest_client import FirebaseRestClient
 import random
 import string
 
@@ -17,6 +19,7 @@ class OnboardingRequestService(IOnboardingRequestService):
         """
         self.logger = logger
         self.email_service = email_service
+        self.firebase_rest_client = FirebaseRestClient(logger)
 
 
 
@@ -68,15 +71,13 @@ class OnboardingRequestService(IOnboardingRequestService):
             
 
             recipient_email = referenced_onboarding_request.info.contact_email
+            print(recipient_email)
             email_subject = "Your account has been approved"
             email_body = "Your account has been approved. Please reset your password"
 
             #refresh the token
-            
 
-
-
-            self.email_service.send_email(recipient_email, email_subject, email_body)
+            AuthService.send_email_verification_link(self, recipient_email)
 
 
 

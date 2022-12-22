@@ -1,66 +1,31 @@
-# Starter Code V2
+# Feeding Canadian Kids
 
-Starter Code for Blueprint projects, brought to you by the UW Blueprint Internal Tools team! 🏗️
+[Feeding Canadian Kids](https://feedingcanadiankids.org) is the only Canadian federal registered charity working to fill the dinner-gap, providing healthy meals to hungry children for a good night’s sleep, nourished body and brighter future. The organization needs assistance to bring volunteers who navigate to their website to sign up for delivering food to schools. A formalized process is needed to make the experience smoother for the volunteers and increase sign ups. They also need one place to have the volunteers submit documents to be screened to ensure safety of the children.
 
-Starter Code is an easy to set up, flexible, and customizable bootstrap that aims to encourage best development practices and provide baseline implementations of features common to UW Blueprint projects. 24 different stack combinations are supported, allowing "mix and match" between our most commonly used technologies. For more information on the motivation and design decisions behind Starter Code, please check out the home page of our [documentation site](https://uwblueprint.github.io/starter-code-v2)!
+Please see our [Notion workspace](https://www.notion.so/uwblueprintexecs/Dev-e3112e78136f49b4b042e9a0d9df9723) for more information and technical details!
 
-Teams should adopt Starter Code and use it as a foundation to get their projects off the ground faster, and as a guideline for how to structure their applications. We hope Starter Code will help project teams output higher quality and maintainable code, and allow them to focus on building cool, interesting features instead of setting up and doing boilerplate work. Put simply, Starter Code is here to help us deliver more value to our NPO partners.
-
-## Stack Choices
+## Stack
 **Backend Language:** Python (with Flask)<br>
 **Backend API:** GraphQL<br>
 **Database:** MongoDB<br>
-**User Auth:** Opt-in<br>
-**File Storage:** Opt-in<br>
-
-The provided frontend is a React application written in TypeScript.
-
-## Key Features & Benefits
-* Many stack combinations, built with separation of concerns in mind to make it easy to swap out layers of the codebase as needed
-* Prebuilt authentication and authorization services, including Google OAuth integration
-* Basic CRUD services via PostgresSQL and MongoDB ORMs
-* Email service
-* File storage service
-* CSV export utilities
-* Out of the box support for frontend deployment to Firebase Hosting via CI/CD pipelines
-* Lots of examples of programming best practices in both the frontend and backend
-
+**Frontend Language:** Typescript (with React)<br>
 
 ## Table of Contents
-* 📝 [Documentation](#documentation)
-* ❗❗ [Reporting Issues](#reporting-issues)
-* 👨‍💻 [Getting Started: Users](#getting-started-users)
-* 👷 [Getting Started: Internal Tools Developers](#getting-started-internal-tools-developers)
+* 👷 [Getting Started](#getting-started)
   * ✔️ [Prerequisites](#prerequisites)
   * ⚙️ [Set up](#set-up)
 * 🚀 [Creating a Release](#creating-a-release)
 * 🧰 [Useful Commands](#useful-commands)
   * ℹ️ [Get Names & Statuses of Running Containers](#get-names--statuses-of-running-containers)
-  * 💽 [Accessing PostgreSQL Database](#accessing-postgresql-database)
   * ✨ [Linting & Formatting](#linting--formatting)
   * 🧪 [Running Tests](#running-tests)
-* ✍️ [Updating Documentation](#updating-documentation)
 * 🌳 [Version Control Guide](#version-control-guide)
   * 🌿 [Branching](#branching)
   * 🔒 [Commits](#commits)
 
-## Documentation
-
-https://uwblueprint.github.io/starter-code-v2
-
-
-## Reporting Issues
-
-You can open an issue in this GitHub repository, or message the #internal-tools-help channel in UW Blueprint’s Slack workspace.
-
-
-## Getting Started: Users
-
-Please follow the instructions in this [guide](https://uwblueprint.github.io/starter-code-v2/docs/getting-started) to generate and set up Starter Code. Starter Code must be preprocessed through the [`create-bp-app`](https://www.npmjs.com/package/@uwblueprint/create-bp-app) CLI tool before being used, so **please do not clone and run this repository directly**.
-
 ---
 
-## Getting Started: Internal Tools Developers
+## Getting Started
 
 ### Prerequisites
 
@@ -73,38 +38,19 @@ Please follow the instructions in this [guide](https://uwblueprint.github.io/sta
 
 1. Clone this repository and `cd` into the project folder
 ```bash
-git clone https://github.com/uwblueprint/starter-code-v2.git
-cd starter-code-v2
+git clone https://github.com/uwblueprint/feeding-canadian-kids.git
+cd feeding-canadian-kids
 ```
 2. Pull secrets from Vault
+```bash
+vault kv get -format=json kv/fck | python update_secret_files.py
 ```
-vault kv get -format=json kv/internal-tools | python update_secret_files.py
-```
-3. Generate a Firebase service account private key. Go to our project in the [Firebase console](https://console.firebase.google.com), click "Project settings" > "Service accounts" > "Generate private key", wait for a file to be downloaded. Copy the file into `/backend/typescript/` **and** `/backend/python`, and rename both to **`firebaseServiceAccount.json`**
-4. Comment out one of the backend services in `docker-compose.yml`
-5. In the root `.env` file, change the name of the MongoDB database according to the backend you're using: either `typescript-test` or `python-test`
-6. If using the Python backend, update the email address and display name on lines 23-24 in `backend/python/app/rest/auth_routes.py` to be `internaltools@uwblueprint.org` and `Internal Tools` respectively
-7. Run the application
+3. Run the application
 ```bash
 docker-compose up --build
 ```
 
-The backend runs at http://localhost:5000 and the frontend runs at http://localhost:3000. By default, we use GraphQL (with TypeScript backend), REST (with Python backend), MongoDB, with user auth.
-
-
-## Creating a Release
-To update the release branch with commits from main:
-1. Create a new branch off the release branch
-2. Merge main into the new branch
-3. Open a PR from your new branch -> release branch
-4. Reviewers should be able to see just the changes from the new main commits
-5. Merge the PR, it should just show up as a single commit in the commit history of the release branch
-6. Tag the most recent `main` commit included in the release
-```bash
-git tag <semver> <short-hash-of-main-commit>
-git push origin --tags
-```
-
+The backend runs at http://localhost:5000 and the frontend runs at http://localhost:3000.
 
 ## Useful Commands
 
@@ -113,71 +59,67 @@ git push origin --tags
 docker ps
 ```
 
-### Accessing PostgreSQL Database
-
-```bash
-# run a bash shell in the container
-docker exec -it scv2_db /bin/bash
-
-# in container now
-psql -U postgres -d scv2
-
-# in postgres shell, some common commands:
-# display all table names
-\dt
-# quit
-\q
-# you can run any SQL query, don't forget the semicolon!
-SELECT * FROM <table-name>;
-```
-
 ### Linting & Formatting
-Python backend:
+Backend:
 ```bash
-docker exec -it scv2_py_backend /bin/bash -c "black ."
+docker exec -it fck_backend /bin/bash -c "black . && flake8 ."
 ```
 
-TypeScript backend and frontend:
+Frontend:
 ```bash
 # linting & formatting warnings only
-docker exec -it scv2_ts_backend /bin/bash -c "yarn lint"
+docker exec -it fck_backend /bin/bash -c "yarn lint"
 
 # linting with fix & formatting
-docker exec -it scv2_ts_backend /bin/bash -c "yarn fix"
+docker exec -it fck_backend /bin/bash -c "yarn fix"
+```
+
+You can also use the Makefiles if you have `make` installed:
+```bash
+# lint backend
+make belint
+# OR
+cd backend
+make lint
+
+# lint frontend
+make felint
+# OR
+cd frontend
+make lint
+
 ```
 
 ### Running Tests
-Python backend:
+Backend:
 ```bash
-docker exec -it scv2_py_backend /bin/bash -c "pip install -e . && pytest"
+docker exec -it fck_backend /bin/bash -c "pip install -r requirements.txt && pytest"
 ```
 
-TypeScript backend and frontend:
+Frontend:
 ```bash
-docker exec -it scv2_ts_backend /bin/bash -c "yarn test"
+docker exec -it fck_frontend /bin/bash -c "yarn test"
 ```
 
-
-## Updating Documentation
-
-To update documentation, checkout the `gh-pages` branch:
+You can also use the Makefiles if you have `make` installed:
 ```bash
-git checkout gh-pages
-```
+# test backend
+make betest
+# OR
+cd backend
+make test
 
-All documentation should be added to the `docs` folder. After making changes, commit and push to GitHub. The changes will be automatically deployed.
-
-We use Jekyll to build the site, so you will need to install some additional dependencies to run the site locally. See this [article](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll) for more details.
-
-To run locally:
-```bash
-bundle exec jekyll serve
+# test frontend
+make fetest
+# OR
+cd frontend
+make test
 ```
 
 ## Version Control Guide
 
 ### Branching
-* Branch off of `main` for all feature work and bug fixes, creating a "feature branch". Prefix the feature branch name with your name. The branch name should be in kebab case and it should be short and descriptive. E.g. `sherry/readme-update`
+* Branch off of `main` for all feature work and bug fixes, creating a "feature branch". Prefix the feature branch name with your GitHub username or usernames. The branch name should be in kebab case and it should be short and descriptive (e.g. `jfdoming-a4bello/readme-update` for two usernames `jfdoming` and `a4bello`).
 * To integrate changes on `main` into your feature branch, **use rebase instead of merge**
 
 ```bash

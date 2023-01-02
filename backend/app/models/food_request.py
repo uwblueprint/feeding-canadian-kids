@@ -1,11 +1,11 @@
 import mongoengine as mg
 from datetime import datetime
 
+
 class ContactInfo(mg.EmbeddedDocument):
     name = mg.StringField(required=True)
     email = mg.StringField(required=True)
     phone = mg.StringField()
-
 
 
 class FoodRequest(mg.Document):
@@ -14,7 +14,7 @@ class FoodRequest(mg.Document):
     requestor_id = mg.ObjectIdField(required=True)
     contacts = mg.EmbeddedDocumentListField(ContactInfo)
 
-    # TODO: this currently only supports 1:1 matching, but we should support 1:N matching
+    # TODO: this currently only supports 1:1 matching, but we want 1:N matching
     donor_id = mg.ObjectIdField()
 
     portions = mg.IntField(required=True)

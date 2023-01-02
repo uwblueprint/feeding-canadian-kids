@@ -9,6 +9,8 @@ from .types import (
 from .shared import GeoLocationInput
 
 # Object Types
+
+
 class UserInfoInput(graphene.InputObjectType):
     contact_name = graphene.String(required=True)
     contact_email = graphene.String(required=True)

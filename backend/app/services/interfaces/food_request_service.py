@@ -46,7 +46,7 @@ class IFoodRequestService(ABC):
         :param user_id: The id of the user
         :type user_id: ObjectID
         :param role: role of the user (should be ASP or Donor)
-        :type role: string 
+        :type role: string
         :param status: filter by FoodRequest status
         :type status: string
         :return: list of FoodRequest dicts

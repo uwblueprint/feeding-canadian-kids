@@ -64,5 +64,7 @@ def init_app(app):
         services["onboarding_request_service"] = OnboardingRequestService(
             logger=current_app.logger
         )
-        services["food_request_service"] = FoodRequestService(logger=current_app.logger, user_service=services["user_service"])
+        services["food_request_service"] = FoodRequestService(
+            logger=current_app.logger, user_service=services["user_service"]
+        )
         pass

@@ -8,10 +8,13 @@ from ..services import services
 from ..shared import GeoLocationInput, GeoLocationResponse
 
 # Input Types
+
+
 class ASPContactInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     email = graphene.String(required=True)
     phone = graphene.String()
+
 
 class CreateFoodRequestInput(graphene.InputObjectType):
     dates = graphene.List(graphene.DateTime, required=True)
@@ -25,15 +28,17 @@ class CreateFoodRequestInput(graphene.InputObjectType):
 
 # Response Types
 
+
 class ASPContactResponse(graphene.ObjectType):
     name = graphene.String(required=True)
     email = graphene.String(required=True)
     phone = graphene.String()
 
+
 class CreateFoodRequestResponse(graphene.ObjectType):
     id = graphene.ID()
     date = graphene.DateTime()
-    location = graphene.Field(GeoLocationResponse) 
+    location = graphene.Field(GeoLocationResponse)
     requestor_id = graphene.ID()
     contacts = graphene.List(ASPContactResponse)
     portions = graphene.Int()

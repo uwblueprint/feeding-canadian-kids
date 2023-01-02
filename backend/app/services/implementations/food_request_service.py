@@ -4,6 +4,7 @@ from ..interfaces.food_request_service import IFoodRequestService
 from ...utilities.types import FoodRequestStatus
 from ...utilities.location import convert_pointfield_to_coordinates
 
+
 class FoodRequestService(IFoodRequestService):
     def __init__(self, logger, user_service):
         self.logger = logger
@@ -21,8 +22,9 @@ class FoodRequestService(IFoodRequestService):
             # priority of the ASP
             priority = self.__get_requestor_priority(food_request_data["requestor_id"])
 
-            requests = [FoodRequest(
-                    **food_request_data, 
+            requests = [
+                FoodRequest(
+                    **food_request_data,
                     date=date,
                     location=[lat, lng],
                     portions_fulfilled=0,
@@ -30,17 +32,18 @@ class FoodRequestService(IFoodRequestService):
                     date_updated=now,
                     is_open=True,
                     priority=priority
-                ) for date in dates
+                )
+                for date in dates
             ]
             FoodRequest.objects.insert(requests)
-            return map(lambda x: {
-                **x.to_serializable_dict(),
-                "status": self.__get_food_request_status(x),
-                "location": {
-                    "latitude": lat,
-                    "longitude": lng
-                }
-            }, requests)
+            return map(
+                lambda x: {
+                    **x.to_serializable_dict(),
+                    "status": self.__get_food_request_status(x),
+                    "location": {"latitude": lat, "longitude": lng},
+                },
+                requests,
+            )
         except Exception as error:
             self.logger.error(str(error))
             raise error
@@ -50,57 +53,60 @@ class FoodRequestService(IFoodRequestService):
             result = FoodRequest.objects()
 
             if status is not None:
-                result = self.__filter_food_requests_by_status(result, status) 
+                result = self.__filter_food_requests_by_status(result, status)
 
             if near_location is not None:
-                result.aggregate([
-                    # outputs documents in order of nearest to farthest
-                    {
-                        "$geoNear": {
-                            "key": "location",
-                            "near": near_location,
-                            "distanceField": "distance",
-                            "maxDistance": 15000,
-                            "spherical": True
-                        }
-                    },
-                    # sort by priority - lower number = higher priority
-                    {
-                        "$sort": {
-                            "priority": 1
-                        }
-                    }
-                ])
-                
-            return map(lambda x: {
-                **x.to_serializable_dict(),
-                "status": self.__get_food_request_status(x),
-                "location": convert_pointfield_to_coordinates(x["location"])
-            }, result.skip(offset).limit(limit))
+                result.aggregate(
+                    [
+                        # outputs documents in order of nearest to farthest
+                        {
+                            "$geoNear": {
+                                "key": "location",
+                                "near": near_location,
+                                "distanceField": "distance",
+                                "maxDistance": 15000,
+                                "spherical": True,
+                            }
+                        },
+                        # sort by priority - lower number = higher priority
+                        {"$sort": {"priority": 1}},
+                    ]
+                )
+
+            return map(
+                lambda x: {
+                    **x.to_serializable_dict(),
+                    "status": self.__get_food_request_status(x),
+                    "location": convert_pointfield_to_coordinates(x["location"]),
+                },
+                result.skip(offset).limit(limit),
+            )
         except Exception as e:
             self.logger.error(str(e))
             raise e
-        
+
     def get_food_requests_by_user(self, limit, offset, user_id, role, status):
         try:
             result = FoodRequest.objects()
             if status is not None:
-                result = self.__filter_food_requests_by_status(result, status) 
+                result = self.__filter_food_requests_by_status(result, status)
             if role == "ASP":
                 result = result.filter(requestor_id=user_id)
             elif role == "Donor":
                 result = result.filter(donor_id=user_id)
 
-            res = map(lambda x: {
-                **x.to_serializable_dict(),
-                "status": self.__get_food_request_status(x),
-                "location": convert_pointfield_to_coordinates(x["location"])
-            }, result.skip(offset).limit(limit))
+            res = map(
+                lambda x: {
+                    **x.to_serializable_dict(),
+                    "status": self.__get_food_request_status(x),
+                    "location": convert_pointfield_to_coordinates(x["location"]),
+                },
+                result.skip(offset).limit(limit),
+            )
             return res
         except Exception as e:
             self.logger.error(str(e))
             raise e
-
 
     @staticmethod
     def __get_food_request_status(food_request):
@@ -131,7 +137,8 @@ class FoodRequestService(IFoodRequestService):
 
     def __get_requestor_priority(self, requestor_id):
         """
-        Returns the priority of the requestor. If the requestor is not an ASP, returns 0.
+        Returns the priority of the requestor. If the requestor is not an ASP,
+        returns 0.
         """
         requestor = self.user_service.get_user_by_id(requestor_id)
         if requestor.role == "ASP":

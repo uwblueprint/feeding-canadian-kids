@@ -4,7 +4,8 @@ from ..interfaces.user_service import IUserService
 from ...models.user import User
 from ...resources.user_dto import UserDTO
 from ...models.user_info import UserInfo
-from ...utilities.location import convert_pointfield_to_coordinates
+
+# from ...utilities.location import convert_pointfield_to_coordinates
 
 
 class UserService(IUserService):

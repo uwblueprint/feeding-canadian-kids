@@ -32,7 +32,6 @@ class OnboardingRequestService(IOnboardingRequestService):
                     contact_email=userInfo.contact_email,
                     contact_phone=userInfo.contact_phone,
                     role=userInfo.role,
-                    priority=userInfo.priority,
                     location=[lat, lng],
                 )
             else:

@@ -16,7 +16,6 @@ class UserInfoInput(graphene.InputObjectType):
     contact_email = graphene.String(required=True)
     contact_phone = graphene.String()
     role = graphene.String(required=True)
-    priority = graphene.Int()
     location = graphene.Argument(GeoLocationInput)
 
 

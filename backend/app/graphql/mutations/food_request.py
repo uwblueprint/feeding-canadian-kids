@@ -47,7 +47,6 @@ class CreateFoodRequestResponse(graphene.ObjectType):
     delivery_notes = graphene.String()
     date_created = graphene.DateTime()
     date_updated = graphene.DateTime()
-    date_fulfilled = graphene.DateTime()
 
 
 # Mutations

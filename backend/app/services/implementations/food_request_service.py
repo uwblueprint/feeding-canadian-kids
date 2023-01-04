@@ -11,6 +11,7 @@ class FoodRequestService(IFoodRequestService):
         self.user_service = user_service
 
     def create_food_requests(self, food_request_data: dict):
+        print(food_request_data)
         try:
             now = datetime.utcnow
             dates = food_request_data.pop("dates")
@@ -20,7 +21,11 @@ class FoodRequestService(IFoodRequestService):
             lat, lng = location["latitude"], location["longitude"]
 
             # priority of the ASP
-            priority = self.__get_requestor_priority(food_request_data["requestor_id"])
+            try:
+                priority = self.__get_requestor_priority(food_request_data["requestor_id"])
+            except Exception as e:
+                self.logger.error(str(e))
+                priority = 0 
 
             requests = [
                 FoodRequest(
@@ -73,6 +78,7 @@ class FoodRequestService(IFoodRequestService):
                     ]
                 )
 
+       
             return map(
                 lambda x: {
                     **x.to_serializable_dict(),
@@ -103,6 +109,11 @@ class FoodRequestService(IFoodRequestService):
                 },
                 result.skip(offset).limit(limit),
             )
+            print({
+                    **result[0].to_serializable_dict(),
+                    # "status": self.__get_food_request_status(x),
+                    # "location": convert_pointfield_to_coordinates(x["location"]),
+                })
             return res
         except Exception as e:
             self.logger.error(str(e))

@@ -6,7 +6,8 @@ from ..types import (
 from ..services import services
 from ...utilities.types import FoodRequestStatus
 from ..shared import GeoLocationResponse
-from ..middleware.auth import requires_role
+
+# from ..middleware.auth import requires_role
 
 # Response types
 

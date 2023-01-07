@@ -55,17 +55,16 @@ class FoodRequestQueries(QueryList):
 
     # fetches all food requests, optionally filtered and sorted by proximity
     def resolve_food_requests(self, info, limit, offset, status=None):
-        # TODO: figure out firebase stuff
+        # TODO: fetch user id from context
         # user = services["user_service"].get_user_by_id(info.context.user.id)
         # near_location = user.location if user.role == "Donor" else None
 
-        # TODO: remove this
+        # TODO: remove this once the above is fixed
         near_location = {"type": "Point", "coordinates": [43.6544, 79.3807]}
         return services["food_request_service"].get_food_requests(
             limit=limit, offset=offset, status=status, near_location=near_location
         )
 
-    # TODO: figure out why lazy context isn't working
     # fetches food requests associated with a user (donor or ASP)
     def resolve_food_requests_by_user(self, info, limit, offset, user_id, status=None):
         user_role = services["user_service"].get_user_by_id(user_id).role

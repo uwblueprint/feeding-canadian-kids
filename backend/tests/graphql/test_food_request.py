@@ -87,8 +87,10 @@ def test_create_food_requests(mocker, graphql_schema):
         for date in expected_dates
     ]
     mocker.patch(
-        "app.services.implementations.food_request_service.\
-        FoodRequestService.create_food_requests",
+        (
+            "app.services.implementations.food_request_service.FoodRequestService"
+            ".create_food_requests"
+        ),
         return_value=mock_service_result,
     )
 

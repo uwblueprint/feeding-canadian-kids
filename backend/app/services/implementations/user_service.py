@@ -50,7 +50,7 @@ class UserService(IUserService):
                 # )
                 # if "location" in user_dict["info"]
                 # else None,
-                # TODO: remove this when ^ is uncommented, currently this 
+                # TODO: remove this when ^ is uncommented, currently this
                 # serves as a placeholder
                 "priority": 1,
                 "location": {

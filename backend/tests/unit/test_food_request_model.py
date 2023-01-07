@@ -20,4 +20,4 @@ def test_create_food_request():
     assert food_request.date == test_date
     assert food_request.portions == 50
     assert food_request.dietary_restrictions == "No beef"
-    assert food_request.is_open == True
+    assert food_request.is_open is True

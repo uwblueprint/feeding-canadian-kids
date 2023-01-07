@@ -22,10 +22,12 @@ class FoodRequestService(IFoodRequestService):
 
             # priority of the ASP
             try:
-                priority = self.__get_requestor_priority(food_request_data["requestor_id"])
+                priority = self.__get_requestor_priority(
+                    food_request_data["requestor_id"]
+                )
             except Exception as e:
                 self.logger.error(str(e))
-                priority = 0 
+                priority = 0
 
             requests = [
                 FoodRequest(
@@ -78,7 +80,6 @@ class FoodRequestService(IFoodRequestService):
                     ]
                 )
 
-       
             return map(
                 lambda x: {
                     **x.to_serializable_dict(),
@@ -109,11 +110,11 @@ class FoodRequestService(IFoodRequestService):
                 },
                 result.skip(offset).limit(limit),
             )
-            print({
-                    **result[0].to_serializable_dict(),
-                    # "status": self.__get_food_request_status(x),
-                    # "location": convert_pointfield_to_coordinates(x["location"]),
-                })
+            # print({
+            #         **result[0].to_serializable_dict(),
+            #         # "status": self.__get_food_request_status(x),
+            #         # "location": convert_pointfield_to_coordinates(x["location"]),
+            #     })
             return res
         except Exception as e:
             self.logger.error(str(e))

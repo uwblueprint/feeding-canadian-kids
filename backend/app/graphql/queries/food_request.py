@@ -53,7 +53,7 @@ class FoodRequestQueries(QueryList):
         status=FoodRequestStatusEnum(),
     )
 
-    # @requires_role(["Donor", "Admin"])
+    # fetches all food requests, optionally filtered and sorted by proximity
     def resolve_food_requests(self, info, limit, offset, status=None):
         # TODO: figure out firebase stuff
         # user = services["user_service"].get_user_by_id(info.context.user.id)
@@ -66,7 +66,7 @@ class FoodRequestQueries(QueryList):
         )
 
     # TODO: figure out why lazy context isn't working
-    # @requires_role(["Donor", "ASP"])
+    # fetches food requests associated with a user (donor or ASP)
     def resolve_food_requests_by_user(self, info, limit, offset, user_id, status=None):
         user_role = services["user_service"].get_user_by_id(user_id).role
         return services["food_request_service"].get_food_requests_by_user(

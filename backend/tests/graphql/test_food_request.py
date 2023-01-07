@@ -4,6 +4,7 @@ Running graphql_schema.execute(...) also tests the service logic
 """
 from datetime import datetime
 
+
 def test_create_food_requests(mocker, graphql_schema):
     mutation = """
     mutation TestCreateFoodRequests{
@@ -86,7 +87,8 @@ def test_create_food_requests(mocker, graphql_schema):
         for date in expected_dates
     ]
     mocker.patch(
-        "app.services.implementations.food_request_service.FoodRequestService.create_food_requests",
+        "app.services.implementations.food_request_service.\
+        FoodRequestService.create_food_requests",
         return_value=mock_service_result,
     )
 
@@ -103,38 +105,3 @@ def test_create_food_requests(mocker, graphql_schema):
         assert food_request["date"] == expected_dates[i]
         for key in expected_fields:
             assert food_request[key] == expected_fields[key]
-
-# TODO: test_get_food_requests
-# test graphql context stuff
-# def test_get_food_requests(mocker, graphql_schema):
-#     query = """
-#     query TestGetFoodRequests {
-#   getFoodRequests(
-#     limit: 10
-#     offset: 0
-#     status: OPEN
-#     nearLocation: [43.6544, 79.3807]
-#   ) {
-#     foodRequests {
-#       id
-#       date
-#       location {
-#         latitude
-#         longitude
-#       }
-#       requestorId
-#       contacts {
-#         name
-#         email
-#       }
-#       portions
-#       portionsFulfilled
-#       dietaryRestrictions
-#       deliveryNotes
-#       dateCreated
-#       dateUpdated
-#       dateFulfilled
-#     }
-#   }
-# }
-#   """

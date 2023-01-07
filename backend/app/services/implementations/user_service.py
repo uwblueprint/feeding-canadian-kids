@@ -5,6 +5,8 @@ from ...models.user import User
 from ...resources.user_dto import UserDTO
 from ...models.user_info import UserInfo
 
+# from ...utilities.location import convert_pointfield_to_coordinates
+
 
 class UserService(IUserService):
     """
@@ -37,6 +39,24 @@ class UserService(IUserService):
                 "last_name": "",
                 "email": user_dict["email"],
                 "role": user_dict["info"]["role"],
+                # TODO: uncomment when the following ticket is completed:
+                # https://app.zenhub.com/workspaces/fck-627480c10d8974001872b0ef/issues/gh/uwblueprint/feeding-canadian-kids/3
+                # "priority": user_dict["info"]["priority"]
+                # if user_dict["info"]["role"] == "ASP"
+                # else None,
+                #
+                # "location": convert_pointfield_to_coordinates(
+                #     user_dict["info"]["location"]
+                # )
+                # if "location" in user_dict["info"]
+                # else None,
+                # TODO: remove this when ^ is uncommented, currently this
+                # serves as a placeholder
+                "priority": 1,
+                "location": {
+                    "latitude": 43.6532,
+                    "longitude": -79.3832,
+                },
             }
 
             return UserDTO(**kwargs)

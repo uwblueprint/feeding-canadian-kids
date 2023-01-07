@@ -9,6 +9,10 @@ def test_create_onboarding_request():
                                 contactEmail: "janedoe@email.com",
                                 contactPhone: "12345",
                                 role: "ASP"
+                                location: {
+                                    latitude: 43.6544,
+                                    longitude: 79.3807
+                                    }
                                 }
                         ) {
                             onboardingRequest {

@@ -61,7 +61,6 @@ class OnboardingRequestQueries(QueryList):
             status,
         )
         return requests
-        return []
 
     def resolve_getOnboardingRequestById(self, info, id):
         request = services["onboarding_request_service"].get_onboarding_request_by_id(

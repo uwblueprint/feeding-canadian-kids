@@ -3,6 +3,7 @@ import os
 
 from flask import current_app
 from .example import ExampleQueries, ExampleMutations
+from .user_queries import UserQueries
 from .services import services
 from ..services.implementations.user_service import UserService
 from ..services.implementations.email_service import EmailService
@@ -19,6 +20,7 @@ from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQue
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
+    UserQueries,
     OnboardingRequestQueries,
 ):
     pass
@@ -64,4 +66,4 @@ def init_app(app):
             logger=current_app.logger
         )
         services["food_request_service"] = FoodRequestService(logger=current_app.logger)
-        pass
+        services["user_service"] = UserService(logger=current_app.logger)

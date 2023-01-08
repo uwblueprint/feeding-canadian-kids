@@ -14,13 +14,14 @@ from ..services.implementations.food_request_service import FoodRequestService
 from ..services.implementations.onboarding_request_service import (
     OnboardingRequestService,
 )
-from .onboarding_request import OnboardingRequestMutations
+from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQueries
 
 
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
     UserQueries,
+    OnboardingRequestQueries,
 ):
     pass
 

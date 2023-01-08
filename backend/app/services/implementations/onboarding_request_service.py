@@ -79,7 +79,58 @@ class OnboardingRequestService(IOnboardingRequestService):
                 )
             )
             raise e
-        
+
         return referenced_onboarding_request.to_serializable_dict()
-        
-        
+    def get_all_onboarding_requests(self, number=None, offset=0, role="", status=""):
+        onboarding_request_dtos = []
+
+        try:
+            filteredRequests = OnboardingRequest.objects()
+            if role:
+                filteredRequests = filteredRequests.filter(info__role=role)
+            if status:
+                filteredRequests = filteredRequests.filter(status=status)
+            for request in filteredRequests.skip(offset).limit(number or 0):
+                request_dict = request.to_serializable_dict()
+                kwargs = {
+                    "contact_name": request_dict["info"]["contact_name"],
+                    "contact_email": request_dict["info"]["contact_email"],
+                    "contact_phone": request_dict["info"]["contact_phone"],
+                    "role": request_dict["info"]["role"],
+                    "date_submitted": request_dict["date_submitted"],
+                    "status": request_dict["status"],
+                }
+                onboarding_request_dtos.append(OnboardingRequestDTO(**kwargs))
+        except Exception as e:
+            self.logger.error("Could not retrieve OnboardingRequest objects")
+            raise e
+        if number > 0:
+            return onboarding_request_dtos[offset : offset + number]
+        return onboarding_request_dtos
+
+    def get_onboarding_request_by_id(self, id):
+        try:
+            request = OnboardingRequest.objects(id=id).first()
+
+            if not request:
+                raise Exception("request id {id} not found".format(id=id))
+
+            request_dict = request.to_serializable_dict()
+
+            kwargs = {
+                "contact_name": request_dict["info"]["contact_name"],
+                "contact_email": request_dict["info"]["contact_email"],
+                "contact_phone": request_dict["info"]["contact_phone"],
+                "role": request_dict["info"]["role"],
+                "date_submitted": request_dict["date_submitted"],
+                "status": request_dict["status"],
+            }
+            return OnboardingRequestDTO(**kwargs)
+        except Exception as e:
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                "Failed to get onboarding request. Reason = {reason}".format(
+                    reason=(reason if reason else str(e))
+                )
+            )
+            raise e

@@ -40,7 +40,7 @@ class OnboardingRequestService(IOnboardingRequestService):
 
         return new_onboarding_request.to_serializable_dict()
 
-    def get_all_onboarding_requests(self, number=5, offset=0, role="", status=""):
+    def get_all_onboarding_requests(self, number=None, offset=0, role="", status=""):
         onboarding_request_dtos = []
 
         try:
@@ -49,7 +49,7 @@ class OnboardingRequestService(IOnboardingRequestService):
                 filteredRequests = filteredRequests.filter(info__role=role)
             if status:
                 filteredRequests = filteredRequests.filter(status=status)
-            for request in filteredRequests:
+            for request in filteredRequests.skip(offset).limit(number or 0):
                 request_dict = request.to_serializable_dict()
                 kwargs = {
                     "contact_name": request_dict["info"]["contact_name"],
@@ -64,7 +64,7 @@ class OnboardingRequestService(IOnboardingRequestService):
             self.logger.error("Could not retrieve OnboardingRequest objects")
             raise e
         if number > 0:
-            return onboarding_request_dtos[offset: offset+number]
+            return onboarding_request_dtos[offset : offset + number]
         return onboarding_request_dtos
 
     def get_onboarding_request_by_id(self, id):

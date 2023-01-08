@@ -55,21 +55,12 @@ class OnboardingRequestQueries(QueryList):
 
     def resolve_getAllOnboardingRequests(self, info, number, offset, role, status):
         requests = services["onboarding_request_service"].get_all_onboarding_requests(
-            number, offset, role, status,
+            number,
+            offset,
+            role,
+            status,
         )
-        return [
-            *map(
-                lambda request: GetOnboardingRequest(
-                    contact_name=request.contact_name,
-                    contact_email=request.contact_email,
-                    contact_phone=request.contact_phone,
-                    role=request.role,
-                    date_submitted=request.date_submitted,
-                    status=request.status,
-                ),
-                requests,
-            )
-        ]
+        return requests
         return []
 
     def resolve_getOnboardingRequestById(self, info, id):

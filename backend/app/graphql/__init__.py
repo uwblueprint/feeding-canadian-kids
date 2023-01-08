@@ -14,13 +14,14 @@ from ..services.implementations.food_request_service import FoodRequestService
 from ..services.implementations.onboarding_request_service import (
     OnboardingRequestService,
 )
-from .onboarding_request import OnboardingRequestMutations
+from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQueries
 
 
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
     UserQueries,
+    OnboardingRequestQueries,
 ):
     pass
 
@@ -54,7 +55,7 @@ def init_app(app):
                 "client_secret": os.getenv("MAILER_CLIENT_SECRET"),
             },
             sender_email=os.getenv("MAILER_USER"),
-            display_name="Display Name",
+            display_name="Feeding Canadian Kids",
         )
         services["auth_service"] = AuthService(
             logger=current_app.logger,

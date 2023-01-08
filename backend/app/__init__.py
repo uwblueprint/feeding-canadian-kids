@@ -5,7 +5,7 @@ import firebase_admin
 from flask import Flask
 from flask.cli import ScriptInfo
 from flask_cors import CORS
-from .graphql.graphql_with_cookies import GraphQLViewWithCookies
+from .graphql.view import GraphQLView
 from logging.config import dictConfig
 
 from .config import app_config
@@ -42,7 +42,7 @@ def create_app(config_name):
 
     app.add_url_rule(
         "/graphql",
-        view_func=GraphQLViewWithCookies.as_view(
+        view_func=GraphQLView.as_view(
             "graphql",
             schema=graphql_schema,
             graphiql=True,
@@ -82,10 +82,9 @@ def create_app(config_name):
         {"storageBucket": os.getenv("FIREBASE_STORAGE_DEFAULT_BUCKET")},
     )
 
-    from . import models, rest, graphql
+    from . import models, graphql
 
     models.init_app(app)
-    rest.init_app(app)
     graphql.init_app(app)
 
     return app

@@ -11,3 +11,4 @@
 **/*.cache
 **/*.egg-info
 **/*.eslintcache
+**/*.swp

@@ -54,7 +54,7 @@ def init_app(app):
                 "client_secret": os.getenv("MAILER_CLIENT_SECRET"),
             },
             sender_email=os.getenv("MAILER_USER"),
-            display_name="Display Name",
+            display_name="Feeding Canadian Kids",
         )
         services["auth_service"] = AuthService(
             logger=current_app.logger,

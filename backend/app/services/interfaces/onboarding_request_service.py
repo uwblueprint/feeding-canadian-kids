@@ -68,3 +68,31 @@ class IOnboardingRequestService(ABC):
         :raises Exception: if onboarding request approval fails
         """
         pass
+    def get_all_onboarding_requests(self, number, offset, role, status):
+        """
+        Gets all OnboardingRequest objects
+
+        :param number: optional param to get number amount of requests back
+        :type number: number
+        :param offset: optional param to get requests back from this offset onwards
+        :type number: number
+        :param role: optional filter for type of onboarding requests
+        :type role: string
+        :param status: optional filter for status of onboarding requests
+        :type status: string
+        :return: list of OnboardingRequest object dicts
+        :rtype: [OnboardingRequestDTO]
+        :raises Exception: if OnboardingRequests could not be retrieved
+        """
+
+    @abstractmethod
+    def get_onboarding_request_by_id(self, id):
+        """
+        Gets OnboardingRequest by id
+
+        :param id: the OnboardingRequest object's id
+        :type id: string
+        :return: OnboardingRequest object dict
+        :rtype: OnboardingRequestDTO
+        :raises Exception: if OnboardingRequest could not be retrieved
+        """

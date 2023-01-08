@@ -7,6 +7,7 @@ from .types import (
     Mutation,
     MutationList,
 )
+from .middleware.auth import requires_role
 
 
 """
@@ -43,6 +44,8 @@ class Greeting(Query):
 class ExampleQueries(QueryList):
     greeting = graphene.Field(Greeting)
 
+    # You can add role restrictions using decorators.
+    @requires_role("Donor")
     def resolve_greeting(self, info):
         # Instead of a hard-coded dictionary, you should call into a service here.
         return {
@@ -85,6 +88,6 @@ class RaiseClientError(Mutation):
 class ExampleMutations(MutationList):
     # You must use PrintGreeting.Field() rather than graphene.Field(PrintGreeting);
     # otherwise, arguments won't work as expected.
-    printGreeting = PrintGreeting.Field()
-    raiseError = RaiseError.Field()
-    raiseClientError = RaiseClientError.Field()
+    print_greeting = PrintGreeting.Field()
+    raise_error = RaiseError.Field()
+    raise_client_error = RaiseClientError.Field()

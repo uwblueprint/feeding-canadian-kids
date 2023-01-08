@@ -13,7 +13,6 @@
     "@tanstack/react-table": "^8.7.0",
     "apollo-upload-client": "^17.0.0",
     "axios": "^0.21.1",
-    "bootstrap": "^4.6.0",
     "framer-motion": "^7.6.12",
     "graphql": "^15.5.0",
     "humps": "^2.0.1",
@@ -34,6 +33,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:ci": " react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --cache",
     "fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix --cache"

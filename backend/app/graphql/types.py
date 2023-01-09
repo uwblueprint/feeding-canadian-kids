@@ -26,3 +26,9 @@ delattr(Mutation, "mutate")
 
 class MutationList(graphene.ObjectType, metaclass=LogErrors(graphene.ObjectType)):
     pass
+
+
+class UserType(graphene.ObjectType):
+    name = graphene.String()
+    email = graphene.String()
+    role = graphene.String()

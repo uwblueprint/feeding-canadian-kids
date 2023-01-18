@@ -93,7 +93,7 @@ make lint
 ### Running Tests
 Backend:
 ```bash
-docker exec -it fck_backend /bin/bash -c "pip install -r requirements.txt && pytest"
+docker exec -it fck_backend /bin/bash -c "pip install -r requirements.txt && python -m pytest"
 ```
 
 Frontend:

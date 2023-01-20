@@ -1,4 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
+import { Button } from "@chakra-ui/react";
 import React, { useContext } from "react";
 
 import AuthContext from "../../contexts/AuthContext";
@@ -22,15 +23,7 @@ const ResetPassword = (): React.ReactElement => {
     await resetPassword({ variables: { email: authenticatedUser?.email } });
   };
 
-  return (
-    <button
-      type="button"
-      className="btn btn-primary"
-      onClick={onResetPasswordClick}
-    >
-      Reset Password
-    </button>
-  );
+  return <Button onClick={onResetPasswordClick}>Reset Password</Button>;
 };
 
 export default ResetPassword;

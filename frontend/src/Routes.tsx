@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes as RouteContainer } from "react-router-dom";
 
 import AuthWall from "./components/auth/AuthWall";
-import { Join } from "./components/auth/Join";
+import Join from "./components/auth/Join";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import CreatePage from "./components/pages/CreatePage";

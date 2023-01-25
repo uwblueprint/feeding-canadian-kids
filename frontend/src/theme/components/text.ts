@@ -23,6 +23,20 @@ const Text = {
       fontSize: "18px",
       lineHeight: "24px",
     },
+    "desktop-xs": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "400",
+      fontSize: "14px",
+      lineHeight: "150%",
+    },
+    "desktop-heading-6": {
+      fontFamily: "DM Sans",
+      fontStyle: "normal",
+      fontWeight: "400",
+      fontSize: "16px",
+      lineHeight: "21px",
+    },
   },
 };
 

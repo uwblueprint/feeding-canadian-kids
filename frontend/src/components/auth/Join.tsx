@@ -19,6 +19,44 @@ import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
+const getContactInfoSection = (): React.ReactElement => {
+  return (
+    <>
+      <Text variant="desktop-heading">Contact Information</Text>
+      <Flex flexDir="column" gap="32px">
+        <Flex flexDir="column" gap="24px">
+          <Flex flexDir="column">
+            <FormControl isRequired>
+              <FormLabel variant="desktop-button-bold">
+                1. Primary contact name
+              </FormLabel>
+              <Input />
+            </FormControl>
+          </Flex>
+          <Flex flexDir="row" gap="24px">
+            <Flex flexDir="column" w="240px">
+              <FormControl isRequired>
+                <FormLabel variant="desktop-button-bold">
+                  Phone number
+                </FormLabel>
+                <Input />
+              </FormControl>
+            </Flex>
+            <Flex flexDir="column" w="519px">
+              <FormControl isRequired>
+                <FormLabel variant="desktop-button-bold">
+                  Email address
+                </FormLabel>
+                <Input />
+              </FormControl>
+            </Flex>
+          </Flex>
+        </Flex>
+      </Flex>
+    </>
+  );
+};
+
 const getOrganizationInfoSection = (): React.ReactElement => {
   return (
     <>
@@ -64,9 +102,9 @@ const Join = (): React.ReactElement => {
         <Divider />
         {getOrganizationInfoSection()}
         <Divider />
-        {/* {getContactInfoSection()}
-      {getCreateAccountButton()} */}
-        {/* <h1>Join</h1>
+        {getContactInfoSection()}
+        {/* getCreateAccountButton()} }
+        {<h1>Join</h1>
       <Input
         placeholder="Email"
         value={email}

@@ -4,6 +4,8 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   HStack,
   Input,
   Text,
@@ -90,43 +92,54 @@ const Login = (): React.ReactElement => {
       alignItems="center"
     >
       <VStack
+      justify="space-between"
       border='1px'
       borderColor='#D6D6D6'
       borderRadius='5%'
-      padding='5% 5% 5% 5%'>
-        <Text fontFamily="Dimbo" fontSize="3xl" as="b">Log in to account</Text>
-        <Text>Please enter your account details to log in.</Text>
+      padding='4% 7% 4% 7%'
+      width="40%"
+      height="75%">
+        <Text pb={5} variant="desktop-display-xl">Log in to account</Text>
+        <Text pb={5}>Please enter your account details to log in.</Text>
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
         <Box>
-          <Text>Email Address</Text>
-          <Input
+        <FormControl pb={5} isRequired>
+          <FormLabel variant="form-label-bold">Email Address</FormLabel>
+          <Input 
+            size='lg'
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+            onChange={(e) => setEmail(e.target.value)}/>
+        </FormControl>
         </Box>
         <Box>
-          <Text>Password</Text>
+          <FormControl pb={2} isRequired>
+          <FormLabel variant="desktop-button-bold">Password</FormLabel>
           <Input
+            size='lg'
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          </FormControl>
         </Box>
-          <Text textDecoration="underline">Forgot Password?</Text>
+          <Text pb={12} variant="desktop-xs" textDecoration="underline">Forgot Password?</Text>
         </Flex>
         <Button
           onClick={onLogInClick}
-          width="100%"
+          width="90%"
+          pt={1}
+          pb={1}
           backgroundColor="#272D77"
+          variant="desktop-button-bold"
         >
           <Text color="white">
             Log In
           </Text>
         </Button>
         <HStack>
-          <Text>Don’t have an account?</Text>
-          <Text textDecoration="underline">Sign up now.</Text>
+          <Text variant="desktop-xs">Don’t have an account?</Text>
+          <Text variant="desktop-xs" textDecoration="underline">Sign up now.</Text>
         </HStack>
       </VStack>
     </Flex>

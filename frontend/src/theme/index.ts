@@ -1,6 +1,6 @@
 import { extendTheme } from "@chakra-ui/react";
 
-import { Button, Input, FormLabel, Text } from "./components";
+import { Button, FormLabel, Input, Text } from "./components";
 import colors from "./foundations/colors";
 import fontSizes from "./foundations/fontSizes";
 import fonts from "./foundations/fonts";

@@ -55,8 +55,6 @@ class OnboardingRequestService(IOnboardingRequestService):
         try:
         
             referenced_onboarding_request = OnboardingRequest.objects.get(id=request_id)
-
-            
             referenced_onboarding_request.status = "Approved" #approve the onboarding request
             
             # create a uid for the user
@@ -64,25 +62,10 @@ class OnboardingRequestService(IOnboardingRequestService):
             
             # set the uid for the user
             referenced_onboarding_request.user_uid = random_user_uid
-            referenced_onboarding_request.save()
-
-            # Send an email to the user with the email address. Instantiate the email service
-            
-            
-
+            referenced_onboarding_request.save()            
             recipient_email = referenced_onboarding_request.info.contact_email
-            print(recipient_email)
-            email_subject = "Your account has been approved"
-            email_body = "Your account has been approved. Please reset your password"
-
-            #refresh the token
-
-            AuthService.send_email_verification_link(self, recipient_email)
-
-
-
+            AuthService.reset_password(self, recipient_email)            
             
-
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(

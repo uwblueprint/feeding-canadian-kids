@@ -36,6 +36,7 @@ class RootMutation(
 schema = graphene.Schema(
     query=RootQuery,
     mutation=RootMutation,
+    
 )
 
 

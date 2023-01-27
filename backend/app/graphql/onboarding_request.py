@@ -34,6 +34,7 @@ class OnboardingRequestInput(graphene.InputObjectType):
     info = graphene.Field(UserInfoInput)
     date_submitted = graphene.DateTime()
     status = graphene.String()
+    user_uid = graphene.String()
 
 
 

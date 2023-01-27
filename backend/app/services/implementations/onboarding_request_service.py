@@ -53,8 +53,13 @@ class OnboardingRequestService(IOnboardingRequestService):
     def approve_onboarding_request(self, request_id):
 
         try:
+
+            
         
             referenced_onboarding_request = OnboardingRequest.objects.get(id=request_id)
+
+            print(OnboardingRequest.objects.get(id=request_id).status)
+            
             referenced_onboarding_request.status = "Approved" #approve the onboarding request
             
             # create a uid for the user
@@ -64,8 +69,8 @@ class OnboardingRequestService(IOnboardingRequestService):
             referenced_onboarding_request.user_uid = random_user_uid
             referenced_onboarding_request.save()            
             recipient_email = referenced_onboarding_request.info.contact_email
-            AuthService.reset_password(self, recipient_email)            
-            
+            # AuthService.reset_password(self, recipient_email)            
+
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(

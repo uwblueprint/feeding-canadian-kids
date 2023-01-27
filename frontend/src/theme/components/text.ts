@@ -7,14 +7,14 @@ const Text = {
       fontStyle: "normal",
       fontWeight: "400",
       fontSize: "40px",
-      lineHeight: "140%",
+      lineHeight: "56px",
     },
     "desktop-heading": {
       fontFamily: "Inter",
       fontStyle: "normal",
       fontWeight: "700",
       fontSize: "20px",
-      lineHeight: "150%",
+      lineHeight: "30px",
     },
     "desktop-button-bold": {
       fontFamily: "Inter",
@@ -28,7 +28,7 @@ const Text = {
       fontStyle: "normal",
       fontWeight: "400",
       fontSize: "14px",
-      lineHeight: "150%",
+      lineHeight: "21px",
     },
     "desktop-heading-6": {
       fontFamily: "DM Sans",

@@ -1,4 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
+import { CheckCircleIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
   Center,
@@ -11,7 +12,16 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import React, { useContext, useState } from "react";
@@ -27,7 +37,7 @@ const getUserInfoSection = (): React.ReactElement => {
     <>
       <Flex flexDir="column">
         <FormControl isRequired>
-          <FormLabel variant="desktop-button-bold">Type of user</FormLabel>
+          <FormLabel variant="desktop-body-bold">Type of user</FormLabel>
           <RadioGroup defaultValue="1">
             <Stack direction="row">
               <Radio value="1">
@@ -80,36 +90,106 @@ const getContactInfoSection = (): React.ReactElement => {
   return (
     <>
       <Text variant="desktop-heading">Contact Information</Text>
-      <Flex flexDir="column" gap="32px">
-        <Flex flexDir="column" gap="24px">
-          <Flex flexDir="column">
+      <Flex flexDir="column" gap="24px">
+        <Flex flexDir="column">
+          <FormControl isRequired>
+            <FormLabel variant="desktop-button-bold">
+              1. Primary contact name
+            </FormLabel>
+            <Input />
+          </FormControl>
+        </Flex>
+        <Flex flexDir="row" gap="24px">
+          <Flex flexDir="column" w="240px">
             <FormControl isRequired>
-              <FormLabel variant="desktop-button-bold">
-                1. Primary contact name
-              </FormLabel>
+              <FormLabel variant="desktop-button-bold">Phone number</FormLabel>
               <Input />
             </FormControl>
           </Flex>
-          <Flex flexDir="row" gap="24px">
-            <Flex flexDir="column" w="240px">
-              <FormControl isRequired>
-                <FormLabel variant="desktop-button-bold">
-                  Phone number
-                </FormLabel>
-                <Input />
-              </FormControl>
-            </Flex>
-            <Flex flexDir="column" w="519px">
-              <FormControl isRequired>
-                <FormLabel variant="desktop-button-bold">
-                  Email address
-                </FormLabel>
-                <Input />
-              </FormControl>
-            </Flex>
+          <Flex flexDir="column" w="519px">
+            <FormControl isRequired>
+              <FormLabel variant="desktop-button-bold">Email address</FormLabel>
+              <Input />
+            </FormControl>
           </Flex>
         </Flex>
       </Flex>
+      <FormControl isRequired>
+        <Flex flexDir="column" gap="24px">
+          <Flex flexDir="column" gap="8px">
+            <FormLabel variant="desktop-body-bold">
+              2. Additional onsite staff
+            </FormLabel>
+            <Text color="#69696B" variant="desktop-xs">
+              *Must add at least 1 onsite staff up to a maximum of 10.
+            </Text>
+          </Flex>
+          <TableContainer>
+            <Table>
+              <Thead>
+                <Tr borderRadius="8px 8px 0 0" h="40px" background="#EDF2F7">
+                  <Th
+                    borderRadius="8px 0 0 0"
+                    padding="0 12px 0 24px"
+                    textTransform="none"
+                  >
+                    <Text color="black" variant="desktop-xs">
+                      Full Name
+                    </Text>
+                  </Th>
+                  <Th padding="0 12px" textTransform="none">
+                    <Text color="black" variant="desktop-xs">
+                      Number
+                    </Text>
+                  </Th>
+                  <Th padding="0 0 0 12px" textTransform="none">
+                    <Text color="black" variant="desktop-xs">
+                      Email
+                    </Text>
+                  </Th>
+                  <Th />
+                  <Th borderRadius="0 8px 0 0" />
+                </Tr>
+              </Thead>
+
+              <Tbody>
+                <Tr h="58px">
+                  <Td padding="0 12px 0 24px" gap="24px">
+                    <Input h="37px" w="168px" />
+                  </Td>
+                  <Td padding="0 12px">
+                    <Input h="37px" w="145px" />
+                  </Td>
+                  <Td padding="0 0 0 12px">
+                    <Input h="37px" w="294px" />
+                  </Td>
+                  <Td padding="0 4px">
+                    <CheckCircleIcon
+                      h="19.5px"
+                      w="21px"
+                      color="#CBD5E0"
+                      cursor="pointer"
+                      _hover={{ color: "#272D77" }}
+                    />
+                  </Td>
+                  <Td padding="0 4px">
+                    <DeleteIcon
+                      h="19.5px"
+                      w="21px"
+                      color="#CBD5E0"
+                      cursor="pointer"
+                      _hover={{ color: "#272D77" }}
+                    />
+                  </Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </TableContainer>
+          <Text color="#272D77" variant="desktop-button-bold">
+            + Add another contact
+          </Text>
+        </Flex>
+      </FormControl>
     </>
   );
 };

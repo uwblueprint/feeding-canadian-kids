@@ -69,7 +69,7 @@ class OnboardingRequestService(IOnboardingRequestService):
             referenced_onboarding_request.user_uid = random_user_uid
             referenced_onboarding_request.save()            
             recipient_email = referenced_onboarding_request.info.contact_email
-            # AuthService.reset_password(self, recipient_email)            
+            AuthService.reset_password(self, recipient_email)            
 
         except Exception as e:
             reason = getattr(e, "message", None)

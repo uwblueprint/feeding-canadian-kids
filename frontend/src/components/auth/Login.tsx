@@ -93,14 +93,14 @@ const Login = (): React.ReactElement => {
     >
       <VStack
       justify="space-between"
-      border='1px'
+      border={{base:'0px', md:'1px'}}
       borderColor='#D6D6D6'
       borderRadius='5%'
-      padding='4% 7% 4% 7%'
-      width="40%"
+      padding={{base:'4% 3% 4% 3%', md:'4% 7% 4% 7%'}}
+      width={{base:"80%", md:"40%"}}
       height="75%">
         <Text pb={5} variant="desktop-display-xl">Log in to account</Text>
-        <Text pb={5}>Please enter your account details to log in.</Text>
+        <Text pb={5} textAlign="center">Please enter your account details to log in.</Text>
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
         <Box>
         <FormControl pb={5} isRequired>

@@ -59,6 +59,9 @@ class OnboardingRequestService(IOnboardingRequestService):
             
         
             referenced_onboarding_request = OnboardingRequest.objects.get(id=request_id)
+
+            print(OnboardingRequest.objects.get(id=request_id).status)
+            
             referenced_onboarding_request.status = "Approved" #approve the onboarding request
             
             # create a uid for the user

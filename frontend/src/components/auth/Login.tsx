@@ -10,7 +10,6 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -61,18 +60,6 @@ const Login = (): React.ReactElement => {
       email,
       password,
       login,
-    );
-    setAuthenticatedUser(user);
-  };
-
-  const onSignUpClick = () => {
-    navigate(SIGNUP_PAGE);
-  };
-
-  const onGoogleLoginSuccess = async (idToken: string) => {
-    const user: AuthenticatedUser = await authAPIClient.loginWithGoogle(
-      idToken,
-      loginWithGoogle,
     );
     setAuthenticatedUser(user);
   };

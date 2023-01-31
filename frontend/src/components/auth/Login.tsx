@@ -11,10 +11,10 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
+import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
@@ -31,29 +31,12 @@ const LOGIN = gql`
   }
 `;
 
-const LOGIN_WITH_GOOGLE = gql`
-  mutation LoginWithGoogle($idToken: String!) {
-    loginWithGoogle(idToken: $idToken) {
-      id
-      firstName
-      lastName
-      email
-      role
-      accessToken
-    }
-  }
-`;
-
 const Login = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
   const [login] = useMutation<{ login: AuthenticatedUser }>(LOGIN);
-  const [loginWithGoogle] = useMutation<{ loginWithGoogle: AuthenticatedUser }>(
-    LOGIN_WITH_GOOGLE,
-  );
 
   const onLogInClick = async () => {
     const user: AuthenticatedUser = await authAPIClient.login(

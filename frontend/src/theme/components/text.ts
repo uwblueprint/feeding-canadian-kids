@@ -30,12 +30,33 @@ const Text = {
       fontSize: "14px",
       lineHeight: "150%",
     },
+    "mobile-xs": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "400",
+      fontSize: "12px",
+      lineHeight: "150%",
+    },
     "desktop-heading-6": {
       fontFamily: "DM Sans",
       fontStyle: "normal",
       fontWeight: "400",
       fontSize: "16px",
       lineHeight: "21px",
+    },
+    "mobile-display-xl": {
+      fontFamily: "Dimbo",
+      fontStyle: "normal",
+      fontWeight: "400",
+      fontSize: "24px",
+      lineHeight: "140%",
+    },
+    "mobile-button-bold": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "700",
+      fontSize: "14px",
+      lineHeight: "28px",
     },
   },
 };

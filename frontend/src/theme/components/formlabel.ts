@@ -9,13 +9,13 @@ const FormLabel = {
             fontSize: "18px",
             lineHeight: "27px",
         },
-      "desktop-button-bold": {
+      "mobile-form-label-bold": {
         fontFamily: "Inter",
         fontStyle: "normal",
-        fontWeight: "700",
-        fontSize: "18px",
-        lineHeight: "24px",
-      },
+        fontWeight: "600",
+        fontSize: "14px",
+        lineHeight: "21px",
+    },
     },
   };
   

@@ -98,15 +98,16 @@ const Login = (): React.ReactElement => {
       borderRadius='5%'
       padding={{base:'4% 3% 4% 3%', md:'4% 7% 4% 7%'}}
       width={{base:"80%", md:"40%"}}
-      height="75%">
-        <Text pb={5} variant="desktop-display-xl">Log in to account</Text>
-        <Text pb={5} textAlign="center">Please enter your account details to log in.</Text>
+      height={{base:"60%", md:"75%"}}>
+        <Text pb={{base:1, md:5}} variant={{base:'mobile-display-xl', md:'desktop-display-xl'}}>Log in to account</Text>
+        <Text pb={5} textAlign="center" fontSize={{base:'12px', md:'16px'}}>Please enter your account details to log in.</Text>
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
         <Box>
         <FormControl pb={5} isRequired>
-          <FormLabel variant="form-label-bold">Email Address</FormLabel>
+          <FormLabel variant={{base:'mobile-form-label-bold', md:'form-label-bold'}}>Email Address</FormLabel>
           <Input 
-            size='lg'
+            height={{base:'38px', md:'51px'}}
+            fontSize={{base:'14px', md:'18px'}}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}/>
@@ -114,33 +115,38 @@ const Login = (): React.ReactElement => {
         </Box>
         <Box>
           <FormControl pb={2} isRequired>
-          <FormLabel variant="desktop-button-bold">Password</FormLabel>
+          <FormLabel variant={{base:'mobile-form-label-bold', md:'form-label-bold'}}>Password</FormLabel>
           <Input
-            size='lg'
+            height={{base:'38px', md:'51px'}}
+            fontSize={{base:'14px', md:'18px'}}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           </FormControl>
         </Box>
-          <Text pb={12} variant="desktop-xs" textDecoration="underline">Forgot Password?</Text>
+          <Text pb={12} variant={{base:'mobile-xs', md:'desktop-xs'}} textDecoration="underline">Forgot Password?</Text>
         </Flex>
+        <VStack
+        pb={5}
+        width="100%"
+        >
         <Button
           onClick={onLogInClick}
-          width="90%"
+          width={{base:"100%", md:"90%"}}
           pt={1}
           pb={1}
           backgroundColor="#272D77"
-          variant="desktop-button-bold"
         >
-          <Text color="white">
-            Log In
+          <Text variant={{base:'mobile-button-bold', md:'desktop-button-bold'}} color="white">
+            Log in
           </Text>
         </Button>
         <HStack>
-          <Text variant="desktop-xs">Don’t have an account?</Text>
-          <Text variant="desktop-xs" textDecoration="underline">Sign up now.</Text>
+          <Text variant={{base:'mobile-xs', md:'desktop-xs'}}>Don’t have an account?</Text>
+          <Text variant={{base:'mobile-xs', md:'desktop-xs'}} textDecoration="underline">Sign up now.</Text>
         </HStack>
+        </VStack>
       </VStack>
     </Flex>
   );

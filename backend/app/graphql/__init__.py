@@ -15,7 +15,6 @@ from ..services.implementations.onboarding_request_service import (
     OnboardingRequestService,
 )
 from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQueries
-from .all_users import AllUsersQuery
 from .user import UserQuery
 from ..services.implementations.user_service import UserService
 

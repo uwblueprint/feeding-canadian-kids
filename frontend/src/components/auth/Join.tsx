@@ -13,12 +13,10 @@ import {
   RadioGroup,
   Stack,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
   Text,
-  Tfoot,
   Th,
   Thead,
   Tr,
@@ -41,15 +39,16 @@ const Join = (): React.ReactElement => {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
   const [contactEmail, setContactEmail] = useState(""); // might go unused
-  const [onsiteName, setOnsiteName] = useState("");
-  const [onsiteNumber, setOnsiteNumber] = useState("");
-  const [onsiteEmail, setOnsiteEmail] = useState("");
+  // const [onsiteName, setOnsiteName] = useState("");
+  // const [onsiteNumber, setOnsiteNumber] = useState("");
+  // const [onsiteEmail, setOnsiteEmail] = useState("");
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
-  interface OnsiteInfo {
-    name: string;
-    number: string;
-    email: string;
-  }
+  // interface OnsiteInfo {
+  //   name: string;
+  //   number: string;
+  //   email: string;
+  // }
 
   const [onsiteInfo, setOnsiteInfo] = useState([
     {
@@ -57,17 +56,15 @@ const Join = (): React.ReactElement => {
       number: "",
       email: "",
       edit: true,
+      attemptedSubmit: false,
     },
   ]);
-
-  console.log(onsiteInfo);
 
   return (
     <Center>
       <Flex
         flexDir="column"
         w="911px"
-        h="1310px"
         p="64px"
         m="128px 0"
         gap="32px"
@@ -97,7 +94,7 @@ const Join = (): React.ReactElement => {
           </FormControl>
         </Flex>
         <Flex flexDir="column">
-          <FormControl isRequired>
+          <FormControl isRequired isInvalid={attemptedSubmit && email === ""}>
             <FormLabel variant="desktop-button-bold">Email address</FormLabel>
             <Input
               variant="outline"
@@ -110,7 +107,10 @@ const Join = (): React.ReactElement => {
         <Text variant="desktop-heading">Organization Info</Text>
         <Flex flexDir="row" gap="24px">
           <Flex flexDir="column" w="240px">
-            <FormControl isRequired>
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationName === ""}
+            >
               <FormLabel variant="desktop-button-bold">
                 Name of organization
               </FormLabel>
@@ -118,7 +118,10 @@ const Join = (): React.ReactElement => {
             </FormControl>
           </Flex>
           <Flex flexDir="column" w="519px">
-            <FormControl isRequired>
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationAddress === ""}
+            >
               <FormLabel variant="desktop-button-bold">
                 Address of organization
               </FormLabel>
@@ -130,16 +133,19 @@ const Join = (): React.ReactElement => {
         <Text variant="desktop-heading">Contact Information</Text>
         <Flex flexDir="column" gap="24px">
           <Flex flexDir="column">
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={attemptedSubmit && name === ""}>
               <FormLabel variant="desktop-button-bold">
                 1. Primary contact name
               </FormLabel>
-              <Input onChange={(e) => setEmail(e.target.value)} />
+              <Input onChange={(e) => setName(e.target.value)} />
             </FormControl>
           </Flex>
           <Flex flexDir="row" gap="24px">
             <Flex flexDir="column" w="240px">
-              <FormControl isRequired>
+              <FormControl
+                isRequired
+                isInvalid={attemptedSubmit && number === ""}
+              >
                 <FormLabel variant="desktop-button-bold">
                   Phone number
                 </FormLabel>
@@ -147,7 +153,10 @@ const Join = (): React.ReactElement => {
               </FormControl>
             </Flex>
             <Flex flexDir="column" w="519px">
-              <FormControl isRequired>
+              <FormControl
+                isRequired
+                isInvalid={attemptedSubmit && contactEmail === ""}
+              >
                 <FormLabel variant="desktop-button-bold">
                   Email address
                 </FormLabel>
@@ -169,7 +178,7 @@ const Join = (): React.ReactElement => {
                 *Must add at least 1 onsite staff up to a maximum of 10.
               </Text>
             </Flex>
-            <TableContainer>
+            <TableContainer border="1px solid #EDF2F7" borderRadius="8px">
               <Table>
                 <Thead>
                   <Tr borderRadius="8px 8px 0 0" h="40px" background="#EDF2F7">
@@ -202,15 +211,22 @@ const Join = (): React.ReactElement => {
                     <Tr h="58px" key={index}>
                       <Td padding="0 12px 0 24px" gap="24px">
                         {onsiteInfo[index].edit ? (
-                          <Input
-                            h="37px"
-                            w="168px"
-                            value={onsiteInfo[index].name}
-                            onChange={(e) => {
-                              onsiteInfo[index].name = e.target.value;
-                              setOnsiteInfo([...onsiteInfo]);
-                            }}
-                          />
+                          <FormControl
+                            isInvalid={
+                              onsiteInfo[index].attemptedSubmit &&
+                              onsiteInfo[index].name === ""
+                            }
+                          >
+                            <Input
+                              h="37px"
+                              w="168px"
+                              value={onsiteInfo[index].name}
+                              onChange={(e) => {
+                                onsiteInfo[index].name = e.target.value;
+                                setOnsiteInfo([...onsiteInfo]);
+                              }}
+                            />
+                          </FormControl>
                         ) : (
                           <Text w="168px" variant="desktop-xs">
                             {onsiteInfo[index].name}
@@ -219,15 +235,22 @@ const Join = (): React.ReactElement => {
                       </Td>
                       <Td padding="0 12px">
                         {onsiteInfo[index].edit ? (
-                          <Input
-                            h="37px"
-                            w="145px"
-                            value={onsiteInfo[index].number}
-                            onChange={(e) => {
-                              onsiteInfo[index].number = e.target.value;
-                              setOnsiteInfo([...onsiteInfo]);
-                            }}
-                          />
+                          <FormControl
+                            isInvalid={
+                              onsiteInfo[index].attemptedSubmit &&
+                              onsiteInfo[index].number === ""
+                            }
+                          >
+                            <Input
+                              h="37px"
+                              w="145px"
+                              value={onsiteInfo[index].number}
+                              onChange={(e) => {
+                                onsiteInfo[index].number = e.target.value;
+                                setOnsiteInfo([...onsiteInfo]);
+                              }}
+                            />
+                          </FormControl>
                         ) : (
                           <Text w="145px" variant="desktop-xs">
                             {onsiteInfo[index].number}
@@ -236,15 +259,22 @@ const Join = (): React.ReactElement => {
                       </Td>
                       <Td padding="0 0 0 12px">
                         {onsiteInfo[index].edit ? (
-                          <Input
-                            h="37px"
-                            w="294px"
-                            value={onsiteInfo[index].email}
-                            onChange={(e) => {
-                              onsiteInfo[index].email = e.target.value;
-                              setOnsiteInfo([...onsiteInfo]);
-                            }}
-                          />
+                          <FormControl
+                            isInvalid={
+                              onsiteInfo[index].attemptedSubmit &&
+                              onsiteInfo[index].email === ""
+                            }
+                          >
+                            <Input
+                              h="37px"
+                              w="294px"
+                              value={onsiteInfo[index].email}
+                              onChange={(e) => {
+                                onsiteInfo[index].email = e.target.value;
+                                setOnsiteInfo([...onsiteInfo]);
+                              }}
+                            />
+                          </FormControl>
                         ) : (
                           <Text w="294px" variant="desktop-xs">
                             {onsiteInfo[index].email}
@@ -260,66 +290,76 @@ const Join = (): React.ReactElement => {
                             cursor="pointer"
                             _hover={{ color: "#272D77" }}
                             onClick={() => {
-                              onsiteInfo[index].edit = false;
+                              onsiteInfo[index].attemptedSubmit = true;
+                              if (
+                                onsiteInfo[index].name !== "" &&
+                                onsiteInfo[index].number !== "" &&
+                                onsiteInfo[index].email !== ""
+                              ) {
+                                onsiteInfo[index].edit = false;
+                              }
                               setOnsiteInfo([...onsiteInfo]);
                             }}
                           />
                         </Td>
                       ) : (
-                        <>
-                          <Td padding="0 4px">
-                            <EditIcon
-                              h="19.5px"
-                              w="100%"
-                              color="#CBD5E0"
-                              cursor="pointer"
-                              _hover={{ color: "#272D77" }}
-                              onClick={() => {
-                                onsiteInfo[index].edit = true;
-                                setOnsiteInfo([...onsiteInfo]);
-                              }}
-                            />
-                          </Td>
-                          {onsiteInfo.length >= 2 && (
-                            <Td padding="0 4px">
-                              <DeleteIcon
-                                h="19.5px"
-                                w="100%"
-                                color="#CBD5E0"
-                                cursor="pointer"
-                                _hover={{ color: "#272D77" }}
-                                onClick={() => {
-                                  onsiteInfo.splice(index, 1);
-                                  setOnsiteInfo([...onsiteInfo]);
-                                }}
-                              />
-                            </Td>
-                          )}
-                        </>
+                        <Td padding="0 4px">
+                          <EditIcon
+                            h="19.5px"
+                            w="100%"
+                            color="#CBD5E0"
+                            cursor="pointer"
+                            _hover={{ color: "#272D77" }}
+                            onClick={() => {
+                              onsiteInfo[index].edit = true;
+                              setOnsiteInfo([...onsiteInfo]);
+                            }}
+                          />
+                        </Td>
+                      )}
+                      {onsiteInfo.length >= 2 ? (
+                        <Td padding="0 4px">
+                          <DeleteIcon
+                            h="19.5px"
+                            w="100%"
+                            color="#CBD5E0"
+                            cursor="pointer"
+                            _hover={{ color: "#272D77" }}
+                            onClick={() => {
+                              onsiteInfo.splice(index, 1);
+                              setOnsiteInfo([...onsiteInfo]);
+                            }}
+                          />
+                        </Td>
+                      ) : (
+                        <Td padding="0 4px" />
                       )}
                     </Tr>
                   ))}
                 </Tbody>
               </Table>
             </TableContainer>
-            <Text
-              color="#272D77"
-              variant="desktop-button-bold"
-              cursor="pointer"
-              onClick={() => {
-                setOnsiteInfo([
-                  ...onsiteInfo,
-                  {
-                    name: "",
-                    number: "",
-                    email: "",
-                    edit: true,
-                  },
-                ]);
-              }}
-            >
-              + Add another contact
-            </Text>
+            {onsiteInfo.length < 10 && (
+              <Text
+                color="#272D77"
+                variant="desktop-button-bold"
+                cursor="pointer"
+                onClick={() => {
+                  setOnsiteInfo([
+                    ...onsiteInfo,
+                    {
+                      name: "",
+                      number: "",
+                      email: "",
+                      edit: true,
+                      attemptedSubmit: false,
+                    },
+                  ]);
+                }}
+              >
+                + Add another contact
+              </Text>
+            )}
           </Flex>
         </FormControl>
         <Flex flexDir="column" alignItems="center" gap="8px">
@@ -330,6 +370,21 @@ const Join = (): React.ReactElement => {
             bgColor="#272D77"
             _hover={{ bgColor: "#272D77" }}
             borderRadius="6px"
+            onClick={() => {
+              setAttemptedSubmit(true);
+              const req = {
+                role,
+                email,
+                organizationName,
+                organizationAddress,
+                name,
+                number,
+                contactEmail,
+                onsiteInfo,
+              };
+              console.log(req);
+              // add validation for the request
+            }}
           >
             Create Account
           </Button>

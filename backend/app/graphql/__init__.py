@@ -18,6 +18,7 @@ from ..services.implementations.onboarding_request_service import (
 from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQueries
 from ..services.implementations.user_service import UserService
 
+
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,

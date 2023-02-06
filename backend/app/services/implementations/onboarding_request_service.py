@@ -1,3 +1,4 @@
+from ...services.implementations.auth_service import AuthService
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import OnboardingRequest
 from ...models.user_info import UserInfo
@@ -5,7 +6,7 @@ from ...resources.onboarding_request_dto import OnboardingRequestDTO
 
 
 class OnboardingRequestService(IOnboardingRequestService):
-    def __init__(self, logger):
+    def __init__(self, logger, email_service):
         """
         Create an instance of OnboardingRequestService
 
@@ -13,6 +14,8 @@ class OnboardingRequestService(IOnboardingRequestService):
         :type logger: logger
         """
         self.logger = logger
+        self.email_service = email_service
+
 
     def create_onboarding_request(self, userInfo):
         try:
@@ -93,3 +96,23 @@ class OnboardingRequestService(IOnboardingRequestService):
                 )
             )
             raise e
+
+    def approve_onboarding_request(self, request_id):
+
+        try:
+            referenced_onboarding_request = OnboardingRequest.objects.get(id=request_id)
+            referenced_onboarding_request.status = "Approved" #approve the onboarding request
+            
+            referenced_onboarding_request.save()            
+            recipient_email = referenced_onboarding_request.info.contact_email
+            AuthService.reset_password(self, recipient_email)         
+        except Exception as e:
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                "Failed to approve onboarding request. Reason = {reason}".format(
+                    reason=(reason if reason else str(e))
+                )
+            )
+            raise e
+
+        return referenced_onboarding_request.to_serializable_dict()

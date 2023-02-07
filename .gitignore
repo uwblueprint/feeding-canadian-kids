@@ -12,4 +12,3 @@
 **/*.egg-info
 **/*.eslintcache
 **/*.swp
-**/yarn.lock

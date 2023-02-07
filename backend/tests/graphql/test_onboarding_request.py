@@ -308,10 +308,10 @@ def test_approve_onboading_request():
                     info {
                         contactName,
                         contactEmail,
-                        contactPhone, 
+                        contactPhone,
                     }
                     dateSubmitted
-                    status    
+                    status
                 }
             }
         }""",

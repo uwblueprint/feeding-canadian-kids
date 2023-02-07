@@ -66,7 +66,7 @@ const Login = (): React.ReactElement => {
         borderRadius="5%"
         padding={{ base: "4% 3% 4% 3%", md: "4% 7% 4% 7%" }}
         width={{ base: "80%", md: "40%" }}
-        height={{ base: "60%", md: "75%" }}
+        height="fit-content"
       >
         <Text
           pb={{ base: 1, md: 5 }}
@@ -89,8 +89,7 @@ const Login = (): React.ReactElement => {
                 Email Address
               </FormLabel>
               <Input
-                height={{ base: "38px", md: "51px" }}
-                fontSize={{ base: "14px", md: "18px" }}
+                variant="outline"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -108,8 +107,7 @@ const Login = (): React.ReactElement => {
                 Password
               </FormLabel>
               <Input
-                height={{ base: "38px", md: "51px" }}
-                fontSize={{ base: "14px", md: "18px" }}
+                variant="outline"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

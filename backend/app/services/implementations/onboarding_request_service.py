@@ -97,7 +97,6 @@ class OnboardingRequestService(IOnboardingRequestService):
             raise e
 
     def approve_onboarding_request(self, request_id):
-
         try:
             referenced_onboarding_request = OnboardingRequest.objects(
                 id=request_id

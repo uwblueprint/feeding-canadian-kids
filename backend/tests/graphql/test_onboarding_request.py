@@ -132,7 +132,6 @@ def test_get_all_requests(mocker):
 
 
 def test_filter_requests_by_role(mocker):
-
     mock_date = datetime.datetime.now()
     mock_result = [
         OnboardingRequest(
@@ -179,7 +178,6 @@ def test_filter_requests_by_role(mocker):
 
 
 def test_filter_requests_by_status(mocker):
-
     mock_date = datetime.datetime.now()
     mock_result = [
         OnboardingRequest(
@@ -227,7 +225,6 @@ def test_filter_requests_by_status(mocker):
 
 
 def test_get_requests_by_id(mocker):
-
     mock_date = datetime.datetime.now()
     mock_result = [
         OnboardingRequest(

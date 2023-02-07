@@ -105,7 +105,6 @@ class OnboardingRequestService(IOnboardingRequestService):
             referenced_onboarding_request.status = (
                 "Approved"  # approve the onboarding request
             )
-            # print(referenced_onboarding_request.info)
 
             referenced_onboarding_request.save()  # save the changes
 

@@ -100,12 +100,16 @@ class OnboardingRequestService(IOnboardingRequestService):
     def approve_onboarding_request(self, request_id):
 
         try:
-            referenced_onboarding_request = OnboardingRequest.objects.get(id=request_id)
+            referenced_onboarding_request = OnboardingRequest.objects(id=request_id).first()
             referenced_onboarding_request.status = "Approved" #approve the onboarding request
+            # print(referenced_onboarding_request.info)
+
+            referenced_onboarding_request.save() #save the changes
             
-            referenced_onboarding_request.save()            
+                 
             recipient_email = referenced_onboarding_request.info.contact_email
-            AuthService.reset_password(self, recipient_email)         
+            AuthService.reset_password(self, recipient_email)     
+            
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -116,3 +120,5 @@ class OnboardingRequestService(IOnboardingRequestService):
             raise e
 
         return referenced_onboarding_request.to_serializable_dict()
+
+        

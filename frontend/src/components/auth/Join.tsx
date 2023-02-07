@@ -1,4 +1,3 @@
-import { gql, useMutation } from "@apollo/client";
 import { CheckCircleIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -22,14 +21,7 @@ import {
   Tr,
   useMediaQuery,
 } from "@chakra-ui/react";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import React, { useContext, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-
-import authAPIClient from "../../APIClients/AuthAPIClient";
-import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
-import AuthContext from "../../contexts/AuthContext";
-import { AuthenticatedUser } from "../../types/AuthTypes";
+import React, { useState } from "react";
 
 const Join = (): React.ReactElement => {
   const [role, setRole] = useState("ASP");

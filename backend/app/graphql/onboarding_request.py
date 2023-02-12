@@ -30,6 +30,7 @@ class OnboardingRequest(graphene.ObjectType):
 
 # Queries
 
+
 # Return object for queries
 class GetOnboardingRequest(Query):
     contact_name = graphene.String()

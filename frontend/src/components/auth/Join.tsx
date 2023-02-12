@@ -90,7 +90,10 @@ const Join = (): React.ReactElement => {
         <Flex flexDir="column">
           <FormControl isRequired>
             <FormLabel
-              variant={{ base: "mobile-body-bold", lg: "desktop-body-bold" }}
+              variant={{
+                base: "mobile-form-label-bold",
+                lg: "form-label-bold",
+              }}
             >
               Type of user
             </FormLabel>
@@ -122,7 +125,9 @@ const Join = (): React.ReactElement => {
         {!isWebView && (
           <Flex flexDir="column">
             <FormControl isRequired isInvalid={attemptedSubmit && email === ""}>
-              <FormLabel variant="mobile-body-bold">Email address</FormLabel>
+              <FormLabel variant="mobile-form-label-bold">
+                Email address
+              </FormLabel>
               <Input
                 variant="mobile-outline"
                 type="email"
@@ -171,7 +176,7 @@ const Join = (): React.ReactElement => {
           {!isWebView && (
             <Flex flexDir="column" gap="8px">
               <FormControl isRequired>
-                <FormLabel variant="mobile-body-bold">
+                <FormLabel variant="mobile-form-label-bold">
                   Organization Info
                 </FormLabel>
 
@@ -254,7 +259,9 @@ const Join = (): React.ReactElement => {
         {!isWebView && (
           <Flex flexDir="column" gap="8px">
             <FormControl isRequired>
-              <FormLabel variant="mobile-body-bold">Primary Contact</FormLabel>
+              <FormLabel variant="mobile-form-label-bold">
+                Primary Contact
+              </FormLabel>
               <Flex flexDir="column" gap="8px">
                 <FormControl
                   isRequired
@@ -299,7 +306,7 @@ const Join = (): React.ReactElement => {
                 {onsiteInfo.map((info, index) => (
                   <Flex flexDir="column" gap="8px" key={index}>
                     <Flex flexDir="row" justifyContent="space-between">
-                      <FormLabel variant="mobile-body-bold">
+                      <FormLabel variant="mobile-form-label-bold">
                         Additional Onsite Staff
                       </FormLabel>
                       {onsiteInfo.length >= 2 && (
@@ -394,7 +401,7 @@ const Join = (): React.ReactElement => {
             {isWebView && (
               <>
                 <Flex flexDir="column" gap="8px">
-                  <FormLabel variant="desktop-body-bold">
+                  <FormLabel variant="form-label-bold">
                     2. Additional onsite staff
                   </FormLabel>
                   <Text color="#69696B" variant="desktop-xs">

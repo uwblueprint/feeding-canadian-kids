@@ -9,14 +9,14 @@ const FormLabel = {
       fontSize: "18px",
       lineHeight: "24px",
     },
-    "desktop-body-bold": {
+    "form-label-bold": {
       fontFamily: "Inter",
       fontStyle: "normal",
       fontWeight: "600",
       fontSize: "18px",
       lineHeight: "27px",
     },
-    "mobile-body-bold": {
+    "mobile-form-label-bold": {
       fontFamily: "Inter",
       fontStyle: "normal",
       fontWeight: "600",

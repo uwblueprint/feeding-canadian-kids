@@ -611,17 +611,17 @@ const Join = (): React.ReactElement => {
             borderRadius="6px"
             onClick={() => {
               setAttemptedSubmit(true);
-              const req = {
-                role,
-                email,
-                organizationName,
-                organizationAddress,
-                contactName,
-                contactNumber,
-                contactEmail,
-                onsiteInfo,
-              };
-              console.log(req);
+              // const req = {
+              //   role,
+              //   email,
+              //   organizationName,
+              //   organizationAddress,
+              //   contactName,
+              //   contactNumber,
+              //   contactEmail,
+              //   onsiteInfo,
+              // };
+              // console.log(req);
               // add validation for the request
             }}
           >

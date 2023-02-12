@@ -28,23 +28,9 @@ const Join = (): React.ReactElement => {
   const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [organizationAddress, setOrganizationAddress] = useState("");
-
-  const [name, setName] = useState("");
-  const [number, setNumber] = useState("");
-  const [contactEmail, setContactEmail] = useState(""); // might go unused
-  // const [onsiteName, setOnsiteName] = useState("");
-  // const [onsiteNumber, setOnsiteNumber] = useState("");
-  // const [onsiteEmail, setOnsiteEmail] = useState("");
-  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
-
-  // interface OnsiteInfo {
-  //   name: string;
-  //   number: string;
-  //   email: string;
-  // }
-
-  const [isWebView] = useMediaQuery("(min-width: 62em)");
-
+  const [contactName, setContactName] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
   const [onsiteInfo, setOnsiteInfo] = useState([
     {
       name: "",
@@ -54,6 +40,9 @@ const Join = (): React.ReactElement => {
       attemptedSubmit: false,
     },
   ]);
+
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+  const [isWebView] = useMediaQuery("(min-width: 62em)");
 
   return (
     <Center>
@@ -117,6 +106,7 @@ const Join = (): React.ReactElement => {
               <Input
                 variant="outline"
                 type="email"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </FormControl>
@@ -131,6 +121,7 @@ const Join = (): React.ReactElement => {
               <Input
                 variant="mobile-outline"
                 type="email"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
               />
@@ -153,6 +144,7 @@ const Join = (): React.ReactElement => {
                       Name of organization
                     </FormLabel>
                     <Input
+                      value={organizationName}
                       onChange={(e) => setOrganizationName(e.target.value)}
                     />
                   </FormControl>
@@ -166,6 +158,7 @@ const Join = (): React.ReactElement => {
                       Address of organization
                     </FormLabel>
                     <Input
+                      value={organizationAddress}
                       onChange={(e) => setOrganizationAddress(e.target.value)}
                     />
                   </FormControl>
@@ -187,6 +180,7 @@ const Join = (): React.ReactElement => {
                   >
                     <Input
                       variant="mobile-outline"
+                      value={organizationName}
                       onChange={(e) => setOrganizationName(e.target.value)}
                       placeholder="Name of organization"
                     />
@@ -197,7 +191,8 @@ const Join = (): React.ReactElement => {
                   >
                     <Input
                       variant="mobile-outline"
-                      onChange={(e) => setOrganizationName(e.target.value)}
+                      value={organizationAddress}
+                      onChange={(e) => setOrganizationAddress(e.target.value)}
                       placeholder="Address of organization"
                     />
                   </FormControl>
@@ -215,26 +210,30 @@ const Join = (): React.ReactElement => {
               <Flex flexDir="column">
                 <FormControl
                   isRequired
-                  isInvalid={attemptedSubmit && name === ""}
+                  isInvalid={attemptedSubmit && contactName === ""}
                 >
                   <FormLabel variant="desktop-button-bold">
                     1. Primary contact name
                   </FormLabel>
-                  <Input onChange={(e) => setName(e.target.value)} />
+                  <Input
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
+                  />
                 </FormControl>
               </Flex>
               <Flex flexDir="row" gap="24px">
                 <Flex flexDir="column" w="240px">
                   <FormControl
                     isRequired
-                    isInvalid={attemptedSubmit && number === ""}
+                    isInvalid={attemptedSubmit && contactNumber === ""}
                   >
                     <FormLabel variant="desktop-button-bold">
                       Phone number
                     </FormLabel>
                     <Input
                       type="tel"
-                      onChange={(e) => setNumber(e.target.value)}
+                      value={contactNumber}
+                      onChange={(e) => setContactNumber(e.target.value)}
                     />
                   </FormControl>
                 </Flex>
@@ -248,6 +247,7 @@ const Join = (): React.ReactElement => {
                     </FormLabel>
                     <Input
                       type="email"
+                      value={contactEmail}
                       onChange={(e) => setContactEmail(e.target.value)}
                     />
                   </FormControl>
@@ -265,22 +265,24 @@ const Join = (): React.ReactElement => {
               <Flex flexDir="column" gap="8px">
                 <FormControl
                   isRequired
-                  isInvalid={attemptedSubmit && name === ""}
+                  isInvalid={attemptedSubmit && contactName === ""}
                 >
                   <Input
                     variant="mobile-outline"
-                    onChange={(e) => setName(e.target.value)}
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
                     placeholder="Full Name"
                   />
                 </FormControl>
                 <FormControl
                   isRequired
-                  isInvalid={attemptedSubmit && number === ""}
+                  isInvalid={attemptedSubmit && contactNumber === ""}
                 >
                   <Input
                     variant="mobile-outline"
                     type="tel"
-                    onChange={(e) => setNumber(e.target.value)}
+                    value={contactNumber}
+                    onChange={(e) => setContactNumber(e.target.value)}
                     placeholder="Phone number"
                   />
                 </FormControl>
@@ -291,6 +293,7 @@ const Join = (): React.ReactElement => {
                   <Input
                     variant="mobile-outline"
                     type="email"
+                    value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     placeholder="Email address"
                   />
@@ -613,8 +616,8 @@ const Join = (): React.ReactElement => {
                 email,
                 organizationName,
                 organizationAddress,
-                name,
-                number,
+                contactName,
+                contactNumber,
                 contactEmail,
                 onsiteInfo,
               };

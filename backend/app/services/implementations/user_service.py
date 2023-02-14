@@ -83,7 +83,7 @@ class UserService(IUserService):
 
     def get_user_role_by_auth_id(self, auth_id):
         try:
-            user = self.__get_user_by_auth_id(auth_id)
+            user = self.get_user_by_auth_id(auth_id)
             return user.role
         except Exception as e:
             reason = getattr(e, "message", None)
@@ -96,7 +96,7 @@ class UserService(IUserService):
 
     def get_user_id_by_auth_id(self, auth_id):
         try:
-            user = self.__get_user_by_auth_id(auth_id)
+            user = self.get_user_by_auth_id(auth_id)
             return str(user.id)
         except Exception as e:
             reason = getattr(e, "message", None)
@@ -355,7 +355,7 @@ class UserService(IUserService):
             )
             raise e
 
-    def __get_user_by_auth_id(self, auth_id):
+    def get_user_by_auth_id(self, auth_id):
         """
         Get a User document by auth_id
 

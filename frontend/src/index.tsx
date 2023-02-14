@@ -40,7 +40,7 @@ const authLink = setContext(async (_, { headers }) => {
   >(AUTHENTICATED_USER_KEY, "accessToken");
 
   // refresh if token has expired
-  if (!auth.shouldRenewToken(token)) {
+  if (auth.shouldRenewToken(token)) {
     const { data } = await axios.post(
       `${process.env.REACT_APP_BACKEND_URL}/graphql`,
       { query: REFRESH_MUTATION },

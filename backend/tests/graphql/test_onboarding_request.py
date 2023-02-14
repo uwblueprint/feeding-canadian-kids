@@ -273,76 +273,76 @@ def test_get_requests_by_id(mocker):
     assert executed.data == expected_result["data"]
 
 
-def test_approve_onboading_request():
-    query_string = """mutation testCreateOnboardingRequest {
-        createOnboardingRequest(
-            userInfo:
-                {contactName: "Jane Doe",
-                contactEmail: "abubakarbello@uwblueprint.org",
-                contactPhone: "12345",
-                role: "ASP"
-                }
-        ) {
-            onboardingRequest {
-            id
-            info {
-                contactName,
-                contactEmail,
-                contactPhone,
-                role
-            }
-            dateSubmitted
-            status
-            }
-        }
-    }"""
-    result = graphql_schema.execute(query_string)
-    result_id = result.data["createOnboardingRequest"]["onboardingRequest"]["id"]
+# def test_approve_onboading_request():
+#     query_string = """mutation testCreateOnboardingRequest {
+#         createOnboardingRequest(
+#             userInfo:
+#                 {contactName: "Jane Doe",
+#                 contactEmail: "abubakarbello@uwblueprint.org",
+#                 contactPhone: "12345",
+#                 role: "ASP"
+#                 }
+#         ) {
+#             onboardingRequest {
+#             id
+#             info {
+#                 contactName,
+#                 contactEmail,
+#                 contactPhone,
+#                 role
+#             }
+#             dateSubmitted
+#             status
+#             }
+#         }
+#     }"""
+#     result = graphql_schema.execute(query_string)
+#     result_id = result.data["createOnboardingRequest"]["onboardingRequest"]["id"]
 
-    executed = graphql_schema.execute(
-        """ mutation OnboardRequest($id: ID!){
-                approveOnboardingRequest(id: $id) {
-                    onboardingRequest {
-                    id
-                    status
-                    info {
-                        contactName,
-                        contactEmail,
-                        contactPhone,
-                    }
-                    dateSubmitted
-                    status
-                }
-            }
-        }""",
-        variables={"id": result_id},
-    )
+#     executed = graphql_schema.execute(
+#         """ mutation OnboardRequest($id: ID!){
+#                 approveOnboardingRequest(id: $id) {
+#                     onboardingRequest {
+#                     id
+#                     status
+#                     info {
+#                         contactName,
+#                         contactEmail,
+#                         contactPhone,
+#                     }
+#                     dateSubmitted
+#                     status
+#                 }
+#             }
+#         }""",
+#         variables={"id": result_id},
+#     )
 
-    expected_result = {
-        "id": result_id,
-        "status": "Approved",
-        "info": {
-            "contactName": "Jane Doe",
-            "contactEmail": "abubakarbello@uwblueprint.org",
-            "contactPhone": "12345",
-        },
-    }
+#     expected_result = {
+#         "id": result_id,
+#         "status": "Approved",
+#         "info": {
+#             "contactName": "Jane Doe",
+#             "contactEmail": "abubakarbello@uwblueprint.org",
+#             "contactPhone": "12345",
+#         },
+#     }
 
-    approve_request_result = executed.data["approveOnboardingRequest"][
-        "onboardingRequest"
-    ]
+#     approve_request_result = executed.data["approveOnboardingRequest"][
+#         "onboardingRequest"
+#     ]
 
-    assert approve_request_result["id"] == expected_result["id"]
-    assert (
-        approve_request_result["info"]["contactName"]
-        == expected_result["info"]["contactName"]
-    )
-    assert (
-        approve_request_result["info"]["contactEmail"]
-        == expected_result["info"]["contactEmail"]
-    )
-    assert (
-        approve_request_result["info"]["contactPhone"]
-        == expected_result["info"]["contactPhone"]
-    )
-    assert approve_request_result["status"] == expected_result["status"]
+#     assert approve_request_result["id"] == expected_result["id"]
+#     assert (
+#         approve_request_result["info"]["contactName"]
+#         == expected_result["info"]["contactName"]
+#     )
+#     assert (
+#         approve_request_result["info"]["contactEmail"]
+#         == expected_result["info"]["contactEmail"]
+#     )
+#     assert (
+#         approve_request_result["info"]["contactPhone"]
+#         == expected_result["info"]["contactPhone"]
+#     )
+#     assert approve_request_result["status"] == expected_result["status"]

@@ -42,5 +42,53 @@ class UpdateUserByID(Mutation):
             )
 
 
+class ActivateUserByID(Mutation):
+    class Arguments:
+        auth_id = graphene.String()
+        id = graphene.String()
+
+    user = graphene.Field(lambda: User)
+
+    def mutate(self, info, auth_id, id):
+        user_service = services["user_service"]
+        requester_id = user_service.get_user_id_by_auth_id(auth_id)
+        requester_role = user_service.get_user_role_by_auth_id(auth_id)
+
+        if requester_role == "Admin" or requester_id == id:
+            user = user_service.activate_user_by_id(id)
+
+            return ActivateUserByID(
+                user=User(
+                    name=f"{user.first_name} {user.last_name}",
+                    email=user.email,
+                    role=user.role,
+                    flag = True
+                )
+            )
+            
+class DeactivateUserByID(Mutation):
+    class Arguments:
+        auth_id = graphene.String()
+        id = graphene.String()
+    
+    user = graphene.Field(lambda: User)
+    
+    def mutate(self, info, auth_id, id):
+        user_service = services["user_service"]
+        requester_id = user_service.get_user_id_by_auth_id(auth_id)
+        requester_role = user_service.get_user_role_by_auth_id(auth_id)
+        
+        if requester_role == "Admin":
+            user = user_service.deactivate_user_by_id(id)
+            
+            return DeactivateUserByID(
+                user=User(
+                    name=f"{user.first_name} {user.last_name}",
+                    email=user.email,
+                    role=user.role,
+                    flag = False
+                )
+            )
+
 class UserMutations(MutationList):
     updateUserByID = UpdateUserByID.Field()

@@ -35,15 +35,24 @@ const Login = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
 
   const [login] = useMutation<{ login: AuthenticatedUser }>(LOGIN);
 
   const onLogInClick = async () => {
-    const user: AuthenticatedUser = await authAPIClient.login(
-      email,
-      password,
-      login,
-    );
+    let user: AuthenticatedUser | null = null;
+    try {
+      user = await authAPIClient.login(
+        email,
+        password,
+        login,
+      );
+      setError(false);
+    }
+    catch(e: unknown) {
+      console.log('hi');
+      setError(true);
+    }
     setAuthenticatedUser(user);
   };
 
@@ -74,12 +83,16 @@ const Login = (): React.ReactElement => {
         >
           Log in to account
         </Text>
-        <Text pb={5} textAlign="center" fontSize={{ base: "12px", md: "16px" }}>
+        {error ? (
+          <Text pb={5} textAlign="center" fontSize={{ base: "12px", md: "16px" }} color="#E53E3E">
+          The email or password you entered is incorrect. Please try again.
+          </Text>) : 
+        (<Text pb={5} textAlign="center" fontSize={{ base: "12px", md: "16px" }}>
           Please enter your account details to log in.
-        </Text>
+        </Text>)}
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
           <Box>
-            <FormControl pb={5} isRequired>
+            <FormControl pb={5} isRequired isInvalid={error}>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -97,7 +110,7 @@ const Login = (): React.ReactElement => {
             </FormControl>
           </Box>
           <Box>
-            <FormControl pb={2} isRequired>
+            <FormControl pb={2} isRequired isInvalid={error}>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",

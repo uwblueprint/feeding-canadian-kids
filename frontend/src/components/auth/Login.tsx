@@ -11,10 +11,10 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import { HOME_PAGE } from "../../constants/Routes";
+import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
@@ -35,15 +35,18 @@ const Login = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
 
   const [login] = useMutation<{ login: AuthenticatedUser }>(LOGIN);
 
   const onLogInClick = async () => {
-    const user: AuthenticatedUser = await authAPIClient.login(
-      email,
-      password,
-      login,
-    );
+    let user: AuthenticatedUser | null = null;
+    try {
+      user = await authAPIClient.login(email, password, login);
+      setError(false);
+    } catch (e: unknown) {
+      setError(true);
+    }
     setAuthenticatedUser(user);
   };
 
@@ -74,12 +77,27 @@ const Login = (): React.ReactElement => {
         >
           Log in to account
         </Text>
-        <Text pb={5} textAlign="center" fontSize={{ base: "12px", md: "16px" }}>
-          Please enter your account details to log in.
-        </Text>
+        {error ? (
+          <Text
+            pb={5}
+            textAlign="center"
+            variant={{ base: "mobile-caption", md: "desktop-caption" }}
+            color="#E53E3E"
+          >
+            The email or password you entered is incorrect. Please try again.
+          </Text>
+        ) : (
+          <Text
+            pb={5}
+            textAlign="center"
+            variant={{ base: "mobile-caption", md: "desktop-caption" }}
+          >
+            Please enter your account details to log in.
+          </Text>
+        )}
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
           <Box>
-            <FormControl pb={5} isRequired>
+            <FormControl pb={5} isRequired isInvalid={error}>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -97,7 +115,7 @@ const Login = (): React.ReactElement => {
             </FormControl>
           </Box>
           <Box>
-            <FormControl pb={2} isRequired>
+            <FormControl pb={2} isRequired isInvalid={error}>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -144,12 +162,14 @@ const Login = (): React.ReactElement => {
             <Text variant={{ base: "mobile-xs", md: "desktop-xs" }}>
               Don’t have an account?
             </Text>
-            <Text
-              variant={{ base: "mobile-xs", md: "desktop-xs" }}
-              textDecoration="underline"
-            >
-              Sign up now.
-            </Text>
+            <Link to={SIGNUP_PAGE}>
+              <Text
+                variant={{ base: "mobile-xs", md: "desktop-xs" }}
+                textDecoration="underline"
+              >
+                Sign up now.
+              </Text>
+            </Link>
           </HStack>
         </VStack>
       </VStack>

@@ -42,15 +42,9 @@ const Login = (): React.ReactElement => {
   const onLogInClick = async () => {
     let user: AuthenticatedUser | null = null;
     try {
-      user = await authAPIClient.login(
-        email,
-        password,
-        login,
-      );
+      user = await authAPIClient.login(email, password, login);
       setError(false);
-    }
-    catch(e: unknown) {
-      console.log('hi');
+    } catch (e: unknown) {
       setError(true);
     }
     setAuthenticatedUser(user);
@@ -84,12 +78,23 @@ const Login = (): React.ReactElement => {
           Log in to account
         </Text>
         {error ? (
-          <Text pb={5} textAlign="center" fontSize={{ base: "12px", md: "16px" }} color="#E53E3E">
-          The email or password you entered is incorrect. Please try again.
-          </Text>) : 
-        (<Text pb={5} textAlign="center" fontSize={{ base: "12px", md: "16px" }}>
-          Please enter your account details to log in.
-        </Text>)}
+          <Text
+            pb={5}
+            textAlign="center"
+            fontSize={{ base: "12px", md: "16px" }}
+            color="#E53E3E"
+          >
+            The email or password you entered is incorrect. Please try again.
+          </Text>
+        ) : (
+          <Text
+            pb={5}
+            textAlign="center"
+            fontSize={{ base: "12px", md: "16px" }}
+          >
+            Please enter your account details to log in.
+          </Text>
+        )}
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
           <Box>
             <FormControl pb={5} isRequired isInvalid={error}>

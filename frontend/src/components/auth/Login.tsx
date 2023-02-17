@@ -11,10 +11,10 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import { HOME_PAGE } from "../../constants/Routes";
+import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
@@ -157,12 +157,14 @@ const Login = (): React.ReactElement => {
             <Text variant={{ base: "mobile-xs", md: "desktop-xs" }}>
               Don’t have an account?
             </Text>
-            <Text
-              variant={{ base: "mobile-xs", md: "desktop-xs" }}
-              textDecoration="underline"
-            >
-              Sign up now.
-            </Text>
+            <Link to={SIGNUP_PAGE}>
+              <Text
+                variant={{ base: "mobile-xs", md: "desktop-xs" }}
+                textDecoration="underline"
+              >
+                Sign up now.
+              </Text>
+            </Link>
           </HStack>
         </VStack>
       </VStack>

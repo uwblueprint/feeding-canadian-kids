@@ -46,6 +46,13 @@ const Button = {
       fontSize: "18px",
       lineHeight: "24px",
     },
+    "mobile-button-bold": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "700",
+      fontSize: "14px",
+      lineHeight: "24px",
+    },
   },
   defaultProps: {
     variant: "default",

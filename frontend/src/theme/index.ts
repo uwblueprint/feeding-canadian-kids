@@ -8,7 +8,7 @@ import styles from "./styles";
 
 const overrides = {
   ...styles,
-  components: { Button, Input, FormLabel, Text },
+  components: { Button, FormLabel, Input, Text },
   colors,
   fonts,
   fontSizes,

@@ -310,7 +310,7 @@ const Join = (): React.ReactElement => {
                   <Flex flexDir="column" gap="8px" key={index}>
                     <Flex flexDir="row" justifyContent="space-between">
                       <FormLabel variant="mobile-form-label-bold">
-                        Additional Onsite Staff
+                        {`Additional Onsite Staff (${index + 1})`}
                       </FormLabel>
                       {onsiteInfo.length >= 2 && (
                         <DeleteIcon
@@ -326,6 +326,11 @@ const Join = (): React.ReactElement => {
                         />
                       )}
                     </Flex>
+                    {index === 0 && (
+                      <Text color="#69696B" variant="desktop-xs" mt="-16px">
+                        *Must add at least 1 onsite staff up to a maximum of 10.
+                      </Text>
+                    )}
                     <FormControl
                       isInvalid={
                         onsiteInfo[index].attemptedSubmit &&

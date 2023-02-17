@@ -1,4 +1,4 @@
-import { CheckCircleIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
   Center,
@@ -36,8 +36,6 @@ const Join = (): React.ReactElement => {
       name: "",
       number: "",
       email: "",
-      edit: true,
-      attemptedSubmit: false,
     },
   ]);
 
@@ -49,7 +47,7 @@ const Join = (): React.ReactElement => {
       <Flex
         flexDir="column"
         w={{ base: "100%", lg: "911px" }}
-        p={{ base: "48px", lg: "64px" }}
+        p={{ base: "24px", sm: "48px", lg: "64px" }}
         m="128px 0"
         gap={{ base: "20px", lg: "32px" }}
         borderRadius="8px"
@@ -61,7 +59,7 @@ const Join = (): React.ReactElement => {
       >
         <Text
           alignSelf={{ base: "center", lg: "unset" }}
-          variant={{ base: "mobile-display-xl", lg: "desktop-display-xl" }}
+          variant="desktop-display-xl"
         >
           Sign Up
         </Text>
@@ -119,7 +117,6 @@ const Join = (): React.ReactElement => {
                 Email address
               </FormLabel>
               <Input
-                variant="mobile-outline"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -179,7 +176,6 @@ const Join = (): React.ReactElement => {
                     isInvalid={attemptedSubmit && organizationName === ""}
                   >
                     <Input
-                      variant="mobile-outline"
                       value={organizationName}
                       onChange={(e) => setOrganizationName(e.target.value)}
                       placeholder="Name of organization"
@@ -190,7 +186,6 @@ const Join = (): React.ReactElement => {
                     isInvalid={attemptedSubmit && organizationAddress === ""}
                   >
                     <Input
-                      variant="mobile-outline"
                       value={organizationAddress}
                       onChange={(e) => setOrganizationAddress(e.target.value)}
                       placeholder="Address of organization"
@@ -268,7 +263,6 @@ const Join = (): React.ReactElement => {
                   isInvalid={attemptedSubmit && contactName === ""}
                 >
                   <Input
-                    variant="mobile-outline"
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     placeholder="Full Name"
@@ -279,7 +273,6 @@ const Join = (): React.ReactElement => {
                   isInvalid={attemptedSubmit && contactNumber === ""}
                 >
                   <Input
-                    variant="mobile-outline"
                     type="tel"
                     value={contactNumber}
                     onChange={(e) => setContactNumber(e.target.value)}
@@ -291,7 +284,6 @@ const Join = (): React.ReactElement => {
                   isInvalid={attemptedSubmit && contactEmail === ""}
                 >
                   <Input
-                    variant="mobile-outline"
                     type="email"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
@@ -302,309 +294,231 @@ const Join = (): React.ReactElement => {
             </FormControl>
           </Flex>
         )}
-        <FormControl isRequired>
-          <Flex flexDir="column" gap="24px">
-            {!isWebView && (
-              <Flex flexDir="column" gap="20px">
-                {onsiteInfo.map((info, index) => (
-                  <Flex flexDir="column" gap="8px" key={index}>
-                    <Flex flexDir="row" justifyContent="space-between">
-                      <FormLabel variant="mobile-form-label-bold">
-                        {`Additional Onsite Staff (${index + 1})`}
-                      </FormLabel>
-                      {onsiteInfo.length >= 2 && (
-                        <DeleteIcon
-                          h="16px"
-                          w="16px"
-                          color="#CBD5E0"
-                          cursor="pointer"
-                          _hover={{ color: "#272D77" }}
-                          onClick={() => {
-                            onsiteInfo.splice(index, 1);
-                            setOnsiteInfo([...onsiteInfo]);
-                          }}
-                        />
-                      )}
-                    </Flex>
-                    {index === 0 && (
-                      <Text color="#69696B" variant="desktop-xs" mt="-16px">
-                        *Must add at least 1 onsite staff up to a maximum of 10.
-                      </Text>
-                    )}
-                    <FormControl
-                      isInvalid={
-                        onsiteInfo[index].attemptedSubmit &&
-                        onsiteInfo[index].name === ""
-                      }
-                    >
-                      <Input
-                        h="37px"
-                        variant="mobile-outline"
-                        value={onsiteInfo[index].name}
-                        placeholder="Full Name"
-                        onChange={(e) => {
-                          onsiteInfo[index].name = e.target.value;
-                          setOnsiteInfo([...onsiteInfo]);
-                        }}
-                      />
-                    </FormControl>
-                    <FormControl
-                      isInvalid={
-                        onsiteInfo[index].attemptedSubmit &&
-                        onsiteInfo[index].number === ""
-                      }
-                    >
-                      <Input
-                        h="37px"
-                        variant="mobile-outline"
-                        value={onsiteInfo[index].number}
-                        placeholder="Phone Number"
-                        onChange={(e) => {
-                          onsiteInfo[index].number = e.target.value;
-                          setOnsiteInfo([...onsiteInfo]);
-                        }}
-                      />
-                    </FormControl>
-                    <FormControl
-                      isInvalid={
-                        onsiteInfo[index].attemptedSubmit &&
-                        onsiteInfo[index].email === ""
-                      }
-                    >
-                      <Input
-                        h="37px"
-                        variant="mobile-outline"
-                        value={onsiteInfo[index].email}
-                        placeholder="Email"
-                        onChange={(e) => {
-                          onsiteInfo[index].email = e.target.value;
-                          setOnsiteInfo([...onsiteInfo]);
-                        }}
-                      />
-                    </FormControl>
-                  </Flex>
-                ))}
-                {onsiteInfo.length < 10 && (
-                  <Text
-                    variant="mobile-body-bold"
-                    cursor="pointer"
-                    onClick={() => {
-                      setOnsiteInfo([
-                        ...onsiteInfo,
-                        {
-                          name: "",
-                          number: "",
-                          email: "",
-                          edit: true,
-                          attemptedSubmit: false,
-                        },
-                      ]);
-                    }}
-                  >
-                    + Add another contact
-                  </Text>
-                )}
-              </Flex>
-            )}
-            {isWebView && (
-              <>
-                <Flex flexDir="column" gap="8px">
-                  <FormLabel variant="form-label-bold">
-                    2. Additional onsite staff
-                  </FormLabel>
-                  <Text color="#69696B" variant="desktop-xs">
+        {!isWebView && (
+          <Flex flexDir="column" gap="20px">
+            {onsiteInfo.map((info, index) => (
+              <Flex flexDir="column" gap="8px" key={index}>
+                <Flex flexDir="row" justifyContent="space-between">
+                  <FormControl isRequired>
+                    <FormLabel variant="mobile-form-label-bold">
+                      {`Additional Onsite Staff (${index + 1})`}
+                    </FormLabel>
+                  </FormControl>
+                  {onsiteInfo.length >= 2 && (
+                    <DeleteIcon
+                      h="16px"
+                      w="16px"
+                      color="#CBD5E0"
+                      cursor="pointer"
+                      _hover={{ color: "#272D77" }}
+                      onClick={() => {
+                        onsiteInfo.splice(index, 1);
+                        setOnsiteInfo([...onsiteInfo]);
+                      }}
+                    />
+                  )}
+                </Flex>
+                {index === 0 && (
+                  <Text color="#69696B" variant="desktop-xs" mt="-16px">
                     *Must add at least 1 onsite staff up to a maximum of 10.
                   </Text>
-                </Flex>
-                <TableContainer border="1px solid #EDF2F7" borderRadius="8px">
-                  <Table>
-                    <Thead>
-                      <Tr
-                        borderRadius="8px 8px 0 0"
-                        h="40px"
-                        background="#EDF2F7"
-                      >
-                        <Th
-                          borderRadius="8px 0 0 0"
-                          padding="0 12px 0 24px"
-                          textTransform="none"
-                        >
-                          <Text color="black" variant="desktop-xs">
-                            Full Name
-                          </Text>
-                        </Th>
-                        <Th padding="0 12px" textTransform="none">
-                          <Text color="black" variant="desktop-xs">
-                            Number
-                          </Text>
-                        </Th>
-                        <Th padding="0 0 0 12px" textTransform="none">
-                          <Text color="black" variant="desktop-xs">
-                            Email
-                          </Text>
-                        </Th>
-                        <Th />
-                        <Th borderRadius="0 8px 0 0" />
-                      </Tr>
-                    </Thead>
-
-                    <Tbody>
-                      {onsiteInfo.map((info, index) => (
-                        <Tr h="58px" key={index}>
-                          <Td padding="0 12px 0 24px" gap="24px">
-                            {onsiteInfo[index].edit ? (
-                              <FormControl
-                                isInvalid={
-                                  onsiteInfo[index].attemptedSubmit &&
-                                  onsiteInfo[index].name === ""
-                                }
-                              >
-                                <Input
-                                  h="37px"
-                                  w="168px"
-                                  value={onsiteInfo[index].name}
-                                  onChange={(e) => {
-                                    onsiteInfo[index].name = e.target.value;
-                                    setOnsiteInfo([...onsiteInfo]);
-                                  }}
-                                />
-                              </FormControl>
-                            ) : (
-                              <Text w="168px" variant="desktop-xs">
-                                {onsiteInfo[index].name}
-                              </Text>
-                            )}
-                          </Td>
-                          <Td padding="0 12px">
-                            {onsiteInfo[index].edit ? (
-                              <FormControl
-                                isInvalid={
-                                  onsiteInfo[index].attemptedSubmit &&
-                                  onsiteInfo[index].number === ""
-                                }
-                              >
-                                <Input
-                                  h="37px"
-                                  w="145px"
-                                  value={onsiteInfo[index].number}
-                                  onChange={(e) => {
-                                    onsiteInfo[index].number = e.target.value;
-                                    setOnsiteInfo([...onsiteInfo]);
-                                  }}
-                                />
-                              </FormControl>
-                            ) : (
-                              <Text w="145px" variant="desktop-xs">
-                                {onsiteInfo[index].number}
-                              </Text>
-                            )}
-                          </Td>
-                          <Td padding="0 0 0 12px">
-                            {onsiteInfo[index].edit ? (
-                              <FormControl
-                                isInvalid={
-                                  onsiteInfo[index].attemptedSubmit &&
-                                  onsiteInfo[index].email === ""
-                                }
-                              >
-                                <Input
-                                  h="37px"
-                                  w="294px"
-                                  value={onsiteInfo[index].email}
-                                  onChange={(e) => {
-                                    onsiteInfo[index].email = e.target.value;
-                                    setOnsiteInfo([...onsiteInfo]);
-                                  }}
-                                />
-                              </FormControl>
-                            ) : (
-                              <Text w="294px" variant="desktop-xs">
-                                {onsiteInfo[index].email}
-                              </Text>
-                            )}
-                          </Td>
-                          {onsiteInfo[index].edit ? (
-                            <Td padding="0 4px">
-                              <CheckCircleIcon
-                                h="19.5px"
-                                w="100%"
-                                color="#CBD5E0"
-                                cursor="pointer"
-                                _hover={{ color: "#272D77" }}
-                                onClick={() => {
-                                  onsiteInfo[index].attemptedSubmit = true;
-                                  if (
-                                    onsiteInfo[index].name !== "" &&
-                                    onsiteInfo[index].number !== "" &&
-                                    onsiteInfo[index].email !== ""
-                                  ) {
-                                    onsiteInfo[index].edit = false;
-                                  }
-                                  setOnsiteInfo([...onsiteInfo]);
-                                }}
-                              />
-                            </Td>
-                          ) : (
-                            <Td padding="0 4px">
-                              <EditIcon
-                                h="19.5px"
-                                w="100%"
-                                color="#CBD5E0"
-                                cursor="pointer"
-                                _hover={{ color: "#272D77" }}
-                                onClick={() => {
-                                  onsiteInfo[index].edit = true;
-                                  setOnsiteInfo([...onsiteInfo]);
-                                }}
-                              />
-                            </Td>
-                          )}
-                          {onsiteInfo.length >= 2 ? (
-                            <Td padding="0 4px">
-                              <DeleteIcon
-                                h="19.5px"
-                                w="100%"
-                                color="#CBD5E0"
-                                cursor="pointer"
-                                _hover={{ color: "#272D77" }}
-                                onClick={() => {
-                                  onsiteInfo.splice(index, 1);
-                                  setOnsiteInfo([...onsiteInfo]);
-                                }}
-                              />
-                            </Td>
-                          ) : (
-                            <Td padding="0 4px" />
-                          )}
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-                {onsiteInfo.length < 10 && (
-                  <Text
-                    variant="desktop-button-bold"
-                    cursor="pointer"
-                    onClick={() => {
-                      setOnsiteInfo([
-                        ...onsiteInfo,
-                        {
-                          name: "",
-                          number: "",
-                          email: "",
-                          edit: true,
-                          attemptedSubmit: false,
-                        },
-                      ]);
-                    }}
-                  >
-                    + Add another contact
-                  </Text>
                 )}
-              </>
+                <FormControl
+                  isInvalid={attemptedSubmit && onsiteInfo[index].name === ""}
+                >
+                  <Input
+                    h="37px"
+                    value={onsiteInfo[index].name}
+                    placeholder="Full Name"
+                    onChange={(e) => {
+                      onsiteInfo[index].name = e.target.value;
+                      setOnsiteInfo([...onsiteInfo]);
+                    }}
+                  />
+                </FormControl>
+                <FormControl
+                  isInvalid={attemptedSubmit && onsiteInfo[index].number === ""}
+                >
+                  <Input
+                    h="37px"
+                    type="tel"
+                    value={onsiteInfo[index].number}
+                    placeholder="Phone Number"
+                    onChange={(e) => {
+                      onsiteInfo[index].number = e.target.value;
+                      setOnsiteInfo([...onsiteInfo]);
+                    }}
+                  />
+                </FormControl>
+                <FormControl
+                  isInvalid={attemptedSubmit && onsiteInfo[index].email === ""}
+                >
+                  <Input
+                    h="37px"
+                    value={onsiteInfo[index].email}
+                    placeholder="Email"
+                    onChange={(e) => {
+                      onsiteInfo[index].email = e.target.value;
+                      setOnsiteInfo([...onsiteInfo]);
+                    }}
+                  />
+                </FormControl>
+              </Flex>
+            ))}
+            {onsiteInfo.length < 10 && (
+              <Text
+                variant="mobile-body-bold"
+                cursor="pointer"
+                onClick={() => {
+                  setOnsiteInfo([
+                    ...onsiteInfo,
+                    {
+                      name: "",
+                      number: "",
+                      email: "",
+                    },
+                  ]);
+                }}
+              >
+                + Add another contact
+              </Text>
             )}
           </Flex>
-        </FormControl>
+        )}
+        {isWebView && (
+          <Flex flexDir="column" gap="24px">
+            <Flex flexDir="column" gap="8px">
+              <FormControl isRequired>
+                <FormLabel variant="form-label-bold">
+                  2. Additional onsite staff
+                </FormLabel>
+              </FormControl>
+              <Text color="#69696B" variant="desktop-xs" mt="-12px">
+                *Must add at least 1 onsite staff up to a maximum of 10.
+              </Text>
+            </Flex>
+            <TableContainer border="1px solid #EDF2F7" borderRadius="8px">
+              <Table>
+                <Thead>
+                  <Tr borderRadius="8px 8px 0 0" h="40px" background="#EDF2F7">
+                    <Th
+                      borderRadius="8px 0 0 0"
+                      padding="0 12px 0 24px"
+                      w="256px"
+                      textTransform="none"
+                    >
+                      <Text color="black" variant="desktop-xs">
+                        Full Name
+                      </Text>
+                    </Th>
+                    <Th padding="0 12px" w="192px" textTransform="none">
+                      <Text color="black" variant="desktop-xs">
+                        Number
+                      </Text>
+                    </Th>
+                    <Th padding="0 0 0 12px" textTransform="none">
+                      <Text color="black" variant="desktop-xs">
+                        Email
+                      </Text>
+                    </Th>
+                    <Th w="48px" borderRadius="0 8px 0 0" />
+                  </Tr>
+                </Thead>
+
+                <Tbody>
+                  {onsiteInfo.map((info, index) => (
+                    <Tr h="58px" key={index}>
+                      <Td padding="0 12px 0 24px" gap="24px">
+                        <FormControl
+                          isInvalid={
+                            attemptedSubmit && onsiteInfo[index].name === ""
+                          }
+                        >
+                          <Input
+                            h="37px"
+                            value={onsiteInfo[index].name}
+                            onChange={(e) => {
+                              onsiteInfo[index].name = e.target.value;
+                              setOnsiteInfo([...onsiteInfo]);
+                            }}
+                          />
+                        </FormControl>
+                      </Td>
+                      <Td padding="0 12px">
+                        <FormControl
+                          isInvalid={
+                            attemptedSubmit && onsiteInfo[index].number === ""
+                          }
+                        >
+                          <Input
+                            h="37px"
+                            type="tel"
+                            value={onsiteInfo[index].number}
+                            onChange={(e) => {
+                              onsiteInfo[index].number = e.target.value;
+                              setOnsiteInfo([...onsiteInfo]);
+                            }}
+                          />
+                        </FormControl>
+                      </Td>
+                      <Td padding="0 0 0 12px">
+                        <FormControl
+                          isInvalid={
+                            attemptedSubmit && onsiteInfo[index].email === ""
+                          }
+                        >
+                          <Input
+                            h="37px"
+                            value={onsiteInfo[index].email}
+                            onChange={(e) => {
+                              onsiteInfo[index].email = e.target.value;
+                              setOnsiteInfo([...onsiteInfo]);
+                            }}
+                          />
+                        </FormControl>
+                      </Td>
+                      {onsiteInfo.length >= 2 ? (
+                        <Td padding="0 4px">
+                          <DeleteIcon
+                            h="19.5px"
+                            w="100%"
+                            color="#CBD5E0"
+                            cursor="pointer"
+                            _hover={{ color: "#272D77" }}
+                            onClick={() => {
+                              onsiteInfo.splice(index, 1);
+                              setOnsiteInfo([...onsiteInfo]);
+                            }}
+                          />
+                        </Td>
+                      ) : (
+                        <Td padding="0 4px" />
+                      )}
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+            {onsiteInfo.length < 10 && (
+              <Text
+                variant="desktop-button-bold"
+                cursor="pointer"
+                onClick={() => {
+                  setOnsiteInfo([
+                    ...onsiteInfo,
+                    {
+                      name: "",
+                      number: "",
+                      email: "",
+                    },
+                  ]);
+                }}
+              >
+                + Add another contact
+              </Text>
+            )}
+          </Flex>
+        )}
 
         <Flex flexDir="column" alignItems="center" gap="8px">
           <Button

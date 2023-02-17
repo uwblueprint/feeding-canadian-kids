@@ -81,7 +81,7 @@ const Login = (): React.ReactElement => {
           <Text
             pb={5}
             textAlign="center"
-            fontSize={{ base: "12px", md: "16px" }}
+            variant={{ base: "mobile-caption", md: "desktop-caption" }}
             color="#E53E3E"
           >
             The email or password you entered is incorrect. Please try again.
@@ -90,7 +90,7 @@ const Login = (): React.ReactElement => {
           <Text
             pb={5}
             textAlign="center"
-            fontSize={{ base: "12px", md: "16px" }}
+            variant={{ base: "mobile-caption", md: "desktop-caption" }}
           >
             Please enter your account details to log in.
           </Text>

@@ -2,20 +2,6 @@ const Text = {
   baseStyle: {},
   sizes: {},
   variants: {
-    "desktop-display-xl": {
-      fontFamily: "Dimbo",
-      fontStyle: "normal",
-      fontWeight: "400",
-      fontSize: "40px",
-      lineHeight: "140%",
-    },
-    "desktop-heading": {
-      fontFamily: "Inter",
-      fontStyle: "normal",
-      fontWeight: "700",
-      fontSize: "20px",
-      lineHeight: "150%",
-    },
     "desktop-button-bold": {
       fontFamily: "Inter",
       fontStyle: "normal",
@@ -23,19 +9,26 @@ const Text = {
       fontSize: "18px",
       lineHeight: "24px",
     },
-    "desktop-xs": {
+    "desktop-caption": {
       fontFamily: "Inter",
       fontStyle: "normal",
       fontWeight: "400",
-      fontSize: "14px",
-      lineHeight: "150%",
+      fontSize: "16px",
+      lineHeight: "24px",
     },
-    "mobile-xs": {
-      fontFamily: "Inter",
+    "desktop-display-xl": {
+      fontFamily: "Dimbo",
       fontStyle: "normal",
       fontWeight: "400",
-      fontSize: "12px",
-      lineHeight: "150%",
+      fontSize: "40px",
+      lineHeight: "56px",
+    },
+    "desktop-heading": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "700",
+      fontSize: "20px",
+      lineHeight: "30px",
     },
     "desktop-heading-6": {
       fontFamily: "DM Sans",
@@ -44,12 +37,19 @@ const Text = {
       fontSize: "16px",
       lineHeight: "21px",
     },
-    "mobile-display-xl": {
-      fontFamily: "Dimbo",
+    "desktop-xs": {
+      fontFamily: "Inter",
       fontStyle: "normal",
       fontWeight: "400",
-      fontSize: "24px",
-      lineHeight: "140%",
+      fontSize: "14px",
+      lineHeight: "21px",
+    },
+    "mobile-body-bold": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "600",
+      fontSize: "14px",
+      lineHeight: "21px",
     },
     "mobile-button-bold": {
       fontFamily: "Inter",
@@ -57,6 +57,27 @@ const Text = {
       fontWeight: "700",
       fontSize: "14px",
       lineHeight: "28px",
+    },
+    "mobile-caption": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "400",
+      fontSize: "12px",
+      lineHeight: "24px",
+    },
+    "mobile-display-xl": {
+      fontFamily: "Dimbo",
+      fontStyle: "normal",
+      fontWeight: "400",
+      fontSize: "24px",
+      lineHeight: "34px",
+    },
+    "mobile-xs": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "400",
+      fontSize: "12px",
+      lineHeight: "18px",
     },
   },
 };

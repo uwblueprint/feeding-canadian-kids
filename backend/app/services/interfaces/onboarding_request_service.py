@@ -60,7 +60,7 @@ class IOnboardingRequestService(ABC):
         :rtype: OnboardingRequestDTO
         :raises Exception: if OnboardingRequest could not be approved
         """
-        
+
     @abstractmethod
     def reject_onboarding_request(self, id):
         """
@@ -73,4 +73,3 @@ class IOnboardingRequestService(ABC):
         :raises Exception: if OnboardingRequest could not be rejected
         """
         pass
-    

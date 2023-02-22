@@ -106,13 +106,14 @@ class ApproveOnboardingRequest(Mutation):
             "onboarding_request_service"
         ].approve_onboarding_request(id)
         return ApproveOnboardingRequest(onboardingRequest=approvedOnboardingRequest)
-    
+
+
 class RejectOnboardingRequest(Mutation):
     class Arguments:
         id = graphene.ID(required=True)
-        
+
     onboardingRequest = graphene.Field(OnboardingRequest)
-    
+
     def mutate(self, info, id):
         rejectedOnboardingRequest = services[
             "onboarding_request_service"

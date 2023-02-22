@@ -161,7 +161,7 @@ class AuthService(IAuthService):
                 + "with email {email}.".format(email=email)
             )
             raise e
-        
+
     def send_onboarding_request_rejected_email(self, email):
         if not self.email_service:
             error_message = """
@@ -172,7 +172,7 @@ class AuthService(IAuthService):
                 """
             self.logger.error(error_message)
             raise Exception(error_message)
-        
+
         try:
             email_body = """
             Hello, 
@@ -180,10 +180,14 @@ class AuthService(IAuthService):
             This is a notification that your onboarding request has been rejected.
             <br><br>
             """
-            self.email_service.send_email(email, "Onboarding request rejected", email_body)
-            
+            self.email_service.send_email(
+                email, "Onboarding request rejected", email_body
+            )
+
         except Exception as e:
-            self.logger.error("Failed to send onboarding request rejected email for user ")
+            self.logger.error(
+                "Failed to send onboarding request rejected email for user "
+            )
             raise e
 
     def __is_authorized_by_condition(self, context, condition):

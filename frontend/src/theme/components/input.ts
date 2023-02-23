@@ -5,8 +5,9 @@ const Input = {
     outline: {
       field: {
         _invalid: {
-          borderColor: "secondary.critical",
-          boxShadow: "0 0 0 1px var(--chakra-colors-secondary-critical)",
+          borderColor: "secondary.critical !important",
+          boxShadow:
+            "0 0 0 1px var(--chakra-colors-secondary-critical) !important",
         },
         color: "text.default",
         borderWidth: "2px",

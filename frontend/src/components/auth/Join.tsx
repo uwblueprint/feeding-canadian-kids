@@ -42,6 +42,11 @@ const Join = (): React.ReactElement => {
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [isWebView] = useMediaQuery("(min-width: 62em)");
 
+  const isValidEmail = (emailStr: string): boolean => {
+    const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    return emailRegex.test(emailStr.toLowerCase());
+  };
+
   const getTitleSection = (): React.ReactElement => {
     return (
       <>
@@ -95,7 +100,10 @@ const Join = (): React.ReactElement => {
   const getEmailSection = (): React.ReactElement => {
     return (
       <Flex flexDir="column">
-        <FormControl isRequired isInvalid={attemptedSubmit && email === ""}>
+        <FormControl
+          isRequired
+          isInvalid={attemptedSubmit && !isValidEmail(email)}
+        >
           <FormLabel
             variant={{
               base: "mobile-form-label-bold",
@@ -232,7 +240,7 @@ const Join = (): React.ReactElement => {
             <Flex flexDir="column" w="519px">
               <FormControl
                 isRequired
-                isInvalid={attemptedSubmit && contactEmail === ""}
+                isInvalid={attemptedSubmit && !isValidEmail(contactEmail)}
               >
                 <FormLabel variant="desktop-button-bold">
                   Email address
@@ -283,7 +291,7 @@ const Join = (): React.ReactElement => {
             </FormControl>
             <FormControl
               isRequired
-              isInvalid={attemptedSubmit && contactEmail === ""}
+              isInvalid={attemptedSubmit && !isValidEmail(contactEmail)}
             >
               <Input
                 variant="mobile-outline"
@@ -345,6 +353,7 @@ const Join = (): React.ReactElement => {
                 <Tr h="58px" key={index}>
                   <Td padding="0 12px 0 24px" gap="24px">
                     <FormControl
+                      isRequired={index === 0}
                       isInvalid={
                         attemptedSubmit && onsiteInfo[index].name === ""
                       }
@@ -361,6 +370,7 @@ const Join = (): React.ReactElement => {
                   </Td>
                   <Td padding="0 12px">
                     <FormControl
+                      isRequired={index === 0}
                       isInvalid={
                         attemptedSubmit && onsiteInfo[index].number === ""
                       }
@@ -378,8 +388,10 @@ const Join = (): React.ReactElement => {
                   </Td>
                   <Td padding="0 0 0 12px">
                     <FormControl
+                      isRequired={index === 0}
                       isInvalid={
-                        attemptedSubmit && onsiteInfo[index].email === ""
+                        attemptedSubmit &&
+                        !isValidEmail(onsiteInfo[index].email)
                       }
                     >
                       <Input
@@ -442,7 +454,7 @@ const Join = (): React.ReactElement => {
         {onsiteInfo.map((info, index) => (
           <Flex flexDir="column" gap="8px" key={index}>
             <Flex flexDir="row" justifyContent="space-between">
-              <FormControl isRequired>
+              <FormControl isRequired={index === 0}>
                 <FormLabel variant="mobile-form-label-bold">
                   {`Additional Onsite Staff (${index + 1})`}
                 </FormLabel>
@@ -467,6 +479,7 @@ const Join = (): React.ReactElement => {
               </Text>
             )}
             <FormControl
+              isRequired={index === 0}
               isInvalid={attemptedSubmit && onsiteInfo[index].name === ""}
             >
               <Input
@@ -481,6 +494,7 @@ const Join = (): React.ReactElement => {
               />
             </FormControl>
             <FormControl
+              isRequired={index === 0}
               isInvalid={attemptedSubmit && onsiteInfo[index].number === ""}
             >
               <Input
@@ -496,7 +510,10 @@ const Join = (): React.ReactElement => {
               />
             </FormControl>
             <FormControl
-              isInvalid={attemptedSubmit && onsiteInfo[index].email === ""}
+              isRequired={index === 0}
+              isInvalid={
+                attemptedSubmit && !isValidEmail(onsiteInfo[index].email)
+              }
             >
               <Input
                 h="37px"
@@ -545,6 +562,34 @@ const Join = (): React.ReactElement => {
           borderRadius="6px"
           onClick={() => {
             setAttemptedSubmit(true);
+
+            const stringsToValidate = [
+              role,
+              organizationName,
+              organizationAddress,
+              contactName,
+            ];
+            const phoneNumsToValidate = [contactNumber];
+            const emailsToValidate = [email, contactEmail];
+
+            for (let i = 0; i < onsiteInfo.length; i += 1) {
+              stringsToValidate.push(onsiteInfo[i].name);
+              phoneNumsToValidate.push(onsiteInfo[i].number);
+              emailsToValidate.push(onsiteInfo[i].email);
+            }
+
+            for (let i = 0; i < stringsToValidate.length; i += 1) {
+              if (stringsToValidate[i] === "") return;
+            }
+
+            for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
+              if (phoneNumsToValidate[i] === "") return;
+            }
+
+            for (let i = 0; i < emailsToValidate.length; i += 1) {
+              if (!isValidEmail(emailsToValidate[i])) return;
+            }
+
             // const req = {
             //   role,
             //   email,
@@ -556,7 +601,7 @@ const Join = (): React.ReactElement => {
             //   onsiteInfo,
             // };
             // console.log(req);
-            // add validation for the request
+            // process createOnboardingRequest
           }}
         >
           Create Account

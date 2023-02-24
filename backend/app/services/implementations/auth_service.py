@@ -165,7 +165,7 @@ class AuthService(IAuthService):
     def send_onboarding_request_rejected_email(self, email):
         if not self.email_service:
             error_message = """
-                Attempted to call send_onboarding_request_rejected_email but this 
+                Attempted to call send_onboarding_request_rejected_email but this
                 instance of AuthService does not have an EmailService instance
                 """
             self.logger.error(error_message)
@@ -173,7 +173,7 @@ class AuthService(IAuthService):
 
         try:
             email_body = """
-            Hello, 
+            Hello,
             <br><br>
             This is a notification that your onboarding request has been rejected.
             <br><br>

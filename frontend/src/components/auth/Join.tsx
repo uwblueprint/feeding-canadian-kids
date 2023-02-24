@@ -23,29 +23,49 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
+import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
+
+const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "(ex. example@domain.com)";
+const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "(ex. 111-222-3333)";
+const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (ex. example@domain.com)";
+const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER =
+  "Phone Number (ex. 111-222-3333)";
+
+type Contact = {
+  name: string;
+  phone: string;
+  email: string;
+};
+
+type Request = {
+  role: string;
+  email: string;
+  organizationName: string;
+  organizationAddress: string;
+  primaryContact: Contact;
+  onsiteInfo: Array<Contact>;
+};
+
 const Join = (): React.ReactElement => {
   const [role, setRole] = useState("ASP");
   const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [organizationAddress, setOrganizationAddress] = useState("");
-  const [contactName, setContactName] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [onsiteInfo, setOnsiteInfo] = useState([
+  const [primaryContact, setPrimaryContact] = useState<Contact>({
+    name: "",
+    phone: "",
+    email: "",
+  });
+  const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>([
     {
       name: "",
-      number: "",
+      phone: "",
       email: "",
     },
   ]);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [isWebView] = useMediaQuery("(min-width: 62em)");
-
-  const isValidEmail = (emailStr: string): boolean => {
-    const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-    return emailRegex.test(emailStr.toLowerCase());
-  };
 
   const getTitleSection = (): React.ReactElement => {
     return (
@@ -120,7 +140,11 @@ const Join = (): React.ReactElement => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder={isWebView ? undefined : "Enter your email"}
+            placeholder={
+              isWebView
+                ? PLACEHOLDER_WEB_EXAMPLE_EMAIL
+                : PLACEHOLDER_MOBILE_EXAMPLE_EMAIL
+            }
           />
         </FormControl>
       </Flex>
@@ -210,14 +234,16 @@ const Join = (): React.ReactElement => {
           <Flex flexDir="column">
             <FormControl
               isRequired
-              isInvalid={attemptedSubmit && contactName === ""}
+              isInvalid={attemptedSubmit && primaryContact.name === ""}
             >
               <FormLabel variant="desktop-button-bold">
                 1. Primary contact name
               </FormLabel>
               <Input
-                value={contactName}
-                onChange={(e) => setContactName(e.target.value)}
+                value={primaryContact.name}
+                onChange={(e) =>
+                  setPrimaryContact({ ...primaryContact, name: e.target.value })
+                }
               />
             </FormControl>
           </Flex>
@@ -225,30 +251,44 @@ const Join = (): React.ReactElement => {
             <Flex flexDir="column" w="240px">
               <FormControl
                 isRequired
-                isInvalid={attemptedSubmit && contactNumber === ""}
+                isInvalid={attemptedSubmit && primaryContact.phone === ""}
               >
                 <FormLabel variant="desktop-button-bold">
                   Phone number
                 </FormLabel>
                 <Input
                   type="tel"
-                  value={contactNumber}
-                  onChange={(e) => setContactNumber(e.target.value)}
+                  value={primaryContact.phone}
+                  placeholder={PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER}
+                  onChange={(e) =>
+                    setPrimaryContact({
+                      ...primaryContact,
+                      phone: e.target.value,
+                    })
+                  }
                 />
               </FormControl>
             </Flex>
             <Flex flexDir="column" w="519px">
               <FormControl
                 isRequired
-                isInvalid={attemptedSubmit && !isValidEmail(contactEmail)}
+                isInvalid={
+                  attemptedSubmit && !isValidEmail(primaryContact.email)
+                }
               >
                 <FormLabel variant="desktop-button-bold">
                   Email address
                 </FormLabel>
                 <Input
                   type="email"
-                  value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
+                  value={primaryContact.email}
+                  placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
+                  onChange={(e) =>
+                    setPrimaryContact({
+                      ...primaryContact,
+                      email: e.target.value,
+                    })
+                  }
                 />
               </FormControl>
             </Flex>
@@ -268,37 +308,49 @@ const Join = (): React.ReactElement => {
           <Flex flexDir="column" gap="8px">
             <FormControl
               isRequired
-              isInvalid={attemptedSubmit && contactName === ""}
+              isInvalid={attemptedSubmit && primaryContact.name === ""}
             >
               <Input
                 variant="mobile-outline"
-                value={contactName}
-                onChange={(e) => setContactName(e.target.value)}
+                value={primaryContact.name}
+                onChange={(e) =>
+                  setPrimaryContact({ ...primaryContact, name: e.target.value })
+                }
                 placeholder="Full Name"
               />
             </FormControl>
             <FormControl
               isRequired
-              isInvalid={attemptedSubmit && contactNumber === ""}
+              isInvalid={attemptedSubmit && primaryContact.phone === ""}
             >
               <Input
                 variant="mobile-outline"
                 type="tel"
-                value={contactNumber}
-                onChange={(e) => setContactNumber(e.target.value)}
-                placeholder="Phone number"
+                value={primaryContact.phone}
+                onChange={(e) =>
+                  setPrimaryContact({
+                    ...primaryContact,
+                    phone: e.target.value,
+                  })
+                }
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER}
               />
             </FormControl>
             <FormControl
               isRequired
-              isInvalid={attemptedSubmit && !isValidEmail(contactEmail)}
+              isInvalid={attemptedSubmit && !isValidEmail(primaryContact.email)}
             >
               <Input
                 variant="mobile-outline"
                 type="email"
-                value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
-                placeholder="Email address"
+                value={primaryContact.email}
+                onChange={(e) =>
+                  setPrimaryContact({
+                    ...primaryContact,
+                    email: e.target.value,
+                  })
+                }
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_EMAIL}
               />
             </FormControl>
           </Flex>
@@ -334,9 +386,9 @@ const Join = (): React.ReactElement => {
                     Full Name
                   </Text>
                 </Th>
-                <Th padding="0 12px" w="192px" textTransform="none">
+                <Th padding="0 12px" w="200px" textTransform="none">
                   <Text color="black" variant="desktop-xs">
-                    Number
+                    Phone Number
                   </Text>
                 </Th>
                 <Th padding="0 0 0 12px" textTransform="none">
@@ -372,15 +424,16 @@ const Join = (): React.ReactElement => {
                     <FormControl
                       isRequired={index === 0}
                       isInvalid={
-                        attemptedSubmit && onsiteInfo[index].number === ""
+                        attemptedSubmit && onsiteInfo[index].phone === ""
                       }
                     >
                       <Input
                         h="37px"
                         type="tel"
-                        value={onsiteInfo[index].number}
+                        value={onsiteInfo[index].phone}
+                        placeholder={PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER}
                         onChange={(e) => {
-                          onsiteInfo[index].number = e.target.value;
+                          onsiteInfo[index].phone = e.target.value;
                           setOnsiteInfo([...onsiteInfo]);
                         }}
                       />
@@ -396,7 +449,9 @@ const Join = (): React.ReactElement => {
                     >
                       <Input
                         h="37px"
+                        type="email"
                         value={onsiteInfo[index].email}
+                        placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
                         onChange={(e) => {
                           onsiteInfo[index].email = e.target.value;
                           setOnsiteInfo([...onsiteInfo]);
@@ -435,7 +490,7 @@ const Join = (): React.ReactElement => {
                 ...onsiteInfo,
                 {
                   name: "",
-                  number: "",
+                  phone: "",
                   email: "",
                 },
               ]);
@@ -495,16 +550,16 @@ const Join = (): React.ReactElement => {
             </FormControl>
             <FormControl
               isRequired={index === 0}
-              isInvalid={attemptedSubmit && onsiteInfo[index].number === ""}
+              isInvalid={attemptedSubmit && onsiteInfo[index].phone === ""}
             >
               <Input
                 h="37px"
                 variant="mobile-outline"
                 type="tel"
-                value={onsiteInfo[index].number}
-                placeholder="Phone Number"
+                value={onsiteInfo[index].phone}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER}
                 onChange={(e) => {
-                  onsiteInfo[index].number = e.target.value;
+                  onsiteInfo[index].phone = e.target.value;
                   setOnsiteInfo([...onsiteInfo]);
                 }}
               />
@@ -518,8 +573,9 @@ const Join = (): React.ReactElement => {
               <Input
                 h="37px"
                 variant="mobile-outline"
+                type="email"
                 value={onsiteInfo[index].email}
-                placeholder="Email"
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_EMAIL}
                 onChange={(e) => {
                   onsiteInfo[index].email = e.target.value;
                   setOnsiteInfo([...onsiteInfo]);
@@ -537,7 +593,7 @@ const Join = (): React.ReactElement => {
                 ...onsiteInfo,
                 {
                   name: "",
-                  number: "",
+                  phone: "",
                   email: "",
                 },
               ]);
@@ -567,14 +623,14 @@ const Join = (): React.ReactElement => {
               role,
               organizationName,
               organizationAddress,
-              contactName,
+              primaryContact.name,
             ];
-            const phoneNumsToValidate = [contactNumber];
-            const emailsToValidate = [email, contactEmail];
+            const phoneNumsToValidate = [primaryContact.phone];
+            const emailsToValidate = [email, primaryContact.email];
 
             for (let i = 0; i < onsiteInfo.length; i += 1) {
               stringsToValidate.push(onsiteInfo[i].name);
-              phoneNumsToValidate.push(onsiteInfo[i].number);
+              phoneNumsToValidate.push(onsiteInfo[i].phone);
               emailsToValidate.push(onsiteInfo[i].email);
             }
 
@@ -590,17 +646,20 @@ const Join = (): React.ReactElement => {
               if (!isValidEmail(emailsToValidate[i])) return;
             }
 
-            // const req = {
-            //   role,
-            //   email,
-            //   organizationName,
-            //   organizationAddress,
-            //   contactName,
-            //   contactNumber,
-            //   contactEmail,
-            //   onsiteInfo,
-            // };
-            // console.log(req);
+            const request = {
+              role: trimWhiteSpace(role),
+              email: trimWhiteSpace(email),
+              organizationName: trimWhiteSpace(organizationName),
+              organizationAddress: trimWhiteSpace(organizationAddress),
+              contactName: trimWhiteSpace(primaryContact.name),
+              contactPhone: trimWhiteSpace(primaryContact.phone),
+              contactEmail: trimWhiteSpace(primaryContact.email),
+              onsiteInfo: onsiteInfo.map((obj) => ({
+                name: trimWhiteSpace(obj.name),
+                phone: trimWhiteSpace(obj.phone),
+                email: trimWhiteSpace(obj.email),
+              })),
+            };
             // process createOnboardingRequest
           }}
         >

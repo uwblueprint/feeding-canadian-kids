@@ -32,6 +32,7 @@ class RootMutation(
     AuthMutations,
     OnboardingRequestMutations,
     FoodRequestMutations,
+    UserMutations,
 ):
     pass
 

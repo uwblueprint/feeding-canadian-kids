@@ -15,6 +15,7 @@ flake8==6.0.0
 Flask==1.1.2
 Flask-Cors==3.0.10
 Flask-Migrate==3.0.1
+Flask-SQLAlchemy==2.5.1
 google-api-core==1.26.3
 google-api-python-client==2.2.0
 google-auth==1.29.0
@@ -70,6 +71,7 @@ requests==2.25.1
 rsa==4.7.2
 sentinels==1.0.0
 six==1.15.0
+SQLAlchemy==1.4.41
 toml==0.10.2
 typed-ast==1.5.4
 typing-extensions==4.3.0

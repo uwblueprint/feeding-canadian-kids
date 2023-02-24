@@ -25,11 +25,17 @@ import React, { useState } from "react";
 
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
-const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "(ex. example@domain.com)";
-const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "(ex. 111-222-3333)";
-const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (ex. example@domain.com)";
-const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER =
-  "Phone Number (ex. 111-222-3333)";
+const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
+const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
+const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
+const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
+const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
+
+const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
+const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
+const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
+const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
+const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
 
 type Contact = {
   name: string;
@@ -42,7 +48,9 @@ type Request = {
   email: string;
   organizationName: string;
   organizationAddress: string;
-  primaryContact: Contact;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
   onsiteInfo: Array<Contact>;
 };
 
@@ -166,6 +174,7 @@ const Join = (): React.ReactElement => {
               </FormLabel>
               <Input
                 value={organizationName}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_NAME}
                 onChange={(e) => setOrganizationName(e.target.value)}
               />
             </FormControl>
@@ -180,6 +189,7 @@ const Join = (): React.ReactElement => {
               </FormLabel>
               <Input
                 value={organizationAddress}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_ADDRESS}
                 onChange={(e) => setOrganizationAddress(e.target.value)}
               />
             </FormControl>
@@ -205,8 +215,8 @@ const Join = (): React.ReactElement => {
               <Input
                 variant="mobile-outline"
                 value={organizationName}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME}
                 onChange={(e) => setOrganizationName(e.target.value)}
-                placeholder="Name of organization"
               />
             </FormControl>
             <FormControl
@@ -217,7 +227,7 @@ const Join = (): React.ReactElement => {
                 variant="mobile-outline"
                 value={organizationAddress}
                 onChange={(e) => setOrganizationAddress(e.target.value)}
-                placeholder="Address of organization"
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS}
               />
             </FormControl>
           </Flex>
@@ -241,6 +251,7 @@ const Join = (): React.ReactElement => {
               </FormLabel>
               <Input
                 value={primaryContact.name}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_FULL_NAME}
                 onChange={(e) =>
                   setPrimaryContact({ ...primaryContact, name: e.target.value })
                 }
@@ -316,7 +327,7 @@ const Join = (): React.ReactElement => {
                 onChange={(e) =>
                   setPrimaryContact({ ...primaryContact, name: e.target.value })
                 }
-                placeholder="Full Name"
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME}
               />
             </FormControl>
             <FormControl
@@ -413,6 +424,7 @@ const Join = (): React.ReactElement => {
                       <Input
                         h="37px"
                         value={onsiteInfo[index].name}
+                        placeholder={PLACEHOLDER_WEB_EXAMPLE_FULL_NAME}
                         onChange={(e) => {
                           onsiteInfo[index].name = e.target.value;
                           setOnsiteInfo([...onsiteInfo]);
@@ -541,7 +553,7 @@ const Join = (): React.ReactElement => {
                 h="37px"
                 variant="mobile-outline"
                 value={onsiteInfo[index].name}
-                placeholder="Full Name"
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME}
                 onChange={(e) => {
                   onsiteInfo[index].name = e.target.value;
                   setOnsiteInfo([...onsiteInfo]);
@@ -646,7 +658,7 @@ const Join = (): React.ReactElement => {
               if (!isValidEmail(emailsToValidate[i])) return;
             }
 
-            const request = {
+            const request: Request = {
               role: trimWhiteSpace(role),
               email: trimWhiteSpace(email),
               organizationName: trimWhiteSpace(organizationName),
@@ -660,6 +672,9 @@ const Join = (): React.ReactElement => {
                 email: trimWhiteSpace(obj.email),
               })),
             };
+
+            // eslint-disable-next-line no-console
+            console.log(request);
             // process createOnboardingRequest
           }}
         >

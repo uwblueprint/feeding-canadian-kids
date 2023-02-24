@@ -4,6 +4,7 @@ import os
 from flask import current_app
 from .example import ExampleQueries, ExampleMutations
 from .user_queries import UserQueries
+from .user_mutations import UserMutations
 from .services import services
 from ..services.implementations.user_service import UserService
 from ..services.implementations.email_service import EmailService
@@ -20,6 +21,7 @@ from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQue
 class RootQuery(
     # All queries listed here will be merged.
     ExampleQueries,
+    UserQueries,
     OnboardingRequestQueries,
 ):
     pass
@@ -31,6 +33,7 @@ class RootMutation(
     AuthMutations,
     OnboardingRequestMutations,
     FoodRequestMutations,
+    UserMutations,
 ):
     pass
 

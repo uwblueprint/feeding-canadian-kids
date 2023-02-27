@@ -1,4 +1,4 @@
-import { CheckCircleIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
   Center,
@@ -23,45 +23,64 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
+import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
+
+const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
+const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
+const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
+const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
+const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
+
+const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
+const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
+const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
+const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
+const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
+
+type Contact = {
+  name: string;
+  phone: string;
+  email: string;
+};
+
+type Request = {
+  role: string;
+  email: string;
+  organizationName: string;
+  organizationAddress: string;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
+  onsiteInfo: Array<Contact>;
+};
+
 const Join = (): React.ReactElement => {
   const [role, setRole] = useState("ASP");
   const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [organizationAddress, setOrganizationAddress] = useState("");
-  const [contactName, setContactName] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [onsiteInfo, setOnsiteInfo] = useState([
+  const [primaryContact, setPrimaryContact] = useState<Contact>({
+    name: "",
+    phone: "",
+    email: "",
+  });
+  const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>([
     {
       name: "",
-      number: "",
+      phone: "",
       email: "",
-      edit: true,
-      attemptedSubmit: false,
     },
   ]);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [isWebView] = useMediaQuery("(min-width: 62em)");
 
-  return (
-    <Center>
-      <Flex
-        flexDir="column"
-        w={{ base: "100%", lg: "911px" }}
-        p={{ base: "48px", lg: "64px" }}
-        m="128px 0"
-        gap={{ base: "20px", lg: "32px" }}
-        borderRadius="8px"
-        boxShadow={{
-          base: "",
-          lg:
-            "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
-        }}
-      >
+  const getTitleSection = (): React.ReactElement => {
+    return (
+      <>
         <Text
           alignSelf={{ base: "center", lg: "unset" }}
-          variant={{ base: "mobile-display-xl", lg: "desktop-display-xl" }}
+          variant="desktop-display-xl"
         >
           Sign Up
         </Text>
@@ -75,574 +94,629 @@ const Join = (): React.ReactElement => {
             Login here
           </Link>
         </Text>
+      </>
+    );
+  };
 
-        <Flex flexDir="column">
-          <FormControl isRequired>
-            <FormLabel
-              variant={{
-                base: "mobile-form-label-bold",
-                lg: "form-label-bold",
-              }}
+  const getUserTypeSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column">
+        <FormControl isRequired>
+          <FormLabel
+            variant={{
+              base: "mobile-form-label-bold",
+              lg: "form-label-bold",
+            }}
+          >
+            Type of user
+          </FormLabel>
+          <RadioGroup onChange={setRole} value={role}>
+            <Stack direction={{ base: "column", lg: "row" }}>
+              <Radio value="ASP">
+                <Text variant="desktop-heading-6">After School Program</Text>
+              </Radio>
+              <Radio value="MD">
+                <Text variant="desktop-heading-6">Meal Donor</Text>
+              </Radio>
+            </Stack>
+          </RadioGroup>
+        </FormControl>
+      </Flex>
+    );
+  };
+
+  const getEmailSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column">
+        <FormControl
+          isRequired
+          isInvalid={attemptedSubmit && !isValidEmail(email)}
+        >
+          <FormLabel
+            variant={{
+              base: "mobile-form-label-bold",
+              lg: "desktop-button-bold",
+            }}
+          >
+            Email address
+          </FormLabel>
+          <Input
+            variant={{
+              base: "mobile-outline",
+              lg: "outline",
+            }}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={
+              isWebView
+                ? PLACEHOLDER_WEB_EXAMPLE_EMAIL
+                : PLACEHOLDER_MOBILE_EXAMPLE_EMAIL
+            }
+          />
+        </FormControl>
+      </Flex>
+    );
+  };
+
+  const getWebOrganizationSection = (): React.ReactElement => {
+    return (
+      <>
+        <Text variant="desktop-heading">Organization Info</Text>
+        <Flex flexDir="row" gap="24px">
+          <Flex flexDir="column" w="240px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationName === ""}
             >
-              Type of user
-            </FormLabel>
-            <RadioGroup onChange={setRole} value={role}>
-              <Stack direction={{ base: "column", lg: "row" }}>
-                <Radio value="ASP">
-                  <Text variant="desktop-heading-6">After School Program</Text>
-                </Radio>
-                <Radio value="MD">
-                  <Text variant="desktop-heading-6">Meal Donor</Text>
-                </Radio>
-              </Stack>
-            </RadioGroup>
-          </FormControl>
-        </Flex>
-
-        {isWebView && (
-          <Flex flexDir="column">
-            <FormControl isRequired isInvalid={attemptedSubmit && email === ""}>
-              <FormLabel variant="desktop-button-bold">Email address</FormLabel>
+              <FormLabel variant="desktop-button-bold">
+                Name of organization
+              </FormLabel>
               <Input
-                variant="outline"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={organizationName}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_NAME}
+                onChange={(e) => setOrganizationName(e.target.value)}
               />
             </FormControl>
           </Flex>
-        )}
-        {!isWebView && (
-          <Flex flexDir="column">
-            <FormControl isRequired isInvalid={attemptedSubmit && email === ""}>
-              <FormLabel variant="mobile-form-label-bold">
-                Email address
+          <Flex flexDir="column" w="519px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationAddress === ""}
+            >
+              <FormLabel variant="desktop-button-bold">
+                Address of organization
               </FormLabel>
+              <Input
+                value={organizationAddress}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_ADDRESS}
+                onChange={(e) => setOrganizationAddress(e.target.value)}
+              />
+            </FormControl>
+          </Flex>
+        </Flex>
+      </>
+    );
+  };
+
+  const getMobileOrganizationSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column" gap="8px">
+        <FormControl isRequired>
+          <FormLabel variant="mobile-form-label-bold">
+            Organization Info
+          </FormLabel>
+
+          <Flex flexDir="column" gap="8px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationName === ""}
+            >
+              <Input
+                variant="mobile-outline"
+                value={organizationName}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME}
+                onChange={(e) => setOrganizationName(e.target.value)}
+              />
+            </FormControl>
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationAddress === ""}
+            >
+              <Input
+                variant="mobile-outline"
+                value={organizationAddress}
+                onChange={(e) => setOrganizationAddress(e.target.value)}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS}
+              />
+            </FormControl>
+          </Flex>
+        </FormControl>
+      </Flex>
+    );
+  };
+
+  const getWebContactSection = (): React.ReactElement => {
+    return (
+      <>
+        <Text variant="desktop-heading">Contact Information</Text>
+        <Flex flexDir="column" gap="24px">
+          <Flex flexDir="column">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && primaryContact.name === ""}
+            >
+              <FormLabel variant="desktop-button-bold">
+                1. Primary contact name
+              </FormLabel>
+              <Input
+                value={primaryContact.name}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_FULL_NAME}
+                onChange={(e) =>
+                  setPrimaryContact({ ...primaryContact, name: e.target.value })
+                }
+              />
+            </FormControl>
+          </Flex>
+          <Flex flexDir="row" gap="24px">
+            <Flex flexDir="column" w="240px">
+              <FormControl
+                isRequired
+                isInvalid={attemptedSubmit && primaryContact.phone === ""}
+              >
+                <FormLabel variant="desktop-button-bold">
+                  Phone number
+                </FormLabel>
+                <Input
+                  type="tel"
+                  value={primaryContact.phone}
+                  placeholder={PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER}
+                  onChange={(e) =>
+                    setPrimaryContact({
+                      ...primaryContact,
+                      phone: e.target.value,
+                    })
+                  }
+                />
+              </FormControl>
+            </Flex>
+            <Flex flexDir="column" w="519px">
+              <FormControl
+                isRequired
+                isInvalid={
+                  attemptedSubmit && !isValidEmail(primaryContact.email)
+                }
+              >
+                <FormLabel variant="desktop-button-bold">
+                  Email address
+                </FormLabel>
+                <Input
+                  type="email"
+                  value={primaryContact.email}
+                  placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
+                  onChange={(e) =>
+                    setPrimaryContact({
+                      ...primaryContact,
+                      email: e.target.value,
+                    })
+                  }
+                />
+              </FormControl>
+            </Flex>
+          </Flex>
+        </Flex>
+      </>
+    );
+  };
+
+  const getMobileContactSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column" gap="8px">
+        <FormControl isRequired>
+          <FormLabel variant="mobile-form-label-bold">
+            Primary Contact
+          </FormLabel>
+          <Flex flexDir="column" gap="8px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && primaryContact.name === ""}
+            >
+              <Input
+                variant="mobile-outline"
+                value={primaryContact.name}
+                onChange={(e) =>
+                  setPrimaryContact({ ...primaryContact, name: e.target.value })
+                }
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME}
+              />
+            </FormControl>
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && primaryContact.phone === ""}
+            >
+              <Input
+                variant="mobile-outline"
+                type="tel"
+                value={primaryContact.phone}
+                onChange={(e) =>
+                  setPrimaryContact({
+                    ...primaryContact,
+                    phone: e.target.value,
+                  })
+                }
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER}
+              />
+            </FormControl>
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && !isValidEmail(primaryContact.email)}
+            >
               <Input
                 variant="mobile-outline"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                value={primaryContact.email}
+                onChange={(e) =>
+                  setPrimaryContact({
+                    ...primaryContact,
+                    email: e.target.value,
+                  })
+                }
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_EMAIL}
               />
             </FormControl>
           </Flex>
-        )}
+        </FormControl>
+      </Flex>
+    );
+  };
 
-        {isWebView && <Divider />}
-        <>
-          {isWebView && (
-            <>
-              <Text variant="desktop-heading">Organization Info</Text>
-              <Flex flexDir="row" gap="24px">
-                <Flex flexDir="column" w="240px">
-                  <FormControl
-                    isRequired
-                    isInvalid={attemptedSubmit && organizationName === ""}
-                  >
-                    <FormLabel variant="desktop-button-bold">
-                      Name of organization
-                    </FormLabel>
-                    <Input
-                      value={organizationName}
-                      onChange={(e) => setOrganizationName(e.target.value)}
-                    />
-                  </FormControl>
-                </Flex>
-                <Flex flexDir="column" w="519px">
-                  <FormControl
-                    isRequired
-                    isInvalid={attemptedSubmit && organizationAddress === ""}
-                  >
-                    <FormLabel variant="desktop-button-bold">
-                      Address of organization
-                    </FormLabel>
-                    <Input
-                      value={organizationAddress}
-                      onChange={(e) => setOrganizationAddress(e.target.value)}
-                    />
-                  </FormControl>
-                </Flex>
-              </Flex>
-            </>
-          )}
-          {!isWebView && (
-            <Flex flexDir="column" gap="8px">
-              <FormControl isRequired>
-                <FormLabel variant="mobile-form-label-bold">
-                  Organization Info
-                </FormLabel>
+  const getWebOnsiteStaffSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column" gap="24px">
+        <Flex flexDir="column" gap="8px">
+          <FormControl isRequired>
+            <FormLabel variant="form-label-bold">
+              2. Additional onsite staff
+            </FormLabel>
+          </FormControl>
+          <Text color="#69696B" variant="desktop-xs" mt="-12px">
+            *Must add at least 1 onsite staff up to a maximum of 10.
+          </Text>
+        </Flex>
+        <TableContainer border="1px solid #EDF2F7" borderRadius="8px">
+          <Table>
+            <Thead>
+              <Tr borderRadius="8px 8px 0 0" h="40px" background="#EDF2F7">
+                <Th
+                  borderRadius="8px 0 0 0"
+                  padding="0 12px 0 24px"
+                  w="256px"
+                  textTransform="none"
+                >
+                  <Text color="black" variant="desktop-xs">
+                    Full Name
+                  </Text>
+                </Th>
+                <Th padding="0 12px" w="200px" textTransform="none">
+                  <Text color="black" variant="desktop-xs">
+                    Phone Number
+                  </Text>
+                </Th>
+                <Th padding="0 0 0 12px" textTransform="none">
+                  <Text color="black" variant="desktop-xs">
+                    Email
+                  </Text>
+                </Th>
+                <Th w="48px" borderRadius="0 8px 0 0" />
+              </Tr>
+            </Thead>
 
-                <Flex flexDir="column" gap="8px">
-                  <FormControl
-                    isRequired
-                    isInvalid={attemptedSubmit && organizationName === ""}
-                  >
-                    <Input
-                      variant="mobile-outline"
-                      value={organizationName}
-                      onChange={(e) => setOrganizationName(e.target.value)}
-                      placeholder="Name of organization"
-                    />
-                  </FormControl>
-                  <FormControl
-                    isRequired
-                    isInvalid={attemptedSubmit && organizationAddress === ""}
-                  >
-                    <Input
-                      variant="mobile-outline"
-                      value={organizationAddress}
-                      onChange={(e) => setOrganizationAddress(e.target.value)}
-                      placeholder="Address of organization"
-                    />
-                  </FormControl>
-                </Flex>
-              </FormControl>
-            </Flex>
-          )}
-        </>
-
-        {isWebView && <Divider />}
-        {isWebView && (
-          <>
-            <Text variant="desktop-heading">Contact Information</Text>
-            <Flex flexDir="column" gap="24px">
-              <Flex flexDir="column">
-                <FormControl
-                  isRequired
-                  isInvalid={attemptedSubmit && contactName === ""}
-                >
-                  <FormLabel variant="desktop-button-bold">
-                    1. Primary contact name
-                  </FormLabel>
-                  <Input
-                    value={contactName}
-                    onChange={(e) => setContactName(e.target.value)}
-                  />
-                </FormControl>
-              </Flex>
-              <Flex flexDir="row" gap="24px">
-                <Flex flexDir="column" w="240px">
-                  <FormControl
-                    isRequired
-                    isInvalid={attemptedSubmit && contactNumber === ""}
-                  >
-                    <FormLabel variant="desktop-button-bold">
-                      Phone number
-                    </FormLabel>
-                    <Input
-                      type="tel"
-                      value={contactNumber}
-                      onChange={(e) => setContactNumber(e.target.value)}
-                    />
-                  </FormControl>
-                </Flex>
-                <Flex flexDir="column" w="519px">
-                  <FormControl
-                    isRequired
-                    isInvalid={attemptedSubmit && contactEmail === ""}
-                  >
-                    <FormLabel variant="desktop-button-bold">
-                      Email address
-                    </FormLabel>
-                    <Input
-                      type="email"
-                      value={contactEmail}
-                      onChange={(e) => setContactEmail(e.target.value)}
-                    />
-                  </FormControl>
-                </Flex>
-              </Flex>
-            </Flex>
-          </>
-        )}
-        {!isWebView && (
-          <Flex flexDir="column" gap="8px">
-            <FormControl isRequired>
-              <FormLabel variant="mobile-form-label-bold">
-                Primary Contact
-              </FormLabel>
-              <Flex flexDir="column" gap="8px">
-                <FormControl
-                  isRequired
-                  isInvalid={attemptedSubmit && contactName === ""}
-                >
-                  <Input
-                    variant="mobile-outline"
-                    value={contactName}
-                    onChange={(e) => setContactName(e.target.value)}
-                    placeholder="Full Name"
-                  />
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={attemptedSubmit && contactNumber === ""}
-                >
-                  <Input
-                    variant="mobile-outline"
-                    type="tel"
-                    value={contactNumber}
-                    onChange={(e) => setContactNumber(e.target.value)}
-                    placeholder="Phone number"
-                  />
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={attemptedSubmit && contactEmail === ""}
-                >
-                  <Input
-                    variant="mobile-outline"
-                    type="email"
-                    value={contactEmail}
-                    onChange={(e) => setContactEmail(e.target.value)}
-                    placeholder="Email address"
-                  />
-                </FormControl>
-              </Flex>
-            </FormControl>
-          </Flex>
-        )}
-        <FormControl isRequired>
-          <Flex flexDir="column" gap="24px">
-            {!isWebView && (
-              <Flex flexDir="column" gap="20px">
-                {onsiteInfo.map((info, index) => (
-                  <Flex flexDir="column" gap="8px" key={index}>
-                    <Flex flexDir="row" justifyContent="space-between">
-                      <FormLabel variant="mobile-form-label-bold">
-                        {`Additional Onsite Staff (${index + 1})`}
-                      </FormLabel>
-                      {onsiteInfo.length >= 2 && (
-                        <DeleteIcon
-                          h="16px"
-                          w="16px"
-                          color="#CBD5E0"
-                          cursor="pointer"
-                          _hover={{ color: "#272D77" }}
-                          onClick={() => {
-                            onsiteInfo.splice(index, 1);
-                            setOnsiteInfo([...onsiteInfo]);
-                          }}
-                        />
-                      )}
-                    </Flex>
-                    {index === 0 && (
-                      <Text color="#69696B" variant="desktop-xs" mt="-16px">
-                        *Must add at least 1 onsite staff up to a maximum of 10.
-                      </Text>
-                    )}
+            <Tbody>
+              {onsiteInfo.map((info, index) => (
+                <Tr h="58px" key={index}>
+                  <Td padding="0 12px 0 24px" gap="24px">
                     <FormControl
+                      isRequired={index === 0}
                       isInvalid={
-                        onsiteInfo[index].attemptedSubmit &&
-                        onsiteInfo[index].name === ""
+                        attemptedSubmit && onsiteInfo[index].name === ""
                       }
                     >
                       <Input
                         h="37px"
-                        variant="mobile-outline"
                         value={onsiteInfo[index].name}
-                        placeholder="Full Name"
+                        placeholder={PLACEHOLDER_WEB_EXAMPLE_FULL_NAME}
                         onChange={(e) => {
                           onsiteInfo[index].name = e.target.value;
                           setOnsiteInfo([...onsiteInfo]);
                         }}
                       />
                     </FormControl>
+                  </Td>
+                  <Td padding="0 12px">
                     <FormControl
+                      isRequired={index === 0}
                       isInvalid={
-                        onsiteInfo[index].attemptedSubmit &&
-                        onsiteInfo[index].number === ""
+                        attemptedSubmit && onsiteInfo[index].phone === ""
                       }
                     >
                       <Input
                         h="37px"
-                        variant="mobile-outline"
-                        value={onsiteInfo[index].number}
-                        placeholder="Phone Number"
+                        type="tel"
+                        value={onsiteInfo[index].phone}
+                        placeholder={PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER}
                         onChange={(e) => {
-                          onsiteInfo[index].number = e.target.value;
+                          onsiteInfo[index].phone = e.target.value;
                           setOnsiteInfo([...onsiteInfo]);
                         }}
                       />
                     </FormControl>
+                  </Td>
+                  <Td padding="0 0 0 12px">
                     <FormControl
+                      isRequired={index === 0}
                       isInvalid={
-                        onsiteInfo[index].attemptedSubmit &&
-                        onsiteInfo[index].email === ""
+                        attemptedSubmit &&
+                        !isValidEmail(onsiteInfo[index].email)
                       }
                     >
                       <Input
                         h="37px"
-                        variant="mobile-outline"
+                        type="email"
                         value={onsiteInfo[index].email}
-                        placeholder="Email"
+                        placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
                         onChange={(e) => {
                           onsiteInfo[index].email = e.target.value;
                           setOnsiteInfo([...onsiteInfo]);
                         }}
                       />
                     </FormControl>
-                  </Flex>
-                ))}
-                {onsiteInfo.length < 10 && (
-                  <Text
-                    variant="mobile-body-bold"
-                    cursor="pointer"
-                    onClick={() => {
-                      setOnsiteInfo([
-                        ...onsiteInfo,
-                        {
-                          name: "",
-                          number: "",
-                          email: "",
-                          edit: true,
-                          attemptedSubmit: false,
-                        },
-                      ]);
-                    }}
-                  >
-                    + Add another contact
-                  </Text>
-                )}
-              </Flex>
-            )}
-            {isWebView && (
-              <>
-                <Flex flexDir="column" gap="8px">
-                  <FormLabel variant="form-label-bold">
-                    2. Additional onsite staff
-                  </FormLabel>
-                  <Text color="#69696B" variant="desktop-xs">
-                    *Must add at least 1 onsite staff up to a maximum of 10.
-                  </Text>
-                </Flex>
-                <TableContainer border="1px solid #EDF2F7" borderRadius="8px">
-                  <Table>
-                    <Thead>
-                      <Tr
-                        borderRadius="8px 8px 0 0"
-                        h="40px"
-                        background="#EDF2F7"
-                      >
-                        <Th
-                          borderRadius="8px 0 0 0"
-                          padding="0 12px 0 24px"
-                          textTransform="none"
-                        >
-                          <Text color="black" variant="desktop-xs">
-                            Full Name
-                          </Text>
-                        </Th>
-                        <Th padding="0 12px" textTransform="none">
-                          <Text color="black" variant="desktop-xs">
-                            Number
-                          </Text>
-                        </Th>
-                        <Th padding="0 0 0 12px" textTransform="none">
-                          <Text color="black" variant="desktop-xs">
-                            Email
-                          </Text>
-                        </Th>
-                        <Th />
-                        <Th borderRadius="0 8px 0 0" />
-                      </Tr>
-                    </Thead>
-
-                    <Tbody>
-                      {onsiteInfo.map((info, index) => (
-                        <Tr h="58px" key={index}>
-                          <Td padding="0 12px 0 24px" gap="24px">
-                            {onsiteInfo[index].edit ? (
-                              <FormControl
-                                isInvalid={
-                                  onsiteInfo[index].attemptedSubmit &&
-                                  onsiteInfo[index].name === ""
-                                }
-                              >
-                                <Input
-                                  h="37px"
-                                  w="168px"
-                                  value={onsiteInfo[index].name}
-                                  onChange={(e) => {
-                                    onsiteInfo[index].name = e.target.value;
-                                    setOnsiteInfo([...onsiteInfo]);
-                                  }}
-                                />
-                              </FormControl>
-                            ) : (
-                              <Text w="168px" variant="desktop-xs">
-                                {onsiteInfo[index].name}
-                              </Text>
-                            )}
-                          </Td>
-                          <Td padding="0 12px">
-                            {onsiteInfo[index].edit ? (
-                              <FormControl
-                                isInvalid={
-                                  onsiteInfo[index].attemptedSubmit &&
-                                  onsiteInfo[index].number === ""
-                                }
-                              >
-                                <Input
-                                  h="37px"
-                                  w="145px"
-                                  value={onsiteInfo[index].number}
-                                  onChange={(e) => {
-                                    onsiteInfo[index].number = e.target.value;
-                                    setOnsiteInfo([...onsiteInfo]);
-                                  }}
-                                />
-                              </FormControl>
-                            ) : (
-                              <Text w="145px" variant="desktop-xs">
-                                {onsiteInfo[index].number}
-                              </Text>
-                            )}
-                          </Td>
-                          <Td padding="0 0 0 12px">
-                            {onsiteInfo[index].edit ? (
-                              <FormControl
-                                isInvalid={
-                                  onsiteInfo[index].attemptedSubmit &&
-                                  onsiteInfo[index].email === ""
-                                }
-                              >
-                                <Input
-                                  h="37px"
-                                  w="294px"
-                                  value={onsiteInfo[index].email}
-                                  onChange={(e) => {
-                                    onsiteInfo[index].email = e.target.value;
-                                    setOnsiteInfo([...onsiteInfo]);
-                                  }}
-                                />
-                              </FormControl>
-                            ) : (
-                              <Text w="294px" variant="desktop-xs">
-                                {onsiteInfo[index].email}
-                              </Text>
-                            )}
-                          </Td>
-                          {onsiteInfo[index].edit ? (
-                            <Td padding="0 4px">
-                              <CheckCircleIcon
-                                h="19.5px"
-                                w="100%"
-                                color="#CBD5E0"
-                                cursor="pointer"
-                                _hover={{ color: "#272D77" }}
-                                onClick={() => {
-                                  onsiteInfo[index].attemptedSubmit = true;
-                                  if (
-                                    onsiteInfo[index].name !== "" &&
-                                    onsiteInfo[index].number !== "" &&
-                                    onsiteInfo[index].email !== ""
-                                  ) {
-                                    onsiteInfo[index].edit = false;
-                                  }
-                                  setOnsiteInfo([...onsiteInfo]);
-                                }}
-                              />
-                            </Td>
-                          ) : (
-                            <Td padding="0 4px">
-                              <EditIcon
-                                h="19.5px"
-                                w="100%"
-                                color="#CBD5E0"
-                                cursor="pointer"
-                                _hover={{ color: "#272D77" }}
-                                onClick={() => {
-                                  onsiteInfo[index].edit = true;
-                                  setOnsiteInfo([...onsiteInfo]);
-                                }}
-                              />
-                            </Td>
-                          )}
-                          {onsiteInfo.length >= 2 ? (
-                            <Td padding="0 4px">
-                              <DeleteIcon
-                                h="19.5px"
-                                w="100%"
-                                color="#CBD5E0"
-                                cursor="pointer"
-                                _hover={{ color: "#272D77" }}
-                                onClick={() => {
-                                  onsiteInfo.splice(index, 1);
-                                  setOnsiteInfo([...onsiteInfo]);
-                                }}
-                              />
-                            </Td>
-                          ) : (
-                            <Td padding="0 4px" />
-                          )}
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-                {onsiteInfo.length < 10 && (
-                  <Text
-                    variant="desktop-button-bold"
-                    cursor="pointer"
-                    onClick={() => {
-                      setOnsiteInfo([
-                        ...onsiteInfo,
-                        {
-                          name: "",
-                          number: "",
-                          email: "",
-                          edit: true,
-                          attemptedSubmit: false,
-                        },
-                      ]);
-                    }}
-                  >
-                    + Add another contact
-                  </Text>
-                )}
-              </>
-            )}
-          </Flex>
-        </FormControl>
-
-        <Flex flexDir="column" alignItems="center" gap="8px">
-          <Button
-            w={{ base: "100%", lg: "480px" }}
-            variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
-            color="white"
-            bgColor="#272D77"
-            _hover={{ bgColor: "#272D77" }}
-            borderRadius="6px"
+                  </Td>
+                  {onsiteInfo.length >= 2 ? (
+                    <Td padding="0 4px">
+                      <DeleteIcon
+                        h="19.5px"
+                        w="100%"
+                        color="#CBD5E0"
+                        cursor="pointer"
+                        _hover={{ color: "#272D77" }}
+                        onClick={() => {
+                          onsiteInfo.splice(index, 1);
+                          setOnsiteInfo([...onsiteInfo]);
+                        }}
+                      />
+                    </Td>
+                  ) : (
+                    <Td padding="0 4px" />
+                  )}
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+        {onsiteInfo.length < 10 && (
+          <Text
+            variant="desktop-button-bold"
+            cursor="pointer"
             onClick={() => {
-              setAttemptedSubmit(true);
-              // const req = {
-              //   role,
-              //   email,
-              //   organizationName,
-              //   organizationAddress,
-              //   contactName,
-              //   contactNumber,
-              //   contactEmail,
-              //   onsiteInfo,
-              // };
-              // console.log(req);
-              // add validation for the request
+              setOnsiteInfo([
+                ...onsiteInfo,
+                {
+                  name: "",
+                  phone: "",
+                  email: "",
+                },
+              ]);
             }}
           >
-            Create Account
-          </Button>
-          <Text
-            color="#69696B"
-            variant={{ base: "mobile-xs", lg: "desktop-xs" }}
-          >
-            {"By selecting Create Account, you agree to FCK's "}
-            {/* replace with actual terms & conditions link */}
-            <Link color="#272D77" textDecoration="underline" href="/join">
-              Terms & Conditions
-            </Link>
+            + Add another contact
           </Text>
-        </Flex>
+        )}
+      </Flex>
+    );
+  };
+
+  const getMobileOnsiteStaffSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column" gap="20px">
+        {onsiteInfo.map((info, index) => (
+          <Flex flexDir="column" gap="8px" key={index}>
+            <Flex flexDir="row" justifyContent="space-between">
+              <FormControl isRequired={index === 0}>
+                <FormLabel variant="mobile-form-label-bold">
+                  {`Additional Onsite Staff (${index + 1})`}
+                </FormLabel>
+              </FormControl>
+              {onsiteInfo.length >= 2 && (
+                <DeleteIcon
+                  h="16px"
+                  w="16px"
+                  color="#CBD5E0"
+                  cursor="pointer"
+                  _hover={{ color: "#272D77" }}
+                  onClick={() => {
+                    onsiteInfo.splice(index, 1);
+                    setOnsiteInfo([...onsiteInfo]);
+                  }}
+                />
+              )}
+            </Flex>
+            {index === 0 && (
+              <Text color="#69696B" variant="desktop-xs" mt="-16px">
+                *Must add at least 1 onsite staff up to a maximum of 10.
+              </Text>
+            )}
+            <FormControl
+              isRequired={index === 0}
+              isInvalid={attemptedSubmit && onsiteInfo[index].name === ""}
+            >
+              <Input
+                h="37px"
+                variant="mobile-outline"
+                value={onsiteInfo[index].name}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME}
+                onChange={(e) => {
+                  onsiteInfo[index].name = e.target.value;
+                  setOnsiteInfo([...onsiteInfo]);
+                }}
+              />
+            </FormControl>
+            <FormControl
+              isRequired={index === 0}
+              isInvalid={attemptedSubmit && onsiteInfo[index].phone === ""}
+            >
+              <Input
+                h="37px"
+                variant="mobile-outline"
+                type="tel"
+                value={onsiteInfo[index].phone}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER}
+                onChange={(e) => {
+                  onsiteInfo[index].phone = e.target.value;
+                  setOnsiteInfo([...onsiteInfo]);
+                }}
+              />
+            </FormControl>
+            <FormControl
+              isRequired={index === 0}
+              isInvalid={
+                attemptedSubmit && !isValidEmail(onsiteInfo[index].email)
+              }
+            >
+              <Input
+                h="37px"
+                variant="mobile-outline"
+                type="email"
+                value={onsiteInfo[index].email}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_EMAIL}
+                onChange={(e) => {
+                  onsiteInfo[index].email = e.target.value;
+                  setOnsiteInfo([...onsiteInfo]);
+                }}
+              />
+            </FormControl>
+          </Flex>
+        ))}
+        {onsiteInfo.length < 10 && (
+          <Text
+            variant="mobile-body-bold"
+            cursor="pointer"
+            onClick={() => {
+              setOnsiteInfo([
+                ...onsiteInfo,
+                {
+                  name: "",
+                  phone: "",
+                  email: "",
+                },
+              ]);
+            }}
+          >
+            + Add another contact
+          </Text>
+        )}
+      </Flex>
+    );
+  };
+
+  const getSubmitSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column" alignItems="center" gap="8px">
+        <Button
+          w={{ base: "100%", lg: "480px" }}
+          variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
+          color="white"
+          bgColor="#272D77"
+          _hover={{ bgColor: "#272D77" }}
+          borderRadius="6px"
+          onClick={() => {
+            setAttemptedSubmit(true);
+
+            const stringsToValidate = [
+              role,
+              organizationName,
+              organizationAddress,
+              primaryContact.name,
+            ];
+            const phoneNumsToValidate = [primaryContact.phone];
+            const emailsToValidate = [email, primaryContact.email];
+
+            for (let i = 0; i < onsiteInfo.length; i += 1) {
+              stringsToValidate.push(onsiteInfo[i].name);
+              phoneNumsToValidate.push(onsiteInfo[i].phone);
+              emailsToValidate.push(onsiteInfo[i].email);
+            }
+
+            for (let i = 0; i < stringsToValidate.length; i += 1) {
+              if (stringsToValidate[i] === "") return;
+            }
+
+            for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
+              if (phoneNumsToValidate[i] === "") return;
+            }
+
+            for (let i = 0; i < emailsToValidate.length; i += 1) {
+              if (!isValidEmail(emailsToValidate[i])) return;
+            }
+
+            const request: Request = {
+              role: trimWhiteSpace(role),
+              email: trimWhiteSpace(email),
+              organizationName: trimWhiteSpace(organizationName),
+              organizationAddress: trimWhiteSpace(organizationAddress),
+              contactName: trimWhiteSpace(primaryContact.name),
+              contactPhone: trimWhiteSpace(primaryContact.phone),
+              contactEmail: trimWhiteSpace(primaryContact.email),
+              onsiteInfo: onsiteInfo.map((obj) => ({
+                name: trimWhiteSpace(obj.name),
+                phone: trimWhiteSpace(obj.phone),
+                email: trimWhiteSpace(obj.email),
+              })),
+            };
+
+            // eslint-disable-next-line no-console
+            console.log(request);
+            // process createOnboardingRequest
+          }}
+        >
+          Create Account
+        </Button>
+        <Text color="#69696B" variant={{ base: "mobile-xs", lg: "desktop-xs" }}>
+          {"By selecting Create Account, you agree to FCK's "}
+          {/* replace with actual terms & conditions link */}
+          <Link color="#272D77" textDecoration="underline" href="/join">
+            Terms & Conditions
+          </Link>
+        </Text>
+      </Flex>
+    );
+  };
+
+  return (
+    <Center>
+      <Flex
+        flexDir="column"
+        w={{ base: "100%", lg: "911px" }}
+        p={{ base: "24px", sm: "48px", lg: "64px" }}
+        m="128px 0"
+        gap={{ base: "20px", lg: "32px" }}
+        borderRadius="8px"
+        boxShadow={{
+          base: "",
+          lg:
+            "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
+        }}
+      >
+        {getTitleSection()}
+        {getUserTypeSection()}
+        {getEmailSection()}
+        {isWebView && <Divider />}
+        {isWebView
+          ? getWebOrganizationSection()
+          : getMobileOrganizationSection()}
+        {isWebView && <Divider />}
+        {isWebView ? getWebContactSection() : getMobileContactSection()}
+        {isWebView ? getWebOnsiteStaffSection() : getMobileOnsiteStaffSection()}
+        {getSubmitSection()}
       </Flex>
     </Center>
   );

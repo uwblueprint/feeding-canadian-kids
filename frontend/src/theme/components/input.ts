@@ -4,7 +4,11 @@ const Input = {
   variants: {
     outline: {
       field: {
-        errorBorderColor: "secondary.critical",
+        _invalid: {
+          borderColor: "secondary.critical !important",
+          boxShadow:
+            "0 0 0 1px var(--chakra-colors-secondary-critical) !important",
+        },
         color: "text.default",
         borderWidth: "2px",
         bg: "background.white",
@@ -19,7 +23,9 @@ const Input = {
     },
     "mobile-outline": {
       field: {
-        errorBorderColor: "secondary.critical",
+        _invalid: {
+          borderColor: "secondary.critical",
+        },
         color: "text.default",
         borderWidth: "2px",
         bg: "background.white",
@@ -27,9 +33,9 @@ const Input = {
         borderRadius: "4px",
         fontFamily: "Inter",
         fontStyle: "normal",
-        fontWeight: "500",
+        fontWeight: "400",
         fontSize: "14px",
-        lineHeight: "26px",
+        lineHeight: "21px",
       },
     },
   },

@@ -15,6 +15,9 @@ def test_create_user():
         "contact_name": "Yuki Kuran",
         "contact_email": "yukikuran@email.com",
         "contact_phone": "123456789",
+        "email": "test1@organization.com",
+        "organization_address": "123 Anywhere Street",
+        "organization_name": "Test1 Org",
         "role": "Donor",
     }
     user_info = UserInfo(**user_info)
@@ -29,6 +32,9 @@ def test_create_onboarding_request():
         "contact_name": "Yuki Kuran",
         "contact_email": "yukikuran@email.com",
         "contact_phone": "123456789",
+        "email": "test1@organization.com",
+        "organization_address": "123 Anywhere Street",
+        "organization_name": "Test1 Org",
         "role": "Donor",
     }
     status = "Pending"
@@ -37,5 +43,8 @@ def test_create_onboarding_request():
     assert onboarding_request.info.contact_name == "Yuki Kuran"
     assert onboarding_request.info.contact_email == "yukikuran@email.com"
     assert onboarding_request.info.contact_phone == "123456789"
+    assert onboarding_request.info.email == "test1@organization.com"
+    assert onboarding_request.info.organization_address == "123 Anywhere Street"
+    assert onboarding_request.info.organization_name == "Test1 Org"
     assert onboarding_request.info.role == "Donor"
     assert onboarding_request.status == status

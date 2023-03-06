@@ -11,6 +11,9 @@ mock_info1 = UserInfo(
     contact_name="Jessie",
     contact_email="jessie123@gmail.com",
     contact_phone="123456",
+    email="test1@organization.com",
+    organization_address = "123 Anywhere Street",
+    organization_name = "Test1 Org",
     role="ASP",
 )
 
@@ -18,6 +21,9 @@ mock_info2 = UserInfo(
     contact_name="Mr. Goose",
     contact_email="goose@gmail.com",
     contact_phone="98765",
+    email="test2@organization.com",
+    organization_address="456 Anywhere Street",
+    organization_name="Test2 Org",
     role="Donor",
 )
 
@@ -29,6 +35,9 @@ def convert_to_dtos(mock_result):
             "contact_name": request_dict["info"]["contact_name"],
             "contact_email": request_dict["info"]["contact_email"],
             "contact_phone": request_dict["info"]["contact_phone"],
+            "email": request_dict["info"]["email"],
+            "organization_address": request_dict["info"]["organization_address"],
+            "organization_name": request_dict["info"]["organization_name"],
             "role": request_dict["info"]["role"],
             "date_submitted": request_dict["date_submitted"],
             "status": request_dict["status"],
@@ -41,9 +50,13 @@ def test_create_onboarding_request():
     query_string = """mutation testCreateOnboardingRequest {
                         createOnboardingRequest(
                             userInfo:
-                                {contactName: "Jane Doe",
+                                {
+                                contactName: "Jane Doe",
                                 contactEmail: "janedoe@email.com",
                                 contactPhone: "12345",
+                                email: "test3@organization.com",
+                                organizationAddress: "789 Anywhere Street",
+                                organizationName" "Test3 Org",
                                 role: "ASP"
                                 }
                         ) {
@@ -53,6 +66,9 @@ def test_create_onboarding_request():
                                 contactName,
                                 contactEmail,
                                 contactPhone,
+                                email,
+                                organizationAddress,
+                                organizationName,
                                 role
                             }
                             dateSubmitted
@@ -69,6 +85,9 @@ def test_create_onboarding_request():
     assert user_info_result["contactName"] == "Jane Doe"
     assert user_info_result["contactEmail"] == "janedoe@email.com"
     assert user_info_result["contactPhone"] == "12345"
+    assert user_info_result["email"] == "test3@organization.com"
+    assert user_info_result["organizationAddress"] == "789 Anywhere Street"
+    assert user_info_result["organizationName"] == "Test3 Org"
     assert user_info_result["role"] == "ASP"
     assert onboarding_request_result["status"] == "Pending"
 
@@ -98,6 +117,9 @@ def test_get_all_requests(mocker):
                 contactName
                 contactEmail
                 contactPhone
+                email
+                organizationAddress
+                organizationName
                 role
                 dateSubmitted
                 status
@@ -112,6 +134,9 @@ def test_get_all_requests(mocker):
                     "contactName": "Jessie",
                     "contactEmail": "jessie123@gmail.com",
                     "contactPhone": "123456",
+                    "email": "test1@organization.com",
+                    "organizationAddress": "123 Anywhere Street",
+                    "organizationName": "Test1 Org",
                     "role": "ASP",
                     "dateSubmitted": mock_date.isoformat(),
                     "status": "Pending",
@@ -120,6 +145,9 @@ def test_get_all_requests(mocker):
                     "contactName": "Mr. Goose",
                     "contactEmail": "goose@gmail.com",
                     "contactPhone": "98765",
+                    "email": "test2@organization.com",
+                    "organizationAddress": "456 Anywhere Street",
+                    "organizationName": "Test2 Org",
                     "role": "Donor",
                     "dateSubmitted": mock_date.isoformat(),
                     "status": "Approved",
@@ -152,6 +180,9 @@ def test_filter_requests_by_role(mocker):
                 contactName
                 contactEmail
                 contactPhone
+                email
+                organizationAddress
+                organizationName
                 role
                 dateSubmitted
                 status
@@ -166,6 +197,9 @@ def test_filter_requests_by_role(mocker):
                     "contactName": "Mr. Goose",
                     "contactEmail": "goose@gmail.com",
                     "contactPhone": "98765",
+                    "email": "test2@organization.com",
+                    "organizationAddress": "456 Anywhere Street",
+                    "organizationName": "Test2 Org",
                     "role": "Donor",
                     "dateSubmitted": mock_date.isoformat(),
                     "status": "Pending",
@@ -199,6 +233,9 @@ def test_filter_requests_by_status(mocker):
                 contactName
                 contactEmail
                 contactPhone
+                email
+                organizationAddress
+                organizationName
                 role
                 dateSubmitted
                 status
@@ -213,6 +250,9 @@ def test_filter_requests_by_status(mocker):
                     "contactName": "Mr. Goose",
                     "contactEmail": "goose@gmail.com",
                     "contactPhone": "98765",
+                    "email": "test2@organization.com",
+                    "organizationAddress": "456 Anywhere Street",
+                    "organizationName": "Test2 Org",
                     "role": "Donor",
                     "dateSubmitted": mock_date.isoformat(),
                     "status": "Approved",
@@ -248,6 +288,9 @@ def test_get_requests_by_id(mocker):
                 contactName
                 contactEmail
                 contactPhone
+                email
+                organizationAddress
+                organizationName
                 role
                 dateSubmitted
                 status
@@ -262,6 +305,9 @@ def test_get_requests_by_id(mocker):
                     "contactName": "Jessie",
                     "contactEmail": "jessie123@gmail.com",
                     "contactPhone": "123456",
+                    "email": "test1@organization.com",
+                    "organizationAddress": "123 Anywhere Street",
+                    "organizationName": "Test1 Org",
                     "role": "ASP",
                     "dateSubmitted": mock_date.isoformat(),
                     "status": "Pending",

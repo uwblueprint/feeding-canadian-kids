@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -20,9 +21,13 @@ import {
   Thead,
   Tr,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+import { JOIN_PAGE } from "../../constants/Routes";
+import { OnboardingRequest } from "../../types/AuthTypes";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -44,15 +49,46 @@ type Contact = {
 };
 
 type Request = {
-  role: string;
-  email: string;
-  organizationName: string;
-  organizationAddress: string;
   contactName: string;
-  contactPhone: string;
   contactEmail: string;
+  contactPhone: string;
+  email: string;
+  organizationAddress: string;
+  organizationName: string;
+  role: string;
   onsiteInfo: Array<Contact>;
 };
+
+type TempRequest = {
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string;
+  email: string;
+  organizationAddress: string;
+  organizationName: string;
+  role: string;
+};
+
+const SIGNUP = gql`
+  mutation OnboardRequest($userInfo: UserInfoInput!) {
+    createOnboardingRequest(userInfo: $userInfo) {
+      onboardingRequest {
+        id
+        info {
+          contactName
+          contactEmail
+          contactPhone
+          email
+          organizationAddress
+          organizationName
+          role
+        }
+        dateSubmitted
+        status
+      }
+    }
+  }
+`;
 
 const Join = (): React.ReactElement => {
   const [role, setRole] = useState("ASP");
@@ -74,6 +110,11 @@ const Join = (): React.ReactElement => {
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [isWebView] = useMediaQuery("(min-width: 62em)");
+  const [signup] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
+    SIGNUP,
+  );
+  const toast = useToast();
+  const navigate = useNavigate();
 
   const getTitleSection = (): React.ReactElement => {
     return (
@@ -618,6 +659,84 @@ const Join = (): React.ReactElement => {
     );
   };
 
+  const handleSignUp = async (userInfo: TempRequest) => {
+    try {
+      const response = await signup({ variables: { userInfo } });
+      // eslint-disable-next-line no-console
+      console.log(response);
+      navigate(JOIN_PAGE);
+    } catch (e: unknown) {
+      toast({
+        title: "Failed to create onboarding request. Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+      // eslint-disable-next-line no-console
+      console.log(e);
+    }
+  };
+
+  const handleSubmit = () => {
+    setAttemptedSubmit(true);
+
+    const stringsToValidate = [
+      role,
+      organizationName,
+      organizationAddress,
+      primaryContact.name,
+    ];
+    const phoneNumsToValidate = [primaryContact.phone];
+    const emailsToValidate = [email, primaryContact.email];
+
+    for (let i = 0; i < onsiteInfo.length; i += 1) {
+      stringsToValidate.push(onsiteInfo[i].name);
+      phoneNumsToValidate.push(onsiteInfo[i].phone);
+      emailsToValidate.push(onsiteInfo[i].email);
+    }
+
+    for (let i = 0; i < stringsToValidate.length; i += 1) {
+      if (stringsToValidate[i] === "") return;
+    }
+
+    for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
+      if (phoneNumsToValidate[i] === "") return;
+    }
+
+    for (let i = 0; i < emailsToValidate.length; i += 1) {
+      if (!isValidEmail(emailsToValidate[i])) return;
+    }
+
+    const request: Request = {
+      contactName: trimWhiteSpace(primaryContact.name),
+      contactEmail: trimWhiteSpace(primaryContact.email),
+      contactPhone: trimWhiteSpace(primaryContact.phone),
+      email: trimWhiteSpace(email),
+      organizationAddress: trimWhiteSpace(organizationAddress),
+      organizationName: trimWhiteSpace(organizationName),
+      role: trimWhiteSpace(role),
+      onsiteInfo: onsiteInfo.map((obj) => ({
+        name: trimWhiteSpace(obj.name),
+        phone: trimWhiteSpace(obj.phone),
+        email: trimWhiteSpace(obj.email),
+      })),
+    };
+
+    const tempRequest: TempRequest = {
+      contactName: trimWhiteSpace(primaryContact.name),
+      contactPhone: trimWhiteSpace(primaryContact.phone),
+      contactEmail: trimWhiteSpace(primaryContact.email),
+      email: trimWhiteSpace(email),
+      organizationAddress: trimWhiteSpace(organizationAddress),
+      organizationName: trimWhiteSpace(organizationName),
+      role: trimWhiteSpace(role),
+    };
+
+    // eslint-disable-next-line no-console
+    console.log(request);
+
+    handleSignUp(tempRequest);
+  };
+
   const getSubmitSection = (): React.ReactElement => {
     return (
       <Flex flexDir="column" alignItems="center" gap="8px">
@@ -628,62 +747,14 @@ const Join = (): React.ReactElement => {
           bgColor="#272D77"
           _hover={{ bgColor: "#272D77" }}
           borderRadius="6px"
-          onClick={() => {
-            setAttemptedSubmit(true);
-
-            const stringsToValidate = [
-              role,
-              organizationName,
-              organizationAddress,
-              primaryContact.name,
-            ];
-            const phoneNumsToValidate = [primaryContact.phone];
-            const emailsToValidate = [email, primaryContact.email];
-
-            for (let i = 0; i < onsiteInfo.length; i += 1) {
-              stringsToValidate.push(onsiteInfo[i].name);
-              phoneNumsToValidate.push(onsiteInfo[i].phone);
-              emailsToValidate.push(onsiteInfo[i].email);
-            }
-
-            for (let i = 0; i < stringsToValidate.length; i += 1) {
-              if (stringsToValidate[i] === "") return;
-            }
-
-            for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
-              if (phoneNumsToValidate[i] === "") return;
-            }
-
-            for (let i = 0; i < emailsToValidate.length; i += 1) {
-              if (!isValidEmail(emailsToValidate[i])) return;
-            }
-
-            const request: Request = {
-              role: trimWhiteSpace(role),
-              email: trimWhiteSpace(email),
-              organizationName: trimWhiteSpace(organizationName),
-              organizationAddress: trimWhiteSpace(organizationAddress),
-              contactName: trimWhiteSpace(primaryContact.name),
-              contactPhone: trimWhiteSpace(primaryContact.phone),
-              contactEmail: trimWhiteSpace(primaryContact.email),
-              onsiteInfo: onsiteInfo.map((obj) => ({
-                name: trimWhiteSpace(obj.name),
-                phone: trimWhiteSpace(obj.phone),
-                email: trimWhiteSpace(obj.email),
-              })),
-            };
-
-            // eslint-disable-next-line no-console
-            console.log(request);
-            // process createOnboardingRequest
-          }}
+          onClick={handleSubmit}
         >
           Create Account
         </Button>
         <Text color="#69696B" variant={{ base: "mobile-xs", lg: "desktop-xs" }}>
           {"By selecting Create Account, you agree to FCK's "}
           {/* replace with actual terms & conditions link */}
-          <Link color="#272D77" textDecoration="underline" href="/join">
+          <Link color="#272D77" textDecoration="underline" href={JOIN_PAGE}>
             Terms & Conditions
           </Link>
         </Text>

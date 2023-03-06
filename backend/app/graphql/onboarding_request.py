@@ -10,7 +10,10 @@ from .types import Mutation, MutationList, Query, QueryList
 class UserInfoInput(graphene.InputObjectType):
     contact_name = graphene.String(required=True)
     contact_email = graphene.String(required=True)
-    contact_phone = graphene.String()
+    contact_phone = graphene.String(required=True)
+    email = graphene.String(required=True)
+    organization_address = graphene.String(required=True)
+    organization_name = graphene.String(required=True)
     role = graphene.String(required=True)
 
 
@@ -18,6 +21,9 @@ class UserInfo(graphene.ObjectType):
     contact_name = graphene.String()
     contact_email = graphene.String()
     contact_phone = graphene.String()
+    email = graphene.String()
+    organization_address = graphene.String()
+    organization_name = graphene.String()
     role = graphene.String()
 
 
@@ -36,6 +42,9 @@ class GetOnboardingRequest(Query):
     contact_name = graphene.String()
     contact_email = graphene.String()
     contact_phone = graphene.String()
+    email = graphene.String()
+    organization_address = graphene.String()
+    organization_name = graphene.String()
     role = graphene.String()
     date_submitted = graphene.DateTime()
     status = graphene.String()
@@ -72,6 +81,9 @@ class OnboardingRequestQueries(QueryList):
                 contact_name=request.contact_name,
                 contact_email=request.contact_email,
                 contact_phone=request.contact_phone,
+                email=request.email,
+                organization_address=request.organization_address,
+                organization_name=request.organization_name,
                 role=request.role,
                 date_submitted=request.date_submitted,
                 status=request.status,

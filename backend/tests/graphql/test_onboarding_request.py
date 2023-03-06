@@ -56,7 +56,7 @@ def test_create_onboarding_request():
                                 contactPhone: "12345",
                                 email: "test3@organization.com",
                                 organizationAddress: "789 Anywhere Street",
-                                organizationName" "Test3 Org",
+                                organizationName: "Test3 Org",
                                 role: "ASP"
                                 }
                         ) {

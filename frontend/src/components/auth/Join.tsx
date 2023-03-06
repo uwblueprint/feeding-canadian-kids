@@ -21,9 +21,12 @@ import {
   Thead,
   Tr,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+import { JOIN_PAGE } from "../../constants/Routes";
 import { OnboardingRequest } from "../../types/AuthTypes";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
@@ -104,6 +107,8 @@ const Join = (): React.ReactElement => {
   const [signup] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
     SIGNUP,
   );
+  const toast = useToast();
+  const navigate = useNavigate();
 
   const getTitleSection = (): React.ReactElement => {
     return (
@@ -649,9 +654,20 @@ const Join = (): React.ReactElement => {
   };
 
   const handleSignUp = async (userInfo: OldRequest) => {
-    const response = await signup({ variables: { userInfo } });
-    // eslint-disable-next-line no-console
-    console.log(response);
+    try {
+      const response = await signup({ variables: { userInfo } });
+      // eslint-disable-next-line no-console
+      console.log(response);
+      navigate(JOIN_PAGE);
+    } catch (e: unknown) {
+      toast({
+        title: "Failed to create onboarding request. Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+      // eslint-disable-next-line no-console
+      console.log(e);
+    }
   };
 
   const getSubmitSection = (): React.ReactElement => {
@@ -729,7 +745,7 @@ const Join = (): React.ReactElement => {
         <Text color="#69696B" variant={{ base: "mobile-xs", lg: "desktop-xs" }}>
           {"By selecting Create Account, you agree to FCK's "}
           {/* replace with actual terms & conditions link */}
-          <Link color="#272D77" textDecoration="underline" href="/join">
+          <Link color="#272D77" textDecoration="underline" href={JOIN_PAGE}>
             Terms & Conditions
           </Link>
         </Text>

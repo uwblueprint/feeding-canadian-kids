@@ -12,8 +12,8 @@ mock_info1 = UserInfo(
     contact_email="jessie123@gmail.com",
     contact_phone="123456",
     email="test1@organization.com",
-    organization_address = "123 Anywhere Street",
-    organization_name = "Test1 Org",
+    organization_address="123 Anywhere Street",
+    organization_name="Test1 Org",
     role="ASP",
 )
 

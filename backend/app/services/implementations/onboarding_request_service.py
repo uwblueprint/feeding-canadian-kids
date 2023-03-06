@@ -61,7 +61,9 @@ class OnboardingRequestService(IOnboardingRequestService):
                     "contact_email": request_dict["info"]["contact_email"],
                     "contact_phone": request_dict["info"]["contact_phone"],
                     "email": request_dict["info"]["email"],
-                    "organization_address": request_dict["info"]["organization_address"],
+                    "organization_address": request_dict["info"][
+                        "organization_address"
+                    ],
                     "organization_name": request_dict["info"]["organization_name"],
                     "role": request_dict["info"]["role"],
                     "date_submitted": request_dict["date_submitted"],
@@ -116,7 +118,9 @@ class OnboardingRequestService(IOnboardingRequestService):
 
             referenced_onboarding_request.save()  # save the changes
 
-            recipient_email = referenced_onboarding_request.info.contact_email # change this to email address?
+            recipient_email = (
+                referenced_onboarding_request.info.contact_email
+            )  # change this to email address?
             AuthService.reset_password(self, recipient_email)
 
         except Exception as e:

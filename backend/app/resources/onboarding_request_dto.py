@@ -9,7 +9,7 @@ class OnboardingRequestDTO:
         organization_name,
         role,
         date_submitted,
-        status
+        status,
     ):
         self.contact_name = contact_name
         self.contact_email = contact_email

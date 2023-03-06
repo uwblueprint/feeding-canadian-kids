@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -23,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
+import { OnboardingRequest } from "../../types/AuthTypes";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -54,6 +56,31 @@ type Request = {
   onsiteInfo: Array<Contact>;
 };
 
+type OldRequest = {
+  role: string;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
+};
+
+const SIGNUP = gql`
+  mutation OnboardRequest($userInfo: UserInfoInput!) {
+    createOnboardingRequest(userInfo: $userInfo) {
+      onboardingRequest {
+        id
+        info {
+          contactName
+          contactEmail
+          contactPhone
+          role
+        }
+        dateSubmitted
+        status
+      }
+    }
+  }
+`;
+
 const Join = (): React.ReactElement => {
   const [role, setRole] = useState("ASP");
   const [email, setEmail] = useState("");
@@ -74,6 +101,9 @@ const Join = (): React.ReactElement => {
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [isWebView] = useMediaQuery("(min-width: 62em)");
+  const [signup] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
+    SIGNUP,
+  );
 
   const getTitleSection = (): React.ReactElement => {
     return (
@@ -618,6 +648,12 @@ const Join = (): React.ReactElement => {
     );
   };
 
+  const handleSignUp = async (userInfo: OldRequest) => {
+    const response = await signup({ variables: { userInfo } });
+    // eslint-disable-next-line no-console
+    console.log(response);
+  };
+
   const getSubmitSection = (): React.ReactElement => {
     return (
       <Flex flexDir="column" alignItems="center" gap="8px">
@@ -673,8 +709,18 @@ const Join = (): React.ReactElement => {
               })),
             };
 
+            const tempRequest: OldRequest = {
+              role: trimWhiteSpace(role),
+              contactName: trimWhiteSpace(primaryContact.name),
+              contactPhone: trimWhiteSpace(primaryContact.phone),
+              contactEmail: trimWhiteSpace(primaryContact.email),
+            };
+
             // eslint-disable-next-line no-console
             console.log(request);
+
+            handleSignUp(tempRequest);
+
             // process createOnboardingRequest
           }}
         >

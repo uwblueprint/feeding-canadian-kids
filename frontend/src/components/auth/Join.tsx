@@ -538,6 +538,7 @@ const Join = (): React.ReactElement => {
           <Text
             variant="desktop-button-bold"
             cursor="pointer"
+            w="fit-content"
             onClick={() => {
               setOnsiteInfo([
                 ...onsiteInfo,
@@ -549,7 +550,7 @@ const Join = (): React.ReactElement => {
               ]);
             }}
           >
-            + Add another contact
+            + Add onsite staff
           </Text>
         )}
       </Flex>
@@ -641,6 +642,7 @@ const Join = (): React.ReactElement => {
           <Text
             variant="mobile-body-bold"
             cursor="pointer"
+            w="fit-content"
             onClick={() => {
               setOnsiteInfo([
                 ...onsiteInfo,
@@ -652,7 +654,7 @@ const Join = (): React.ReactElement => {
               ]);
             }}
           >
-            + Add another contact
+            + Add onsite staff
           </Text>
         )}
       </Flex>
@@ -667,7 +669,7 @@ const Join = (): React.ReactElement => {
       navigate(JOIN_PAGE);
     } catch (e: unknown) {
       toast({
-        title: "Failed to create onboarding request. Please try again.",
+        title: "Failed to create account. Please try again.",
         status: "error",
         isClosable: true,
       });

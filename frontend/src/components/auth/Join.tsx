@@ -678,9 +678,7 @@ const Join = (): React.ReactElement => {
     }
   };
 
-  const handleSubmit = () => {
-    setAttemptedSubmit(true);
-
+  const isRequestValid = () => {
     const stringsToValidate = [
       role,
       organizationName,
@@ -697,17 +695,23 @@ const Join = (): React.ReactElement => {
     }
 
     for (let i = 0; i < stringsToValidate.length; i += 1) {
-      if (stringsToValidate[i] === "") return;
+      if (stringsToValidate[i] === "") return false;
     }
 
     for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
-      if (phoneNumsToValidate[i] === "") return;
+      if (phoneNumsToValidate[i] === "") return false;
     }
 
     for (let i = 0; i < emailsToValidate.length; i += 1) {
-      if (!isValidEmail(emailsToValidate[i])) return;
+      if (!isValidEmail(emailsToValidate[i])) return false;
     }
 
+    return true;
+  };
+
+  const handleSubmit = () => {
+    setAttemptedSubmit(true);
+    if (!isRequestValid()) return;
     const request: Request = {
       contactName: trimWhiteSpace(primaryContact.name),
       contactEmail: trimWhiteSpace(primaryContact.email),
@@ -747,7 +751,13 @@ const Join = (): React.ReactElement => {
           variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
           color="white"
           bgColor="#272D77"
+          disabled={!isRequestValid()}
           _hover={{ bgColor: "#272D77" }}
+          _disabled={{
+            bgColor: "#CCCCCC !important",
+            color: "#666666",
+            cursor: "auto",
+          }}
           borderRadius="6px"
           onClick={handleSubmit}
         >
@@ -756,7 +766,12 @@ const Join = (): React.ReactElement => {
         <Text color="#69696B" variant={{ base: "mobile-xs", lg: "desktop-xs" }}>
           {"By selecting Create Account, you agree to FCK's "}
           {/* replace with actual terms & conditions link */}
-          <Link color="#272D77" textDecoration="underline" href={JOIN_PAGE}>
+          <Link
+            color="#272D77"
+            textDecoration="underline"
+            href={JOIN_PAGE}
+            isExternal
+          >
             Terms & Conditions
           </Link>
         </Text>

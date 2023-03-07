@@ -23,10 +23,15 @@ import {
   useMediaQuery,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
-import { HOME_PAGE, JOIN_SUCCESS_PAGE } from "../../constants/Routes";
+import {
+  DASHBOARD_PAGE,
+  HOME_PAGE,
+  JOIN_SUCCESS_PAGE,
+} from "../../constants/Routes";
+import AuthContext from "../../contexts/AuthContext";
 import { OnboardingRequest } from "../../types/AuthTypes";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
@@ -115,6 +120,11 @@ const Join = (): React.ReactElement => {
   );
   const toast = useToast();
   const navigate = useNavigate();
+  const { authenticatedUser } = useContext(AuthContext);
+
+  if (authenticatedUser) {
+    return <Navigate replace to={DASHBOARD_PAGE} />;
+  }
 
   const getTitleSection = (): React.ReactElement => {
     return (

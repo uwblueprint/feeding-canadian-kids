@@ -26,7 +26,7 @@ import {
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { JOIN_PAGE } from "../../constants/Routes";
+import { HOME_PAGE, JOIN_SUCCESS_PAGE } from "../../constants/Routes";
 import { OnboardingRequest } from "../../types/AuthTypes";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
@@ -666,7 +666,7 @@ const Join = (): React.ReactElement => {
       const response = await signup({ variables: { userInfo } });
       // eslint-disable-next-line no-console
       console.log(response);
-      navigate(JOIN_PAGE);
+      navigate(JOIN_SUCCESS_PAGE);
     } catch (e: unknown) {
       toast({
         title: "Failed to create account. Please try again.",
@@ -765,11 +765,11 @@ const Join = (): React.ReactElement => {
         </Button>
         <Text color="#69696B" variant={{ base: "mobile-xs", lg: "desktop-xs" }}>
           {"By selecting Create Account, you agree to FCK's "}
-          {/* replace with actual terms & conditions link */}
+          {/* TODO: replace HOME_PAGE with actual terms & conditions route */}
           <Link
             color="#272D77"
             textDecoration="underline"
-            href={JOIN_PAGE}
+            href={HOME_PAGE}
             isExternal
           >
             Terms & Conditions

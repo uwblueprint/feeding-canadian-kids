@@ -14,7 +14,8 @@ const RESET_PASSWORD = gql`
 
 const ResetPassword = (): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
-  const [error, setError] = useState('');
+  const [notMatching, setNotMatching] = useState(false);
+  const [tooShort, setTooShort] = useState(false);
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
 
@@ -24,11 +25,14 @@ const ResetPassword = (): React.ReactElement => {
 
   const onResetPasswordClick = () => {
     if (password !== confirm) {
-      setError('Passwords do not match.');
+      setNotMatching(true);
+      setTooShort(false);
     } else if (password.length < 8) {
-      setError('Password must be at least 8 characters long.');
+      setNotMatching(false);
+      setTooShort(true);
     } else {
-      setError('');
+      setNotMatching(false);
+      setTooShort(false);
     }
 
     // await resetPassword({ variables: { email: authenticatedUser?.email } });
@@ -66,7 +70,7 @@ const ResetPassword = (): React.ReactElement => {
           </Text>
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
           <Box>
-            <FormControl pb={5} isRequired isInvalid={error.length !== 0}>
+            <FormControl pb={5} isRequired isInvalid={notMatching || tooShort}>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -81,10 +85,19 @@ const ResetPassword = (): React.ReactElement => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              {tooShort ? (
+                <FormErrorMessage>
+                <Text
+              variant={{ base: "mobile-caption", md: "desktop-caption" }}
+            >
+                  Password must be at least 8 characters long.
+                  </Text>
+                </FormErrorMessage>
+              ) : null}
             </FormControl>
           </Box>
           <Box>
-            <FormControl pb={12} isRequired isInvalid={error.length !== 0}>
+            <FormControl pb={12} isRequired isInvalid={notMatching}>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -103,7 +116,7 @@ const ResetPassword = (): React.ReactElement => {
               <Text
             variant={{ base: "mobile-caption", md: "desktop-caption" }}
           >
-                {error}
+                Passwords do not match.
                 </Text>
               </FormErrorMessage>
             </FormControl>

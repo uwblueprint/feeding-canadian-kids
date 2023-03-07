@@ -1,27 +1,21 @@
-import { gql, useMutation } from "@apollo/client";
-import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, HStack, Input, Text, VStack } from "@chakra-ui/react";
-import React, { useContext, useState } from "react";
-
-import AuthContext from "../../contexts/AuthContext";
-
-const RESET_PASSWORD = gql`
-  mutation ResetPassword($email: String!) {
-    resetPassword(email: $email) {
-      success
-    }
-  }
-`;
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import React, { useState } from "react";
 
 const ResetPassword = (): React.ReactElement => {
-  const { authenticatedUser } = useContext(AuthContext);
   const [notMatching, setNotMatching] = useState(false);
   const [tooShort, setTooShort] = useState(false);
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-
-  const [resetPassword] = useMutation<{ resetPassword: { success: boolean } }>(
-    RESET_PASSWORD,
-  );
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
 
   const onResetPasswordClick = () => {
     if (password !== confirm) {
@@ -61,13 +55,14 @@ const ResetPassword = (): React.ReactElement => {
         >
           Reset password
         </Text>
-          <Text
-            pb={5}
-            textAlign="center"
-            variant={{ base: "mobile-caption", md: "desktop-caption" }}
-          >
-            Please enter your new password. The password must be at least 8 characters.
-          </Text>
+        <Text
+          pb={5}
+          textAlign="center"
+          variant={{ base: "mobile-caption", md: "desktop-caption" }}
+        >
+          Please enter your new password. The password must be at least 8
+          characters.
+        </Text>
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
           <Box>
             <FormControl pb={5} isRequired isInvalid={notMatching || tooShort}>
@@ -87,10 +82,10 @@ const ResetPassword = (): React.ReactElement => {
               />
               {tooShort ? (
                 <FormErrorMessage>
-                <Text
-              variant={{ base: "mobile-caption", md: "desktop-caption" }}
-            >
-                  Password must be at least 8 characters long.
+                  <Text
+                    variant={{ base: "mobile-caption", md: "desktop-caption" }}
+                  >
+                    Password must be at least 8 characters long.
                   </Text>
                 </FormErrorMessage>
               ) : null}
@@ -113,10 +108,10 @@ const ResetPassword = (): React.ReactElement => {
                 onChange={(e) => setConfirm(e.target.value)}
               />
               <FormErrorMessage>
-              <Text
-            variant={{ base: "mobile-caption", md: "desktop-caption" }}
-          >
-                Passwords do not match.
+                <Text
+                  variant={{ base: "mobile-caption", md: "desktop-caption" }}
+                >
+                  Passwords do not match.
                 </Text>
               </FormErrorMessage>
             </FormControl>

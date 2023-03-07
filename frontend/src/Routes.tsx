@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Routes as RouteContainer } from "react-router-dom";
 
 import AuthWall from "./components/auth/AuthWall";
+import ForgotPassword from "./components/auth/ForgotPassword";
 import Join from "./components/auth/Join";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
@@ -23,7 +24,9 @@ const Routes = (): React.ReactElement => (
     <Route path={Paths.HOME_PAGE} element={<Default />} />
     <Route path={Paths.LOGIN_PAGE} element={<Login />} />
     <Route path={Paths.JOIN_PAGE} element={<Join />} />
+    <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
     <Route path={Paths.SIGNUP_PAGE} element={<Signup />} />
+    <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
     <Route path={Paths.DASHBOARD_PAGE} element={<AuthWall />}>
       <Route path="" element={<Dashboard />} />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />

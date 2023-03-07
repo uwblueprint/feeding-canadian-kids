@@ -4,6 +4,8 @@ export const LOGIN_PAGE = "/login";
 
 export const JOIN_PAGE = "/join";
 
+export const FORGOT_PASSWORD_PAGE = "/forgot-password";
+
 export const SIGNUP_PAGE = "/signup";
 
 export const DASHBOARD_PAGE = "/dashboard";

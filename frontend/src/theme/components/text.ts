@@ -58,12 +58,26 @@ const Text = {
       fontSize: "14px",
       lineHeight: "28px",
     },
+    "mobile-button-bold-2": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "700",
+      fontSize: "20px",
+      lineHeight: "28px",
+    },
     "mobile-caption": {
       fontFamily: "Inter",
       fontStyle: "normal",
       fontWeight: "400",
       fontSize: "12px",
       lineHeight: "24px",
+    },
+    "mobile-caption-2": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "400",
+      fontSize: "12px",
+      lineHeight: "18px",
     },
     "mobile-display-xl": {
       fontFamily: "Dimbo",

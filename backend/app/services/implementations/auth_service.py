@@ -208,7 +208,6 @@ class AuthService(IAuthService):
             return False
 
     def send_onboarding_request_approve_email(self, objectID, email):
-
         if not self.email_service:
             error_message = """
                 Attempted to call send_onboarding_request_approve_email but this
@@ -218,7 +217,6 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-
             set_password_link = "https://feeding-canadian-kids-staging.web.app/{ObjectID}/set-password".format(
                 ObjectID=objectID
             )

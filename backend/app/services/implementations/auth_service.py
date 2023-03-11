@@ -217,14 +217,16 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            set_password_link = "https://feeding-canadian-kids-staging.web.app/{ObjectID}/set-password".format(
-                ObjectID=objectID
+            url = "https://feeding-canadian-kids-staging.web.app"
+            set_password_link = "{url}/{ObjectID}/set-password".format(
+                url=url, ObjectID=objectID
             )
 
             email_body = """
             Hello,
             <br><br>
-            We have received your onboarding request and it has been approved. Please set your password using the following link. 
+            We have received your onboarding request and it has been approved.
+            Please set your password using the following link.
             <br><br>
             <a href="{reset_link}">Reset Password</a>
             """.format(

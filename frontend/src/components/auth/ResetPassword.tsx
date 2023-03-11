@@ -18,17 +18,9 @@ const ResetPassword = (): React.ReactElement => {
   const [confirm, setConfirm] = useState("");
 
   const onResetPasswordClick = () => {
-    if (password !== confirm) {
-      setNotMatching(true);
-      setTooShort(false);
-    } else if (password.length < 8) {
-      setNotMatching(false);
-      setTooShort(true);
-    } else {
-      setNotMatching(false);
-      setTooShort(false);
-    }
-
+    setNotMatching(password !== confirm);
+    setTooShort(password.length < 8);
+    
     // await resetPassword({ variables: { email: authenticatedUser?.email } });
   };
 
@@ -92,7 +84,7 @@ const ResetPassword = (): React.ReactElement => {
             </FormControl>
           </Box>
           <Box>
-            <FormControl pb={12} isRequired isInvalid={notMatching}>
+            <FormControl pb={12} isRequired isInvalid={notMatching || tooShort}>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -107,13 +99,15 @@ const ResetPassword = (): React.ReactElement => {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
               />
-              <FormErrorMessage>
-                <Text
-                  variant={{ base: "mobile-caption", md: "desktop-caption" }}
-                >
-                  Passwords do not match.
-                </Text>
-              </FormErrorMessage>
+              {notMatching ? (
+                <FormErrorMessage>
+                  <Text
+                    variant={{ base: "mobile-caption", md: "desktop-caption" }}
+                  >
+                    Passwords do not match.
+                  </Text>
+                </FormErrorMessage>
+              ) : null}
             </FormControl>
           </Box>
         </Flex>
@@ -123,7 +117,7 @@ const ResetPassword = (): React.ReactElement => {
             width={{ base: "100%", md: "90%" }}
             pt={1}
             pb={1}
-            backgroundColor="#272D77"
+            backgroundColor="primary.blue"
           >
             <Text
               variant={{

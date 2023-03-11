@@ -82,7 +82,7 @@ const Login = (): React.ReactElement => {
             pb={5}
             textAlign="center"
             variant={{ base: "mobile-caption", md: "desktop-caption" }}
-            color="#E53E3E"
+            color="secondary.critical"
           >
             The email or password you entered is incorrect. Please try again.
           </Text>
@@ -146,14 +146,14 @@ const Login = (): React.ReactElement => {
             width={{ base: "100%", md: "90%" }}
             pt={1}
             pb={1}
-            backgroundColor="#272D77"
+            backgroundColor="primary.blue"
           >
             <Text
               variant={{
                 base: "mobile-button-bold",
                 md: "desktop-button-bold",
               }}
-              color="white"
+              color="text.white"
             >
               Log in
             </Text>

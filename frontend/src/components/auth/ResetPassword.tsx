@@ -20,7 +20,7 @@ const ResetPassword = (): React.ReactElement => {
   const onResetPasswordClick = () => {
     setNotMatching(password !== confirm);
     setTooShort(password.length < 8);
-    
+
     // await resetPassword({ variables: { email: authenticatedUser?.email } });
   };
 

@@ -4,7 +4,13 @@ export const LOGIN_PAGE = "/login";
 
 export const JOIN_PAGE = "/join";
 
+export const FORGOT_PASSWORD_PAGE = "/forgot-password";
+
 export const SIGNUP_PAGE = "/signup";
+
+export const RESET_PASSWORD_PAGE = "/reset-password";
+
+export const SET_PASSWORD_PAGE = "/set-password";
 
 export const DASHBOARD_PAGE = "/dashboard";
 

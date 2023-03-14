@@ -140,16 +140,17 @@ class Logout(Mutation):
 
 class ResetPassword(Mutation):
     """
-    Triggers password reset for user with specified email (reset link will be emailed)
+    Triggers password reset for user with specified email
     """
 
     class Arguments:
         email = graphene.String()
+        password = graphene.String()
 
     success = graphene.Boolean()
 
-    def mutate(self, info, email):
-        services["auth_service"].reset_password(email)
+    def mutate(self, info, email, password):
+        services["auth_service"].reset_password(email, password)
         return ResetPassword(success=True)
 
 

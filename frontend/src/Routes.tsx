@@ -5,6 +5,8 @@ import AuthWall from "./components/auth/AuthWall";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import Join from "./components/auth/Join";
 import Login from "./components/auth/Login";
+import ResetPassword from "./components/auth/ResetPassword";
+import SetPassword from "./components/auth/SetPassword";
 import Signup from "./components/auth/Signup";
 import CreatePage from "./components/pages/CreatePage";
 import Dashboard from "./components/pages/Dashboard";
@@ -27,6 +29,8 @@ const Routes = (): React.ReactElement => (
     <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
     <Route path={Paths.SIGNUP_PAGE} element={<Signup />} />
     <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
+    <Route path={Paths.RESET_PASSWORD_PAGE} element={<ResetPassword />} />
+    <Route path={Paths.SET_PASSWORD_PAGE} element={<SetPassword />} />
     <Route path={Paths.DASHBOARD_PAGE} element={<AuthWall />}>
       <Route path="" element={<Dashboard />} />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />

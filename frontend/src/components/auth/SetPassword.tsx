@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-const ResetPassword = (): React.ReactElement => {
+const SetPassword = (): React.ReactElement => {
   const [notMatching, setNotMatching] = useState(false);
   const [tooShort, setTooShort] = useState(false);
   const [password, setPassword] = useState("");
@@ -45,7 +45,7 @@ const ResetPassword = (): React.ReactElement => {
           pb={{ base: 1, md: 5 }}
           variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
         >
-          Reset password
+          Set your password
         </Text>
         <Text
           pb={5}
@@ -126,7 +126,7 @@ const ResetPassword = (): React.ReactElement => {
               }}
               color="white"
             >
-              Reset
+              Confirm
             </Text>
           </Button>
         </VStack>
@@ -135,4 +135,4 @@ const ResetPassword = (): React.ReactElement => {
   );
 };
 
-export default ResetPassword;
+export default SetPassword;

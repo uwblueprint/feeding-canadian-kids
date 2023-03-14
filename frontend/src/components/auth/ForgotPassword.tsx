@@ -4,20 +4,17 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Heading,
   Input,
   Link,
   Text,
 } from "@chakra-ui/react";
 import React from "react";
 
-import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
+import { isValidEmail } from "../../utils/ValidationUtils";
 
 const ForgotPassword = () => {
   const [email, setEmail] = React.useState("");
-  console.log(email);
   const [emailError, setEmailError] = React.useState(false);
-  // reload the page on email error change
 
   return (
     <Center>
@@ -72,6 +69,7 @@ const ForgotPassword = () => {
           w={{ base: "224px", lg: "388px" }}
           marginBottom="64px"
           isRequired
+          isInvalid={emailError}
         >
           <FormLabel
             variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
@@ -98,7 +96,6 @@ const ForgotPassword = () => {
           _hover={{ bgColor: "#272D77" }}
           borderRadius="6px"
           onClick={() => {
-            console.log("clicked");
             if (isValidEmail(email)) {
               setEmailError(false);
             } else {
@@ -108,17 +105,32 @@ const ForgotPassword = () => {
         >
           Reset
         </Button>
-        <Text
-          alignSelf={{ base: "center", lg: "unset" }}
-          textAlign={{ base: "center", lg: "unset" }}
-          marginTop="0"
-          variant={{ base: "mobile-caption", lg: "desktop-caption" }}
-        >
-          Already have an account?{" "}
-          <Link color="black" textDecoration="underline" href="/login">
-            Log in now.
-          </Link>
-        </Text>
+        {!emailError && (
+          <Text
+            alignSelf={{ base: "center", lg: "unset" }}
+            textAlign={{ base: "center", lg: "unset" }}
+            marginTop="0"
+            variant={{ base: "mobile-caption", lg: "desktop-caption" }}
+          >
+            Already have an account?{" "}
+            <Link color="black" textDecoration="underline" href="/login">
+              Log in now.
+            </Link>
+          </Text>
+        )}
+        {emailError && (
+          <Text
+            alignSelf={{ base: "center", lg: "unset" }}
+            textAlign={{ base: "center", lg: "unset" }}
+            marginTop="0"
+            variant={{ base: "mobile-caption", lg: "desktop-caption" }}
+          >
+            Don’t have an account?{" "}
+            <Link color="black" textDecoration="underline" href="/login">
+              Sign up now.
+            </Link>
+          </Text>
+        )}
       </Flex>
     </Center>
   );

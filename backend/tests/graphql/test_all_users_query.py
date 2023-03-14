@@ -6,8 +6,8 @@ from app.resources.user_dto import UserDTO
 
 def test_all_users(mocker):
     mock_result = [
-        UserDTO("1", "John", "Doe", "JohnDoe@email.com", "Admin"),
-        UserDTO("2", "Jane", "Doe", "JaneDoe@email.com", "ASP"),
+        UserDTO("1", "John", "Doe", "JohnDoe@email.com", "Admin", True),
+        UserDTO("2", "Jane", "Doe", "JaneDoe@email.com", "ASP", True),
     ]
 
     mocker.patch(
@@ -40,8 +40,8 @@ def test_all_users(mocker):
 
 def test_all_users_filter(mocker):
     mock_result = [
-        UserDTO("1", "John", "Doe", "JohnDoe@email.com", "Admin"),
-        UserDTO("2", "Jane", "Doe", "JaneDoe@email.com", "ASP"),
+        UserDTO("1", "John", "Doe", "JohnDoe@email.com", "Admin", True),
+        UserDTO("2", "Jane", "Doe", "JaneDoe@email.com", "ASP", True),
     ]
 
     mocker.patch(
@@ -72,7 +72,7 @@ def test_all_users_filter(mocker):
 
 
 def test_user_by_id(mocker):
-    mock_result = UserDTO("1", "John", "Doe", "JohnDoe@email.com", "Admin")
+    mock_result = UserDTO("1", "John", "Doe", "JohnDoe@email.com", "Admin", True)
 
     mocker.patch(
         "app.services.implementations.user_service.UserService.get_user_by_id",

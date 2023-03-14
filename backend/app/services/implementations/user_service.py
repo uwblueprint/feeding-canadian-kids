@@ -170,6 +170,7 @@ class UserService(IUserService):
                         contact_email=user.email,
                         role=user.role,
                     ),
+                    active=True,
                 ).save()
             except Exception as mongo_error:
                 # rollback user creation in Firebase
@@ -264,6 +265,34 @@ class UserService(IUserService):
             raise e
 
         return UserDTO(user_id, user.first_name, user.last_name, user.email, user.role)
+
+    def activate_user_by_id(self, user_id):
+        try:
+            user = User.objects(id=user_id).modify(active=True, new=False)
+            if not user:
+                raise Exception(f"user_id {user_id} not found")
+            
+            update_user_dict = user.__dict__
+            user_dto = UserDTO(**update_user_dict)
+            
+            return user_dto
+        except Exception as e:
+            self.logger.error(f"Failed to activate user. Reason = {e}")
+            raise e
+
+    def deactivate_user_by_id(self, user_id):
+        try:
+            user = User.objects(id=user_id).modify(active=False, new=False)
+            if not user:
+                raise Exception(f"user_id {user_id} not found")
+            
+            update_user_dict = user.__dict__
+            user_dto = UserDTO(**update_user_dict)
+            
+            return user_dto
+        except Exception as e:
+            self.logger.error(f"Failed to activate user. Reason = {e}")
+            raise e
 
     def delete_user_by_id(self, user_id):
         try:

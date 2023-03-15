@@ -1,12 +1,12 @@
 import {
   Button,
-  Center,
   Flex,
   FormControl,
   FormLabel,
   Input,
   Link,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -17,25 +17,25 @@ const ForgotPassword = () => {
   const [emailError, setEmailError] = React.useState(false);
 
   return (
-    <Center>
-      <Flex
-        flexDir="column"
-        w={{ base: "304px", lg: "580px" }}
-        h={{ base: "500px", lg: "522px" }}
-        p={{ base: "16px", lg: "64px" }}
-        m={{ base: "125px 0", lg: "128px 0" }}
-        borderRadius="8px"
-        boxShadow={{
-          base: "",
-          lg:
-            "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
-        }}
-        alignItems="center"
-        alignContent="center"
-        textAlign="center"
+    <Flex
+      flexDirection="column"
+      width="100wh"
+      height="100vh"
+      justifyContent={{ base: "center", md: "flex-start" }}
+      alignItems="center"
+      marginBottom="50px"
+    >
+      <VStack
+        justify="space-between"
+        border={{ base: "0px", md: "1px" }}
+        borderColor="#D6D6D6"
+        borderRadius="5%"
+        padding={{ base: "4% 3% 4% 3%", md: "4% 7% 4% 7%" }}
+        width={{ base: "80%", md: "45%" }}
+        height="fit-content"
       >
         <Text
-          alignSelf="center"
+          textAlign="center"
           variant={{ base: "mobile-display-xl", lg: "desktop-display-xl" }}
           w={{ base: "224px", md: "400px", lg: "388px" }}
           marginBottom="32px"
@@ -44,7 +44,8 @@ const ForgotPassword = () => {
         </Text>
         {!emailError && (
           <Text
-            marginBottom="32px"
+            textAlign="center"
+            paddingBottom="32px"
             w={{ base: "224px", lg: "388px" }}
             variant={{ base: "mobile-caption-2", lg: "desktop-caption" }}
           >
@@ -55,7 +56,8 @@ const ForgotPassword = () => {
 
         {emailError && (
           <Text
-            marginBottom="32px"
+            textAlign="center"
+            paddingBottom="32px"
             color="#E53E3E"
             w={{ base: "224px", lg: "388px" }}
             variant={{ base: "mobile-caption-2", lg: "desktop-caption" }}
@@ -67,7 +69,7 @@ const ForgotPassword = () => {
 
         <FormControl
           w={{ base: "224px", lg: "388px" }}
-          marginBottom="64px"
+          paddingBottom="64px"
           isRequired
           isInvalid={emailError}
         >
@@ -131,8 +133,8 @@ const ForgotPassword = () => {
             </Link>
           </Text>
         )}
-      </Flex>
-    </Center>
+      </VStack>
+    </Flex>
   );
 };
 

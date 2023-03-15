@@ -59,8 +59,9 @@ const Login = (): React.ReactElement => {
       flexDirection="column"
       width="100wh"
       height="100vh"
-      justifyContent="center"
+      justifyContent={{ base: "center", md: "flex-start" }}
       alignItems="center"
+      marginBottom="50px"
     >
       <VStack
         justify="space-between"
@@ -68,7 +69,7 @@ const Login = (): React.ReactElement => {
         borderColor="#D6D6D6"
         borderRadius="5%"
         padding={{ base: "4% 3% 4% 3%", md: "4% 7% 4% 7%" }}
-        width={{ base: "80%", md: "40%" }}
+        width={{ base: "80%", md: "45%" }}
         height="fit-content"
       >
         <Text

@@ -4,8 +4,8 @@ import { IconProps } from "../../utils/IconUtils";
 
 export const LinkedinIcon = ({
   className = "",
-  color = "#647488",
-  size = 28,
+  color = "#D4D4D4",
+  size = 30,
   style = {},
 }: IconProps) => (
   <svg
@@ -16,45 +16,20 @@ export const LinkedinIcon = ({
     }}
     width={`${size}px`}
     height={`${size}px`}
-    viewBox="0 0 24 24"
-    fill="none"
+    viewBox="-143 145 512 512"
     className={className}
+    fill={color}
+    xmlSpace="preserve"
+    version="1.1"
+    id="Layer_1"
   >
-    <g
-      fill="#141010"
-      fillRule="nonzero"
-      stroke={color}
-      strokeWidth="1"
-      strokeLinecap="butt"
-      strokeLinejoin="miter"
-      strokeMiterlimit="10"
-      strokeDasharray=""
-      strokeDashoffset="0"
-      fontFamily="none"
-      fontWeight="none"
-      fontSize="none"
-      textAnchor="none"
-    >
-      <path d="M0,256v-256h256v256z" id="bgRectangle" />
-    </g>
-    <g
-      fillRule="nonzero"
-      stroke={color}
-      strokeWidth="1"
-      strokeLinecap="butt"
-      strokeLinejoin="miter"
-      strokeMiterlimit="10"
-      strokeDasharray=""
-      strokeDashoffset="0"
-      fontFamily="none"
-      fontWeight="none"
-      fontSize="none"
-      textAnchor="none"
-    >
-      <g transform="scale(4,4)">
-        <path d="M40.227,12c10.918,0 11.773,0.854 11.773,11.773v16.453c0,10.919 -0.855,11.774 -11.773,11.774h-16.454c-10.918,0 -11.773,-0.855 -11.773,-11.773v-16.454c0,-10.919 0.855,-11.773 11.773,-11.773zM25.029,43v-16.272h-5.057v16.272zM22.501,24.401c1.625,0 2.947,-1.322 2.947,-2.949c0,-1.625 -1.322,-2.947 -2.947,-2.947c-1.629,0 -2.949,1.32 -2.949,2.947c0,1.627 1.318,2.949 2.949,2.949zM44,43v-8.925c0,-4.382 -0.946,-7.752 -6.067,-7.752c-2.46,0 -4.109,1.349 -4.785,2.628h-0.068v-2.223h-4.851v16.272h5.054v-8.05c0,-2.122 0.405,-4.178 3.036,-4.178c2.594,0 2.628,2.427 2.628,4.315v7.913z" />
-      </g>
-    </g>
+    <path
+      d="M329,145h-432c-22.1,0-40,17.9-40,40v432c0,22.1,17.9,40,40,40h432c22.1,0,40-17.9,40-40V185C369,162.9,351.1,145,329,145z
+	 M41.4,508.1H-8.5V348.4h49.9V508.1z M15.1,328.4h-0.4c-18.1,0-29.8-12.2-29.8-27.7c0-15.8,12.1-27.7,30.5-27.7
+	c18.4,0,29.7,11.9,30.1,27.7C45.6,316.1,33.9,328.4,15.1,328.4z M241,508.1h-56.6v-82.6c0-21.6-8.8-36.4-28.3-36.4
+	c-14.9,0-23.2,10-27,19.6c-1.4,3.4-1.2,8.2-1.2,13.1v86.3H71.8c0,0,0.7-146.4,0-159.7h56.1v25.1c3.3-11,21.2-26.6,49.8-26.6
+	c35.5,0,63.3,23,63.3,72.4V508.1z"
+    />
   </svg>
 );
 

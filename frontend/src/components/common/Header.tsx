@@ -1,16 +1,23 @@
-import {
-    Flex,
-    Image
-  } from "@chakra-ui/react";
-
+import { Flex, Image } from "@chakra-ui/react";
 import React from "react";
 
-import Logo from '../../assets/logo.png';
-
-console.log(Logo);
+import Logo from "../../assets/logo.png";
 
 const Header = () => {
-    return <Flex justifyContent="left" position="absolute" padding="1.5% 1.5% 1.5% 1.5%"><Image src={Logo} alt="Logo" style={{height:99, width:104}}/></Flex>;
-}
+  return (
+    <Flex
+      justifyContent={{ base: "center", md: "left" }}
+      alignItems="center"
+      padding="20px 24px"
+    >
+      <Image
+        src={Logo}
+        alt="Logo"
+        height={{ base: 59, md: 99 }}
+        width={{ base: 62, md: 104 }}
+      />
+    </Flex>
+  );
+};
 
 export default Header;

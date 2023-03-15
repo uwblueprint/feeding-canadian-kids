@@ -1,48 +1,41 @@
 import React from "react";
 
-import { IconProps } from '../../utils/IconUtils';
+import { IconProps } from "../../utils/IconUtils";
 
 export const InstagramIcon = ({
-  className = '',
-  color = '#647488',
+  className = "",
+  color = "#D4D4D4",
   size = 28,
   style = {},
 }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     style={{
-      isolation: 'isolate',
+      isolation: "isolate",
       ...style,
     }}
     width={`${size}px`}
     height={`${size}px`}
-    viewBox="0 0 24 24"
-    fill="none"
+    viewBox="-143 145 512 512"
+    fill={color}
     className={className}
   >
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M7.496 3H16.505C18.987 3 21 5.012 21 7.496V16.505C21 18.987 18.988 21 16.504 21H7.496C5.013 21 3 18.988 3 16.504V7.496C3 5.013 5.012 3 7.496 3V3Z"
-      stroke={color}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M16.9491 6.71289C16.7631 6.71389 16.6121 6.86489 16.6121 7.05089C16.6121 7.23689 16.7641 7.38789 16.9501 7.38789C17.1361 7.38789 17.2871 7.23689 17.2871 7.05089C17.2881 6.86389 17.1361 6.71289 16.9491 6.71289Z"
-      stroke={color}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M14.5456 9.45432C15.9515 10.8602 15.9515 13.1396 14.5456 14.5455C13.1397 15.9514 10.8603 15.9514 9.45444 14.5455C8.04855 13.1396 8.04855 10.8602 9.45444 9.45432C10.8603 8.04843 13.1397 8.04843 14.5456 9.45432"
-      stroke={color}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <g>
+      <path
+        d="M113,446c24.8,0,45.1-20.2,45.1-45.1c0-9.8-3.2-18.9-8.5-26.3c-8.2-11.3-21.5-18.8-36.5-18.8s-28.3,7.4-36.5,18.8
+		c-5.3,7.4-8.5,16.5-8.5,26.3C68,425.8,88.2,446,113,446z"
+      />
+      <polygon points="211.4,345.9 211.4,308.1 211.4,302.5 205.8,302.5 168,302.6 168.2,346 	" />
+      <path
+        d="M329,145h-432c-22.1,0-40,17.9-40,40v432c0,22.1,17.9,40,40,40h432c22.1,0,40-17.9,40-40V185C369,162.9,351.1,145,329,145z
+		 M241,374.7v104.8c0,27.3-22.2,49.5-49.5,49.5h-157C7.2,529-15,506.8-15,479.5V374.7v-52.3c0-27.3,22.2-49.5,49.5-49.5h157
+		c27.3,0,49.5,22.2,49.5,49.5V374.7z"
+      />
+      <path
+        d="M183,401c0,38.6-31.4,70-70,70c-38.6,0-70-31.4-70-70c0-9.3,1.9-18.2,5.2-26.3H10v104.8C10,493,21,504,34.5,504h157
+		c13.5,0,24.5-11,24.5-24.5V374.7h-38.2C181.2,382.8,183,391.7,183,401z"
+      />
+    </g>
   </svg>
 );
 

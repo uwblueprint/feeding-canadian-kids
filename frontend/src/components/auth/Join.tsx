@@ -704,7 +704,7 @@ const Join = (): React.ReactElement => {
         flexDir="column"
         w={{ base: "100%", lg: "911px" }}
         p={{ base: "24px", sm: "48px", lg: "64px" }}
-        m="128px 0"
+        marginBottom="50px"
         gap={{ base: "20px", lg: "32px" }}
         borderRadius="8px"
         boxShadow={{

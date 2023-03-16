@@ -20,13 +20,12 @@ class OnboardingRequestService(IOnboardingRequestService):
         try:
             # Create initial UserInfo object
             user_info = UserInfo(
-                contact_name=userInfo.contact_name,
-                contact_email=userInfo.contact_email,
-                contact_phone=userInfo.contact_phone,
                 email=userInfo.email,
                 organization_address=userInfo.organization_address,
                 organization_name=userInfo.organization_name,
                 role=userInfo.role,
+                primary_contact=userInfo.primary_contact,
+                onsite_contacts=userInfo.onsite_contacts,
             )
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(
@@ -57,15 +56,14 @@ class OnboardingRequestService(IOnboardingRequestService):
             for request in filteredRequests.skip(offset).limit(number or 0):
                 request_dict = request.to_serializable_dict()
                 kwargs = {
-                    "contact_name": request_dict["info"]["contact_name"],
-                    "contact_email": request_dict["info"]["contact_email"],
-                    "contact_phone": request_dict["info"]["contact_phone"],
                     "email": request_dict["info"]["email"],
                     "organization_address": request_dict["info"][
                         "organization_address"
                     ],
                     "organization_name": request_dict["info"]["organization_name"],
                     "role": request_dict["info"]["role"],
+                    "primary_contact": request_dict["info"]["primary_contact"],
+                    "onsite_contacts": request_dict["info"]["onsite_contacts"],
                     "date_submitted": request_dict["date_submitted"],
                     "status": request_dict["status"],
                 }
@@ -87,13 +85,12 @@ class OnboardingRequestService(IOnboardingRequestService):
             request_dict = request.to_serializable_dict()
 
             kwargs = {
-                "contact_name": request_dict["info"]["contact_name"],
-                "contact_email": request_dict["info"]["contact_email"],
-                "contact_phone": request_dict["info"]["contact_phone"],
                 "email": request_dict["info"]["email"],
                 "organization_address": request_dict["info"]["organization_address"],
                 "organization_name": request_dict["info"]["organization_name"],
                 "role": request_dict["info"]["role"],
+                "primary_contact": request_dict["info"]["primary_contact"],
+                "onsite_contacts": request_dict["info"]["onsite_contacts"],
                 "date_submitted": request_dict["date_submitted"],
                 "status": request_dict["status"],
             }
@@ -118,9 +115,7 @@ class OnboardingRequestService(IOnboardingRequestService):
 
             referenced_onboarding_request.save()  # save the changes
 
-            recipient_email = (
-                referenced_onboarding_request.info.contact_email
-            )  # change this to email address?
+            recipient_email = referenced_onboarding_request.info.email
             AuthService.reset_password(self, recipient_email)
 
         except Exception as e:

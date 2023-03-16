@@ -54,24 +54,12 @@ type Contact = {
 };
 
 type Request = {
-  contactName: string;
-  contactEmail: string;
-  contactPhone: string;
   email: string;
   organizationAddress: string;
   organizationName: string;
   role: string;
-  onsiteInfo: Array<Contact>;
-};
-
-type TempRequest = {
-  contactName: string;
-  contactEmail: string;
-  contactPhone: string;
-  email: string;
-  organizationAddress: string;
-  organizationName: string;
-  role: string;
+  primaryContact: Contact;
+  onsiteContacts: Array<Contact>;
 };
 
 const SIGNUP = gql`
@@ -80,13 +68,20 @@ const SIGNUP = gql`
       onboardingRequest {
         id
         info {
-          contactName
-          contactEmail
-          contactPhone
           email
           organizationAddress
           organizationName
           role
+          primaryContact {
+            name
+            phone
+            email
+          }
+          onsiteContacts {
+            name
+            phone
+            email
+          }
         }
         dateSubmitted
         status
@@ -671,7 +666,7 @@ const Join = (): React.ReactElement => {
     );
   };
 
-  const handleSignUp = async (userInfo: TempRequest) => {
+  const handleSignUp = async (userInfo: Request) => {
     try {
       const response = await signup({ variables: { userInfo } });
       // eslint-disable-next-line no-console
@@ -723,34 +718,26 @@ const Join = (): React.ReactElement => {
     setAttemptedSubmit(true);
     if (!isRequestValid()) return;
     const request: Request = {
-      contactName: trimWhiteSpace(primaryContact.name),
-      contactEmail: trimWhiteSpace(primaryContact.email),
-      contactPhone: trimWhiteSpace(primaryContact.phone),
       email: trimWhiteSpace(email),
       organizationAddress: trimWhiteSpace(organizationAddress),
       organizationName: trimWhiteSpace(organizationName),
       role: trimWhiteSpace(role),
-      onsiteInfo: onsiteInfo.map((obj) => ({
+      primaryContact: {
+        name: trimWhiteSpace(primaryContact.name),
+        email: trimWhiteSpace(primaryContact.email),
+        phone: trimWhiteSpace(primaryContact.phone),
+      },
+      onsiteContacts: onsiteInfo.map((obj) => ({
         name: trimWhiteSpace(obj.name),
         phone: trimWhiteSpace(obj.phone),
         email: trimWhiteSpace(obj.email),
       })),
     };
 
-    const tempRequest: TempRequest = {
-      contactName: trimWhiteSpace(primaryContact.name),
-      contactPhone: trimWhiteSpace(primaryContact.phone),
-      contactEmail: trimWhiteSpace(primaryContact.email),
-      email: trimWhiteSpace(email),
-      organizationAddress: trimWhiteSpace(organizationAddress),
-      organizationName: trimWhiteSpace(organizationName),
-      role: trimWhiteSpace(role),
-    };
-
     // eslint-disable-next-line no-console
     console.log(request);
 
-    handleSignUp(tempRequest);
+    handleSignUp(request);
   };
 
   const getSubmitSection = (): React.ReactElement => {

@@ -79,9 +79,7 @@ mock_user_info2 = UserInfo(**mock_info2_snake)
 
 def assert_user_infos_equal(data_result, expected_result):
     assert data_result["email"] == expected_result["email"]
-    assert (
-        data_result["organizationAddress"] == expected_result["organizationAddress"]
-    )
+    assert data_result["organizationAddress"] == expected_result["organizationAddress"]
     assert data_result["organizationName"] == expected_result["organizationName"]
     assert data_result["role"] == expected_result["role"]
     assert (
@@ -96,9 +94,7 @@ def assert_user_infos_equal(data_result, expected_result):
         data_result["primaryContact"]["email"]
         == expected_result["primaryContact"]["email"]
     )
-    assert len(data_result["onsiteContacts"]) == len(
-        expected_result["onsiteContacts"]
-    )
+    assert len(data_result["onsiteContacts"]) == len(expected_result["onsiteContacts"])
     for i in range(len(expected_result["onsiteContacts"])):
         assert (
             data_result["onsiteContacts"][i]["name"]
@@ -226,7 +222,9 @@ def test_get_all_requests(mocker):
                         phone
                         email
                     }
-                }
+                    dateSubmitted
+                    status
+                    }
             }"""
     )
 
@@ -240,12 +238,12 @@ def test_get_all_requests(mocker):
     )
 
     assert (
-        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
+        executed.data["getAllOnboardingRequests"][1]["dateSubmitted"]
         == mock_date.isoformat()
     )
-    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Approved"
+    assert executed.data["getAllOnboardingRequests"][1]["status"] == "Approved"
     assert_user_infos_equal(
-        executed.data["getAllOnboardingRequests"][0], mock_info2_camel
+        executed.data["getAllOnboardingRequests"][1], mock_info2_camel
     )
 
 

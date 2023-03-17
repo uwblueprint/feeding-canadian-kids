@@ -5,21 +5,13 @@ from .services import services
 from ..resources.create_user_dto import CreateUserDTO
 
 
-class User(graphene.ObjectType):
+class CurrentUser(graphene.ObjectType):
     access_token = graphene.String()
     id = graphene.ID()
     first_name = graphene.String()
     last_name = graphene.String()
     email = graphene.String()
     role = graphene.String()
-
-
-class UserInput(graphene.InputObjectType):
-    email = graphene.String(required=True)
-    password = graphene.String(required=True)
-    first_name = graphene.String(required=True)
-    last_name = graphene.String(required=True)
-
 
 def BaseLogin(method_name):
     class LoginMutation(Mutation):
@@ -75,37 +67,32 @@ class Register(Mutation):
     """
 
     class Arguments:
-        user = UserInput(required=True)
+        email = graphene.String()
+        password = graphene.String()
+        request_id = graphene.String()
 
-    access_token = graphene.String()
-    id = graphene.ID()
-    first_name = graphene.String()
-    last_name = graphene.String()
-    email = graphene.String()
-    role = graphene.String()
+    user = graphene.Field(CurrentUser)
 
-    def mutate(self, info, user):
+    def mutate(self, info, email, password, request_id):
         kwargs = {
-            "email": user.email,
-            "password": user.password,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "role": "ASP",
+            "email": email,
+            "password": password,
+            "request_id": request_id,
         }
         userDTO = CreateUserDTO(**kwargs)
         services["user_service"].create_user(userDTO)
-        auth_dto = services["auth_service"].generate_token(user.email, user.password)
+        auth_dto = services["auth_service"].generate_token(email, password)
         info.context.cookies.refresh_token = auth_dto.refresh_token
-        services["auth_service"].send_email_verification_link(user.email)
-        newUser = {
-            "access_token": auth_dto.access_token,
-            "id": auth_dto.id,
-            "first_name": auth_dto.first_name,
-            "last_name": auth_dto.last_name,
-            "email": auth_dto.email,
-            "role": auth_dto.role,
-        }
-        return Register(**newUser)
+        services["auth_service"].send_email_verification_link(email)
+        cur_user = CurrentUser(
+            access_token=auth_dto.access_token,
+            id=auth_dto.id,
+            first_name=auth_dto.first_name,
+            last_name=auth_dto.last_name,
+            email=auth_dto.email,
+            role=auth_dto.role,
+        )
+        return Register(user=cur_user)
 
 
 class Refresh(Mutation):

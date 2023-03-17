@@ -161,7 +161,7 @@ const Join = (): React.ReactElement => {
               <Radio value="ASP">
                 <Text variant="desktop-heading-6">After School Program</Text>
               </Radio>
-              <Radio value="MD">
+              <Radio value="Donor">
                 <Text variant="desktop-heading-6">Meal Donor</Text>
               </Radio>
             </Stack>
@@ -752,7 +752,7 @@ const Join = (): React.ReactElement => {
           variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
           color="white"
           bgColor="primary.blue"
-          disabled={!isRequestValid()}
+          disabled={attemptedSubmit && !isRequestValid()}
           _hover={{ bgColor: "primary.blue" }}
           _disabled={{
             bgColor: "#CCCCCC !important",

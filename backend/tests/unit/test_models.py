@@ -39,38 +39,41 @@ def test_create_onboarding_request():
     user_info = UserInfo(**test_user_info)
     onboarding_request = OnboardingRequest(info=user_info, status=status)
     assert onboarding_request.status == status
-    assert onboarding_request.info.email == test_user_info.email
+    assert onboarding_request.info.email == test_user_info["email"]
     assert (
         onboarding_request.info.organization_address
-        == test_user_info.organization_address
+        == test_user_info["organization_address"]
     )
-    assert onboarding_request.info.organization_name == test_user_info.organization_name
-    assert onboarding_request.info.role == test_user_info.role
+    assert (
+        onboarding_request.info.organization_name
+        == test_user_info["organization_address"]
+    )
+    assert onboarding_request.info.role == test_user_info["role"]
     assert (
         onboarding_request.info.primary_contact.name
-        == test_user_info.primary_contact.name
+        == test_user_info["primary_contact"]["name"]
     )
     assert (
         onboarding_request.info.primary_contact.phone
-        == test_user_info.primary_contact.phone
+        == test_user_info["primary_contact"]["phone"]
     )
     assert (
         onboarding_request.info.primary_contact.email
-        == test_user_info.primary_contact.email
+        == test_user_info["primary_contact"]["email"]
     )
     assert len(onboarding_request.info.onsite_contacts) == len(
-        test_user_info.onsite_contacts
+        test_user_info["onsite_contacts"]
     )
-    for i in range(len(test_user_info.onsite_contacts)):
+    for i in range(len(test_user_info["onsite_contacts"])):
         assert (
             onboarding_request.info.onsite_contacts[i].name
-            == test_user_info.onsite_contacts[i].name
+            == test_user_info["onsite_contacts"][i]["name"]
         )
         assert (
             onboarding_request.info.onsite_contacts[i].phone
-            == test_user_info.onsite_contacts[i].phone
+            == test_user_info["onsite_contacts"][i]["phone"]
         )
         assert (
             onboarding_request.info.onsite_contacts[i].email
-            == test_user_info.onsite_contacts[i].email
+            == test_user_info["onsite_contacts"][i]["email"]
         )

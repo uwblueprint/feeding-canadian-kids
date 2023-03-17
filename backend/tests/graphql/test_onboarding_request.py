@@ -77,6 +77,43 @@ mock_user_info1 = UserInfo(**mock_info1_snake)
 mock_user_info2 = UserInfo(**mock_info2_snake)
 
 
+def assert_user_infos_equal(data_result, expected_result):
+    assert data_result["email"] == expected_result["email"]
+    assert (
+        data_result["organization_address"] == expected_result["organization_address"]
+    )
+    assert data_result["organization_name"] == expected_result["organization_name"]
+    assert data_result["role"] == expected_result["role"]
+    assert (
+        data_result["primary_contact"]["name"]
+        == expected_result["primary_contact"]["name"]
+    )
+    assert (
+        data_result["primary_contact"]["phone"]
+        == expected_result["primary_contact"]["phone"]
+    )
+    assert (
+        data_result["primary_contact"]["email"]
+        == expected_result["primary_contact"]["email"]
+    )
+    assert len(data_result["onsite_contacts"]) == len(
+        expected_result["onsite_contacts"]
+    )
+    for i in range(len(expected_result["onsite_contacts"])):
+        assert (
+            data_result["onsite_contacts"][i]["name"]
+            == expected_result["onsite_contacts"][i]["name"]
+        )
+        assert (
+            data_result["onsite_contacts"][i]["phone"]
+            == expected_result["onsite_contacts"][i]["phone"]
+        )
+        assert (
+            data_result["onsite_contacts"][i]["email"]
+            == expected_result["onsite_contacts"][i]["email"]
+        )
+
+
 def convert_to_dtos(mock_result):
     mock_result_dtos = []
     for request_dict in mock_result:
@@ -149,42 +186,8 @@ def test_create_onboarding_request():
         "onboardingRequest"
     ]
     user_info_result = onboarding_request_result["info"]
-    assert user_info_result.status == "Pending"
-    assert user_info_result.info.email == mock_info1_snake.email
-    assert (
-        user_info_result.info.organization_address
-        == mock_info1_snake.organization_address
-    )
-    assert user_info_result.info.organization_name == mock_info1_snake.organization_name
-    assert user_info_result.info.role == mock_info1_snake.role
-    assert (
-        user_info_result.info.primary_contact.name
-        == mock_info1_snake.primary_contact.name
-    )
-    assert (
-        user_info_result.info.primary_contact.phone
-        == mock_info1_snake.primary_contact.phone
-    )
-    assert (
-        user_info_result.info.primary_contact.email
-        == mock_info1_snake.primary_contact.email
-    )
-    assert len(user_info_result.info.onsite_contacts) == len(
-        mock_info1_snake.onsite_contacts
-    )
-    for i in range(len(mock_info1_snake.onsite_contacts)):
-        assert (
-            user_info_result.info.onsite_contacts[i].name
-            == mock_info1_snake.onsite_contacts[i].name
-        )
-        assert (
-            user_info_result.info.onsite_contacts[i].phone
-            == mock_info1_snake.onsite_contacts[i].phone
-        )
-        assert (
-            user_info_result.info.onsite_contacts[i].email
-            == mock_info1_snake.onsite_contacts[i].email
-        )
+    assert user_info_result["status"] == "Pending"
+    assert_user_infos_equal(user_info_result, mock_info1_snake)
 
 
 def test_get_all_requests(mocker):
@@ -227,19 +230,23 @@ def test_get_all_requests(mocker):
             }"""
     )
 
-    expected_result = {
-        "data": {"getAllOnboardingRequests": [mock_info1_camel, mock_info2_camel]}
-    }
-    expected_result["data"]["getAllOnboardingRequests"][0][
-        "dateSubmitted"
-    ] = mock_date.isoformat()
-    expected_result["data"]["getAllOnboardingRequests"][0]["status"] = "Pending"
-    expected_result["data"]["getAllOnboardingRequests"][1][
-        "dateSubmitted"
-    ] = mock_date.isoformat()
-    expected_result["data"]["getAllOnboardingRequests"][1]["status"] = "Approved"
+    assert (
+        executed["data"]["getAllOnboardingRequests"][0]["dateSubmitted"]
+        == mock_date.isoformat()
+    )
+    assert executed["data"]["getAllOnboardingRequests"][0]["status"] == "Pending"
+    assert_user_infos_equal(
+        executed["data"]["getAllOnboardingRequests"][0], mock_info1_camel
+    )
 
-    assert executed.data == expected_result["data"]
+    assert (
+        executed["data"]["getAllOnboardingRequests"][0]["dateSubmitted"]
+        == mock_date.isoformat()
+    )
+    assert executed["data"]["getAllOnboardingRequests"][0]["status"] == "Approved"
+    assert_user_infos_equal(
+        executed["data"]["getAllOnboardingRequests"][0], mock_info2_camel
+    )
 
 
 def test_filter_requests_by_role(mocker):
@@ -280,19 +287,14 @@ def test_filter_requests_by_role(mocker):
             }"""
     )
 
-    expected_result = {
-        "data": {
-            "getAllOnboardingRequests": [
-                mock_info2_camel,
-            ]
-        }
-    }
-    expected_result["data"]["getAllOnboardingRequests"][0][
-        "dateSubmitted"
-    ] = mock_date.isoformat()
-    expected_result["data"]["getAllOnboardingRequests"][0]["status"] = "Pending"
-
-    assert executed.data == expected_result["data"]
+    assert (
+        executed["data"]["getAllOnboardingRequests"][0]["dateSubmitted"]
+        == mock_date.isoformat()
+    )
+    assert executed["data"]["getAllOnboardingRequests"][0]["status"] == "Pending"
+    assert_user_infos_equal(
+        executed["data"]["getAllOnboardingRequests"][0], mock_info2_camel
+    )
 
 
 def test_filter_requests_by_status(mocker):
@@ -334,26 +336,21 @@ def test_filter_requests_by_status(mocker):
             }"""
     )
 
-    expected_result = {
-        "data": {
-            "getAllOnboardingRequests": [
-                mock_info2_camel,
-            ]
-        }
-    }
-    expected_result["data"]["getAllOnboardingRequests"][0][
-        "dateSubmitted"
-    ] = mock_date.isoformat()
-    expected_result["data"]["getAllOnboardingRequests"][0]["status"] = "Approved"
-
-    assert executed.data == expected_result["data"]
+    assert (
+        executed["data"]["getAllOnboardingRequests"][0]["dateSubmitted"]
+        == mock_date.isoformat()
+    )
+    assert executed["data"]["getAllOnboardingRequests"][0]["status"] == "Approved"
+    assert_user_infos_equal(
+        executed["data"]["getAllOnboardingRequests"][0], mock_info2_camel
+    )
 
 
 def test_get_requests_by_id(mocker):
     mock_date = datetime.datetime.now()
     mock_result = [
         OnboardingRequest(
-            info=mock_info1_snake, status="Pending", date_submitted=mock_date
+            info=mock_user_info1, status="Pending", date_submitted=mock_date
         ).to_serializable_dict()
     ]
 
@@ -390,13 +387,14 @@ def test_get_requests_by_id(mocker):
             }"""
     )
 
-    expected_result = {"data": {"getOnboardingRequestById": [mock_info1_camel]}}
-    expected_result["data"]["getOnboardingRequestById"][0][
-        "dateSubmitted"
-    ] = mock_date.isoformat()
-    expected_result["data"]["getOnboardingRequestById"][0]["status"] = "Pending"
-
-    assert executed.data == expected_result["data"]
+    assert (
+        executed["data"]["getOnboardingRequestById"][0]["dateSubmitted"]
+        == mock_date.isoformat()
+    )
+    assert executed["data"]["getOnboardingRequestById"][0]["status"] == "Pending"
+    assert_user_infos_equal(
+        executed["data"]["getAllOnboardingRequests"][0], mock_info1_camel
+    )
 
 
 # def test_approve_onboading_request():

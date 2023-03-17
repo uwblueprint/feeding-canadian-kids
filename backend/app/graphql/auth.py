@@ -13,6 +13,7 @@ class CurrentUser(graphene.ObjectType):
     email = graphene.String()
     role = graphene.String()
 
+
 def BaseLogin(method_name):
     class LoginMutation(Mutation):
         """

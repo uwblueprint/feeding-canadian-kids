@@ -80,37 +80,37 @@ mock_user_info2 = UserInfo(**mock_info2_snake)
 def assert_user_infos_equal(data_result, expected_result):
     assert data_result["email"] == expected_result["email"]
     assert (
-        data_result["organization_address"] == expected_result["organization_address"]
+        data_result["organizationAddress"] == expected_result["organizationAddress"]
     )
-    assert data_result["organization_name"] == expected_result["organization_name"]
+    assert data_result["organizationName"] == expected_result["organizationName"]
     assert data_result["role"] == expected_result["role"]
     assert (
-        data_result["primary_contact"]["name"]
-        == expected_result["primary_contact"]["name"]
+        data_result["primaryContact"]["name"]
+        == expected_result["primaryContact"]["name"]
     )
     assert (
-        data_result["primary_contact"]["phone"]
-        == expected_result["primary_contact"]["phone"]
+        data_result["primaryContact"]["phone"]
+        == expected_result["primaryContact"]["phone"]
     )
     assert (
-        data_result["primary_contact"]["email"]
-        == expected_result["primary_contact"]["email"]
+        data_result["primaryContact"]["email"]
+        == expected_result["primaryContact"]["email"]
     )
-    assert len(data_result["onsite_contacts"]) == len(
-        expected_result["onsite_contacts"]
+    assert len(data_result["onsiteContacts"]) == len(
+        expected_result["onsiteContacts"]
     )
-    for i in range(len(expected_result["onsite_contacts"])):
+    for i in range(len(expected_result["onsiteContacts"])):
         assert (
-            data_result["onsite_contacts"][i]["name"]
-            == expected_result["onsite_contacts"][i]["name"]
+            data_result["onsiteContacts"][i]["name"]
+            == expected_result["onsiteContacts"][i]["name"]
         )
         assert (
-            data_result["onsite_contacts"][i]["phone"]
-            == expected_result["onsite_contacts"][i]["phone"]
+            data_result["onsiteContacts"][i]["phone"]
+            == expected_result["onsiteContacts"][i]["phone"]
         )
         assert (
-            data_result["onsite_contacts"][i]["email"]
-            == expected_result["onsite_contacts"][i]["email"]
+            data_result["onsiteContacts"][i]["email"]
+            == expected_result["onsiteContacts"][i]["email"]
         )
 
 
@@ -187,7 +187,7 @@ def test_create_onboarding_request():
     ]
     user_info_result = onboarding_request_result["info"]
     assert onboarding_request_result["status"] == "Pending"
-    assert_user_infos_equal(user_info_result, mock_info1_snake)
+    assert_user_infos_equal(user_info_result, mock_info1_camel)
 
 
 def test_get_all_requests(mocker):
@@ -393,7 +393,7 @@ def test_get_requests_by_id(mocker):
     )
     assert executed.data["getOnboardingRequestById"][0]["status"] == "Pending"
     assert_user_infos_equal(
-        executed.data["getAllOnboardingRequests"][0], mock_info1_camel
+        executed.data["getOnboardingRequestById"][0], mock_info1_camel
     )
 
 

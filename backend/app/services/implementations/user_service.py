@@ -3,7 +3,6 @@ from ...models.onboarding_request import OnboardingRequest
 from ..interfaces.user_service import IUserService
 from ...models.user import User
 from ...resources.user_dto import UserDTO
-from ...models.user_info import UserInfo
 
 
 class UserService(IUserService):

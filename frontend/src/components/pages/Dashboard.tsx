@@ -6,7 +6,6 @@ import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
 import Logout from "../auth/Logout";
 import RefreshCredentials from "../auth/RefreshCredentials";
-import ResetPassword from "../auth/ResetPassword";
 
 type ButtonProps = { text: string; path: string };
 
@@ -35,12 +34,11 @@ const TeamInfoDisplay = () => {
 
 const Default = (): React.ReactElement => {
   return (
-    <div style={{ textAlign: "center", paddingTop: "20px" }}>
+    <div style={{ textAlign: "center", paddingTop: "20px", height: "100vh" }}>
       <h1>Default Page</h1>
       <Wrap>
         <Logout />
         <RefreshCredentials />
-        <ResetPassword />
         <Button text="Create Entity" path={Routes.CREATE_ENTITY_PAGE} />
         <Button text="Update Entity" path={Routes.UPDATE_ENTITY_PAGE} />
         <Button text="Display Entities" path={Routes.DISPLAY_ENTITY_PAGE} />

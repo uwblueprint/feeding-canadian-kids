@@ -59,8 +59,9 @@ const Login = (): React.ReactElement => {
       flexDirection="column"
       width="100wh"
       height="100vh"
-      justifyContent="center"
+      justifyContent={{ base: "center", md: "flex-start" }}
       alignItems="center"
+      marginBottom="50px"
     >
       <VStack
         justify="space-between"
@@ -68,7 +69,7 @@ const Login = (): React.ReactElement => {
         borderColor="#D6D6D6"
         borderRadius="5%"
         padding={{ base: "4% 3% 4% 3%", md: "4% 7% 4% 7%" }}
-        width={{ base: "80%", md: "40%" }}
+        width={{ base: "80%", md: "45%" }}
         height="fit-content"
       >
         <Text
@@ -82,7 +83,7 @@ const Login = (): React.ReactElement => {
             pb={5}
             textAlign="center"
             variant={{ base: "mobile-caption", md: "desktop-caption" }}
-            color="#E53E3E"
+            color="secondary.critical"
           >
             The email or password you entered is incorrect. Please try again.
           </Text>
@@ -146,14 +147,14 @@ const Login = (): React.ReactElement => {
             width={{ base: "100%", md: "90%" }}
             pt={1}
             pb={1}
-            backgroundColor="#272D77"
+            backgroundColor="primary.blue"
           >
             <Text
               variant={{
                 base: "mobile-button-bold",
                 md: "desktop-button-bold",
               }}
-              color="white"
+              color="text.white"
             >
               Log in
             </Text>

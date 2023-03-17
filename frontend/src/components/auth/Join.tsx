@@ -136,7 +136,7 @@ const Join = (): React.ReactElement => {
           variant="desktop-xs"
         >
           Already have an account?{" "}
-          <Link color="#272D77" textDecoration="underline" href="/login">
+          <Link color="primary.blue" textDecoration="underline" href="/login">
             Login here
           </Link>
         </Text>
@@ -425,14 +425,18 @@ const Join = (): React.ReactElement => {
               2. Additional onsite staff
             </FormLabel>
           </FormControl>
-          <Text color="#69696B" variant="desktop-xs" mt="-12px">
+          <Text color="text.subtitle" variant="desktop-xs" mt="-12px">
             *Must add at least 1 onsite staff up to a maximum of 10.
           </Text>
         </Flex>
         <TableContainer border="1px solid #EDF2F7" borderRadius="8px">
           <Table>
             <Thead>
-              <Tr borderRadius="8px 8px 0 0" h="40px" background="#EDF2F7">
+              <Tr
+                borderRadius="8px 8px 0 0"
+                h="40px"
+                background="primary.lightblue"
+              >
                 <Th
                   borderRadius="8px 0 0 0"
                   padding="0 12px 0 24px"
@@ -522,9 +526,9 @@ const Join = (): React.ReactElement => {
                       <DeleteIcon
                         h="19.5px"
                         w="100%"
-                        color="#CBD5E0"
+                        color="gray.gray300"
                         cursor="pointer"
-                        _hover={{ color: "#272D77" }}
+                        _hover={{ color: "primary.blue" }}
                         onClick={() => {
                           onsiteInfo.splice(index, 1);
                           setOnsiteInfo([...onsiteInfo]);
@@ -577,9 +581,9 @@ const Join = (): React.ReactElement => {
                 <DeleteIcon
                   h="16px"
                   w="16px"
-                  color="#CBD5E0"
+                  color="gray.gray300"
                   cursor="pointer"
-                  _hover={{ color: "#272D77" }}
+                  _hover={{ color: "primary.blue" }}
                   onClick={() => {
                     onsiteInfo.splice(index, 1);
                     setOnsiteInfo([...onsiteInfo]);
@@ -588,7 +592,7 @@ const Join = (): React.ReactElement => {
               )}
             </Flex>
             {index === 0 && (
-              <Text color="#69696B" variant="desktop-xs" mt="-16px">
+              <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
                 *Must add at least 1 onsite staff up to a maximum of 10.
               </Text>
             )}
@@ -747,9 +751,9 @@ const Join = (): React.ReactElement => {
           w={{ base: "100%", lg: "480px" }}
           variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
           color="white"
-          bgColor="#272D77"
+          bgColor="primary.blue"
           disabled={!isRequestValid()}
-          _hover={{ bgColor: "#272D77" }}
+          _hover={{ bgColor: "primary.blue" }}
           _disabled={{
             bgColor: "#CCCCCC !important",
             color: "#666666",
@@ -760,11 +764,14 @@ const Join = (): React.ReactElement => {
         >
           Create Account
         </Button>
-        <Text color="#69696B" variant={{ base: "mobile-xs", lg: "desktop-xs" }}>
+        <Text
+          color="text.subtitle"
+          variant={{ base: "mobile-xs", lg: "desktop-xs" }}
+        >
           {"By selecting Create Account, you agree to FCK's "}
           {/* TODO: replace HOME_PAGE with actual terms & conditions route */}
           <Link
-            color="#272D77"
+            color="primary.blue"
             textDecoration="underline"
             href={HOME_PAGE}
             isExternal
@@ -782,7 +789,7 @@ const Join = (): React.ReactElement => {
         flexDir="column"
         w={{ base: "100%", lg: "911px" }}
         p={{ base: "24px", sm: "48px", lg: "64px" }}
-        m="128px 0"
+        marginBottom="50px"
         gap={{ base: "20px", lg: "32px" }}
         borderRadius="8px"
         boxShadow={{

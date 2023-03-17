@@ -186,7 +186,7 @@ def test_create_onboarding_request():
         "onboardingRequest"
     ]
     user_info_result = onboarding_request_result["info"]
-    assert user_info_result["status"] == "Pending"
+    assert onboarding_request_result["status"] == "Pending"
     assert_user_infos_equal(user_info_result, mock_info1_snake)
 
 
@@ -231,21 +231,21 @@ def test_get_all_requests(mocker):
     )
 
     assert (
-        executed["data"]["getAllOnboardingRequests"][0]["dateSubmitted"]
+        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
         == mock_date.isoformat()
     )
-    assert executed["data"]["getAllOnboardingRequests"][0]["status"] == "Pending"
+    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Pending"
     assert_user_infos_equal(
-        executed["data"]["getAllOnboardingRequests"][0], mock_info1_camel
+        executed.data["getAllOnboardingRequests"][0], mock_info1_camel
     )
 
     assert (
-        executed["data"]["getAllOnboardingRequests"][0]["dateSubmitted"]
+        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
         == mock_date.isoformat()
     )
-    assert executed["data"]["getAllOnboardingRequests"][0]["status"] == "Approved"
+    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Approved"
     assert_user_infos_equal(
-        executed["data"]["getAllOnboardingRequests"][0], mock_info2_camel
+        executed.data["getAllOnboardingRequests"][0], mock_info2_camel
     )
 
 
@@ -288,12 +288,12 @@ def test_filter_requests_by_role(mocker):
     )
 
     assert (
-        executed["data"]["getAllOnboardingRequests"][0]["dateSubmitted"]
+        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
         == mock_date.isoformat()
     )
-    assert executed["data"]["getAllOnboardingRequests"][0]["status"] == "Pending"
+    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Pending"
     assert_user_infos_equal(
-        executed["data"]["getAllOnboardingRequests"][0], mock_info2_camel
+        executed.data["getAllOnboardingRequests"][0], mock_info2_camel
     )
 
 
@@ -337,12 +337,12 @@ def test_filter_requests_by_status(mocker):
     )
 
     assert (
-        executed["data"]["getAllOnboardingRequests"][0]["dateSubmitted"]
+        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
         == mock_date.isoformat()
     )
-    assert executed["data"]["getAllOnboardingRequests"][0]["status"] == "Approved"
+    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Approved"
     assert_user_infos_equal(
-        executed["data"]["getAllOnboardingRequests"][0], mock_info2_camel
+        executed.data["getAllOnboardingRequests"][0], mock_info2_camel
     )
 
 
@@ -388,12 +388,12 @@ def test_get_requests_by_id(mocker):
     )
 
     assert (
-        executed["data"]["getOnboardingRequestById"][0]["dateSubmitted"]
+        executed.data["getOnboardingRequestById"][0]["dateSubmitted"]
         == mock_date.isoformat()
     )
-    assert executed["data"]["getOnboardingRequestById"][0]["status"] == "Pending"
+    assert executed.data["getOnboardingRequestById"][0]["status"] == "Pending"
     assert_user_infos_equal(
-        executed["data"]["getAllOnboardingRequests"][0], mock_info1_camel
+        executed.data["getAllOnboardingRequests"][0], mock_info1_camel
     )
 
 

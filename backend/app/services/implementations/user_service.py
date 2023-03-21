@@ -1,9 +1,8 @@
 import firebase_admin.auth
-
+from ...models.onboarding_request import OnboardingRequest
 from ..interfaces.user_service import IUserService
 from ...models.user import User
 from ...resources.user_dto import UserDTO
-from ...models.user_info import UserInfo
 
 
 class UserService(IUserService):
@@ -65,7 +64,7 @@ class UserService(IUserService):
             user_dict["email"] = firebase_user.email
             kwargs = {
                 "id": user_dict["id"],
-                "first_name": user_dict["info"]["contact_name"],
+                "first_name": user_dict["info"]["primary_contact"]["name"],
                 "last_name": "",
                 "email": user_dict["email"],
                 "role": user_dict["info"]["role"],
@@ -165,11 +164,7 @@ class UserService(IUserService):
             try:
                 new_user = User(
                     auth_id=firebase_user.uid,
-                    info=UserInfo(
-                        contact_name=(user.first_name + user.last_name),
-                        contact_email=user.email,
-                        role=user.role,
-                    ),
+                    info=OnboardingRequest.objects(id=user.request_id).first().info,
                 ).save()
             except Exception as mongo_error:
                 # rollback user creation in Firebase
@@ -205,7 +200,7 @@ class UserService(IUserService):
         new_user_dict["email"] = firebase_user.email
         kwargs = {
             "id": new_user_dict["id"],
-            "first_name": new_user_dict["info"]["contact_name"],
+            "first_name": new_user_dict["info"]["primary_contact"]["name"],
             "last_name": "",
             "email": new_user_dict["email"],
             "role": new_user_dict["info"]["role"],

@@ -32,7 +32,12 @@ import {
   JOIN_SUCCESS_PAGE,
 } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { OnboardingRequest } from "../../types/AuthTypes";
+import {
+  Contact,
+  OnboardingRequest,
+  Role,
+  UserInfo,
+} from "../../types/AuthTypes";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -46,21 +51,6 @@ const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
 const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
-
-type Contact = {
-  name: string;
-  phone: string;
-  email: string;
-};
-
-type Request = {
-  email: string;
-  organizationAddress: string;
-  organizationName: string;
-  role: string;
-  primaryContact: Contact;
-  onsiteContacts: Array<Contact>;
-};
 
 const SIGNUP = gql`
   mutation OnboardRequest($userInfo: UserInfoInput!) {
@@ -91,7 +81,7 @@ const SIGNUP = gql`
 `;
 
 const Join = (): React.ReactElement => {
-  const [role, setRole] = useState("ASP");
+  const [role, setRole] = useState<Role>("ASP");
   const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [organizationAddress, setOrganizationAddress] = useState("");
@@ -156,7 +146,10 @@ const Join = (): React.ReactElement => {
           >
             Type of user
           </FormLabel>
-          <RadioGroup onChange={setRole} value={role}>
+          <RadioGroup
+            onChange={(radioVal) => setRole(radioVal as Role)}
+            value={role}
+          >
             <Stack direction={{ base: "column", lg: "row" }}>
               <Radio value="ASP">
                 <Text variant="desktop-heading-6">After School Program</Text>
@@ -670,7 +663,7 @@ const Join = (): React.ReactElement => {
     );
   };
 
-  const handleSignUp = async (userInfo: Request) => {
+  const handleSignUp = async (userInfo: UserInfo) => {
     try {
       const response = await signup({ variables: { userInfo } });
       // eslint-disable-next-line no-console
@@ -721,11 +714,11 @@ const Join = (): React.ReactElement => {
   const handleSubmit = () => {
     setAttemptedSubmit(true);
     if (!isRequestValid()) return;
-    const request: Request = {
+    const request: UserInfo = {
       email: trimWhiteSpace(email),
       organizationAddress: trimWhiteSpace(organizationAddress),
       organizationName: trimWhiteSpace(organizationName),
-      role: trimWhiteSpace(role),
+      role,
       primaryContact: {
         name: trimWhiteSpace(primaryContact.name),
         email: trimWhiteSpace(primaryContact.email),

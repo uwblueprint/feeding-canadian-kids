@@ -4,6 +4,7 @@ import { Route, Routes as RouteContainer } from "react-router-dom";
 import AuthWall from "./components/auth/AuthWall";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import Join from "./components/auth/Join";
+import JoinSuccess from "./components/auth/JoinSuccess";
 import Login from "./components/auth/Login";
 import ResetPassword from "./components/auth/ResetPassword";
 import SetPassword from "./components/auth/SetPassword";
@@ -28,6 +29,7 @@ const Routes = (): React.ReactElement => (
     <Route path={Paths.JOIN_PAGE} element={<Join />} />
     <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
     <Route path={Paths.SIGNUP_PAGE} element={<Signup />} />
+    <Route path={Paths.JOIN_SUCCESS_PAGE} element={<JoinSuccess />} />
     <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
     <Route path={Paths.RESET_PASSWORD_PAGE} element={<ResetPassword />} />
     <Route path={Paths.SET_PASSWORD_PAGE} element={<SetPassword />} />

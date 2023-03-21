@@ -10,7 +10,7 @@ from app.resources.user_dto import UserDTO
 class User(graphene.ObjectType):
     name = graphene.String()
     email = graphene.String()
-    role = graphene.String() 
+    role = graphene.String()
 
 
 class UpdateUserByID(Mutation):
@@ -62,32 +62,34 @@ class ActivateUserByID(Mutation):
                     name=f"{user.first_name} {user.last_name}",
                     email=user.email,
                     role=user.role,
-                    active = True
+                    active=True,
                 )
             )
-            
+
+
 class DeactivateUserByID(Mutation):
     class Arguments:
         auth_id = graphene.String()
         id = graphene.String()
-    
+
     user = graphene.Field(lambda: User)
-    
+
     def mutate(self, info, auth_id, id):
         user_service = services["user_service"]
         requester_role = user_service.get_user_role_by_auth_id(auth_id)
-        
+
         if requester_role == "Admin":
             user = user_service.deactivate_user_by_id(id)
-            
+
             return DeactivateUserByID(
                 user=User(
                     name=f"{user.first_name} {user.last_name}",
                     email=user.email,
                     role=user.role,
-                    active = False
+                    active=False,
                 )
             )
+
 
 class UserMutations(MutationList):
     updateUserByID = UpdateUserByID.Field()

@@ -271,10 +271,10 @@ class UserService(IUserService):
             user = User.objects(id=user_id).modify(active=True, new=False)
             if not user:
                 raise Exception(f"user_id {user_id} not found")
-            
+
             update_user_dict = user.__dict__
             user_dto = UserDTO(**update_user_dict)
-            
+
             return user_dto
         except Exception as e:
             self.logger.error(f"Failed to activate user. Reason = {e}")
@@ -285,10 +285,10 @@ class UserService(IUserService):
             user = User.objects(id=user_id).modify(active=False, new=False)
             if not user:
                 raise Exception(f"user_id {user_id} not found")
-            
+
             update_user_dict = user.__dict__
             user_dto = UserDTO(**update_user_dict)
-            
+
             return user_dto
         except Exception as e:
             self.logger.error(f"Failed to activate user. Reason = {e}")

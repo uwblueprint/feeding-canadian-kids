@@ -47,6 +47,7 @@ class OnboardingRequestService(IOnboardingRequestService):
 
         try:
             filteredRequests = OnboardingRequest.objects()
+            print(filteredRequests)
             if role:
                 filteredRequests = filteredRequests.filter(info__role=role)
             if status:

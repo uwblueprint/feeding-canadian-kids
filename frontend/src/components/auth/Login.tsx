@@ -14,7 +14,7 @@ import React, { useContext, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
+import { DASHBOARD_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
@@ -51,7 +51,7 @@ const Login = (): React.ReactElement => {
   };
 
   if (authenticatedUser) {
-    return <Navigate replace to={HOME_PAGE} />;
+    return <Navigate replace to={DASHBOARD_PAGE} />;
   }
 
   return (
@@ -59,8 +59,9 @@ const Login = (): React.ReactElement => {
       flexDirection="column"
       width="100wh"
       height="100vh"
-      justifyContent="center"
+      justifyContent={{ base: "center", md: "flex-start" }}
       alignItems="center"
+      marginBottom="50px"
     >
       <VStack
         justify="space-between"
@@ -68,7 +69,7 @@ const Login = (): React.ReactElement => {
         borderColor="#D6D6D6"
         borderRadius="5%"
         padding={{ base: "4% 3% 4% 3%", md: "4% 7% 4% 7%" }}
-        width={{ base: "80%", md: "40%" }}
+        width={{ base: "80%", md: "45%" }}
         height="fit-content"
       >
         <Text

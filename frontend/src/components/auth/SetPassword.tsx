@@ -29,8 +29,9 @@ const SetPassword = (): React.ReactElement => {
       flexDirection="column"
       width="100wh"
       height="100vh"
-      justifyContent="center"
+      justifyContent={{ base: "center", md: "flex-start" }}
       alignItems="center"
+      marginBottom="50px"
     >
       <VStack
         justify="space-between"
@@ -42,6 +43,7 @@ const SetPassword = (): React.ReactElement => {
         height="fit-content"
       >
         <Text
+          textAlign="center"
           pb={{ base: 1, md: 5 }}
           variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
         >

@@ -2,6 +2,8 @@ import React, { useMemo, useReducer, useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 
 import Routes from "./Routes";
+import Footer from "./components/common/Footer";
+import Header from "./components/common/Header";
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
 import AuthContext from "./contexts/AuthContext";
 import SampleContext, {
@@ -42,7 +44,9 @@ const App = (): React.ReactElement => {
       >
         <AuthContext.Provider value={currentAuthContext}>
           <BrowserRouter>
+            <Header />
             <Routes />
+            <Footer />
           </BrowserRouter>
         </AuthContext.Provider>
       </SampleContextDispatcherContext.Provider>

@@ -4,21 +4,36 @@ from ..graphql.services import services
 
 from .types import Mutation, MutationList, Query, QueryList
 
+
 # Object Types
+class ContactInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+    email = graphene.String(required=True)
+    phone = graphene.String(required=True)
+
+
+class Contact(graphene.ObjectType):
+    name = graphene.String()
+    email = graphene.String()
+    phone = graphene.String()
 
 
 class UserInfoInput(graphene.InputObjectType):
-    contact_name = graphene.String(required=True)
-    contact_email = graphene.String(required=True)
-    contact_phone = graphene.String()
+    email = graphene.String(required=True)
+    organization_address = graphene.String(required=True)
+    organization_name = graphene.String(required=True)
     role = graphene.String(required=True)
+    primary_contact = graphene.Field(ContactInput, required=True)
+    onsite_contacts = graphene.List(ContactInput, required=True)
 
 
 class UserInfo(graphene.ObjectType):
-    contact_name = graphene.String()
-    contact_email = graphene.String()
-    contact_phone = graphene.String()
+    email = graphene.String()
+    organization_address = graphene.String()
+    organization_name = graphene.String()
     role = graphene.String()
+    primary_contact = graphene.Field(Contact)
+    onsite_contacts = graphene.List(Contact)
 
 
 class OnboardingRequest(graphene.ObjectType):
@@ -33,10 +48,12 @@ class OnboardingRequest(graphene.ObjectType):
 
 # Return object for queries
 class GetOnboardingRequest(Query):
-    contact_name = graphene.String()
-    contact_email = graphene.String()
-    contact_phone = graphene.String()
+    email = graphene.String()
+    organization_address = graphene.String()
+    organization_name = graphene.String()
     role = graphene.String()
+    primary_contact = graphene.Field(Contact)
+    onsite_contacts = graphene.List(Contact)
     date_submitted = graphene.DateTime()
     status = graphene.String()
 
@@ -69,10 +86,12 @@ class OnboardingRequestQueries(QueryList):
         )
         return [
             GetOnboardingRequest(
-                contact_name=request.contact_name,
-                contact_email=request.contact_email,
-                contact_phone=request.contact_phone,
+                email=request.email,
+                organization_address=request.organization_address,
+                organization_name=request.organization_name,
                 role=request.role,
+                primary_contact=request.primary_contact,
+                onsite_contacts=request.onsite_contacts,
                 date_submitted=request.date_submitted,
                 status=request.status,
             )

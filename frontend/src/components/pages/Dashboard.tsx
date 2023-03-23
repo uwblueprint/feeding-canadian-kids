@@ -34,7 +34,7 @@ const TeamInfoDisplay = () => {
 
 const Default = (): React.ReactElement => {
   return (
-    <div style={{ textAlign: "center", paddingTop: "20px" }}>
+    <div style={{ textAlign: "center", paddingTop: "20px", height: "100vh" }}>
       <h1>Default Page</h1>
       <Wrap>
         <Logout />

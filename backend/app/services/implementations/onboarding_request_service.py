@@ -115,13 +115,41 @@ class OnboardingRequestService(IOnboardingRequestService):
 
             referenced_onboarding_request.save()  # save the changes
 
-            recipient_email = referenced_onboarding_request.info.email
-            AuthService.reset_password(self, recipient_email)
-
+            recipient_email = referenced_onboarding_request.info.contact_email
+            AuthService.send_onboarding_request_approve_email(
+                self, request_id, recipient_email
+            )
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
                 "Failed to approve onboarding request. Reason = {reason}".format(
+                    reason=(reason if reason else str(e))
+                )
+            )
+            raise e
+
+        return referenced_onboarding_request.to_serializable_dict()
+
+    def reject_onboarding_request(self, request_id):
+        try:
+            referenced_onboarding_request = OnboardingRequest.objects(
+                id=request_id
+            ).first()
+
+            referenced_onboarding_request.status = (
+                "Rejected"  # reject the onboarding request
+            )
+
+            referenced_onboarding_request.save()  # save the changes
+
+            recipient_email = referenced_onboarding_request.info.contact_email
+
+            AuthService.send_onboarding_request_rejected_email(self, recipient_email)
+
+        except Exception as e:
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                "Failed to reject onboarding request. Reason = {reason}".format(
                     reason=(reason if reason else str(e))
                 )
             )

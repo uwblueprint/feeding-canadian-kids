@@ -38,6 +38,7 @@ import {
   Role,
   UserInfo,
 } from "../../types/AuthTypes";
+import LargerBackgroundImage from "../../assets/largerbackground.png";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -777,7 +778,13 @@ const Join = (): React.ReactElement => {
   };
 
   return (
-    <Center>
+    <Center
+    style={{ 
+      backgroundImage:`url(${LargerBackgroundImage})`,
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover"
+    }}>
       <Flex
         flexDir="column"
         w={{ base: "100%", lg: "911px" }}
@@ -789,6 +796,9 @@ const Join = (): React.ReactElement => {
           base: "",
           lg:
             "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
+        }}
+        style={{ 
+          backgroundColor: "white"
         }}
       >
         {getTitleSection()}

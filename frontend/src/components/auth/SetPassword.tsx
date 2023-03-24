@@ -33,11 +33,11 @@ const SetPassword = (): React.ReactElement => {
       height="100vh"
       justifyContent={{ base: "center", md: "flex-start" }}
       alignItems="center"
-      style={{ 
-        backgroundImage:`url(${BackgroundImage})`,
+      style={{
+        backgroundImage: `url(${BackgroundImage})`,
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        backgroundSize: "cover"
+        backgroundSize: "cover",
       }}
     >
       <VStack
@@ -48,8 +48,8 @@ const SetPassword = (): React.ReactElement => {
         padding={{ base: "4% 3% 4% 3%", md: "4% 7% 4% 7%" }}
         width={{ base: "80%", md: "40%" }}
         height="fit-content"
-        style={{ 
-          background:"white"
+        style={{
+          background: "white",
         }}
       >
         <Text

@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import {
   Box,
   Button,
@@ -8,21 +9,71 @@ import {
   Input,
   Text,
   VStack,
+  useToast
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Navigate } from 'react-router-dom';
+
+import authAPIClient from "../../APIClients/AuthAPIClient";
+import { LOGIN_PAGE } from "../../constants/Routes";
+import AuthContext from "../../contexts/AuthContext";
+
+const RESET_PASSWORD = gql `
+    mutation ResetPassword($email: String!, $password: String!) {
+      resetPassword(email: $email, password: $password) {
+        success
+      }
+    }
+  `;
 
 const ResetPassword = (): React.ReactElement => {
   const [notMatching, setNotMatching] = useState(false);
   const [tooShort, setTooShort] = useState(false);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [complete, setComplete] = useState(false);
+  const toast = useToast();
 
-  const onResetPasswordClick = () => {
+  const { authenticatedUser } = useContext(AuthContext)
+
+  if (!authenticatedUser) {
+    return (
+      <>
+        {toast({
+          title: 'User not found.',
+          description: "Make sure you are logged in.",
+          status: 'error',
+          duration: 9000,
+          isClosable: false,
+        })}
+      </>
+    )
+  }
+
+  const [resetPassword] = useMutation<{ resetPassword: { success: boolean } }>(RESET_PASSWORD);
+
+  const onResetPasswordClick = async () => {
     setNotMatching(password !== confirm);
     setTooShort(password.length < 8);
 
-    // await resetPassword({ variables: { email: authenticatedUser?.email } });
+    const success = await authAPIClient.resetPassword(
+      String(authenticatedUser?.email),
+      String(password),
+      resetPassword,
+    );
+    if (!success) {
+      toast({
+          title: 'An error occured',
+          description: "Password not changed.",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+    }
+    setComplete(success);
   };
+
+  if (complete) return <Navigate replace to={LOGIN_PAGE} />;
 
   return (
     <Flex

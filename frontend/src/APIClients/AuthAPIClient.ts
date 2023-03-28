@@ -142,6 +142,37 @@ const logout = async (
   return success;
 };
 
+type ResetPasswordFunction = (
+  options?:
+    | MutationFunctionOptions<
+        {
+          resetPassword: { success: boolean };
+        },
+        OperationVariables
+      >
+    | undefined,
+) => Promise<
+  FetchResult<
+    {
+      resetPassword: { success: boolean };
+    },
+    Record<string, unknown>,
+    Record<string, unknown>
+  >
+>;
+
+const resetPassword = async (
+  authenticatedUserEmail: string,
+  newPassword: string,
+  resetPasswordFunction: ResetPasswordFunction,
+): Promise<boolean> => {
+  const result = await resetPasswordFunction({
+    variables: { email: authenticatedUserEmail, password: newPassword },
+  });
+  const success = result.data?.resetPassword.success ?? false;
+  return success;
+};
+
 type RefreshFunction = (
   options?:
     | MutationFunctionOptions<
@@ -172,4 +203,4 @@ const refresh = async (refreshFunction: RefreshFunction): Promise<boolean> => {
   return success;
 };
 
-export default { login, logout, loginWithGoogle, register, refresh };
+export default { login, logout, loginWithGoogle, register, refresh, resetPassword };

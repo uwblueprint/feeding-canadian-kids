@@ -1,10 +1,4 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  gql,
-  useMutation,
-  useQuery,
-} from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Button,
@@ -171,7 +165,6 @@ const SetPassword = (): React.ReactElement => {
                 variant="outline"
                 type="password"
                 value={password}
-                // outlineColor={er ? "red" : ""}
                 onChange={(e) => setPassword(e.target.value)}
               />
               {tooShort ? (

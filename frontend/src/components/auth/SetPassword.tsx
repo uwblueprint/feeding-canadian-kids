@@ -1,4 +1,10 @@
-import { ApolloClient, InMemoryCache, gql, useQuery } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  gql,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import {
   Box,
   Button,
@@ -8,40 +14,72 @@ import {
   FormLabel,
   Input,
   Text,
-  Toast,
   VStack,
-  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const SetPassword = (): React.ReactElement => {
   const [notMatching, setNotMatching] = useState(false);
   const [tooShort, setTooShort] = useState(false);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const navigate = useNavigate();
 
   const { objectID: objectId } = useParams();
 
-  const GET_OBJECT_ID = React.useMemo(
-    () =>
-      gql`
-    query getOnboardingRequestID {
-      getOnboardingRequestById(id: "${objectId}") {
-        contactName
-        contactEmail
-        contactPhone
+  const GET_OBJECT_ID = gql`
+    query GetOnboardingRequestById{
+      getOnboardingRequestById(id: "${objectId}"
+          
+        ) {
+        email
+        organizationAddress
+        organizationName
         role
+        primaryContact {
+          name
+          email
+          phone
+        }
+        onsiteContacts {
+          name
+          email
+          phone
+        }
         dateSubmitted
         status
       }
     }
-  `,
-    [objectId],
-  );
+  `;
+
+  const REGISTER_USER = gql`
+    mutation register(
+      $email: String!
+      $password: String!
+      $requestId: String!
+    ) {
+      register(email: $email, password: $password, requestId: $requestId) {
+        user {
+          accessToken
+          id
+          firstName
+          lastName
+          email
+          role
+        }
+      }
+    }
+  `;
+
   const { data, loading, error } = useQuery(GET_OBJECT_ID, {
     onCompleted: () => {},
   });
+
+  const [
+    register,
+    { loading: registerLoading, error: registerError },
+  ] = useMutation(REGISTER_USER);
 
   if (loading) return <p>Loading...</p>;
 
@@ -49,9 +87,21 @@ const SetPassword = (): React.ReactElement => {
     return data.getOnboardingRequestById[0].status !== "Approved";
   }
 
-  const onResetPasswordClick = () => {
+  const onResetPasswordClick = async () => {
     setNotMatching(password !== confirm);
     setTooShort(password.length < 8);
+
+    const response = await register({
+      variables: {
+        email: data?.getOnboardingRequestById[0].email,
+        password,
+        requestId: objectId,
+      },
+    }).then(() => {
+      navigate("/login");
+    });
+
+    return response;
   };
 
   return (
@@ -190,7 +240,7 @@ const SetPassword = (): React.ReactElement => {
               }}
               color="white"
             >
-              Confirm
+              {registerLoading ? "Loading..." : "Confirm"}
             </Text>
           </Button>
         </VStack>

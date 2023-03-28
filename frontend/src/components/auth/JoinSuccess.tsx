@@ -17,6 +17,7 @@ const JoinSuccess = (): React.ReactElement => {
     >
       <Flex
         flexDir="column"
+        alignSelf={{ base: "center", md: "flex-start" }}
         p={{ base: "24px", md: "48px" }}
         m="0 48px"
         gap={{ base: "14px", md: "18px" }}

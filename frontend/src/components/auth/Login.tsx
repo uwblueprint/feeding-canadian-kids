@@ -14,6 +14,7 @@ import React, { useContext, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
+import BackgroundImage from "../../assets/background.png";
 import { DASHBOARD_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
@@ -61,7 +62,12 @@ const Login = (): React.ReactElement => {
       height="100vh"
       justifyContent={{ base: "center", md: "flex-start" }}
       alignItems="center"
-      marginBottom="50px"
+      style={{
+        backgroundImage: `url(${BackgroundImage})`,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
     >
       <VStack
         justify="space-between"
@@ -71,6 +77,7 @@ const Login = (): React.ReactElement => {
         padding={{ base: "4% 3% 4% 3%", md: "4% 7% 4% 7%" }}
         width={{ base: "80%", md: "45%" }}
         height="fit-content"
+        style={{ background: "white" }}
       >
         <Text
           pb={{ base: 1, md: 5 }}

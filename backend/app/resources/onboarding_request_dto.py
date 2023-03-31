@@ -15,6 +15,7 @@ class OnboardingRequestDTO:
         self.info = info
         self.date_submitted = date_submitted
         self.status = status
+        # TODO: Should we add validation calls to each DTO?
         # error_list = self.validate()
         # if len(error_list) > 0:
         #     error_message = "\n".join(error_list)

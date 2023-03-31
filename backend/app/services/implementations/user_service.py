@@ -32,10 +32,11 @@ class UserService(IUserService):
             user_dict["email"] = firebase_user.email
             kwargs = {
                 "id": user_dict["id"],
-                "first_name": user_dict["info"]["contact_name"],
+                "first_name": user_dict["info"]["primary_contact"]["name"],
                 "last_name": "",
                 "email": user_dict["email"],
                 "role": user_dict["info"]["role"],
+                "active": user_dict["active"],
             }
 
             return UserDTO(**kwargs)
@@ -68,6 +69,7 @@ class UserService(IUserService):
                 "last_name": "",
                 "email": user_dict["email"],
                 "role": user_dict["info"]["role"],
+                "active": user_dict["active"]
             }
 
             return UserDTO(**kwargs)
@@ -83,7 +85,7 @@ class UserService(IUserService):
     def get_user_role_by_auth_id(self, auth_id):
         try:
             user = self.get_user_by_auth_id(auth_id)
-            return user.role
+            return user.info.role
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -137,6 +139,8 @@ class UserService(IUserService):
                     "last_name": "",
                     "email": user_dict["email"],
                     "role": user_dict["info"]["role"],
+                    "active": user_dict["active"],
+                    
                 }
                 user_dtos.append(UserDTO(**kwargs))
             except Exception as e:
@@ -204,6 +208,7 @@ class UserService(IUserService):
             "last_name": "",
             "email": new_user_dict["email"],
             "role": new_user_dict["info"]["role"],
+            "active": new_user_dict["active"],
         }
         return UserDTO(**kwargs)
 
@@ -266,10 +271,19 @@ class UserService(IUserService):
             if not user:
                 raise Exception(f"user_id {user_id} not found")
 
-            update_user_dict = user.__dict__
-            user_dto = UserDTO(**update_user_dict)
+            user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+            user_dict["email"] = user_dict["info"]["email"]
+            kwargs = {
+                "id": user_dict["id"],
+                "first_name": user_dict["info"]["primary_contact"]["name"],
+                "last_name": "",
+                "email": user_dict["email"],
+                "role": user_dict["info"]["role"],
+                "active": True,
+            }
 
-            return user_dto
+            return UserDTO(**kwargs)
+
         except Exception as e:
             self.logger.error(f"Failed to activate user. Reason = {e}")
             raise e
@@ -279,11 +293,19 @@ class UserService(IUserService):
             user = User.objects(id=user_id).modify(active=False, new=False)
             if not user:
                 raise Exception(f"user_id {user_id} not found")
+            
+            user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+            user_dict["email"] = user_dict["info"]["email"]
+            kwargs = {
+                "id": user_dict["id"],
+                "first_name": user_dict["info"]["primary_contact"]["name"],
+                "last_name": "",
+                "email": user_dict["email"],
+                "role": user_dict["info"]["role"],
+                "active": False,
+            }
 
-            update_user_dict = user.__dict__
-            user_dto = UserDTO(**update_user_dict)
-
-            return user_dto
+            return UserDTO(**kwargs)
         except Exception as e:
             self.logger.error(f"Failed to activate user. Reason = {e}")
             raise e

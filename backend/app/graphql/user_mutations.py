@@ -11,7 +11,7 @@ class User(graphene.ObjectType):
     name = graphene.String()
     email = graphene.String()
     role = graphene.String()
-
+    active = graphene.Boolean()
 
 class UpdateUserByID(Mutation):
     class Arguments:
@@ -30,7 +30,7 @@ class UpdateUserByID(Mutation):
 
         if requester_role == "Admin" or requester_id == id:
             user = user_service.update_user_by_id(
-                id, UserDTO(id, name.split(" ")[0], name.split(" ")[1], email, role)
+                id, UserDTO(id, name.split(" ")[0], name.split(" ")[1], email, role, active=True)
             )
 
             return UpdateUserByID(
@@ -38,6 +38,7 @@ class UpdateUserByID(Mutation):
                     name=f"{user.first_name} {user.last_name}",
                     email=user.email,
                     role=user.role,
+                    active=user.active,
                 )
             )
 
@@ -86,7 +87,7 @@ class DeactivateUserByID(Mutation):
                     name=f"{user.first_name} {user.last_name}",
                     email=user.email,
                     role=user.role,
-                    active=False,
+                    active=user.active,
                 )
             )
 

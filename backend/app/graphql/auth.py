@@ -29,12 +29,12 @@ def BaseLogin(method_name):
             method = getattr(services["auth_service"], method_name)
             auth_dto = method(email=email, password=password, id_token=id_token)
             info.context.cookies.refresh_token = auth_dto.refresh_token
-            registered_user_dict = {
-                "access_token": auth_dto.access_token,
-                "id": auth_dto.id,
-                "info": auth_dto.info,
-            }
-            return Login(**registered_user_dict)
+            registered_user = RegisteredUser(
+                access_token=auth_dto.access_token,
+                id=auth_dto.id,
+                info=auth_dto.info,
+            )
+            return Login(registered_user=registered_user)
 
     return LoginMutation
 
@@ -66,12 +66,12 @@ class Register(Mutation):
         auth_dto = services["auth_service"].generate_token(email, password)
         info.context.cookies.refresh_token = auth_dto.refresh_token
         services["auth_service"].send_email_verification_link(email)
-        registered_user_dict = {
-            "access_token": auth_dto.access_token,
-            "id": auth_dto.id,
-            "info": auth_dto.info,
-        }
-        return Register(**registered_user_dict)
+        registered_user = RegisteredUser(
+            access_token=auth_dto.access_token,
+            id=auth_dto.id,
+            info=auth_dto.info,
+        )
+        return Register(registered_user=registered_user)
 
 
 class Refresh(Mutation):

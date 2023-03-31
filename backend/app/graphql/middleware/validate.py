@@ -5,14 +5,14 @@ import json
 from ...resources.create_user_dto import CreateUserDTO
 from ...resources.entity_dto import EntityDTO
 from ...resources.simple_entity_dto import SimpleEntityDTO
-from ...resources.register_user_dto import RegisterUserDTO
+# from ...resources.register_user_dto import RegisterUserDTO
 from ...resources.update_user_dto import UpdateUserDTO
 
 dtos = {
     "CreateUserDTO": CreateUserDTO,
     "EntityDTO": EntityDTO,
     "SimpleEntityDTO": SimpleEntityDTO,
-    "RegisterUserDTO": RegisterUserDTO,
+    # "RegisterUserDTO": RegisterUserDTO,
     "UpdateUserDTO": UpdateUserDTO,
 }
 

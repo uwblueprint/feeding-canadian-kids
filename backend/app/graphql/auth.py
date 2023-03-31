@@ -59,7 +59,7 @@ def BaseLogin(method_name):
 
 
 Login = BaseLogin("generate_token")
-LoginWithGoogle = BaseLogin("generate_token_for_oauth")
+# LoginWithGoogle = BaseLogin("generate_token_for_oauth")
 
 
 class Register(Mutation):
@@ -80,8 +80,8 @@ class Register(Mutation):
             "password": password,
             "request_id": request_id,
         }
-        userDTO = CreateUserDTO(**kwargs)
-        services["user_service"].create_user(userDTO)
+        create_user_dto = CreateUserDTO(**kwargs)
+        services["user_service"].create_user(create_user_dto)
         auth_dto = services["auth_service"].generate_token(email, password)
         info.context.cookies.refresh_token = auth_dto.refresh_token
         services["auth_service"].send_email_verification_link(email)

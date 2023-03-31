@@ -41,39 +41,40 @@ class AuthService(IAuthService):
             )
             raise e
 
-    def generate_token_for_oauth(self, id_token, user_to_create=None, **_):
-        try:
-            google_user = self.firebase_rest_client.sign_in_with_google(id_token)
-            # google_user["idToken"] refers to the user's Firebase Auth access token
-            token = Token(google_user["idToken"], google_user["refreshToken"])
-            # If user already has a login with this email, just return the token
-            try:
-                # Note: an error message will be logged from UserService if this fails.
-                # You may want to silence the logger for this special OAuth lookup case
-                user = self.user_service.get_user_by_email(google_user["email"])
-                return AuthDTO(**{**token.__dict__, **user.__dict__})
-            except Exception:
-                if user_to_create is None:
-                    raise
+    # generate_token_for_oauth function is not being used
+    # def generate_token_for_oauth(self, id_token, user_to_create=None, **_):
+    #     try:
+    #         google_user = self.firebase_rest_client.sign_in_with_google(id_token)
+    #         # google_user["idToken"] refers to the user's Firebase Auth access token
+    #         token = Token(google_user["idToken"], google_user["refreshToken"])
+    #         # If user already has a login with this email, just return the token
+    #         try:
+    #             # Note: an error message will be logged from UserService if this fails.
+    #             # You may want to silence the logger for this special OAuth lookup case
+    #             user = self.user_service.get_user_by_email(google_user["email"])
+    #             return AuthDTO(**{**token.__dict__, **user.__dict__})
+    #         except Exception:
+    #             if user_to_create is None:
+    #                 raise
 
-            user = self.user_service.create_user(
-                CreateUserDTO(
-                    **{
-                        **user_to_create.__dict__,
-                        "email": google_user["email"],
-                    }
-                ),
-                auth_id=google_user["localId"],
-                signup_method="GOOGLE",
-            )
-            return AuthDTO(**{**token.__dict__, **user.__dict__})
-        except Exception as e:
-            reason = getattr(e, "message", None)
-            self.logger.error(
-                "Failed to generate token for user with OAuth id token. "
-                + "Reason = {reason}".format(reason=(reason if reason else str(e)))
-            )
-            raise e
+    #         user = self.user_service.create_user(
+    #             CreateUserDTO(
+    #                 **{
+    #                     **user_to_create.__dict__,
+    #                     "email": google_user["email"],
+    #                 }
+    #             ),
+    #             auth_id=google_user["localId"],
+    #             signup_method="GOOGLE",
+    #         )
+    #         return AuthDTO(**{**token.__dict__, **user.__dict__})
+    #     except Exception as e:
+    #         reason = getattr(e, "message", None)
+    #         self.logger.error(
+    #             "Failed to generate token for user with OAuth id token. "
+    #             + "Reason = {reason}".format(reason=(reason if reason else str(e)))
+    #         )
+    #         raise e
 
     def revoke_tokens(self, user_id):
         try:

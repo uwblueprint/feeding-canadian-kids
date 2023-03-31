@@ -258,8 +258,10 @@ class UserService(IUserService):
 
         return UserDTO(user_id, user.first_name, user.last_name, user.email, user.role)
 
-    # TODO: test if User.objects(id=user_id).modify(remove=True, new=False) actually works.
-    # in particular, modify(remove=True, new=False) is sketchy. cannot find any documentation on this.
+    # TODO:
+    # test if User.objects(id=user_id).modify(remove=True, new=False) actually works.
+    # in particular, modify(remove=True, new=False) is sketchy.
+    # cannot find any documentation on this.
     def delete_user_by_id(self, user_id):
         try:
             deleted_user = User.objects(id=user_id).modify(remove=True, new=False)
@@ -301,8 +303,10 @@ class UserService(IUserService):
             )
             raise e
 
-    # TODO: test if User.objects(id=user_id).modify(remove=True, new=False) actually works.
-    # in particular, modify(remove=True, new=False) is sketchy. cannot find any documentation on this.
+    # TODO:
+    # test if User.objects(id=user_id).modify(remove=True, new=False) actually works.
+    # in particular, modify(remove=True, new=False) is sketchy.
+    # cannot find any documentation on this.
     def delete_user_by_email(self, email):
         try:
             firebase_user = firebase_admin.auth.get_user_by_email(email)

@@ -143,7 +143,7 @@ class ResetPassword(Mutation):
 
 class AuthMutations(MutationList):
     login = Login.Field()
-    login_with_google = LoginWithGoogle.Field()
+    # login_with_google = LoginWithGoogle.Field()
     register = Register.Field()
     refresh = Refresh.Field()
     logout = Logout.Field()

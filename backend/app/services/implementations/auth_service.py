@@ -50,8 +50,8 @@ class AuthService(IAuthService):
     #         token = Token(google_user["idToken"], google_user["refreshToken"])
     #         # If user already has a login with this email, just return the token
     #         try:
-    #             # Note: an error message will be logged from UserService if this fails.
-    #             # You may want to silence the logger for this special OAuth lookup case
+    #             # Note: error message will be logged from UserService if this fails.
+    #             # May want to silence the logger for this special OAuth lookup case
     #             user = self.user_service.get_user_by_email(google_user["email"])
     #             return AuthDTO(**{**token.__dict__, **user.__dict__})
     #         except Exception:

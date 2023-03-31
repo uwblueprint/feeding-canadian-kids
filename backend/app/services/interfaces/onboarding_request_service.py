@@ -48,3 +48,28 @@ class IOnboardingRequestService(ABC):
         :rtype: OnboardingRequestDTO
         :raises Exception: if OnboardingRequest could not be retrieved
         """
+
+    @abstractmethod
+    def approve_onboarding_request(self, id):
+        """
+        Approves an onboarding request
+
+        :param id: the OnboardingRequest object's id
+        :type id: string
+        :return: OnboardingRequest object dict
+        :rtype: OnboardingRequestDTO
+        :raises Exception: if OnboardingRequest could not be approved
+        """
+
+    @abstractmethod
+    def reject_onboarding_request(self, id):
+        """
+        Rejects an onboarding request
+
+        :param id: the OnboardingRequest object's id
+        :type id: string
+        :return: OnboardingRequest object dict
+        :rtype: OnboardingRequestDTO
+        :raises Exception: if OnboardingRequest could not be rejected
+        """
+        pass

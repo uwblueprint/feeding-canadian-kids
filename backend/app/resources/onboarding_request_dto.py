@@ -22,7 +22,9 @@ class OnboardingRequestDTO:
 
         if type(self.status) not in ONBOARDING_REQUEST_STATUSES:
             error_list.append(
-                f"The status is not one of {', '.join(ONBOARDING_REQUEST_STATUSES)}"
+                "The status is not one of {valid_statuses}".format(
+                    valid_statuses=", ".join(ONBOARDING_REQUEST_STATUSES)
+                )
             )
 
         return error_list

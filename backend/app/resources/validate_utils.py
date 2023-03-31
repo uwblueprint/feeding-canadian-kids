@@ -1,3 +1,6 @@
+from ..models.user_info import USERINFO_ROLES
+
+
 def validate_contact(contact, contact_str, error_list):
     if not isinstance(contact, dict):
         error_list.append(f"The {contact_str} supplied is not a dict.")
@@ -50,4 +53,11 @@ def validate_userinfo(userinfo, error_list):
             error_list.append(
                 f"The field info.{key} supplied must not be an empty string."
             )
+        elif key == "role" and val not in USERINFO_ROLES:
+            error_list.append(
+                "The status is not one of {valid_roles}".format(
+                    valid_roles=", ".join(USERINFO_ROLES)
+                )
+            )
+
     return error_list

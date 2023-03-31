@@ -44,6 +44,8 @@ class OnboardingRequestService(IOnboardingRequestService):
                 info=user_info,
                 status=ONBOARDING_REQUEST_STATUS_PENDING,
             ).save()
+            request_dict = new_onboarding_request.to_serializable_dict()
+            return OnboardingRequestDTO(**request_dict)
 
         except Exception as e:
             reason = getattr(e, "message", None)
@@ -53,8 +55,6 @@ class OnboardingRequestService(IOnboardingRequestService):
                 )
             )
             raise e
-
-        return new_onboarding_request.to_serializable_dict()
 
     def get_all_onboarding_requests(self, number=None, offset=0, role="", status=""):
         onboarding_request_dtos = []
@@ -67,12 +67,8 @@ class OnboardingRequestService(IOnboardingRequestService):
                 filteredRequests = filteredRequests.filter(status=status)
             for request in filteredRequests.skip(offset).limit(number or 0):
                 request_dict = request.to_serializable_dict()
-                kwargs = {
-                    "info": request_dict["info"],
-                    "date_submitted": request_dict["date_submitted"],
-                    "status": request_dict["status"],
-                }
-                onboarding_request_dtos.append(OnboardingRequestDTO(**kwargs))
+                onboarding_request_dtos.append(OnboardingRequestDTO(**request_dict))
+
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -98,13 +94,8 @@ class OnboardingRequestService(IOnboardingRequestService):
                 raise Exception(error_message)
 
             request_dict = request.to_serializable_dict()
+            return OnboardingRequestDTO(**request_dict)
 
-            kwargs = {
-                "info": request_dict["info"],
-                "date_submitted": request_dict["date_submitted"],
-                "status": request_dict["status"],
-            }
-            return OnboardingRequestDTO(**kwargs)
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -129,6 +120,9 @@ class OnboardingRequestService(IOnboardingRequestService):
             AuthService.send_onboarding_request_approve_email(
                 self, request_id, recipient_email
             )
+            request_dict = referenced_onboarding_request.to_serializable_dict()
+            return OnboardingRequestDTO(**request_dict)
+
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -137,8 +131,6 @@ class OnboardingRequestService(IOnboardingRequestService):
                 )
             )
             raise e
-
-        return referenced_onboarding_request.to_serializable_dict()
 
     def reject_onboarding_request(self, request_id):
         try:
@@ -155,6 +147,8 @@ class OnboardingRequestService(IOnboardingRequestService):
             recipient_email = referenced_onboarding_request.info.email
 
             AuthService.send_onboarding_request_rejected_email(self, recipient_email)
+            request_dict = referenced_onboarding_request.to_serializable_dict()
+            return OnboardingRequestDTO(**request_dict)
 
         except Exception as e:
             reason = getattr(e, "message", None)
@@ -164,5 +158,3 @@ class OnboardingRequestService(IOnboardingRequestService):
                 )
             )
             raise e
-
-        return referenced_onboarding_request.to_serializable_dict()

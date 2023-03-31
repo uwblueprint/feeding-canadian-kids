@@ -3,11 +3,20 @@ import datetime
 
 from .user_info import UserInfo
 
+ONBOARDING_REQUEST_STATUS_PENDING = "Pending"
+ONBOARDING_REQUEST_STATUS_APPROVED = "Approved"
+ONBOARDING_REQUEST_STATUS_REJECTED = "Rejected"
+ONBOARDING_REQUEST_STATUSES = [
+    ONBOARDING_REQUEST_STATUS_PENDING,
+    ONBOARDING_REQUEST_STATUS_APPROVED,
+    ONBOARDING_REQUEST_STATUS_REJECTED,
+]
+
 
 class OnboardingRequest(mg.Document):
     info = mg.EmbeddedDocumentField(UserInfo, required=True)
     date_submitted = mg.DateTimeField(default=datetime.datetime.now)
-    status = mg.StringField(choices=["Pending", "Approved", "Rejected"], required=True)
+    status = mg.StringField(choices=ONBOARDING_REQUEST_STATUSES, required=True)
 
     def to_serializable_dict(self):
         """

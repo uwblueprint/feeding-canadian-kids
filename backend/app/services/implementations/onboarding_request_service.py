@@ -1,6 +1,11 @@
 from ...services.implementations.auth_service import AuthService
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
-from ...models.onboarding_request import OnboardingRequest
+from ...models.onboarding_request import (
+    OnboardingRequest,
+    ONBOARDING_REQUEST_STATUS_APPROVED,
+    ONBOARDING_REQUEST_STATUS_PENDING,
+    ONBOARDING_REQUEST_STATUS_REJECTED,
+)
 from ...models.user_info import UserInfo
 from ...resources.onboarding_request_dto import OnboardingRequestDTO
 
@@ -30,7 +35,7 @@ class OnboardingRequestService(IOnboardingRequestService):
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(
                 info=user_info,
-                status="Pending",
+                status=ONBOARDING_REQUEST_STATUS_PENDING,
             ).save()
 
         except Exception as e:
@@ -110,12 +115,12 @@ class OnboardingRequestService(IOnboardingRequestService):
                 id=request_id
             ).first()
             referenced_onboarding_request.status = (
-                "Approved"  # approve the onboarding request
+                ONBOARDING_REQUEST_STATUS_APPROVED  # approve the onboarding request
             )
 
             referenced_onboarding_request.save()  # save the changes
 
-            recipient_email = referenced_onboarding_request.info.contact_email
+            recipient_email = referenced_onboarding_request.info.email
             AuthService.send_onboarding_request_approve_email(
                 self, request_id, recipient_email
             )
@@ -137,12 +142,12 @@ class OnboardingRequestService(IOnboardingRequestService):
             ).first()
 
             referenced_onboarding_request.status = (
-                "Rejected"  # reject the onboarding request
+                ONBOARDING_REQUEST_STATUS_REJECTED  # reject the onboarding request
             )
 
             referenced_onboarding_request.save()  # save the changes
 
-            recipient_email = referenced_onboarding_request.info.contact_email
+            recipient_email = referenced_onboarding_request.info.email
 
             AuthService.send_onboarding_request_rejected_email(self, recipient_email)
 

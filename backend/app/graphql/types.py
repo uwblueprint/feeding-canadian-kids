@@ -28,7 +28,21 @@ class MutationList(graphene.ObjectType, metaclass=LogErrors(graphene.ObjectType)
     pass
 
 
-class UserType(graphene.ObjectType):
+class Contact(graphene.ObjectType):
     name = graphene.String()
     email = graphene.String()
+    phone = graphene.String()
+
+
+class UserInfo(graphene.ObjectType):
+    email = graphene.String()
+    organization_address = graphene.String()
+    organization_name = graphene.String()
     role = graphene.String()
+    primary_contact = graphene.Field(Contact)
+    onsite_contacts = graphene.List(Contact)
+
+
+class User(graphene.ObjectType):
+    id = graphene.String()
+    info = graphene.Field(UserInfo)

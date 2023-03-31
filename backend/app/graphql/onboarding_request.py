@@ -2,7 +2,7 @@ import graphene
 
 from ..graphql.services import services
 
-from .types import Mutation, MutationList, Query, QueryList
+from .types import Contact, Mutation, MutationList, Query, QueryList, UserInfo
 
 
 # Object Types
@@ -12,12 +12,6 @@ class ContactInput(graphene.InputObjectType):
     phone = graphene.String(required=True)
 
 
-class Contact(graphene.ObjectType):
-    name = graphene.String()
-    email = graphene.String()
-    phone = graphene.String()
-
-
 class UserInfoInput(graphene.InputObjectType):
     email = graphene.String(required=True)
     organization_address = graphene.String(required=True)
@@ -25,15 +19,6 @@ class UserInfoInput(graphene.InputObjectType):
     role = graphene.String(required=True)
     primary_contact = graphene.Field(ContactInput, required=True)
     onsite_contacts = graphene.List(ContactInput, required=True)
-
-
-class UserInfo(graphene.ObjectType):
-    email = graphene.String()
-    organization_address = graphene.String()
-    organization_name = graphene.String()
-    role = graphene.String()
-    primary_contact = graphene.Field(Contact)
-    onsite_contacts = graphene.List(Contact)
 
 
 class OnboardingRequest(graphene.ObjectType):

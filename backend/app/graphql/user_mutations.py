@@ -1,27 +1,19 @@
+from app.resources.update_user_dto import UpdateUserDTO
 import graphene
 from .services import services
 from .types import (
     Mutation,
     MutationList,
+    User,
 )
-from app.resources.user_dto import UserDTO
-
-
-class User(graphene.ObjectType):
-    name = graphene.String()
-    email = graphene.String()
-    role = graphene.String()
 
 
 class UpdateUserByID(Mutation):
     class Arguments:
         auth_id = graphene.String()
         id = graphene.String()
-        name = graphene.String()
-        email = graphene.String()
-        role = graphene.String()
 
-    user = graphene.Field(lambda: User)
+    user = graphene.Field(User)
 
     def mutate(self, info, auth_id, id, name, email, role):
         user_service = services["user_service"]
@@ -30,7 +22,8 @@ class UpdateUserByID(Mutation):
 
         if requester_role == "Admin" or requester_id == id:
             user = user_service.update_user_by_id(
-                id, UserDTO(id, name.split(" ")[0], name.split(" ")[1], email, role)
+                id,
+                UpdateUserDTO(id, name.split(" ")[0], name.split(" ")[1], email, role),
             )
 
             return UpdateUserByID(

@@ -1,3 +1,4 @@
+# this class is currnetly unused
 class RegisterUserDTO:
     def __init__(self, **kwargs):
         self.first_name = kwargs.get("first_name")

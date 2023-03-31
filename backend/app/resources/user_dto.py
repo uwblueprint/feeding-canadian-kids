@@ -1,7 +1,16 @@
+from ..graphql.middleware.validate import validate_userinfo
+
+
 class UserDTO:
-    def __init__(self, id, first_name, last_name, email, role):
+    def __init__(self, id, info):
         self.id = id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.role = role
+        self.info = info
+
+    def validate(self):
+        error_list = []
+        if type(self.id) is not str:
+            error_list.append("The id supplied is not a string.")
+
+        error_list = validate_userinfo(self.info, error_list)
+
+        return error_list

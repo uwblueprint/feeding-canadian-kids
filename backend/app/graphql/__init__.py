@@ -23,7 +23,6 @@ class RootQuery(
     ExampleQueries,
     UserQueries,
     OnboardingRequestQueries,
-    UserQueries,
 ):
     pass
 

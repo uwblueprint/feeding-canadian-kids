@@ -36,14 +36,14 @@ TEST_USERS = (
         "first_name": "Jane",
         "last_name": "Doe",
         "role": "Admin",
-        "active": "false"
+        "active": "false",
     },
     {
         "auth_id": "B",
         "first_name": "Hello",
         "last_name": "World",
         "role": "User",
-        "active": "true"
+        "active": "true",
     },
 )
 
@@ -85,10 +85,18 @@ def test_get_users(user_service):
     users_with_email = list(map(get_expected_user, TEST_USERS))
     assert_returned_users(users, users_with_email)
 
+
 def test_activate_user_by_id(user_service):
     insert_users()
     user_id = "A"
-    expected_user = UserDTO(auth_id="A", first_name="Jane", last_name="Doe", role="Admin", active=True, new=False)
+    expected_user = UserDTO(
+        auth_id="A",
+        first_name="Jane",
+        last_name="Doe",
+        role="Admin",
+        active=True,
+        new=False,
+    )
 
     actual_user = user_service.activate_user_by_id(user_id)
     assert actual_user == expected_user

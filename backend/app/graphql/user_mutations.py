@@ -8,6 +8,7 @@ from .types import (
 )
 
 
+# TODO: refactor and update with user_service.update_user_by_id
 class UpdateUserByID(Mutation):
     class Arguments:
         auth_id = graphene.String()

@@ -23,7 +23,10 @@ class OnboardingRequestService(IOnboardingRequestService):
 
     def create_onboarding_request(self, userInfo):
         if UserInfo.objects(email__iexact=userInfo.email).count() > 0:
-            error_message = f"Failed to create onboarding request. Reason = email {userInfo.email} already exists"
+            error_message = f"""
+                Failed to create onboarding request.
+                Reason = email {userInfo.email} already exists
+                """
             self.logger.error(error_message)
             raise Exception(error_message)
         try:
@@ -73,7 +76,10 @@ class OnboardingRequestService(IOnboardingRequestService):
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
-                "Could not retrieve OnboardingRequest objects. Reason = {reason}".format(
+                """
+                Could not retrieve OnboardingRequest objects.
+                Reason = {reason}
+                """.format(
                     reason=(reason if reason else str(e))
                 )
             )

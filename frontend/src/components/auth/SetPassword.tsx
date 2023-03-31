@@ -13,6 +13,8 @@ import {
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import BackgroundImage from "../../assets/background.png";
+
 const SetPassword = (): React.ReactElement => {
   const [notMatching, setNotMatching] = useState(false);
   const [tooShort, setTooShort] = useState(false);
@@ -105,7 +107,12 @@ const SetPassword = (): React.ReactElement => {
       height="100vh"
       justifyContent={{ base: "center", md: "flex-start" }}
       alignItems="center"
-      marginBottom="50px"
+      style={{
+        backgroundImage: `url(${BackgroundImage})`,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
     >
       <VStack
         justify="space-between"
@@ -115,6 +122,9 @@ const SetPassword = (): React.ReactElement => {
         padding={{ base: "4% 3% 4% 3%", md: "4% 7% 4% 7%" }}
         width={{ base: "80%", md: "40%" }}
         height="fit-content"
+        style={{
+          background: "white",
+        }}
       >
         <Text
           textAlign="center"

@@ -90,39 +90,60 @@ class CreateOnboardingRequest(Mutation):
     class Arguments:
         userInfo = UserInfoInput(required=True)
 
-    onboardingRequest = graphene.Field(OnboardingRequest)
+    onboarding_request = graphene.Field(OnboardingRequest)
 
     def mutate(self, info, userInfo):
-        newOnboardingRequest = services[
+        onboarding_request_dto = services[
             "onboarding_request_service"
         ].create_onboarding_request(userInfo=userInfo)
-        return CreateOnboardingRequest(onboardingRequest=newOnboardingRequest)
+        onboarding_request = OnboardingRequest(
+            id=onboarding_request_dto.id,
+            info=onboarding_request_dto.info,
+            date_submitted=onboarding_request_dto.date_submitted,
+            status=onboarding_request_dto.status,
+        )
+
+        return CreateOnboardingRequest(onboarding_request=onboarding_request)
 
 
 class ApproveOnboardingRequest(Mutation):
     class Arguments:
         id = graphene.ID(required=True)
 
-    onboardingRequest = graphene.Field(OnboardingRequest)
+    onboarding_request = graphene.Field(OnboardingRequest)
 
     def mutate(self, info, id):
-        approvedOnboardingRequest = services[
+        onboarding_request_dto = services[
             "onboarding_request_service"
         ].approve_onboarding_request(id)
-        return ApproveOnboardingRequest(onboardingRequest=approvedOnboardingRequest)
+        onboarding_request = OnboardingRequest(
+            id=onboarding_request_dto.id,
+            info=onboarding_request_dto.info,
+            date_submitted=onboarding_request_dto.date_submitted,
+            status=onboarding_request_dto.status,
+        )
+
+        return ApproveOnboardingRequest(onboarding_request=onboarding_request)
 
 
 class RejectOnboardingRequest(Mutation):
     class Arguments:
         id = graphene.ID(required=True)
 
-    onboardingRequest = graphene.Field(OnboardingRequest)
+    onboarding_request = graphene.Field(OnboardingRequest)
 
     def mutate(self, info, id):
-        rejectedOnboardingRequest = services[
+        onboarding_request_dto = services[
             "onboarding_request_service"
         ].reject_onboarding_request(id)
-        return RejectOnboardingRequest(onboardingRequest=rejectedOnboardingRequest)
+        onboarding_request = OnboardingRequest(
+            id=onboarding_request_dto.id,
+            info=onboarding_request_dto.info,
+            date_submitted=onboarding_request_dto.date_submitted,
+            status=onboarding_request_dto.status,
+        )
+
+        return RejectOnboardingRequest(onboarding_request=onboarding_request)
 
 
 class OnboardingRequestMutations(MutationList):

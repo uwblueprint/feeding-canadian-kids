@@ -2,7 +2,7 @@ import graphene
 
 from ..graphql.services import services
 
-from .types import Contact, Mutation, MutationList, Query, QueryList, UserInfo
+from .types import Mutation, MutationList, QueryList, UserInfo
 
 
 # Object Types
@@ -32,28 +32,16 @@ class OnboardingRequest(graphene.ObjectType):
 
 
 # Return object for queries
-class GetOnboardingRequest(Query):
-    email = graphene.String()
-    organization_address = graphene.String()
-    organization_name = graphene.String()
-    role = graphene.String()
-    primary_contact = graphene.Field(Contact)
-    onsite_contacts = graphene.List(Contact)
-    date_submitted = graphene.DateTime()
-    status = graphene.String()
-
-
 class OnboardingRequestQueries(QueryList):
     getAllOnboardingRequests = graphene.List(
-        GetOnboardingRequest,
+        OnboardingRequest,
         number=graphene.Int(default_value=5),
         offset=graphene.Int(default_value=0),
         role=graphene.String(default_value=""),
         status=graphene.String(default_value=""),
     )
-    getOnboardingRequestById = graphene.List(
-        GetOnboardingRequest,
-        id=graphene.String(),
+    getOnboardingRequestById = graphene.Field(
+        OnboardingRequest, id=graphene.String(required=True)
     )
 
     def resolve_getAllOnboardingRequests(self, info, number, offset, role, status):
@@ -63,24 +51,26 @@ class OnboardingRequestQueries(QueryList):
             role,
             status,
         )
-        return requests
+        return [
+            OnboardingRequest(
+                id=request.id,
+                info=request.info,
+                date_submitted=request.date_submitted,
+                status=request.status,
+            )
+            for request in requests
+        ]
 
     def resolve_getOnboardingRequestById(self, info, id):
         request = services["onboarding_request_service"].get_onboarding_request_by_id(
             id
         )
-        return [
-            GetOnboardingRequest(
-                email=request.email,
-                organization_address=request.organization_address,
-                organization_name=request.organization_name,
-                role=request.role,
-                primary_contact=request.primary_contact,
-                onsite_contacts=request.onsite_contacts,
-                date_submitted=request.date_submitted,
-                status=request.status,
-            )
-        ]
+        return OnboardingRequest(
+            id=request.id,
+            info=request.info,
+            date_submitted=request.date_submitted,
+            status=request.status,
+        )
 
 
 # Mutations

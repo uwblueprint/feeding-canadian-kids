@@ -7,10 +7,9 @@ class UserDTO:
         self.info = info
 
     def validate(self):
-        error_list = []
+        error_list = validate_userinfo(self.info, [])
+
         if type(self.id) is not str:
             error_list.append("The id supplied is not a string.")
-
-        error_list = validate_userinfo(self.info, error_list)
 
         return error_list

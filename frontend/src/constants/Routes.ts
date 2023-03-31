@@ -14,7 +14,6 @@ export const RESET_PASSWORD_PAGE = "/reset-password";
 
 export const SET_PASSWORD_PAGE = "/:objectID/set-password";
 
-
 export const DASHBOARD_PAGE = "/dashboard";
 
 export const EDIT_TEAM_PAGE = "/dashboard/edit-team";

@@ -21,6 +21,7 @@ const JoinSuccess = (): React.ReactElement => {
         p={{ base: "24px", md: "48px" }}
         m="0 48px"
         gap={{ base: "14px", md: "18px" }}
+        borderRadius="8px"
         width={{ base: "85%", md: "50%" }}
         boxShadow="0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)"
         style={{

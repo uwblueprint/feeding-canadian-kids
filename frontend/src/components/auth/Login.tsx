@@ -13,6 +13,7 @@ import {
 import React, { useContext, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 
+import authAPIClient from "../../APIClients/AuthAPIClient";
 import BackgroundImage from "../../assets/background.png";
 import { DASHBOARD_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";

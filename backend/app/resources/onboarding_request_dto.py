@@ -1,7 +1,6 @@
 import datetime
-
 from ..models.onboarding_request import ONBOARDING_REQUEST_STATUSES
-from ..graphql.middleware.validate import validate_userinfo
+from .validate_utils import validate_userinfo
 
 
 class OnboardingRequestDTO:

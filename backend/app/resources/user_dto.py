@@ -1,4 +1,4 @@
-from ..graphql.middleware.validate import validate_userinfo
+from .validate_utils import validate_userinfo
 
 
 class UserDTO:

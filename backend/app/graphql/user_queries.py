@@ -1,12 +1,6 @@
 import graphene
 from .services import services
-from .types import QueryList, Query
-
-
-class User(Query):
-    name = graphene.String()
-    email = graphene.String()
-    role = graphene.String()
+from .types import QueryList, User
 
 
 class UserQueries(QueryList):
@@ -17,10 +11,7 @@ class UserQueries(QueryList):
         role=graphene.String(default_value=""),
     )
 
-    user = graphene.Field(
-        User,
-        id=graphene.String(required=True),
-    )
+    user = graphene.Field(User)
 
     def resolve_users(self, info, first, offset, role):
         user_service = services["user_service"]
@@ -32,9 +23,8 @@ class UserQueries(QueryList):
                 if user.role == role:
                     filtered.append(
                         User(
-                            name=f"{user.first_name} {user.last_name}",
-                            email=user.email,
-                            role=user.role,
+                            id=user.id,
+                            info=user.info,
                         )
                     )
             return filtered[offset : offset + first]  # noqa: E203
@@ -42,9 +32,8 @@ class UserQueries(QueryList):
         return [
             *map(
                 lambda user: User(
-                    name=f"{user.first_name} {user.last_name}",
-                    email=user.email,
-                    role=user.role,
+                    id=user.id,
+                    info=user.info,
                 ),
                 users[offset : offset + first],  # noqa: E203
             )
@@ -54,8 +43,9 @@ class UserQueries(QueryList):
         user_service = services["user_service"]
         user = user_service.get_user_by_id(id)
 
-        return User(
-            name=f"{user.first_name} {user.last_name}",
-            email=user.email,
-            role=user.role,
+        return (
+            User(
+                id=user.id,
+                info=user.info,
+            ),
         )

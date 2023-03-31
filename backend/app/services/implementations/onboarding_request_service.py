@@ -22,6 +22,10 @@ class OnboardingRequestService(IOnboardingRequestService):
         self.email_service = email_service
 
     def create_onboarding_request(self, userInfo):
+        if UserInfo.objects(email__iexact=userInfo.email).count() > 0:
+            error_message = f"Failed to create onboarding request. Reason = email {userInfo.email} already exists"
+            self.logger.error(error_message)
+            raise Exception(error_message)
         try:
             # Create initial UserInfo object
             user_info = UserInfo(
@@ -61,20 +65,18 @@ class OnboardingRequestService(IOnboardingRequestService):
             for request in filteredRequests.skip(offset).limit(number or 0):
                 request_dict = request.to_serializable_dict()
                 kwargs = {
-                    "email": request_dict["info"]["email"],
-                    "organization_address": request_dict["info"][
-                        "organization_address"
-                    ],
-                    "organization_name": request_dict["info"]["organization_name"],
-                    "role": request_dict["info"]["role"],
-                    "primary_contact": request_dict["info"]["primary_contact"],
-                    "onsite_contacts": request_dict["info"]["onsite_contacts"],
+                    "info": request_dict["info"],
                     "date_submitted": request_dict["date_submitted"],
                     "status": request_dict["status"],
                 }
                 onboarding_request_dtos.append(OnboardingRequestDTO(**kwargs))
         except Exception as e:
-            self.logger.error("Could not retrieve OnboardingRequest objects")
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                "Could not retrieve OnboardingRequest objects. Reason = {reason}".format(
+                    reason=(reason if reason else str(e))
+                )
+            )
             raise e
         if number > 0:
             return onboarding_request_dtos[offset : offset + number]
@@ -85,17 +87,14 @@ class OnboardingRequestService(IOnboardingRequestService):
             request = OnboardingRequest.objects(id=id).first()
 
             if not request:
-                raise Exception("request id {id} not found".format(id=id))
+                error_message = f"request id {id} not found"
+                self.logger.error(error_message)
+                raise Exception(error_message)
 
             request_dict = request.to_serializable_dict()
 
             kwargs = {
-                "email": request_dict["info"]["email"],
-                "organization_address": request_dict["info"]["organization_address"],
-                "organization_name": request_dict["info"]["organization_name"],
-                "role": request_dict["info"]["role"],
-                "primary_contact": request_dict["info"]["primary_contact"],
-                "onsite_contacts": request_dict["info"]["onsite_contacts"],
+                "info": request_dict["info"],
                 "date_submitted": request_dict["date_submitted"],
                 "status": request_dict["status"],
             }

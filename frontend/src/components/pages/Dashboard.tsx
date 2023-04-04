@@ -2,6 +2,7 @@ import { Button as ChakraButton, Wrap } from "@chakra-ui/react";
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
+import BackgroundImage from "../../assets/background.png";
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
 import Logout from "../auth/Logout";
@@ -34,7 +35,17 @@ const TeamInfoDisplay = () => {
 
 const Default = (): React.ReactElement => {
   return (
-    <div style={{ textAlign: "center", paddingTop: "20px" }}>
+    <div
+      style={{
+        textAlign: "center",
+        paddingTop: "20px",
+        height: "100vh",
+        backgroundImage: `url(${BackgroundImage})`,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
+    >
       <h1>Default Page</h1>
       <Wrap>
         <Logout />

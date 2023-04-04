@@ -7,29 +7,119 @@ from app.resources.onboarding_request_dto import OnboardingRequestDTO
 
 # Testing Mock Data
 
-mock_info1 = UserInfo(
-    contact_name="Jessie",
-    contact_email="jessie123@gmail.com",
-    contact_phone="123456",
-    role="ASP",
-)
+mock_info1_snake = {
+    "email": "test1@organization.com",
+    "organization_address": "123 Anywhere Street",
+    "organization_name": "Test1 Org",
+    "role": "ASP",
+    "primary_contact": {
+        "name": "Jessie",
+        "phone": "123456",
+        "email": "jessie123@gmail.com",
+    },
+    "onsite_contacts": [
+        {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"},
+        {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
+    ],
+}
 
-mock_info2 = UserInfo(
-    contact_name="Mr. Goose",
-    contact_email="goose@gmail.com",
-    contact_phone="98765",
-    role="Donor",
-)
+mock_info1_camel = {
+    "email": "test1@organization.com",
+    "organizationAddress": "123 Anywhere Street",
+    "organizationName": "Test1 Org",
+    "role": "ASP",
+    "primaryContact": {
+        "name": "Jessie",
+        "phone": "123456",
+        "email": "jessie123@gmail.com",
+    },
+    "onsiteContacts": [
+        {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"},
+        {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
+    ],
+}
+
+
+mock_info2_snake = {
+    "email": "test2@organization.com",
+    "organization_address": "456 Anywhere Street",
+    "organization_name": "Test2 Org",
+    "role": "Donor",
+    "primary_contact": {
+        "name": "Mr. Goose",
+        "phone": "98765",
+        "email": "goose@gmail.com",
+    },
+    "onsite_contacts": [
+        {"name": "def", "phone": "098-765-4321", "email": "abc@uwblueprint.org"},
+        {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
+    ],
+}
+
+mock_info2_camel = {
+    "email": "test2@organization.com",
+    "organizationAddress": "456 Anywhere Street",
+    "organizationName": "Test2 Org",
+    "role": "Donor",
+    "primaryContact": {
+        "name": "Mr. Goose",
+        "phone": "98765",
+        "email": "goose@gmail.com",
+    },
+    "onsiteContacts": [
+        {"name": "def", "phone": "098-765-4321", "email": "abc@uwblueprint.org"},
+        {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
+    ],
+}
+
+mock_user_info1 = UserInfo(**mock_info1_snake)
+
+mock_user_info2 = UserInfo(**mock_info2_snake)
+
+
+def assert_user_infos_equal(data_result, expected_result):
+    assert data_result["email"] == expected_result["email"]
+    assert data_result["organizationAddress"] == expected_result["organizationAddress"]
+    assert data_result["organizationName"] == expected_result["organizationName"]
+    assert data_result["role"] == expected_result["role"]
+    assert (
+        data_result["primaryContact"]["name"]
+        == expected_result["primaryContact"]["name"]
+    )
+    assert (
+        data_result["primaryContact"]["phone"]
+        == expected_result["primaryContact"]["phone"]
+    )
+    assert (
+        data_result["primaryContact"]["email"]
+        == expected_result["primaryContact"]["email"]
+    )
+    assert len(data_result["onsiteContacts"]) == len(expected_result["onsiteContacts"])
+    for i in range(len(expected_result["onsiteContacts"])):
+        assert (
+            data_result["onsiteContacts"][i]["name"]
+            == expected_result["onsiteContacts"][i]["name"]
+        )
+        assert (
+            data_result["onsiteContacts"][i]["phone"]
+            == expected_result["onsiteContacts"][i]["phone"]
+        )
+        assert (
+            data_result["onsiteContacts"][i]["email"]
+            == expected_result["onsiteContacts"][i]["email"]
+        )
 
 
 def convert_to_dtos(mock_result):
     mock_result_dtos = []
     for request_dict in mock_result:
         kwargs = {
-            "contact_name": request_dict["info"]["contact_name"],
-            "contact_email": request_dict["info"]["contact_email"],
-            "contact_phone": request_dict["info"]["contact_phone"],
+            "email": request_dict["info"]["email"],
+            "organization_address": request_dict["info"]["organization_address"],
+            "organization_name": request_dict["info"]["organization_name"],
             "role": request_dict["info"]["role"],
+            "primary_contact": request_dict["info"]["primary_contact"],
+            "onsite_contacts": request_dict["info"]["onsite_contacts"],
             "date_submitted": request_dict["date_submitted"],
             "status": request_dict["status"],
         }
@@ -39,24 +129,51 @@ def convert_to_dtos(mock_result):
 
 def test_create_onboarding_request():
     query_string = """mutation testCreateOnboardingRequest {
-                        createOnboardingRequest(
-                            userInfo:
-                                {contactName: "Jane Doe",
-                                contactEmail: "janedoe@email.com",
-                                contactPhone: "12345",
-                                role: "ASP"
-                                }
+                        createOnboardingRequest (
+                            userInfo: {
+                                email: "test1@organization.com",
+                                organizationAddress: "123 Anywhere Street",
+                                organizationName: "Test1 Org",
+                                role: "ASP",
+                                primaryContact: {
+                                    name: "Jessie",
+                                    phone: "123456",
+                                    email: "jessie123@gmail.com"
+                                },
+                                onsiteContacts: [
+                                    {
+                                        name: "abc",
+                                        phone: "123-456-7890",
+                                        email: "abc@uwblueprint.org"
+                                    },
+                                    {
+                                        name: "Jane Doe",
+                                        phone: "111-222-3333",
+                                        email: "example@domain.com"
+                                    }
+                                ]
+                            }
                         ) {
                             onboardingRequest {
-                            id
-                            info {
-                                contactName,
-                                contactEmail,
-                                contactPhone,
-                                role
-                            }
-                            dateSubmitted
-                            status
+                                id
+                                info {
+                                    email
+                                    organizationAddress
+                                    organizationName
+                                    role
+                                    primaryContact {
+                                        name
+                                        phone
+                                        email
+                                    }
+                                    onsiteContacts {
+                                        name
+                                        phone
+                                        email
+                                    }
+                                }
+                                dateSubmitted
+                                status
                             }
                         }
                     }"""
@@ -65,22 +182,18 @@ def test_create_onboarding_request():
         "onboardingRequest"
     ]
     user_info_result = onboarding_request_result["info"]
-    assert user_info_result
-    assert user_info_result["contactName"] == "Jane Doe"
-    assert user_info_result["contactEmail"] == "janedoe@email.com"
-    assert user_info_result["contactPhone"] == "12345"
-    assert user_info_result["role"] == "ASP"
     assert onboarding_request_result["status"] == "Pending"
+    assert_user_infos_equal(user_info_result, mock_info1_camel)
 
 
 def test_get_all_requests(mocker):
     mock_date = datetime.datetime.now()
     mock_result = [
         OnboardingRequest(
-            info=mock_info1, status="Pending", date_submitted=mock_date
+            info=mock_user_info1, status="Pending", date_submitted=mock_date
         ).to_serializable_dict(),
         OnboardingRequest(
-            info=mock_info2, status="Approved", date_submitted=mock_date
+            info=mock_user_info2, status="Approved", date_submitted=mock_date
         ).to_serializable_dict(),
     ]
 
@@ -95,47 +208,50 @@ def test_get_all_requests(mocker):
     executed = graphql_schema.execute(
         """ {
              getAllOnboardingRequests(number: 5, offset: 0) {
-                contactName
-                contactEmail
-                contactPhone
-                role
-                dateSubmitted
-                status
-                }
+                    email
+                    organizationAddress
+                    organizationName
+                    role
+                    primaryContact {
+                        name
+                        phone
+                        email
+                    }
+                    onsiteContacts {
+                        name
+                        phone
+                        email
+                    }
+                    dateSubmitted
+                    status
+                    }
             }"""
     )
 
-    expected_result = {
-        "data": {
-            "getAllOnboardingRequests": [
-                {
-                    "contactName": "Jessie",
-                    "contactEmail": "jessie123@gmail.com",
-                    "contactPhone": "123456",
-                    "role": "ASP",
-                    "dateSubmitted": mock_date.isoformat(),
-                    "status": "Pending",
-                },
-                {
-                    "contactName": "Mr. Goose",
-                    "contactEmail": "goose@gmail.com",
-                    "contactPhone": "98765",
-                    "role": "Donor",
-                    "dateSubmitted": mock_date.isoformat(),
-                    "status": "Approved",
-                },
-            ]
-        }
-    }
+    assert (
+        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
+        == mock_date.isoformat()
+    )
+    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Pending"
+    assert_user_infos_equal(
+        executed.data["getAllOnboardingRequests"][0], mock_info1_camel
+    )
 
-    assert executed.data == expected_result["data"]
+    assert (
+        executed.data["getAllOnboardingRequests"][1]["dateSubmitted"]
+        == mock_date.isoformat()
+    )
+    assert executed.data["getAllOnboardingRequests"][1]["status"] == "Approved"
+    assert_user_infos_equal(
+        executed.data["getAllOnboardingRequests"][1], mock_info2_camel
+    )
 
 
 def test_filter_requests_by_role(mocker):
     mock_date = datetime.datetime.now()
     mock_result = [
         OnboardingRequest(
-            info=mock_info2, status="Pending", date_submitted=mock_date
+            info=mock_user_info2, status="Pending", date_submitted=mock_date
         ).to_serializable_dict(),
     ]
     mock_result_dtos = convert_to_dtos(mock_result)
@@ -149,39 +265,41 @@ def test_filter_requests_by_role(mocker):
     executed = graphql_schema.execute(
         """ {
              getAllOnboardingRequests(role: "Donor") {
-                contactName
-                contactEmail
-                contactPhone
+                email
+                organizationAddress
+                organizationName
                 role
+                primaryContact {
+                    name
+                    phone
+                    email
+                }
+                onsiteContacts {
+                    name
+                    phone
+                    email
+                }
                 dateSubmitted
                 status
                 }
             }"""
     )
 
-    expected_result = {
-        "data": {
-            "getAllOnboardingRequests": [
-                {
-                    "contactName": "Mr. Goose",
-                    "contactEmail": "goose@gmail.com",
-                    "contactPhone": "98765",
-                    "role": "Donor",
-                    "dateSubmitted": mock_date.isoformat(),
-                    "status": "Pending",
-                },
-            ]
-        }
-    }
-
-    assert executed.data == expected_result["data"]
+    assert (
+        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
+        == mock_date.isoformat()
+    )
+    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Pending"
+    assert_user_infos_equal(
+        executed.data["getAllOnboardingRequests"][0], mock_info2_camel
+    )
 
 
 def test_filter_requests_by_status(mocker):
     mock_date = datetime.datetime.now()
     mock_result = [
         OnboardingRequest(
-            info=mock_info2, status="Approved", date_submitted=mock_date
+            info=mock_user_info2, status="Approved", date_submitted=mock_date
         ).to_serializable_dict(),
     ]
 
@@ -196,39 +314,41 @@ def test_filter_requests_by_status(mocker):
     executed = graphql_schema.execute(
         """ {
              getAllOnboardingRequests(status: "Approved") {
-                contactName
-                contactEmail
-                contactPhone
+                email
+                organizationAddress
+                organizationName
                 role
+                primaryContact {
+                    name
+                    phone
+                    email
+                }
+                onsiteContacts {
+                    name
+                    phone
+                    email
+                }
                 dateSubmitted
                 status
                 }
             }"""
     )
 
-    expected_result = {
-        "data": {
-            "getAllOnboardingRequests": [
-                {
-                    "contactName": "Mr. Goose",
-                    "contactEmail": "goose@gmail.com",
-                    "contactPhone": "98765",
-                    "role": "Donor",
-                    "dateSubmitted": mock_date.isoformat(),
-                    "status": "Approved",
-                },
-            ]
-        }
-    }
-
-    assert executed.data == expected_result["data"]
+    assert (
+        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
+        == mock_date.isoformat()
+    )
+    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Approved"
+    assert_user_infos_equal(
+        executed.data["getAllOnboardingRequests"][0], mock_info2_camel
+    )
 
 
 def test_get_requests_by_id(mocker):
     mock_date = datetime.datetime.now()
     mock_result = [
         OnboardingRequest(
-            info=mock_info1, status="Pending", date_submitted=mock_date
+            info=mock_user_info1, status="Pending", date_submitted=mock_date
         ).to_serializable_dict()
     ]
 
@@ -245,32 +365,34 @@ def test_get_requests_by_id(mocker):
     executed = graphql_schema.execute(
         """ {
              getOnboardingRequestById(id: "0") {
-                contactName
-                contactEmail
-                contactPhone
+                email
+                organizationAddress
+                organizationName
                 role
+                primaryContact {
+                    name
+                    phone
+                    email
+                }
+                onsiteContacts {
+                    name
+                    phone
+                    email
+                }
                 dateSubmitted
                 status
                 }
             }"""
     )
 
-    expected_result = {
-        "data": {
-            "getOnboardingRequestById": [
-                {
-                    "contactName": "Jessie",
-                    "contactEmail": "jessie123@gmail.com",
-                    "contactPhone": "123456",
-                    "role": "ASP",
-                    "dateSubmitted": mock_date.isoformat(),
-                    "status": "Pending",
-                },
-            ]
-        }
-    }
-
-    assert executed.data == expected_result["data"]
+    assert (
+        executed.data["getOnboardingRequestById"][0]["dateSubmitted"]
+        == mock_date.isoformat()
+    )
+    assert executed.data["getOnboardingRequestById"][0]["status"] == "Pending"
+    assert_user_infos_equal(
+        executed.data["getOnboardingRequestById"][0], mock_info1_camel
+    )
 
 
 # def test_approve_onboading_request():

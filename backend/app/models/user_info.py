@@ -1,11 +1,19 @@
 import mongoengine as mg
 
 
+class Contact(mg.EmbeddedDocument):
+    name = mg.StringField(required=True)
+    email = mg.StringField(required=True)
+    phone = mg.StringField(required=True)
+
+
 class UserInfo(mg.EmbeddedDocument):
-    contact_name = mg.StringField(required=True)
-    contact_email = mg.StringField(required=True)
-    contact_phone = mg.StringField()
+    email = mg.StringField(required=True)
+    organization_address = mg.StringField(required=True)
+    organization_name = mg.StringField(required=True)
     role = mg.StringField(choices=["Admin", "Donor", "ASP"], required=True)
+    primary_contact = mg.EmbeddedDocumentField(Contact, required=True)
+    onsite_contacts = mg.EmbeddedDocumentListField(Contact, required=True)
 
     meta = {"allow_inheritance": True}
 

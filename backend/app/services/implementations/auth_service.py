@@ -154,6 +154,32 @@ class AuthService(IAuthService):
             )
             raise e
 
+    def send_onboarding_request_rejected_email(self, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call send_onboarding_request_rejected_email but this
+                instance of AuthService does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            email_body = """
+            Hello,
+            <br><br>
+            This is a notification that your onboarding request has been rejected.
+            <br><br>
+            """
+            self.email_service.send_email(
+                email, "Onboarding request rejected", email_body
+            )
+
+        except Exception as e:
+            self.logger.error(
+                "Failed to send onboarding request rejected email for user "
+            )
+            raise e
+
     def __is_authorized_by_condition(self, context, condition):
         return context.firebase_user.email_verified and (
             condition or context.user.info.role == "Admin"
@@ -198,3 +224,39 @@ class AuthService(IAuthService):
             )
         except Exception:
             return False
+
+    def send_onboarding_request_approve_email(self, objectID, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call send_onboarding_request_approve_email but this
+                instance of AuthService does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            url = "https://feeding-canadian-kids-staging.web.app"
+            set_password_link = "{url}/{ObjectID}/set-password".format(
+                url=url, ObjectID=objectID
+            )
+
+            email_body = """
+            Hello,
+            <br><br>
+            We have received your onboarding request and it has been approved.
+            Please set your password using the following link.
+            <br><br>
+            <a href="{reset_link}">Reset Password</a>
+            """.format(
+                reset_link=set_password_link
+            )
+
+            self.email_service.send_email(
+                email, "Onboarding request approved. Set Password", email_body
+            )
+
+        except Exception as e:
+            self.logger.error(
+                "Failed to send onboarding request approved email for user "
+            )
+            raise e

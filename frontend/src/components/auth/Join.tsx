@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -20,9 +21,24 @@ import {
   Thead,
   Tr,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
+import LargerBackgroundImage from "../../assets/largerbackground.png";
+import {
+  DASHBOARD_PAGE,
+  HOME_PAGE,
+  JOIN_SUCCESS_PAGE,
+} from "../../constants/Routes";
+import AuthContext from "../../contexts/AuthContext";
+import {
+  Contact,
+  OnboardingRequest,
+  Role,
+  UserInfo,
+} from "../../types/AuthTypes";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -37,25 +53,36 @@ const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
 
-type Contact = {
-  name: string;
-  phone: string;
-  email: string;
-};
-
-type Request = {
-  role: string;
-  email: string;
-  organizationName: string;
-  organizationAddress: string;
-  contactName: string;
-  contactPhone: string;
-  contactEmail: string;
-  onsiteInfo: Array<Contact>;
-};
+const SIGNUP = gql`
+  mutation OnboardRequest($userInfo: UserInfoInput!) {
+    createOnboardingRequest(userInfo: $userInfo) {
+      onboardingRequest {
+        id
+        info {
+          email
+          organizationAddress
+          organizationName
+          role
+          primaryContact {
+            name
+            phone
+            email
+          }
+          onsiteContacts {
+            name
+            phone
+            email
+          }
+        }
+        dateSubmitted
+        status
+      }
+    }
+  }
+`;
 
 const Join = (): React.ReactElement => {
-  const [role, setRole] = useState("ASP");
+  const [role, setRole] = useState<Role>("ASP");
   const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [organizationAddress, setOrganizationAddress] = useState("");
@@ -74,6 +101,16 @@ const Join = (): React.ReactElement => {
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [isWebView] = useMediaQuery("(min-width: 62em)");
+  const [signup] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
+    SIGNUP,
+  );
+  const toast = useToast();
+  const navigate = useNavigate();
+  const { authenticatedUser } = useContext(AuthContext);
+
+  if (authenticatedUser) {
+    return <Navigate replace to={DASHBOARD_PAGE} />;
+  }
 
   const getTitleSection = (): React.ReactElement => {
     return (
@@ -110,12 +147,15 @@ const Join = (): React.ReactElement => {
           >
             Type of user
           </FormLabel>
-          <RadioGroup onChange={setRole} value={role}>
+          <RadioGroup
+            onChange={(radioVal) => setRole(radioVal as Role)}
+            value={role}
+          >
             <Stack direction={{ base: "column", lg: "row" }}>
               <Radio value="ASP">
                 <Text variant="desktop-heading-6">After School Program</Text>
               </Radio>
-              <Radio value="MD">
+              <Radio value="Donor">
                 <Text variant="desktop-heading-6">Meal Donor</Text>
               </Radio>
             </Stack>
@@ -501,6 +541,7 @@ const Join = (): React.ReactElement => {
           <Text
             variant="desktop-button-bold"
             cursor="pointer"
+            w="fit-content"
             onClick={() => {
               setOnsiteInfo([
                 ...onsiteInfo,
@@ -512,7 +553,7 @@ const Join = (): React.ReactElement => {
               ]);
             }}
           >
-            + Add another contact
+            + Add onsite staff
           </Text>
         )}
       </Flex>
@@ -604,6 +645,7 @@ const Join = (): React.ReactElement => {
           <Text
             variant="mobile-body-bold"
             cursor="pointer"
+            w="fit-content"
             onClick={() => {
               setOnsiteInfo([
                 ...onsiteInfo,
@@ -615,11 +657,85 @@ const Join = (): React.ReactElement => {
               ]);
             }}
           >
-            + Add another contact
+            + Add onsite staff
           </Text>
         )}
       </Flex>
     );
+  };
+
+  const handleSignUp = async (userInfo: UserInfo) => {
+    try {
+      const response = await signup({ variables: { userInfo } });
+      // eslint-disable-next-line no-console
+      console.log(response);
+      navigate(JOIN_SUCCESS_PAGE);
+    } catch (e: unknown) {
+      toast({
+        title: "Failed to create account. Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+      // eslint-disable-next-line no-console
+      console.log(e);
+    }
+  };
+
+  const isRequestValid = () => {
+    const stringsToValidate = [
+      role,
+      organizationName,
+      organizationAddress,
+      primaryContact.name,
+    ];
+    const phoneNumsToValidate = [primaryContact.phone];
+    const emailsToValidate = [email, primaryContact.email];
+
+    for (let i = 0; i < onsiteInfo.length; i += 1) {
+      stringsToValidate.push(onsiteInfo[i].name);
+      phoneNumsToValidate.push(onsiteInfo[i].phone);
+      emailsToValidate.push(onsiteInfo[i].email);
+    }
+
+    for (let i = 0; i < stringsToValidate.length; i += 1) {
+      if (stringsToValidate[i] === "") return false;
+    }
+
+    for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
+      if (phoneNumsToValidate[i] === "") return false;
+    }
+
+    for (let i = 0; i < emailsToValidate.length; i += 1) {
+      if (!isValidEmail(emailsToValidate[i])) return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = () => {
+    setAttemptedSubmit(true);
+    if (!isRequestValid()) return;
+    const request: UserInfo = {
+      email: trimWhiteSpace(email),
+      organizationAddress: trimWhiteSpace(organizationAddress),
+      organizationName: trimWhiteSpace(organizationName),
+      role,
+      primaryContact: {
+        name: trimWhiteSpace(primaryContact.name),
+        email: trimWhiteSpace(primaryContact.email),
+        phone: trimWhiteSpace(primaryContact.phone),
+      },
+      onsiteContacts: onsiteInfo.map((obj) => ({
+        name: trimWhiteSpace(obj.name),
+        phone: trimWhiteSpace(obj.phone),
+        email: trimWhiteSpace(obj.email),
+      })),
+    };
+
+    // eslint-disable-next-line no-console
+    console.log(request);
+
+    handleSignUp(request);
   };
 
   const getSubmitSection = (): React.ReactElement => {
@@ -630,57 +746,15 @@ const Join = (): React.ReactElement => {
           variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
           color="white"
           bgColor="primary.blue"
+          disabled={attemptedSubmit && !isRequestValid()}
           _hover={{ bgColor: "primary.blue" }}
-          borderRadius="6px"
-          onClick={() => {
-            setAttemptedSubmit(true);
-
-            const stringsToValidate = [
-              role,
-              organizationName,
-              organizationAddress,
-              primaryContact.name,
-            ];
-            const phoneNumsToValidate = [primaryContact.phone];
-            const emailsToValidate = [email, primaryContact.email];
-
-            for (let i = 0; i < onsiteInfo.length; i += 1) {
-              stringsToValidate.push(onsiteInfo[i].name);
-              phoneNumsToValidate.push(onsiteInfo[i].phone);
-              emailsToValidate.push(onsiteInfo[i].email);
-            }
-
-            for (let i = 0; i < stringsToValidate.length; i += 1) {
-              if (stringsToValidate[i] === "") return;
-            }
-
-            for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
-              if (phoneNumsToValidate[i] === "") return;
-            }
-
-            for (let i = 0; i < emailsToValidate.length; i += 1) {
-              if (!isValidEmail(emailsToValidate[i])) return;
-            }
-
-            const request: Request = {
-              role: trimWhiteSpace(role),
-              email: trimWhiteSpace(email),
-              organizationName: trimWhiteSpace(organizationName),
-              organizationAddress: trimWhiteSpace(organizationAddress),
-              contactName: trimWhiteSpace(primaryContact.name),
-              contactPhone: trimWhiteSpace(primaryContact.phone),
-              contactEmail: trimWhiteSpace(primaryContact.email),
-              onsiteInfo: onsiteInfo.map((obj) => ({
-                name: trimWhiteSpace(obj.name),
-                phone: trimWhiteSpace(obj.phone),
-                email: trimWhiteSpace(obj.email),
-              })),
-            };
-
-            // eslint-disable-next-line no-console
-            console.log(request);
-            // process createOnboardingRequest
+          _disabled={{
+            bgColor: "#CCCCCC !important",
+            color: "#666666",
+            cursor: "auto",
           }}
+          borderRadius="6px"
+          onClick={handleSubmit}
         >
           Create Account
         </Button>
@@ -689,8 +763,13 @@ const Join = (): React.ReactElement => {
           variant={{ base: "mobile-xs", lg: "desktop-xs" }}
         >
           {"By selecting Create Account, you agree to FCK's "}
-          {/* replace with actual terms & conditions link */}
-          <Link color="primary.blue" textDecoration="underline" href="/join">
+          {/* TODO: replace HOME_PAGE with actual terms & conditions route */}
+          <Link
+            color="primary.blue"
+            textDecoration="underline"
+            href={HOME_PAGE}
+            isExternal
+          >
             Terms & Conditions
           </Link>
         </Text>
@@ -699,18 +778,28 @@ const Join = (): React.ReactElement => {
   };
 
   return (
-    <Center>
+    <Center
+      style={{
+        backgroundImage: `url(${LargerBackgroundImage})`,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
+    >
       <Flex
         flexDir="column"
         w={{ base: "100%", lg: "911px" }}
         p={{ base: "24px", sm: "48px", lg: "64px" }}
-        m="128px 0"
+        marginBottom="50px"
         gap={{ base: "20px", lg: "32px" }}
         borderRadius="8px"
         boxShadow={{
           base: "",
           lg:
             "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
+        }}
+        style={{
+          backgroundColor: "white",
         }}
       >
         {getTitleSection()}

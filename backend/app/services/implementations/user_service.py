@@ -204,34 +204,25 @@ class UserService(IUserService):
         }
         return UserDTO(**kwargs)
 
-    # TODO: update this along with class UpdateUserByID
-    def update_user_by_id(self, user_id, user):
+    def update_user_by_id(self, user_id, update_user_dto):
         try:
-            update_user_dict = user.__dict__
-            email = update_user_dict.pop("email", None)
-
-            # workaround for running validations since modify() doesn't auto-run them
-            # auth_id is a placeholder because it is not part of the UpdateUserDTO
-            User(auth_id="", **update_user_dict).validate()
-
-            old_user = User.objects(id=user_id).modify(new=False, **update_user_dict)
+            old_user = User.objects(id=user_id).modify(
+                new=False, auth_id=update_user_dto.auth_id, info=update_user_dto.info
+            )
 
             if not old_user:
                 raise Exception("user_id {user_id} not found".format(user_id=user_id))
 
-            # IMPORTANT: update_user_dict references the same instance of
-            # UpdateUserDTO as user
-            update_user_dict["email"] = email
-
             try:
-                firebase_admin.auth.update_user(old_user.auth_id, email=user.email)
+                firebase_admin.auth.update_user(
+                    old_user.auth_id, email=update_user_dto.info.email
+                )
             except Exception as firebase_error:
                 try:
                     # rollback MongoDB user update
                     User.objects(id=user_id).modify(
-                        first_name=old_user.first_name,
-                        last_name=old_user.last_name,
-                        role=old_user.role,
+                        auth_id=old_user.auth_id,
+                        info=old_user.info,
                     )
                 except Exception as mongo_error:
                     reason = getattr(mongo_error, "message", None)
@@ -256,12 +247,16 @@ class UserService(IUserService):
             )
             raise e
 
-        return UserDTO(user_id, user.first_name, user.last_name, user.email, user.role)
+        updated_user = UserService.get_user_by_id(user_id)
+        updated_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
+            updated_user
+        )
+        kwargs = {
+            "id": updated_user_dict["id"],
+            "info": updated_user_dict["info"],
+        }
+        return UserDTO(**kwargs)
 
-    # TODO:
-    # test if User.objects(id=user_id).modify(remove=True, new=False) actually works.
-    # in particular, modify(remove=True, new=False) is sketchy.
-    # cannot find any documentation on this.
     def delete_user_by_id(self, user_id):
         try:
             deleted_user = User.objects(id=user_id).modify(remove=True, new=False)
@@ -303,10 +298,15 @@ class UserService(IUserService):
             )
             raise e
 
-    # TODO:
-    # test if User.objects(id=user_id).modify(remove=True, new=False) actually works.
-    # in particular, modify(remove=True, new=False) is sketchy.
-    # cannot find any documentation on this.
+        deleted_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
+            deleted_user
+        )
+        kwargs = {
+            "id": deleted_user_dict["id"],
+            "info": deleted_user_dict["info"],
+        }
+        return UserDTO(**kwargs)
+
     def delete_user_by_email(self, email):
         try:
             firebase_user = firebase_admin.auth.get_user_by_email(email)
@@ -351,6 +351,15 @@ class UserService(IUserService):
                 )
             )
             raise e
+
+        deleted_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
+            deleted_user
+        )
+        kwargs = {
+            "id": deleted_user_dict["id"],
+            "info": deleted_user_dict["info"],
+        }
+        return UserDTO(**kwargs)
 
     @staticmethod
     def __user_to_serializable_dict_and_remove_auth_id(user):

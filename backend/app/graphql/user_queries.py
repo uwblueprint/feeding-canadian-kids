@@ -20,7 +20,7 @@ class UserQueries(QueryList):
         if role != "":
             filtered = []
             for user in users:
-                if user.role == role:
+                if user.info.role == role:
                     filtered.append(
                         User(
                             id=user.id,

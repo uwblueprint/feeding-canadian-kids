@@ -5,33 +5,33 @@ from .types import (
     Mutation,
     MutationList,
     User,
+    UserInfo,
 )
 
 
-# TODO: refactor and update with user_service.update_user_by_id
 class UpdateUserByID(Mutation):
     class Arguments:
         auth_id = graphene.String()
         id = graphene.String()
+        userInfo = graphene.Field(UserInfo)
 
     user = graphene.Field(User)
 
-    def mutate(self, info, auth_id, id, name, email, role):
+    def mutate(self, info, auth_id, id, userInfo):
         user_service = services["user_service"]
         requester_id = user_service.get_user_id_by_auth_id(auth_id)
         requester_role = user_service.get_user_role_by_auth_id(auth_id)
 
         if requester_role == "Admin" or requester_id == id:
-            user = user_service.update_user_by_id(
+            user_dto = user_service.update_user_by_id(
                 id,
-                UpdateUserDTO(id, name.split(" ")[0], name.split(" ")[1], email, role),
+                UpdateUserDTO(auth_id=auth_id, info=userInfo),
             )
 
             return UpdateUserByID(
                 user=User(
-                    name=f"{user.first_name} {user.last_name}",
-                    email=user.email,
-                    role=user.role,
+                    id=user_dto.id,
+                    info=user_dto.info,
                 )
             )
 

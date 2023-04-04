@@ -20,6 +20,12 @@ class EntityDTO(object):
         self.bool_field = kwargs.get("bool_field")
         self.file = kwargs.get("file")
 
+        error_list = self.validate()
+        if len(error_list) > 0:
+            error_message = "\n".join(error_list)
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
     def validate(self):
         error_list = []
         if type(self.string_field) is not str:

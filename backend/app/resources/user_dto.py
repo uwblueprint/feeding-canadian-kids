@@ -6,6 +6,12 @@ class UserDTO:
         self.id = id
         self.info = info
 
+        error_list = self.validate()
+        if len(error_list) > 0:
+            error_message = "\n".join(error_list)
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
     def validate(self):
         error_list = validate_userinfo(self.info, [])
 

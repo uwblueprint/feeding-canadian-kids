@@ -1,10 +1,16 @@
-# this class is currnetly unused
+# this class is currently unused
 # class RegisterUserDTO:
 #     def __init__(self, **kwargs):
 #         self.first_name = kwargs.get("first_name")
 #         self.last_name = kwargs.get("last_name")
 #         self.email = kwargs.get("email")
 #         self.password = kwargs.get("password")
+
+#         error_list = self.validate()
+#         if len(error_list) > 0:
+#             error_message = "\n".join(error_list)
+#             self.logger.error(error_message)
+#             raise Exception(error_message)
 
 #     def validate(self):
 #         error_list = []

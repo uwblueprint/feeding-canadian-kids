@@ -9,16 +9,15 @@ import {
   Input,
   Text,
   VStack,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 import BackgroundImage from "../../assets/background.png";
 import { LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import NotFound from "../pages/NotFound";
-
 
 const ResetPassword = (): React.ReactElement => {
   const [notMatching, setNotMatching] = useState(false);
@@ -28,14 +27,14 @@ const ResetPassword = (): React.ReactElement => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const { authenticatedUser } = useContext(AuthContext)
+  const { authenticatedUser } = useContext(AuthContext);
 
-  const RESET_PASSWORD = gql `
-  mutation ResetPassword($email: String!, $password: String!) {
-    resetPassword(email: $email, password: $password) {
-      success
+  const RESET_PASSWORD = gql`
+    mutation ResetPassword($email: String!, $password: String!) {
+      resetPassword(email: $email, password: $password) {
+        success
+      }
     }
-  }
   `;
 
   const [resetPassword, { loading }] = useMutation(RESET_PASSWORD);
@@ -45,8 +44,8 @@ const ResetPassword = (): React.ReactElement => {
       await resetPassword({
         variables: {
           email: authenticatedUser?.email,
-          password
-        }
+          password,
+        },
       });
       navigate(LOGIN_PAGE);
     } catch (e: unknown) {
@@ -56,21 +55,19 @@ const ResetPassword = (): React.ReactElement => {
         isClosable: true,
       });
     }
-  }
+  };
 
   const onResetPasswordClick = async () => {
     setNotMatching(password !== confirm);
     setTooShort(password.length < 8);
 
-    if(notMatching || tooShort) return;
+    if (notMatching || tooShort) return;
 
     handleResetPassword();
   };
 
   if (!authenticatedUser) {
-    return (
-      <NotFound />
-    )
+    return <NotFound />;
   }
 
   return (

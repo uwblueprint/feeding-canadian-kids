@@ -5,15 +5,15 @@ from .types import (
     Mutation,
     MutationList,
     User,
-    UserInfo,
+    UserInfoInput,
 )
 
 
 class UpdateUserByID(Mutation):
     class Arguments:
-        auth_id = graphene.String()
-        id = graphene.String()
-        userInfo = graphene.Field(UserInfo)
+        auth_id = graphene.String(required=True)
+        id = graphene.String(required=True)
+        userInfo = UserInfoInput(required=True)
 
     user = graphene.Field(User)
 

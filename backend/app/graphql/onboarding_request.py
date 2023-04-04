@@ -2,24 +2,7 @@ import graphene
 
 from ..graphql.services import services
 
-from .types import Mutation, MutationList, QueryList, UserInfo
-
-
-# Object Types
-class ContactInput(graphene.InputObjectType):
-    name = graphene.String(required=True)
-    email = graphene.String(required=True)
-    phone = graphene.String(required=True)
-
-
-class UserInfoInput(graphene.InputObjectType):
-    email = graphene.String(required=True)
-    organization_address = graphene.String(required=True)
-    organization_name = graphene.String(required=True)
-    role = graphene.String(required=True)
-    primary_contact = graphene.Field(ContactInput, required=True)
-    onsite_contacts = graphene.List(ContactInput, required=True)
-
+from .types import Mutation, MutationList, QueryList, UserInfo, UserInfoInput
 
 class OnboardingRequest(graphene.ObjectType):
     id = graphene.ID()

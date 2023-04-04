@@ -42,6 +42,18 @@ class UserInfo(graphene.ObjectType):
     primary_contact = graphene.Field(Contact)
     onsite_contacts = graphene.List(Contact)
 
+class ContactInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+    email = graphene.String(required=True)
+    phone = graphene.String(required=True)
+
+class UserInfoInput(graphene.InputObjectType):
+    email = graphene.String(required=True)
+    organization_address = graphene.String(required=True)
+    organization_name = graphene.String(required=True)
+    role = graphene.String(required=True)
+    primary_contact = graphene.Field(ContactInput, required=True)
+    onsite_contacts = graphene.List(ContactInput, required=True)
 
 class User(graphene.ObjectType):
     id = graphene.String()

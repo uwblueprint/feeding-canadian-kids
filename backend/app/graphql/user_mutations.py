@@ -25,7 +25,10 @@ class UpdateUserByID(Mutation):
         if requester_role == "Admin" or requester_id == id:
             user_dto = user_service.update_user_by_id(
                 id,
-                UpdateUserDTO(auth_id=auth_id, info=userInfo),
+                UpdateUserDTO(
+                    auth_id=auth_id,
+                    info=userInfo.__dict__,
+                ),
             )
 
             return UpdateUserByID(

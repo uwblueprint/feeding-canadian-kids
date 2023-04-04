@@ -45,7 +45,9 @@ class OnboardingRequestQueries(QueryList):
     )
 
     def resolve_getAllOnboardingRequests(self, info, number, offset, role, status):
-        requests = services["onboarding_request_service"].get_all_onboarding_requests(
+        onboarding_request_dtos = services[
+            "onboarding_request_service"
+        ].get_all_onboarding_requests(
             number,
             offset,
             role,
@@ -53,23 +55,23 @@ class OnboardingRequestQueries(QueryList):
         )
         return [
             OnboardingRequest(
-                id=request.id,
-                info=request.info,
-                date_submitted=request.date_submitted,
-                status=request.status,
+                id=onboarding_request_dto.id,
+                info=onboarding_request_dto.info,
+                date_submitted=onboarding_request_dto.date_submitted,
+                status=onboarding_request_dto.status,
             )
-            for request in requests
+            for onboarding_request_dto in onboarding_request_dtos
         ]
 
     def resolve_getOnboardingRequestById(self, info, id):
-        request = services["onboarding_request_service"].get_onboarding_request_by_id(
-            id
-        )
+        onboarding_request_dto = services[
+            "onboarding_request_service"
+        ].get_onboarding_request_by_id(id)
         return OnboardingRequest(
-            id=request.id,
-            info=request.info,
-            date_submitted=request.date_submitted,
-            status=request.status,
+            id=onboarding_request_dto.id,
+            info=onboarding_request_dto.info,
+            date_submitted=onboarding_request_dto.date_submitted,
+            status=onboarding_request_dto.status,
         )
 
 

@@ -4,6 +4,7 @@ from ..graphql.services import services
 
 from .types import Mutation, MutationList, QueryList, UserInfo, UserInfoInput
 
+
 class OnboardingRequest(graphene.ObjectType):
     id = graphene.ID()
     info = graphene.Field(UserInfo)

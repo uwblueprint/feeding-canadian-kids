@@ -19,9 +19,9 @@ def BaseLogin(method_name):
         """
 
         class Arguments:
-            email = graphene.String()
-            password = graphene.String()
-            id_token = graphene.String()
+            email = graphene.String(required=True)
+            password = graphene.String(required=True)
+            id_token = graphene.String(required=True)
 
         registered_user = graphene.Field(RegisteredUser)
 
@@ -49,9 +49,9 @@ class Register(Mutation):
     """
 
     class Arguments:
-        email = graphene.String()
-        password = graphene.String()
-        request_id = graphene.String()
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+        request_id = graphene.String(required=True)
 
     registered_user = graphene.Field(RegisteredUser)
 
@@ -110,7 +110,7 @@ class ResetPassword(Mutation):
     """
 
     class Arguments:
-        email = graphene.String()
+        email = graphene.String(required=True)
 
     success = graphene.Boolean()
 

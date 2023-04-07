@@ -20,7 +20,7 @@ import {
   
     return isMobileView ? (
       <VStack width="100wh" bg="#F8F8FB">
-        <Stack direction="column" h="15%" padding="16px 48px">
+        <Stack direction="column" h="15%" padding="25px 48px">
           <VStack  direction="column" padding="1% 4% 1% 4%">
             <Text fontSize="14px" color="#647488" align="center">
               Feeding Canadian Kids registered Charity Number: 783404882RR0001

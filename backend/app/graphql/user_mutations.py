@@ -27,7 +27,7 @@ class UpdateUserByID(Mutation):
                 id,
                 UpdateUserDTO(
                     auth_id=auth_id,
-                    info=userInfo.__dict__,
+                    info=userInfo,
                 ),
             )
 

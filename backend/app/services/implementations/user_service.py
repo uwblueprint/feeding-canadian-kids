@@ -207,7 +207,9 @@ class UserService(IUserService):
     def update_user_by_id(self, user_id, update_user_dto):
         try:
             old_user = User.objects(id=user_id).modify(
-                new=False, auth_id=update_user_dto.auth_id, info=update_user_dto.info
+                new=False,
+                auth_id=update_user_dto.auth_id,
+                info=update_user_dto.info,
             )
 
             if not old_user:
@@ -247,7 +249,12 @@ class UserService(IUserService):
             )
             raise e
 
-        updated_user = UserService.get_user_by_id(user_id)
+        updated_user = User.objects(id=user_id).first()
+        if not updated_user:
+            error_message = f"updated user_id {user_id} not found"
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
         updated_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
             updated_user
         )

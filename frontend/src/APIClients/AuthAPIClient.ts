@@ -172,4 +172,10 @@ const refresh = async (refreshFunction: RefreshFunction): Promise<boolean> => {
   return success;
 };
 
-export default { login, logout, loginWithGoogle, register, refresh };
+export default {
+  login,
+  logout,
+  loginWithGoogle,
+  register,
+  refresh,
+};

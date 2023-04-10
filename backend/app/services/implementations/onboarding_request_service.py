@@ -49,6 +49,7 @@ class OnboardingRequestService(IOnboardingRequestService):
 
         try:
             filteredRequests = OnboardingRequest.objects()
+            print(filteredRequests)
             if role:
                 filteredRequests = filteredRequests.filter(info__role=role)
             if status:
@@ -115,7 +116,7 @@ class OnboardingRequestService(IOnboardingRequestService):
 
             referenced_onboarding_request.save()  # save the changes
 
-            recipient_email = referenced_onboarding_request.info.contact_email
+            recipient_email = referenced_onboarding_request.info.email
             AuthService.send_onboarding_request_approve_email(
                 self, request_id, recipient_email
             )
@@ -142,7 +143,7 @@ class OnboardingRequestService(IOnboardingRequestService):
 
             referenced_onboarding_request.save()  # save the changes
 
-            recipient_email = referenced_onboarding_request.info.contact_email
+            recipient_email = referenced_onboarding_request.info.email
 
             AuthService.send_onboarding_request_rejected_email(self, recipient_email)
 

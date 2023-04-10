@@ -1,3 +1,4 @@
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Button,
@@ -8,10 +9,13 @@ import {
   Input,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import BackgroundImage from "../../assets/background.png";
+import { LOGIN_PAGE } from "../../constants/Routes";
 
 const SetPassword = (): React.ReactElement => {
   const [notMatching, setNotMatching] = useState(false);
@@ -19,11 +23,93 @@ const SetPassword = (): React.ReactElement => {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
-  const onResetPasswordClick = () => {
-    setNotMatching(password !== confirm);
-    setTooShort(password.length < 8);
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { objectID: objectId } = useParams();
 
-    // await resetPassword({ variables: { email: authenticatedUser?.email } });
+  const GET_ONBOARDING_REQUEST = gql`
+    query GetOnboardingRequestById{
+      getOnboardingRequestById(id: "${objectId}"
+          
+        ) {
+        email
+        organizationAddress
+        organizationName
+        role
+        primaryContact {
+          name
+          email
+          phone
+        }
+        onsiteContacts {
+          name
+          email
+          phone
+        }
+        dateSubmitted
+        status
+      }
+    }
+  `;
+
+  const REGISTER_USER = gql`
+    mutation register(
+      $email: String!
+      $password: String!
+      $requestId: String!
+    ) {
+      register(email: $email, password: $password, requestId: $requestId) {
+        user {
+          accessToken
+          id
+          firstName
+          lastName
+          email
+          role
+        }
+      }
+    }
+  `;
+
+  const { data: onboardingData, error: onboardingError } = useQuery(
+    GET_ONBOARDING_REQUEST,
+  );
+
+  const [register, { loading: registerLoading }] = useMutation(REGISTER_USER);
+
+  const dataStatus = () => {
+    return onboardingData?.getOnboardingRequestById[0].status !== "Approved";
+  };
+
+  const handleRegister = async () => {
+    try {
+      await register({
+        variables: {
+          email: onboardingData?.getOnboardingRequestById[0].email,
+          password,
+          requestId: objectId,
+        },
+      });
+      navigate(LOGIN_PAGE);
+    } catch (e: unknown) {
+      toast({
+        title: "Failed to set password. Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+    }
+  };
+
+  const onResetPasswordClick = async () => {
+    const passwordMatchCheck = password !== confirm;
+    const passwordLengthCheck = password.length < 8;
+
+    setNotMatching(passwordMatchCheck);
+    setTooShort(passwordLengthCheck);
+
+    if (passwordLengthCheck || passwordMatchCheck) return;
+
+    handleRegister();
   };
 
   return (
@@ -59,17 +145,38 @@ const SetPassword = (): React.ReactElement => {
         >
           Set your password
         </Text>
-        <Text
-          pb={5}
-          textAlign="center"
-          variant={{ base: "mobile-caption", md: "desktop-caption" }}
-        >
-          Please enter your new password. The password must be at least 8
-          characters.
-        </Text>
+        {onboardingError ? (
+          <Text
+            pb={5}
+            textAlign="center"
+            variant={{ base: "mobile-caption", md: "desktop-caption" }}
+            textColor="red"
+          >
+            Sorry, we could not find an onboarding request associated with the
+            object ID.
+          </Text>
+        ) : (
+          <Text
+            pb={5}
+            textAlign="center"
+            variant={{ base: "mobile-caption", md: "desktop-caption" }}
+            textColor={dataStatus() ? "red" : "black"}
+          >
+            {onboardingData?.getOnboardingRequestById[0].status === "Approved"
+              ? "Please enter your new password. The password must be at least 8 characters long."
+              : "Sorry, your onboarding request has not been approved. Please wait for a response from admin."}
+          </Text>
+        )}
+
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
           <Box>
-            <FormControl pb={5} isRequired isInvalid={notMatching || tooShort}>
+            <FormControl
+              pb={5}
+              isRequired
+              isInvalid={
+                notMatching || tooShort || !!onboardingError || dataStatus()
+              }
+            >
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -84,19 +191,28 @@ const SetPassword = (): React.ReactElement => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              {tooShort ? (
+              {tooShort && (
                 <FormErrorMessage>
                   <Text
-                    variant={{ base: "mobile-caption", md: "desktop-caption" }}
+                    variant={{
+                      base: "mobile-caption",
+                      md: "desktop-caption",
+                    }}
                   >
                     Password must be at least 8 characters long.
                   </Text>
                 </FormErrorMessage>
-              ) : null}
+              )}
             </FormControl>
           </Box>
           <Box>
-            <FormControl pb={12} isRequired isInvalid={notMatching || tooShort}>
+            <FormControl
+              pb={12}
+              isRequired
+              isInvalid={
+                notMatching || tooShort || !!onboardingError || dataStatus()
+              }
+            >
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -109,17 +225,21 @@ const SetPassword = (): React.ReactElement => {
                 variant="outline"
                 type="password"
                 value={confirm}
+                // outlineColor={confirmGray ? "red" : ""}
                 onChange={(e) => setConfirm(e.target.value)}
               />
-              {notMatching ? (
+              {notMatching && (
                 <FormErrorMessage>
                   <Text
-                    variant={{ base: "mobile-caption", md: "desktop-caption" }}
+                    variant={{
+                      base: "mobile-caption",
+                      md: "desktop-caption",
+                    }}
                   >
                     Passwords do not match.
                   </Text>
                 </FormErrorMessage>
-              ) : null}
+              )}
             </FormControl>
           </Box>
         </Flex>
@@ -130,6 +250,7 @@ const SetPassword = (): React.ReactElement => {
             pt={1}
             pb={1}
             backgroundColor="primary.blue"
+            disabled={!!onboardingError || dataStatus()}
           >
             <Text
               variant={{
@@ -138,7 +259,7 @@ const SetPassword = (): React.ReactElement => {
               }}
               color="white"
             >
-              Confirm
+              {registerLoading ? "Loading..." : "Confirm"}
             </Text>
           </Button>
         </VStack>

@@ -12,7 +12,7 @@ export const SIGNUP_PAGE = "/signup";
 
 export const RESET_PASSWORD_PAGE = "/:objectID/reset-password";
 
-export const SET_PASSWORD_PAGE = "/set-password";
+export const SET_PASSWORD_PAGE = "/:objectID/set-password";
 
 export const DASHBOARD_PAGE = "/dashboard";
 

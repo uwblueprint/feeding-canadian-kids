@@ -77,49 +77,12 @@ mock_user_info1 = UserInfo(**mock_info1_snake)
 mock_user_info2 = UserInfo(**mock_info2_snake)
 
 
-def assert_user_infos_equal(data_result, expected_result):
-    assert data_result["email"] == expected_result["email"]
-    assert data_result["organizationAddress"] == expected_result["organizationAddress"]
-    assert data_result["organizationName"] == expected_result["organizationName"]
-    assert data_result["role"] == expected_result["role"]
-    assert (
-        data_result["primaryContact"]["name"]
-        == expected_result["primaryContact"]["name"]
-    )
-    assert (
-        data_result["primaryContact"]["phone"]
-        == expected_result["primaryContact"]["phone"]
-    )
-    assert (
-        data_result["primaryContact"]["email"]
-        == expected_result["primaryContact"]["email"]
-    )
-    assert len(data_result["onsiteContacts"]) == len(expected_result["onsiteContacts"])
-    for i in range(len(expected_result["onsiteContacts"])):
-        assert (
-            data_result["onsiteContacts"][i]["name"]
-            == expected_result["onsiteContacts"][i]["name"]
-        )
-        assert (
-            data_result["onsiteContacts"][i]["phone"]
-            == expected_result["onsiteContacts"][i]["phone"]
-        )
-        assert (
-            data_result["onsiteContacts"][i]["email"]
-            == expected_result["onsiteContacts"][i]["email"]
-        )
-
-
 def convert_to_dtos(mock_result):
     mock_result_dtos = []
     for request_dict in mock_result:
         kwargs = {
-            "email": request_dict["info"]["email"],
-            "organization_address": request_dict["info"]["organization_address"],
-            "organization_name": request_dict["info"]["organization_name"],
-            "role": request_dict["info"]["role"],
-            "primary_contact": request_dict["info"]["primary_contact"],
-            "onsite_contacts": request_dict["info"]["onsite_contacts"],
+            "id": request_dict["id"],
+            "info": request_dict["info"],
             "date_submitted": request_dict["date_submitted"],
             "status": request_dict["status"],
         }
@@ -181,9 +144,8 @@ def test_create_onboarding_request():
     onboarding_request_result = result.data["createOnboardingRequest"][
         "onboardingRequest"
     ]
-    user_info_result = onboarding_request_result["info"]
     assert onboarding_request_result["status"] == "Pending"
-    assert_user_infos_equal(user_info_result, mock_info1_camel)
+    assert onboarding_request_result["info"] == mock_info1_camel
 
 
 def test_get_all_requests(mocker):
@@ -208,6 +170,8 @@ def test_get_all_requests(mocker):
     executed = graphql_schema.execute(
         """ {
              getAllOnboardingRequests(number: 5, offset: 0) {
+                id
+                info {
                     email
                     organizationAddress
                     organizationName
@@ -222,36 +186,29 @@ def test_get_all_requests(mocker):
                         phone
                         email
                     }
-                    dateSubmitted
-                    status
-                    }
+                }
+                dateSubmitted
+                status
+                }
             }"""
     )
 
-    assert (
-        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
-        == mock_date.isoformat()
-    )
-    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Pending"
-    assert_user_infos_equal(
-        executed.data["getAllOnboardingRequests"][0], mock_info1_camel
-    )
+    onboarding_request_result1 = executed.data["getAllOnboardingRequests"][0]
+    assert onboarding_request_result1["dateSubmitted"] == mock_date.isoformat()
+    assert onboarding_request_result1["status"] == "Pending"
+    assert onboarding_request_result1["info"] == mock_info1_camel
 
-    assert (
-        executed.data["getAllOnboardingRequests"][1]["dateSubmitted"]
-        == mock_date.isoformat()
-    )
-    assert executed.data["getAllOnboardingRequests"][1]["status"] == "Approved"
-    assert_user_infos_equal(
-        executed.data["getAllOnboardingRequests"][1], mock_info2_camel
-    )
+    onboarding_request_result1 = executed.data["getAllOnboardingRequests"][1]
+    assert onboarding_request_result1["dateSubmitted"] == mock_date.isoformat()
+    assert onboarding_request_result1["status"] == "Approved"
+    assert onboarding_request_result1["info"] == mock_info2_camel
 
 
 def test_filter_requests_by_role(mocker):
     mock_date = datetime.datetime.now()
     mock_result = [
         OnboardingRequest(
-            info=mock_user_info2, status="Pending", date_submitted=mock_date
+            info=mock_user_info1, status="Pending", date_submitted=mock_date
         ).to_serializable_dict(),
     ]
     mock_result_dtos = convert_to_dtos(mock_result)
@@ -264,20 +221,23 @@ def test_filter_requests_by_role(mocker):
 
     executed = graphql_schema.execute(
         """ {
-             getAllOnboardingRequests(role: "Donor") {
-                email
-                organizationAddress
-                organizationName
-                role
-                primaryContact {
-                    name
-                    phone
+             getAllOnboardingRequests(role: "ASP") {
+                id
+                info {
                     email
-                }
-                onsiteContacts {
-                    name
-                    phone
-                    email
+                    organizationAddress
+                    organizationName
+                    role
+                    primaryContact {
+                        name
+                        phone
+                        email
+                    }
+                    onsiteContacts {
+                        name
+                        phone
+                        email
+                    }
                 }
                 dateSubmitted
                 status
@@ -285,14 +245,10 @@ def test_filter_requests_by_role(mocker):
             }"""
     )
 
-    assert (
-        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
-        == mock_date.isoformat()
-    )
-    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Pending"
-    assert_user_infos_equal(
-        executed.data["getAllOnboardingRequests"][0], mock_info2_camel
-    )
+    onboarding_request_result = executed.data["getAllOnboardingRequests"][0]
+    assert onboarding_request_result["dateSubmitted"] == mock_date.isoformat()
+    assert onboarding_request_result["status"] == "Pending"
+    assert onboarding_request_result["info"] == mock_info1_camel
 
 
 def test_filter_requests_by_status(mocker):
@@ -314,19 +270,22 @@ def test_filter_requests_by_status(mocker):
     executed = graphql_schema.execute(
         """ {
              getAllOnboardingRequests(status: "Approved") {
-                email
-                organizationAddress
-                organizationName
-                role
-                primaryContact {
-                    name
-                    phone
+                id
+                info {
                     email
-                }
-                onsiteContacts {
-                    name
-                    phone
-                    email
+                    organizationAddress
+                    organizationName
+                    role
+                    primaryContact {
+                        name
+                        phone
+                        email
+                    }
+                    onsiteContacts {
+                        name
+                        phone
+                        email
+                    }
                 }
                 dateSubmitted
                 status
@@ -334,14 +293,10 @@ def test_filter_requests_by_status(mocker):
             }"""
     )
 
-    assert (
-        executed.data["getAllOnboardingRequests"][0]["dateSubmitted"]
-        == mock_date.isoformat()
-    )
-    assert executed.data["getAllOnboardingRequests"][0]["status"] == "Approved"
-    assert_user_infos_equal(
-        executed.data["getAllOnboardingRequests"][0], mock_info2_camel
-    )
+    onboarding_request_result = executed.data["getAllOnboardingRequests"][0]
+    assert onboarding_request_result["dateSubmitted"] == mock_date.isoformat()
+    assert onboarding_request_result["status"] == "Approved"
+    assert onboarding_request_result["info"] == mock_info2_camel
 
 
 def test_get_requests_by_id(mocker):
@@ -351,7 +306,6 @@ def test_get_requests_by_id(mocker):
             info=mock_user_info1, status="Pending", date_submitted=mock_date
         ).to_serializable_dict()
     ]
-
     mock_result[0]["id"] = "0"
 
     mock_result_dtos = convert_to_dtos(mock_result)
@@ -365,19 +319,22 @@ def test_get_requests_by_id(mocker):
     executed = graphql_schema.execute(
         """ {
              getOnboardingRequestById(id: "0") {
-                email
-                organizationAddress
-                organizationName
-                role
-                primaryContact {
-                    name
-                    phone
+                id
+                info {
                     email
-                }
-                onsiteContacts {
-                    name
-                    phone
-                    email
+                    organizationAddress
+                    organizationName
+                    role
+                    primaryContact {
+                        name
+                        phone
+                        email
+                    }
+                    onsiteContacts {
+                        name
+                        phone
+                        email
+                    }
                 }
                 dateSubmitted
                 status
@@ -385,17 +342,13 @@ def test_get_requests_by_id(mocker):
             }"""
     )
 
-    assert (
-        executed.data["getOnboardingRequestById"][0]["dateSubmitted"]
-        == mock_date.isoformat()
-    )
-    assert executed.data["getOnboardingRequestById"][0]["status"] == "Pending"
-    assert_user_infos_equal(
-        executed.data["getOnboardingRequestById"][0], mock_info1_camel
-    )
+    onboarding_request_result = executed.data["getOnboardingRequestById"]
+    assert onboarding_request_result["dateSubmitted"] == mock_date.isoformat()
+    assert onboarding_request_result["status"] == "Pending"
+    assert onboarding_request_result["info"] == mock_info1_camel
 
 
-# def test_approve_onboading_request():
+# def test_approve_onboarding_request():
 #     query_string = """mutation testCreateOnboardingRequest {
 #         createOnboardingRequest(
 #             userInfo:

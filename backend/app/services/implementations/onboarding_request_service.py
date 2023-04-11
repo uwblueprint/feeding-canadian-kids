@@ -22,7 +22,7 @@ class OnboardingRequestService(IOnboardingRequestService):
         self.email_service = email_service
 
     def create_onboarding_request(self, userInfo):
-        if UserInfo.objects(email__iexact=userInfo.email).count() > 0:
+        if OnboardingRequest.objects(info__email__iexact=userInfo.email).count() > 0:
             error_message = f"""
                 Failed to create onboarding request.
                 Reason = email {userInfo.email} already exists

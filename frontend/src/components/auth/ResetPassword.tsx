@@ -1,3 +1,4 @@
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Button,
@@ -8,22 +9,76 @@ import {
   Input,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import BackgroundImage from "../../assets/background.png";
+import { LOGIN_PAGE } from "../../constants/Routes";
 
 const ResetPassword = (): React.ReactElement => {
   const [notMatching, setNotMatching] = useState(false);
   const [tooShort, setTooShort] = useState(false);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { objectID: objectId } = useParams();
 
-  const onResetPasswordClick = () => {
-    setNotMatching(password !== confirm);
-    setTooShort(password.length < 8);
+  const GET_USER = gql`
+  query GetUserByID{
+    user(id: "${objectId}"
+      ) {
+        name
+        email
+        role
+    }
+  }
+`;
 
-    // await resetPassword({ variables: { email: authenticatedUser?.email } });
+  const RESET_PASSWORD = gql`
+    mutation ResetPassword($email: String!, $password: String!) {
+      resetPassword(email: $email, password: $password) {
+        success
+      }
+    }
+  `;
+
+  const { data: userData, error: getUserError } = useQuery(GET_USER);
+
+  const [resetPassword, { loading: resetPasswordLoading }] = useMutation(
+    RESET_PASSWORD,
+  );
+
+  const handleResetPassword = async () => {
+    try {
+      await resetPassword({
+        variables: {
+          email: userData?.user.email,
+          password,
+        },
+      });
+      navigate(LOGIN_PAGE);
+    } catch (e: unknown) {
+      toast({
+        title: "Failed to reset password. Please try again",
+        status: "error",
+        isClosable: true,
+      });
+    }
+  };
+
+  const onResetPasswordClick = async () => {
+    const passwordMatchCheck = password !== confirm;
+    const passwordLengthCheck = password.length < 8;
+
+    setNotMatching(passwordMatchCheck);
+    setTooShort(passwordLengthCheck);
+
+    if (passwordLengthCheck || passwordMatchCheck) return;
+
+    handleResetPassword();
   };
 
   return (
@@ -62,13 +117,19 @@ const ResetPassword = (): React.ReactElement => {
           pb={5}
           textAlign="center"
           variant={{ base: "mobile-caption", md: "desktop-caption" }}
+          textColor={getUserError ? "red" : "black"}
         >
-          Please enter your new password. The password must be at least 8
-          characters.
+          {getUserError
+            ? "User does not exist. Please visit our join page to initiate a request to join."
+            : "Please enter your new password. The password must be at least 8 characters."}
         </Text>
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
           <Box>
-            <FormControl pb={5} isRequired isInvalid={notMatching || tooShort}>
+            <FormControl
+              pb={5}
+              isRequired
+              isInvalid={notMatching || tooShort || !!getUserError}
+            >
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -83,7 +144,7 @@ const ResetPassword = (): React.ReactElement => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              {tooShort ? (
+              {tooShort && (
                 <FormErrorMessage>
                   <Text
                     variant={{ base: "mobile-caption", md: "desktop-caption" }}
@@ -91,11 +152,15 @@ const ResetPassword = (): React.ReactElement => {
                     Password must be at least 8 characters long.
                   </Text>
                 </FormErrorMessage>
-              ) : null}
+              )}
             </FormControl>
           </Box>
           <Box>
-            <FormControl pb={12} isRequired isInvalid={notMatching || tooShort}>
+            <FormControl
+              pb={12}
+              isRequired
+              isInvalid={notMatching || tooShort || !!getUserError}
+            >
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -110,7 +175,7 @@ const ResetPassword = (): React.ReactElement => {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
               />
-              {notMatching ? (
+              {notMatching && (
                 <FormErrorMessage>
                   <Text
                     variant={{ base: "mobile-caption", md: "desktop-caption" }}
@@ -118,7 +183,7 @@ const ResetPassword = (): React.ReactElement => {
                     Passwords do not match.
                   </Text>
                 </FormErrorMessage>
-              ) : null}
+              )}
             </FormControl>
           </Box>
         </Flex>
@@ -137,7 +202,7 @@ const ResetPassword = (): React.ReactElement => {
               }}
               color="white"
             >
-              Reset
+              {resetPasswordLoading ? "Loading..." : "Reset"}
             </Text>
           </Button>
         </VStack>

@@ -99,7 +99,7 @@ class AuthService(IAuthService):
             self.logger.error("Failed to refresh token")
             raise e
 
-    def reset_password(self, email):
+    def reset_password(self, email, password):
         if not self.email_service:
             error_message = """
                 Attempted to call reset_password but this instance of AuthService
@@ -109,23 +109,15 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            reset_link = firebase_admin.auth.generate_password_reset_link(email)
-            email_body = """
-                Hello,
-                <br><br>
-                We have received a password reset request for your account.
-                Please click the following link to reset it.
-                <strong>This link is only valid for 1 hour.</strong>
-                <br><br>
-                <a href={reset_link}>Reset Password</a>
-                """.format(
-                reset_link=reset_link
-            )
-            self.email_service.send_email(email, "Your Password Reset Link", email_body)
+            firebase_user = firebase_admin.auth.get_user_by_email(email)
+            auth_id = firebase_user.uid
+
+            firebase_admin.auth.update_user(auth_id, password=password)
+
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
-                f"Failed to send password reset link for {email}. "
+                f"Failed to reset password for {email}. "
                 + f"Reason = {reason if reason else str(e)}"
             )
             raise e

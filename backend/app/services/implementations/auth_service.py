@@ -1,4 +1,3 @@
-from ..implementations.user_service import UserService
 import firebase_admin.auth
 
 from ..interfaces.auth_service import IAuthService

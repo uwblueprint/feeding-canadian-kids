@@ -9,7 +9,6 @@ class UpdateUserDTO:
         error_list = self.validate()
         if len(error_list) > 0:
             error_message = "\n".join(error_list)
-            self.logger.error(error_message)
             raise Exception(error_message)
 
     def validate(self):

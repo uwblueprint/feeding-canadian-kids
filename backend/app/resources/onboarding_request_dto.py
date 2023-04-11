@@ -19,7 +19,6 @@ class OnboardingRequestDTO:
         error_list = self.validate()
         if len(error_list) > 0:
             error_message = "\n".join(error_list)
-            self.logger.error(error_message)
             raise Exception(error_message)
 
     def validate(self):
@@ -31,10 +30,14 @@ class OnboardingRequestDTO:
         if type(self.date_submitted) is not datetime.datetime:
             error_list.append("The date_submitted supplied is not a datetime object.")
 
-        if type(self.status) not in ONBOARDING_REQUEST_STATUSES:
+        if type(self.status) is not str:
+            error_list.append("The status supplied is not a string.")
+
+        if self.status not in ONBOARDING_REQUEST_STATUSES:
             error_list.append(
-                "The status is not one of {valid_statuses}".format(
-                    valid_statuses=", ".join(ONBOARDING_REQUEST_STATUSES)
+                "The status {self_status} is not one of {valid_statuses}".format(
+                    self_status=self.status,
+                    valid_statuses=", ".join(ONBOARDING_REQUEST_STATUSES),
                 )
             )
 

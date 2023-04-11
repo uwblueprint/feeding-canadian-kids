@@ -32,7 +32,7 @@ class UserService(IUserService):
             user_dict["email"] = firebase_user.email
             kwargs = {
                 "id": user_dict["id"],
-                "first_name": user_dict["info"]["contact_name"],
+                "first_name": user_dict["info"]["primary_contact"]["name"],
                 "last_name": "",
                 "email": user_dict["email"],
                 "role": user_dict["info"]["role"],

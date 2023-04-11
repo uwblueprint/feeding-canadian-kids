@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
+import BackgroundImage from "../../assets/background.png";
 import { isValidEmail } from "../../utils/ValidationUtils";
 
 const ForgotPassword = () => {
@@ -23,7 +24,12 @@ const ForgotPassword = () => {
       height="100vh"
       justifyContent={{ base: "center", md: "flex-start" }}
       alignItems="center"
-      marginBottom="50px"
+      style={{
+        backgroundImage: `url(${BackgroundImage})`,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
     >
       <VStack
         justify="space-between"
@@ -33,6 +39,9 @@ const ForgotPassword = () => {
         padding={{ base: "4% 3% 4% 3%", md: "4% 7% 4% 7%" }}
         width={{ base: "80%", md: "45%" }}
         height="fit-content"
+        style={{
+          background: "white",
+        }}
       >
         <Text
           textAlign="center"

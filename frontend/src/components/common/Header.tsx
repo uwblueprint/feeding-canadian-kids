@@ -9,6 +9,7 @@ const Header = () => {
       justifyContent={{ base: "center", md: "left" }}
       alignItems="center"
       padding="20px 24px"
+      style={{ backgroundColor: "#BFBFBF" }}
     >
       <Image
         src={Logo}

@@ -96,6 +96,38 @@ class AuthService(IAuthService):
         except Exception as e:
             self.logger.error("Failed to refresh token")
             raise e
+        
+    def forgot_password(self, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call reset_password but this instance of AuthService
+                does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            reset_link = firebase_admin.auth.generate_password_reset_link(email)
+            email_body = """
+                Hello,
+                <br><br>
+                We have received a password reset request for your account. 
+                Please click the following link to reset it. 
+                <strong>This link is only valid for 1 hour.</strong>
+                <br><br>
+                <a href={reset_link}>Reset Password</a>
+                """.format(
+                reset_link=reset_link
+            )
+            self.email_service.send_email(email, "Your Password Reset Link", email_body)
+        except Exception as e:
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                "Failed to send password reset link for {email}. Reason = {reason}".format(
+                    email=email, reason=(reason if reason else str(e))
+                )
+            )
+            raise e
 
     def reset_password(self, email, password):
         if not self.email_service:

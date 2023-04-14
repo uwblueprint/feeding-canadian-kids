@@ -61,6 +61,19 @@ class IAuthService(ABC):
         pass
 
     @abstractmethod
+    def forgot_password(self, email):
+        """
+        Generates a password reset link for the user with the given email
+        and sends the reset link to that email address
+
+        :param email: email of user requesting password reset
+        :type email: str
+        :raises Exception: if unable to generate link or send email
+        """
+        pass
+
+
+    @abstractmethod
     def reset_password(self, email):
         """
         Generates a password reset link for the user with the given email

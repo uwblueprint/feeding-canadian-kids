@@ -125,7 +125,20 @@ class Logout(Mutation):
         del info.context.cookies.refresh_token
         return Logout(success=True)
 
+class ForgotPassword(Mutation):
+    """
+    Triggers forgotten password reset link for user with specified email
+    """
 
+    class Arguments:
+        email = graphene.String()
+
+    success = graphene.Boolean()
+
+    def mutate(self, info, email):
+        services["auth_service"].forgot_password(email)
+        return ForgotPassword(success=True)
+    
 class ResetPassword(Mutation):
     """
     Triggers password reset for user with specified email

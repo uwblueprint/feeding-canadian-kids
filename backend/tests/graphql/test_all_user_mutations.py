@@ -3,6 +3,7 @@ from tests.graphql.mock_test_data import (
     MOCK_INFO1_CAMEL,
     MOCK_INFO3_CAMEL,
 )
+from copy import deepcopy
 
 
 def test_update_user_by_id(user_setup, mocker):
@@ -13,14 +14,14 @@ def test_update_user_by_id(user_setup, mocker):
         return_value=None,
     )
 
-    update_to_user_3_info = graphql_schema.execute(
+    update_to_user_4_info = graphql_schema.execute(
         f"""mutation testUpdateUserById {{
             updateUserByID (
                 requestorAuthId: "{str(user_3.auth_id)}",
                 authId: "{str(user_3.auth_id)}",
                 id: "{str(user_1.id)}",
                 userInfo: {{
-                    email: "test3@organization.com",
+                    email: "test4@organization.com",
                     organizationAddress: "789 Anywhere Street",
                     organizationName: "Test3 Org",
                     role: "Admin",
@@ -66,9 +67,11 @@ def test_update_user_by_id(user_setup, mocker):
         }}"""
     )
 
-    user_result3 = update_to_user_3_info.data["updateUserByID"]["user"]
-    assert user_result3["id"] == str(user_1.id)
-    assert user_result3["info"] == MOCK_INFO3_CAMEL
+    user_result4 = update_to_user_4_info.data["updateUserByID"]["user"]
+    assert user_result4["id"] == str(user_1.id)
+    MOCK_INFO4_CAMEL = deepcopy(MOCK_INFO3_CAMEL)
+    MOCK_INFO4_CAMEL["email"] = "test4@organization.com"
+    assert user_result4["info"] == MOCK_INFO4_CAMEL
 
     update_to_user_1_info = graphql_schema.execute(
         f"""mutation testUpdateUserById {{

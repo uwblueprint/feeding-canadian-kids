@@ -14,7 +14,7 @@ class Contact(mg.EmbeddedDocument):
 
 
 class UserInfo(mg.EmbeddedDocument):
-    email = mg.StringField(required=True)
+    email = mg.StringField(required=True, unique=True)
     organization_address = mg.StringField(required=True)
     organization_name = mg.StringField(required=True)
     role = mg.StringField(choices=USERINFO_ROLES, required=True)

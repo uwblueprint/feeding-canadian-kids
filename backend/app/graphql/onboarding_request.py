@@ -1,9 +1,12 @@
 import graphene
+from graphql import GraphQLError
+from mongoengine.errors import NotUniqueError
 
 from ..graphql.services import services
 
 from .types import Mutation, MutationList, QueryList, UserInfo, UserInfoInput
 
+ONBOARDING_REQUEST_EMAIL_ALREADY_EXISTS_ERROR = "Failed to create onboarding request. Reason = Email already exists"
 
 class OnboardingRequest(graphene.ObjectType):
     id = graphene.ID()
@@ -69,17 +72,20 @@ class CreateOnboardingRequest(Mutation):
     onboarding_request = graphene.Field(OnboardingRequest)
 
     def mutate(self, info, userInfo):
-        onboarding_request_dto = services[
-            "onboarding_request_service"
-        ].create_onboarding_request(userInfo=userInfo)
-        onboarding_request = OnboardingRequest(
-            id=onboarding_request_dto.id,
-            info=onboarding_request_dto.info,
-            date_submitted=onboarding_request_dto.date_submitted,
-            status=onboarding_request_dto.status,
-        )
+        try:
+            onboarding_request_dto = services[
+                "onboarding_request_service"
+            ].create_onboarding_request(userInfo=userInfo)
+            onboarding_request = OnboardingRequest(
+                id=onboarding_request_dto.id,
+                info=onboarding_request_dto.info,
+                date_submitted=onboarding_request_dto.date_submitted,
+                status=onboarding_request_dto.status,
+            )
 
-        return CreateOnboardingRequest(onboarding_request=onboarding_request)
+            return CreateOnboardingRequest(onboarding_request=onboarding_request)
+        except NotUniqueError:
+            raise GraphQLError(ONBOARDING_REQUEST_EMAIL_ALREADY_EXISTS_ERROR)
 
 
 class ApproveOnboardingRequest(Mutation):

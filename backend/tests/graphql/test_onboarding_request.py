@@ -1,3 +1,4 @@
+from app.graphql.onboarding_request import ONBOARDING_REQUEST_EMAIL_ALREADY_EXISTS_ERROR
 from app.models.onboarding_request import OnboardingRequest
 from app.graphql import schema as graphql_schema
 from tests.graphql.mock_test_data import (
@@ -118,18 +119,10 @@ def test_create_onboarding_request_with_existing_email_errors():
                         }
                 }"""
 
-    try:
-        graphql_schema.execute(mutation_string)
-    except Exception as e:
-        # TODO:
-        # This assert currently cannot be reached because the context manager
-        # that wraps OnboardingRequestService is suppressing all exceptions
-        error_message = """
-            Failed to create onboarding request.
-            Reason = email test1@organization.com already exists
-            """
-        executed_error = getattr(e, "message", str(e))
-        assert executed_error == error_message
+    result = graphql_schema.execute(mutation_string)
+    assert result.errors is not None
+    assert len(result.errors) == 1
+    assert result.errors[0].message == ONBOARDING_REQUEST_EMAIL_ALREADY_EXISTS_ERROR
 
 
 def test_get_all_requests(onboarding_request_setup):

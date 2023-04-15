@@ -56,17 +56,16 @@ class OnboardingRequestService(IOnboardingRequestService):
             )
             raise e
 
-    def get_all_onboarding_requests(self, number=None, offset=0, role="", status=""):
+    def get_all_onboarding_requests(self, number=5, offset=0, role="", status=""):
         onboarding_request_dtos = []
 
         try:
             filteredRequests = OnboardingRequest.objects()
-            print(filteredRequests)
             if role:
                 filteredRequests = filteredRequests.filter(info__role=role)
             if status:
                 filteredRequests = filteredRequests.filter(status=status)
-            for request in filteredRequests.skip(offset).limit(number or 0):
+            for request in filteredRequests.skip(offset).limit(number):
                 request_dict = request.to_serializable_dict()
                 onboarding_request_dtos.append(OnboardingRequestDTO(**request_dict))
 
@@ -81,8 +80,6 @@ class OnboardingRequestService(IOnboardingRequestService):
                 )
             )
             raise e
-        if number > 0:
-            return onboarding_request_dtos[offset : offset + number]
         return onboarding_request_dtos
 
     def get_onboarding_request_by_id(self, id):

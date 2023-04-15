@@ -1,6 +1,3 @@
-from app.models.user import User
-from app.models.user_info import UserInfo
-
 MOCK_INFO1_SNAKE = {
     "email": "test1@organization.com",
     "organization_address": "123 Anywhere Street",
@@ -33,7 +30,6 @@ MOCK_INFO1_CAMEL = {
     ],
 }
 
-
 MOCK_INFO2_SNAKE = {
     "email": "test2@organization.com",
     "organization_address": "456 Anywhere Street",
@@ -45,7 +41,7 @@ MOCK_INFO2_SNAKE = {
         "email": "goose@gmail.com",
     },
     "onsite_contacts": [
-        {"name": "def", "phone": "098-765-4321", "email": "abc@uwblueprint.org"},
+        {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
         {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
     ],
 }
@@ -61,23 +57,54 @@ MOCK_INFO2_CAMEL = {
         "email": "goose@gmail.com",
     },
     "onsiteContacts": [
-        {"name": "def", "phone": "098-765-4321", "email": "abc@uwblueprint.org"},
+        {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
         {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
     ],
 }
 
+MOCK_INFO3_SNAKE = {
+    "email": "test3@organization.com",
+    "organization_address": "789 Anywhere Street",
+    "organization_name": "Test3 Org",
+    "role": "Admin",
+    "primary_contact": {
+        "name": "Anon ymous",
+        "phone": "13579",
+        "email": "anon@gmail.com",
+    },
+    "onsite_contacts": [
+        {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
+        {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
+    ],
+}
+
+MOCK_INFO3_CAMEL = {
+    "email": "test3@organization.com",
+    "organizationAddress": "789 Anywhere Street",
+    "organizationName": "Test3 Org",
+    "role": "Admin",
+    "primaryContact": {
+        "name": "Anon ymous",
+        "phone": "13579",
+        "email": "anon@gmail.com",
+    },
+    "onsiteContacts": [
+        {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
+        {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
+    ],
+}
+
 MOCK_USER1_SNAKE = {
-    "auth_id": 1,
+    "auth_id": "1",
     "info": MOCK_INFO1_SNAKE,
 }
 
 MOCK_USER2_SNAKE = {
-    "auth_id": 2,
+    "auth_id": "2",
     "info": MOCK_INFO2_SNAKE,
 }
 
-MOCK_USER_INFO1 = UserInfo(**MOCK_INFO1_SNAKE)
-MOCK_USER1 = User(**MOCK_USER1_SNAKE)
-
-MOCK_USER_INFO2 = UserInfo(**MOCK_INFO2_SNAKE)
-MOCK_USER2 = User(**MOCK_USER2_SNAKE)
+MOCK_USER3_SNAKE = {
+    "auth_id": "3",
+    "info": MOCK_INFO3_SNAKE,
+}

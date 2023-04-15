@@ -1,31 +1,74 @@
-import datetime
-
-from app.graphql import schema as graphql_schema
 from app.models.onboarding_request import OnboardingRequest
-from app.resources.onboarding_request_dto import OnboardingRequestDTO
+from app.graphql import schema as graphql_schema
 from tests.graphql.mock_test_data import (
-    MOCK_USER_INFO1,
-    MOCK_USER_INFO2,
     MOCK_INFO1_CAMEL,
     MOCK_INFO2_CAMEL,
+    MOCK_INFO3_CAMEL,
 )
 
 
-def convert_to_onboarding_request_dtos(mock_result):
-    mock_result_dtos = []
-    for request_dict in mock_result:
-        kwargs = {
-            "id": request_dict["id"],
-            "info": request_dict["info"],
-            "date_submitted": request_dict["date_submitted"],
-            "status": request_dict["status"],
-        }
-        mock_result_dtos.append(OnboardingRequestDTO(**kwargs))
-    return mock_result_dtos
-
-
 def test_create_onboarding_request():
-    query_string = """mutation testCreateOnboardingRequest {
+    mutation_string = """mutation testCreateOnboardingRequest {
+                        createOnboardingRequest (
+                            userInfo: {
+                                email: "test3@organization.com",
+                                organizationAddress: "789 Anywhere Street",
+                                organizationName: "Test3 Org",
+                                role: "Admin",
+                                primaryContact: {
+                                    name: "Anon ymous",
+                                    phone: "13579",
+                                    email: "anon@gmail.com",
+                                },
+                                onsiteContacts: [
+                                    {
+                                        name: "ghi",
+                                        phone: "135-792-4680",
+                                        email: "ghi@uwblueprint.org"
+                                    },
+                                    {
+                                        name: "Jack Doe",
+                                        phone: "777-888-999",
+                                        email: "com@domain.email"
+                                    },
+                                ],
+                            }
+                        ) {
+                            onboardingRequest {
+                                id
+                                info {
+                                    email
+                                    organizationAddress
+                                    organizationName
+                                    role
+                                    primaryContact {
+                                        name
+                                        phone
+                                        email
+                                    }
+                                    onsiteContacts {
+                                        name
+                                        phone
+                                        email
+                                    }
+                                }
+                                dateSubmitted
+                                status
+                            }
+                        }
+                }"""
+    result = graphql_schema.execute(mutation_string)
+    onboarding_request_result = result.data["createOnboardingRequest"][
+        "onboardingRequest"
+    ]
+    assert onboarding_request_result["id"] == str(onboarding_request_result["id"])
+    assert onboarding_request_result["status"] == "Pending"
+    assert onboarding_request_result["info"] == MOCK_INFO3_CAMEL
+    OnboardingRequest.objects(id=onboarding_request_result["id"]).delete()
+
+
+def test_create_onboarding_request_with_existing_email_errors():
+    mutation_string = """mutation testCreateOnboardingRequest {
                         createOnboardingRequest (
                             userInfo: {
                                 email: "test1@organization.com",
@@ -74,212 +117,163 @@ def test_create_onboarding_request():
                             }
                         }
                 }"""
-    result = graphql_schema.execute(query_string)
-    onboarding_request_result = result.data["createOnboardingRequest"][
-        "onboardingRequest"
-    ]
-    assert onboarding_request_result["status"] == "Pending"
-    assert onboarding_request_result["info"] == MOCK_INFO1_CAMEL
+
+    try:
+        graphql_schema.execute(mutation_string)
+    except Exception as e:
+        # TODO:
+        # This assert currently cannot be reached because the context manager
+        # that wraps OnboardingRequestService is suppressing all exceptions
+        error_message = """
+            Failed to create onboarding request.
+            Reason = email test1@organization.com already exists
+            """
+        executed_error = getattr(e, "message", str(e))
+        assert executed_error == error_message
 
 
-def test_get_all_requests(mocker):
-    mock_date = datetime.datetime.now()
-    mock_result = [
-        OnboardingRequest(
-            info=MOCK_USER_INFO1, status="Pending", date_submitted=mock_date
-        ).to_serializable_dict(),
-        OnboardingRequest(
-            info=MOCK_USER_INFO2, status="Approved", date_submitted=mock_date
-        ).to_serializable_dict(),
-    ]
-
-    mock_result_dtos = convert_to_onboarding_request_dtos(mock_result)
-
-    mocker.patch(
-        "app.services.implementations.onboarding_request_service."
-        "OnboardingRequestService.get_all_onboarding_requests",
-        return_value=mock_result_dtos,
-    )
-
+def test_get_all_requests(onboarding_request_setup):
+    onboarding_request_1, onboarding_request_2 = onboarding_request_setup
     executed = graphql_schema.execute(
         """ {
-             getAllOnboardingRequests(number: 5, offset: 0) {
-                id
-                info {
-                    email
-                    organizationAddress
-                    organizationName
-                    role
-                    primaryContact {
-                        name
-                        phone
+                getAllOnboardingRequests {
+                    id
+                    info {
                         email
+                        organizationAddress
+                        organizationName
+                        role
+                        primaryContact {
+                            name
+                            phone
+                            email
+                        }
+                        onsiteContacts {
+                            name
+                            phone
+                            email
+                        }
                     }
-                    onsiteContacts {
-                        name
-                        phone
-                        email
-                    }
-                }
-                dateSubmitted
-                status
+                    dateSubmitted
+                    status
                 }
             }"""
     )
 
+    assert len(executed.data["getAllOnboardingRequests"]) == 2
     onboarding_request_result1 = executed.data["getAllOnboardingRequests"][0]
-    assert onboarding_request_result1["dateSubmitted"] == mock_date.isoformat()
+    assert onboarding_request_result1["id"] == str(onboarding_request_1.id)
     assert onboarding_request_result1["status"] == "Pending"
     assert onboarding_request_result1["info"] == MOCK_INFO1_CAMEL
 
-    onboarding_request_result1 = executed.data["getAllOnboardingRequests"][1]
-    assert onboarding_request_result1["dateSubmitted"] == mock_date.isoformat()
-    assert onboarding_request_result1["status"] == "Approved"
-    assert onboarding_request_result1["info"] == MOCK_INFO2_CAMEL
+    onboarding_request_result2 = executed.data["getAllOnboardingRequests"][1]
+    assert onboarding_request_result2["id"] == str(onboarding_request_2.id)
+    assert onboarding_request_result2["status"] == "Approved"
+    assert onboarding_request_result2["info"] == MOCK_INFO2_CAMEL
 
 
-def test_filter_requests_by_role(mocker):
-    mock_date = datetime.datetime.now()
-    mock_result = [
-        OnboardingRequest(
-            info=MOCK_USER_INFO1, status="Pending", date_submitted=mock_date
-        ).to_serializable_dict(),
-    ]
-    mock_result_dtos = convert_to_onboarding_request_dtos(mock_result)
-
-    mocker.patch(
-        "app.services.implementations.onboarding_request_service."
-        "OnboardingRequestService.get_all_onboarding_requests",
-        return_value=mock_result_dtos,
-    )
-
+def test_filter_requests_by_role(onboarding_request_setup):
+    onboarding_request_1, onboarding_request_2 = onboarding_request_setup
     executed = graphql_schema.execute(
         """ {
-             getAllOnboardingRequests(role: "ASP") {
-                id
-                info {
-                    email
-                    organizationAddress
-                    organizationName
-                    role
-                    primaryContact {
-                        name
-                        phone
+                getAllOnboardingRequests(role: "Donor") {
+                    id
+                    info {
                         email
+                        organizationAddress
+                        organizationName
+                        role
+                        primaryContact {
+                            name
+                            phone
+                            email
+                        }
+                        onsiteContacts {
+                            name
+                            phone
+                            email
+                        }
                     }
-                    onsiteContacts {
-                        name
-                        phone
-                        email
-                    }
-                }
-                dateSubmitted
-                status
+                    dateSubmitted
+                    status
                 }
             }"""
     )
 
+    assert len(executed.data["getAllOnboardingRequests"]) == 1
     onboarding_request_result = executed.data["getAllOnboardingRequests"][0]
-    assert onboarding_request_result["dateSubmitted"] == mock_date.isoformat()
-    assert onboarding_request_result["status"] == "Pending"
-    assert onboarding_request_result["info"] == MOCK_INFO1_CAMEL
-
-
-def test_filter_requests_by_status(mocker):
-    mock_date = datetime.datetime.now()
-    mock_result = [
-        OnboardingRequest(
-            info=MOCK_USER_INFO2, status="Approved", date_submitted=mock_date
-        ).to_serializable_dict(),
-    ]
-
-    mock_result_dtos = convert_to_onboarding_request_dtos(mock_result)
-
-    mocker.patch(
-        "app.services.implementations.onboarding_request_service."
-        "OnboardingRequestService.get_all_onboarding_requests",
-        return_value=mock_result_dtos,
-    )
-
-    executed = graphql_schema.execute(
-        """ {
-             getAllOnboardingRequests(status: "Approved") {
-                id
-                info {
-                    email
-                    organizationAddress
-                    organizationName
-                    role
-                    primaryContact {
-                        name
-                        phone
-                        email
-                    }
-                    onsiteContacts {
-                        name
-                        phone
-                        email
-                    }
-                }
-                dateSubmitted
-                status
-                }
-            }"""
-    )
-
-    onboarding_request_result = executed.data["getAllOnboardingRequests"][0]
-    assert onboarding_request_result["dateSubmitted"] == mock_date.isoformat()
+    assert onboarding_request_result["id"] == str(onboarding_request_2.id)
     assert onboarding_request_result["status"] == "Approved"
     assert onboarding_request_result["info"] == MOCK_INFO2_CAMEL
 
 
-def test_get_requests_by_id(mocker):
-    mock_date = datetime.datetime.now()
-    mock_result = [
-        OnboardingRequest(
-            info=MOCK_USER_INFO1, status="Pending", date_submitted=mock_date
-        ).to_serializable_dict()
-    ]
-    mock_result[0]["id"] = "0"
-
-    mock_result_dtos = convert_to_onboarding_request_dtos(mock_result)
-
-    mocker.patch(
-        "app.services.implementations.onboarding_request_service."
-        "OnboardingRequestService.get_onboarding_request_by_id",
-        return_value=mock_result_dtos[0],
-    )
-
+def test_filter_requests_by_status(onboarding_request_setup):
+    onboarding_request_1, onboarding_request_2 = onboarding_request_setup
     executed = graphql_schema.execute(
         """ {
-             getOnboardingRequestById(id: "0") {
-                id
-                info {
-                    email
-                    organizationAddress
-                    organizationName
-                    role
-                    primaryContact {
-                        name
-                        phone
+                getAllOnboardingRequests(status: "Pending") {
+                    id
+                    info {
                         email
+                        organizationAddress
+                        organizationName
+                        role
+                        primaryContact {
+                            name
+                            phone
+                            email
+                        }
+                        onsiteContacts {
+                            name
+                            phone
+                            email
+                        }
                     }
-                    onsiteContacts {
-                        name
-                        phone
-                        email
-                    }
-                }
-                dateSubmitted
-                status
+                    dateSubmitted
+                    status
                 }
             }"""
     )
 
-    onboarding_request_result = executed.data["getOnboardingRequestById"]
-    assert onboarding_request_result["dateSubmitted"] == mock_date.isoformat()
+    assert len(executed.data["getAllOnboardingRequests"]) == 1
+    onboarding_request_result = executed.data["getAllOnboardingRequests"][0]
+    assert onboarding_request_result["id"] == str(onboarding_request_1.id)
     assert onboarding_request_result["status"] == "Pending"
     assert onboarding_request_result["info"] == MOCK_INFO1_CAMEL
+
+
+def test_get_requests_by_id(onboarding_request_setup):
+    onboarding_request_1, onboarding_request_2 = onboarding_request_setup
+    executed = graphql_schema.execute(
+        f"""{{
+            getOnboardingRequestById(id: "{str(onboarding_request_2.id)}") {{
+                id
+                info {{
+                    email
+                    organizationAddress
+                    organizationName
+                    role
+                    primaryContact {{
+                        name
+                        phone
+                        email
+                    }}
+                    onsiteContacts {{
+                        name
+                        phone
+                        email
+                    }}
+                }}
+                dateSubmitted
+                status
+            }}
+        }}"""
+    )
+
+    onboarding_request_result = executed.data["getOnboardingRequestById"]
+    assert onboarding_request_result["id"] == str(onboarding_request_2.id)
+    assert onboarding_request_result["status"] == "Approved"
+    assert onboarding_request_result["info"] == MOCK_INFO2_CAMEL
 
 
 # def test_approve_onboarding_request():

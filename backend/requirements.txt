@@ -41,7 +41,7 @@ Jinja2==2.11.2
 Mako==1.1.4
 MarkupSafe==1.1.1
 mccabe==0.7.0
-mongoengine==0.23.0
+mongoengine==0.27.0
 mongomock==3.23.0
 msgpack==1.0.2
 mypy-extensions==0.4.3

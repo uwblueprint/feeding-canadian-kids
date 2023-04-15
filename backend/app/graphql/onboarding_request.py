@@ -6,7 +6,10 @@ from ..graphql.services import services
 
 from .types import Mutation, MutationList, QueryList, UserInfo, UserInfoInput
 
-ONBOARDING_REQUEST_EMAIL_ALREADY_EXISTS_ERROR = "Failed to create onboarding request. Reason = Email already exists"
+ONBOARDING_REQUEST_EMAIL_ALREADY_EXISTS_ERROR = (
+    "Failed to create onboarding request. Reason = Email already exists"
+)
+
 
 class OnboardingRequest(graphene.ObjectType):
     id = graphene.ID()

@@ -26,7 +26,6 @@ def call_and_log_errors(resolve):
                 original_error=None,
             )
 
-
     return do_resolve
 
 

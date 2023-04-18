@@ -1,6 +1,11 @@
 from ...services.implementations.auth_service import AuthService
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
-from ...models.onboarding_request import OnboardingRequest
+from ...models.onboarding_request import (
+    OnboardingRequest,
+    ONBOARDING_REQUEST_STATUS_APPROVED,
+    ONBOARDING_REQUEST_STATUS_PENDING,
+    ONBOARDING_REQUEST_STATUS_REJECTED,
+)
 from ...models.user_info import UserInfo
 from ...resources.onboarding_request_dto import OnboardingRequestDTO
 
@@ -30,8 +35,10 @@ class OnboardingRequestService(IOnboardingRequestService):
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(
                 info=user_info,
-                status="Pending",
+                status=ONBOARDING_REQUEST_STATUS_PENDING,
             ).save()
+            request_dict = new_onboarding_request.to_serializable_dict()
+            return OnboardingRequestDTO(**request_dict)
 
         except Exception as e:
             reason = getattr(e, "message", None)
@@ -42,38 +49,30 @@ class OnboardingRequestService(IOnboardingRequestService):
             )
             raise e
 
-        return new_onboarding_request.to_serializable_dict()
-
-    def get_all_onboarding_requests(self, number=None, offset=0, role="", status=""):
+    def get_all_onboarding_requests(self, number=5, offset=0, role="", status=""):
         onboarding_request_dtos = []
 
         try:
             filteredRequests = OnboardingRequest.objects()
-            print(filteredRequests)
             if role:
                 filteredRequests = filteredRequests.filter(info__role=role)
             if status:
                 filteredRequests = filteredRequests.filter(status=status)
-            for request in filteredRequests.skip(offset).limit(number or 0):
+            for request in filteredRequests.skip(offset).limit(number):
                 request_dict = request.to_serializable_dict()
-                kwargs = {
-                    "email": request_dict["info"]["email"],
-                    "organization_address": request_dict["info"][
-                        "organization_address"
-                    ],
-                    "organization_name": request_dict["info"]["organization_name"],
-                    "role": request_dict["info"]["role"],
-                    "primary_contact": request_dict["info"]["primary_contact"],
-                    "onsite_contacts": request_dict["info"]["onsite_contacts"],
-                    "date_submitted": request_dict["date_submitted"],
-                    "status": request_dict["status"],
-                }
-                onboarding_request_dtos.append(OnboardingRequestDTO(**kwargs))
+                onboarding_request_dtos.append(OnboardingRequestDTO(**request_dict))
+
         except Exception as e:
-            self.logger.error("Could not retrieve OnboardingRequest objects")
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                """
+                Could not retrieve OnboardingRequest objects.
+                Reason = {reason}
+                """.format(
+                    reason=(reason if reason else str(e))
+                )
+            )
             raise e
-        if number > 0:
-            return onboarding_request_dtos[offset : offset + number]
         return onboarding_request_dtos
 
     def get_onboarding_request_by_id(self, id):
@@ -81,21 +80,13 @@ class OnboardingRequestService(IOnboardingRequestService):
             request = OnboardingRequest.objects(id=id).first()
 
             if not request:
-                raise Exception("request id {id} not found".format(id=id))
+                error_message = f"request id {id} not found"
+                self.logger.error(error_message)
+                raise Exception(error_message)
 
             request_dict = request.to_serializable_dict()
+            return OnboardingRequestDTO(**request_dict)
 
-            kwargs = {
-                "email": request_dict["info"]["email"],
-                "organization_address": request_dict["info"]["organization_address"],
-                "organization_name": request_dict["info"]["organization_name"],
-                "role": request_dict["info"]["role"],
-                "primary_contact": request_dict["info"]["primary_contact"],
-                "onsite_contacts": request_dict["info"]["onsite_contacts"],
-                "date_submitted": request_dict["date_submitted"],
-                "status": request_dict["status"],
-            }
-            return OnboardingRequestDTO(**kwargs)
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -111,7 +102,7 @@ class OnboardingRequestService(IOnboardingRequestService):
                 id=request_id
             ).first()
             referenced_onboarding_request.status = (
-                "Approved"  # approve the onboarding request
+                ONBOARDING_REQUEST_STATUS_APPROVED  # approve the onboarding request
             )
 
             referenced_onboarding_request.save()  # save the changes
@@ -120,6 +111,9 @@ class OnboardingRequestService(IOnboardingRequestService):
             AuthService.send_onboarding_request_approve_email(
                 self, request_id, recipient_email
             )
+            request_dict = referenced_onboarding_request.to_serializable_dict()
+            return OnboardingRequestDTO(**request_dict)
+
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -129,8 +123,6 @@ class OnboardingRequestService(IOnboardingRequestService):
             )
             raise e
 
-        return referenced_onboarding_request.to_serializable_dict()
-
     def reject_onboarding_request(self, request_id):
         try:
             referenced_onboarding_request = OnboardingRequest.objects(
@@ -138,7 +130,7 @@ class OnboardingRequestService(IOnboardingRequestService):
             ).first()
 
             referenced_onboarding_request.status = (
-                "Rejected"  # reject the onboarding request
+                ONBOARDING_REQUEST_STATUS_REJECTED  # reject the onboarding request
             )
 
             referenced_onboarding_request.save()  # save the changes
@@ -146,6 +138,8 @@ class OnboardingRequestService(IOnboardingRequestService):
             recipient_email = referenced_onboarding_request.info.email
 
             AuthService.send_onboarding_request_rejected_email(self, recipient_email)
+            request_dict = referenced_onboarding_request.to_serializable_dict()
+            return OnboardingRequestDTO(**request_dict)
 
         except Exception as e:
             reason = getattr(e, "message", None)
@@ -155,5 +149,3 @@ class OnboardingRequestService(IOnboardingRequestService):
                 )
             )
             raise e
-
-        return referenced_onboarding_request.to_serializable_dict()

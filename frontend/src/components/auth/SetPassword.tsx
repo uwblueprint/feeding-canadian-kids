@@ -32,19 +32,22 @@ const SetPassword = (): React.ReactElement => {
       getOnboardingRequestById(id: "${objectId}"
           
         ) {
-        email
-        organizationAddress
-        organizationName
-        role
-        primaryContact {
-          name
-          email
-          phone
-        }
-        onsiteContacts {
-          name
-          email
-          phone
+        id
+        info {
+            email
+            organizationAddress
+            organizationName
+            role
+            primaryContact {
+                name
+                phone
+                email
+            }
+            onsiteContacts {
+                name
+                phone
+                email
+            }
         }
         dateSubmitted
         status
@@ -59,13 +62,25 @@ const SetPassword = (): React.ReactElement => {
       $requestId: String!
     ) {
       register(email: $email, password: $password, requestId: $requestId) {
-        user {
+        registeredUser {
           accessToken
           id
-          firstName
-          lastName
-          email
-          role
+          info {
+            email
+            organizationAddress
+            organizationName
+            role
+            primaryContact {
+              name
+              phone
+              email
+            }
+            onsiteContacts {
+              name
+              phone
+              email
+            }
+          }
         }
       }
     }
@@ -78,14 +93,14 @@ const SetPassword = (): React.ReactElement => {
   const [register, { loading: registerLoading }] = useMutation(REGISTER_USER);
 
   const dataStatus = () => {
-    return onboardingData?.getOnboardingRequestById[0].status !== "Approved";
+    return onboardingData?.getOnboardingRequestById?.status !== "Approved";
   };
 
   const handleRegister = async () => {
     try {
       await register({
         variables: {
-          email: onboardingData?.getOnboardingRequestById[0].email,
+          email: onboardingData?.getOnboardingRequestById?.info.email,
           password,
           requestId: objectId,
         },
@@ -162,7 +177,7 @@ const SetPassword = (): React.ReactElement => {
             variant={{ base: "mobile-caption", md: "desktop-caption" }}
             textColor={dataStatus() ? "red" : "black"}
           >
-            {onboardingData?.getOnboardingRequestById[0].status === "Approved"
+            {onboardingData?.getOnboardingRequestById?.status === "Approved"
               ? "Please enter your new password. The password must be at least 8 characters long."
               : "Sorry, your onboarding request has not been approved. Please wait for a response from admin."}
           </Text>

@@ -24,18 +24,14 @@ class UserService(IUserService):
             user = User.objects(id=user_id).first()
 
             if not user:
-                raise Exception("user_id {user_id} not found".format(user_id=user_id))
-
-            firebase_user = firebase_admin.auth.get_user(user.auth_id)
+                error_message = f"user_id {user_id} not found"
+                self.logger.error(error_message)
+                raise Exception(error_message)
 
             user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
-            user_dict["email"] = firebase_user.email
             kwargs = {
                 "id": user_dict["id"],
-                "first_name": user_dict["info"]["primary_contact"]["name"],
-                "last_name": "",
-                "email": user_dict["email"],
-                "role": user_dict["info"]["role"],
+                "info": user_dict["info"],
             }
 
             return UserDTO(**kwargs)
@@ -48,26 +44,36 @@ class UserService(IUserService):
             )
             raise e
 
+    def get_user_by_auth_id(self, auth_id):
+        """
+        Get a User document by auth_id
+
+        :param auth_id: the user's auth_id (Firebase uid)
+        :type auth_id: str
+        """
+        user = User.objects(auth_id=auth_id).first()
+
+        if not user:
+            error_message = f"user with auth_id {auth_id} not found"
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        return user
+
     def get_user_by_email(self, email):
         try:
             firebase_user = firebase_admin.auth.get_user_by_email(email)
             user = User.objects(auth_id=firebase_user.uid).first()
 
             if not user:
-                raise Exception(
-                    "user with auth_id {auth_id} not found".format(
-                        auth_id=firebase_user.uid
-                    )
-                )
+                error_message = f"user with auth_id {firebase_user.uid} not found"
+                self.logger.error(error_message)
+                raise Exception(error_message)
 
             user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
-            user_dict["email"] = firebase_user.email
             kwargs = {
                 "id": user_dict["id"],
-                "first_name": user_dict["info"]["primary_contact"]["name"],
-                "last_name": "",
-                "email": user_dict["email"],
-                "role": user_dict["info"]["role"],
+                "info": user_dict["info"],
             }
 
             return UserDTO(**kwargs)
@@ -83,7 +89,7 @@ class UserService(IUserService):
     def get_user_role_by_auth_id(self, auth_id):
         try:
             user = self.get_user_by_auth_id(auth_id)
-            return user.role
+            return user.info.role
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -129,42 +135,37 @@ class UserService(IUserService):
             user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
 
             try:
-                firebase_user = firebase_admin.auth.get_user(user.auth_id)
-                user_dict["email"] = firebase_user.email
                 kwargs = {
                     "id": user_dict["id"],
-                    "first_name": user_dict["info"]["contact_name"],
-                    "last_name": "",
-                    "email": user_dict["email"],
-                    "role": user_dict["info"]["role"],
+                    "info": user_dict["info"],
                 }
                 user_dtos.append(UserDTO(**kwargs))
             except Exception as e:
+                reason = getattr(e, "message", None)
                 self.logger.error(
-                    f"User with auth_id {user.auth_id} could not be fetched "
-                    + "from Firebase"
+                    "Failed to get users. Reason = {reason}".format(
+                        reason=(reason if reason else str(e))
+                    )
                 )
                 raise e
 
         return user_dtos
 
-    def create_user(self, user, auth_id=None, signup_method="PASSWORD"):
+    def create_user(self, create_user_dto):
         new_user = None
         firebase_user = None
 
         try:
-            if signup_method == "PASSWORD":
-                firebase_user = firebase_admin.auth.create_user(
-                    email=user.email, password=user.password
-                )
-            elif signup_method == "GOOGLE":
-                # If they signup with Google OAuth, a Firebase user is auto-created
-                firebase_user = firebase_admin.auth.get_user(uid=auth_id)
+            firebase_user = firebase_admin.auth.create_user(
+                email=create_user_dto.email, password=create_user_dto.password
+            )
 
             try:
                 new_user = User(
                     auth_id=firebase_user.uid,
-                    info=OnboardingRequest.objects(id=user.request_id).first().info,
+                    info=OnboardingRequest.objects(id=create_user_dto.request_id)
+                    .first()
+                    .info,
                 ).save()
             except Exception as mongo_error:
                 # rollback user creation in Firebase
@@ -197,43 +198,33 @@ class UserService(IUserService):
         new_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
             new_user
         )
-        new_user_dict["email"] = firebase_user.email
         kwargs = {
             "id": new_user_dict["id"],
-            "first_name": new_user_dict["info"]["primary_contact"]["name"],
-            "last_name": "",
-            "email": new_user_dict["email"],
-            "role": new_user_dict["info"]["role"],
+            "info": new_user_dict["info"],
         }
         return UserDTO(**kwargs)
 
-    def update_user_by_id(self, user_id, user):
+    def update_user_by_id(self, user_id, update_user_dto):
         try:
-            update_user_dict = user.__dict__
-            email = update_user_dict.pop("email", None)
-
-            # workaround for running validations since modify() doesn't auto-run them
-            # auth_id is a placeholder because it is not part of the UpdateUserDTO
-            User(auth_id="", **update_user_dict).validate()
-
-            old_user = User.objects(id=user_id).modify(new=False, **update_user_dict)
+            old_user = User.objects(id=user_id).modify(
+                new=False,
+                auth_id=update_user_dto.auth_id,
+                info=update_user_dto.info,
+            )
 
             if not old_user:
                 raise Exception("user_id {user_id} not found".format(user_id=user_id))
 
-            # IMPORTANT: update_user_dict references the same instance of
-            # UpdateUserDTO as user
-            update_user_dict["email"] = email
-
             try:
-                firebase_admin.auth.update_user(old_user.auth_id, email=user.email)
+                firebase_admin.auth.update_user(
+                    old_user.auth_id, email=update_user_dto.info.email
+                )
             except Exception as firebase_error:
                 try:
                     # rollback MongoDB user update
                     User.objects(id=user_id).modify(
-                        first_name=old_user.first_name,
-                        last_name=old_user.last_name,
-                        role=old_user.role,
+                        auth_id=old_user.auth_id,
+                        info=old_user.info,
                     )
                 except Exception as mongo_error:
                     reason = getattr(mongo_error, "message", None)
@@ -258,7 +249,20 @@ class UserService(IUserService):
             )
             raise e
 
-        return UserDTO(user_id, user.first_name, user.last_name, user.email, user.role)
+        updated_user = User.objects(id=user_id).first()
+        if not updated_user:
+            error_message = f"updated user_id {user_id} not found"
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        updated_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
+            updated_user
+        )
+        kwargs = {
+            "id": updated_user_dict["id"],
+            "info": updated_user_dict["info"],
+        }
+        return UserDTO(**kwargs)
 
     def delete_user_by_id(self, user_id):
         try:
@@ -275,10 +279,8 @@ class UserService(IUserService):
                 # rollback MongoDB user deletion
                 try:
                     User(
-                        first_name=deleted_user.first_name,
-                        last_name=deleted_user.last_name,
                         auth_id=deleted_user.auth_id,
-                        role=deleted_user.role,
+                        info=deleted_user.info,
                     ).save()
                 except Exception as mongo_error:
                     reason = getattr(mongo_error, "message", None)
@@ -303,6 +305,15 @@ class UserService(IUserService):
             )
             raise e
 
+        deleted_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
+            deleted_user
+        )
+        kwargs = {
+            "id": deleted_user_dict["id"],
+            "info": deleted_user_dict["info"],
+        }
+        return UserDTO(**kwargs)
+
     def delete_user_by_email(self, email):
         try:
             firebase_user = firebase_admin.auth.get_user_by_email(email)
@@ -322,10 +333,8 @@ class UserService(IUserService):
             except Exception as firebase_error:
                 try:
                     User(
-                        first_name=deleted_user.first_name,
-                        last_name=deleted_user.last_name,
                         auth_id=deleted_user.auth_id,
-                        role=deleted_user.role,
+                        info=deleted_user.info,
                     ).save()
                 except Exception as mongo_error:
                     reason = getattr(mongo_error, "message", None)
@@ -350,21 +359,14 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_user_by_auth_id(self, auth_id):
-        """
-        Get a User document by auth_id
-
-        :param auth_id: the user's auth_id (Firebase uid)
-        :type auth_id: str
-        """
-        user = User.objects(auth_id=auth_id).first()
-
-        if not user:
-            raise Exception(
-                "user with auth_id {auth_id} not found".format(auth_id=auth_id)
-            )
-
-        return user
+        deleted_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
+            deleted_user
+        )
+        kwargs = {
+            "id": deleted_user_dict["id"],
+            "info": deleted_user_dict["info"],
+        }
+        return UserDTO(**kwargs)
 
     @staticmethod
     def __user_to_serializable_dict_and_remove_auth_id(user):

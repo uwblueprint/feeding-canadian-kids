@@ -99,6 +99,44 @@ class AuthService(IAuthService):
             self.logger.error("Failed to refresh token")
             raise e
 
+    def forgot_password(self, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call forgot_password but this instance of AuthService
+                does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            user = self.user_service.get_user_by_email(email)
+
+            url = "https://feeding-canadian-kids-staging.web.app"
+            set_password_link = "{url}/{ObjectID}/reset-password".format(
+                url=url, ObjectID=user.id
+            )
+
+            email_body = """
+            Hello,
+            <br><br>
+            We have received your reset password request.
+            Please reset your password using the following link.
+            <br><br>
+            <a href="{reset_link}">Reset Password</a>
+            """.format(
+                reset_link=set_password_link
+            )
+
+            self.email_service.send_email(email, "FCK Reset Password Link", email_body)
+
+        except Exception as e:
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                f"Failed to send password reset link for {email}. "
+                + f"Reason = {reason if reason else str(e)}"
+            )
+            raise e
+
     def reset_password(self, email, password):
         if not self.email_service:
             error_message = """

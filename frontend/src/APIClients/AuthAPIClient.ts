@@ -24,10 +24,13 @@ type LoginFunction = (
 const login = async (
   email: string,
   password: string,
+  idToken: string,
   loginFunction: LoginFunction,
 ): Promise<AuthenticatedUser | null> => {
   let user: AuthenticatedUser = null;
-  const result = await loginFunction({ variables: { email, password } });
+  const result = await loginFunction({
+    variables: { email, password, idToken },
+  });
   user = result.data?.login ?? null;
   if (user) {
     localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(user));

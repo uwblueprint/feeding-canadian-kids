@@ -132,10 +132,8 @@ class AuthService(IAuthService):
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
-                "Failed to send password reset link for {email}. Reason = {reason}"
-                .format(
-                    email=email, reason=(reason if reason else str(e))
-                )
+                f"Failed to send password reset link for {email}. "
+                + f"Reason = {reason if reason else str(e)}"
             )
             raise e
 

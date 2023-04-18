@@ -17,15 +17,14 @@ def call_and_log_errors(resolve):
     def do_resolve(*args, **kwargs):
         try:
             return resolve(*args, **kwargs)
-        except Exception as error:
-            if error and not isinstance(error, (ClientError, GraphQLError)):
-                logger.error(error, exc_info=error)
-                raise GraphQLError(
-                    message="Unexpected error.",
-                    original_error=None,
-                )
-
+        except (ClientError, GraphQLError) as error:
             raise error
+        except Exception as error:
+            logger.error(error, exc_info=error)
+            raise GraphQLError(
+                message="Unexpected error.",
+                original_error=None,
+            )
 
     return do_resolve
 

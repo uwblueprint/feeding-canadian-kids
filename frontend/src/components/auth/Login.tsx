@@ -20,14 +20,28 @@ import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
 const LOGIN = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      id
-      firstName
-      lastName
-      email
-      role
-      accessToken
+  mutation Login($email: String!, $password: String!, $idToken: String!) {
+    login(email: $email, password: $password, idToken: $idToken) {
+      registeredUser {
+        accessToken
+        id
+        info {
+          email
+          organizationAddress
+          organizationName
+          role
+          primaryContact {
+            name
+            phone
+            email
+          }
+          onsiteContacts {
+            name
+            phone
+            email
+          }
+        }
+      }
     }
   }
 `;
@@ -43,7 +57,7 @@ const Login = (): React.ReactElement => {
   const onLogInClick = async () => {
     let user: AuthenticatedUser | null = null;
     try {
-      user = await authAPIClient.login(email, password, login);
+      user = await authAPIClient.login(email, password, "", login);
       setError(false);
     } catch (e: unknown) {
       setError(true);

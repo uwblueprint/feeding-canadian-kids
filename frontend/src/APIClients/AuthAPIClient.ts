@@ -24,10 +24,13 @@ type LoginFunction = (
 const login = async (
   email: string,
   password: string,
+  idToken: string,
   loginFunction: LoginFunction,
 ): Promise<AuthenticatedUser | null> => {
   let user: AuthenticatedUser = null;
-  const result = await loginFunction({ variables: { email, password } });
+  const result = await loginFunction({
+    variables: { email, password, idToken },
+  });
   user = result.data?.login ?? null;
   if (user) {
     localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(user));
@@ -35,40 +38,41 @@ const login = async (
   return user;
 };
 
-type LoginWithGoogleFunction = (
-  options?:
-    | MutationFunctionOptions<
-        { loginWithGoogle: AuthenticatedUser },
-        OperationVariables
-      >
-    | undefined,
-) => Promise<
-  FetchResult<
-    { loginWithGoogle: AuthenticatedUser },
-    Record<string, unknown>,
-    Record<string, unknown>
-  >
->;
+// type LoginWithGoogleFunction = (
+//   options?:
+//     | MutationFunctionOptions<
+//         { loginWithGoogle: AuthenticatedUser },
+//         OperationVariables
+//       >
+//     | undefined,
+// ) => Promise<
+//   FetchResult<
+//     { loginWithGoogle: AuthenticatedUser },
+//     Record<string, unknown>,
+//     Record<string, unknown>
+//   >
+// >;
 
-const loginWithGoogle = async (
-  idToken: string,
-  loginFunction: LoginWithGoogleFunction,
-): Promise<AuthenticatedUser | null> => {
-  let user: AuthenticatedUser = null;
-  try {
-    const result = await loginFunction({
-      variables: { idToken },
-    });
-    user = result.data?.loginWithGoogle ?? null;
-    if (user) {
-      localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(user));
-    }
-  } catch (e: unknown) {
-    // eslint-disable-next-line no-alert
-    window.alert("Failed to login");
-  }
-  return user;
-};
+// loginWithGoogle function currently not used
+// const loginWithGoogle = async (
+//   idToken: string,
+//   loginFunction: LoginWithGoogleFunction,
+// ): Promise<AuthenticatedUser | null> => {
+//   let user: AuthenticatedUser = null;
+//   try {
+//     const result = await loginFunction({
+//       variables: { idToken },
+//     });
+//     user = result.data?.loginWithGoogle ?? null;
+//     if (user) {
+//       localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(user));
+//     }
+//   } catch (e: unknown) {
+//     // eslint-disable-next-line no-alert
+//     window.alert("Failed to login");
+//   }
+//   return user;
+// };
 
 type RegisterFunction = (
   options?:
@@ -172,10 +176,4 @@ const refresh = async (refreshFunction: RefreshFunction): Promise<boolean> => {
   return success;
 };
 
-export default {
-  login,
-  logout,
-  loginWithGoogle,
-  register,
-  refresh,
-};
+export default { login, logout, register, refresh };

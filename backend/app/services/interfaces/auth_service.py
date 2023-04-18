@@ -22,19 +22,19 @@ class IAuthService(ABC):
         """
         pass
 
-    @abstractmethod
-    def generate_token_for_oauth(self, id_token):
-        """
-        Generate a short-lived JWT access token and a long-lived refresh token
-        when supplied user's OAuth ID token
+    # @abstractmethod
+    # def generate_token_for_oauth(self, id_token):
+    #     """
+    #     Generate a short-lived JWT access token and a long-lived refresh token
+    #     when supplied user's OAuth ID token
 
-        :param id_token: user's OAuth ID token
-        :type id_token: str
-        :return: AuthDTO object containing the access/refresh token and user info
-        :rtype: AuthDTO
-        :raises Exception: if token generation fails
-        """
-        pass
+    #     :param id_token: user's OAuth ID token
+    #     :type id_token: str
+    #     :return: AuthDTO object containing the access/refresh token and user info
+    #     :rtype: AuthDTO
+    #     :raises Exception: if token generation fails
+    #     """
+    #     pass
 
     @abstractmethod
     def revoke_tokens(self, user_id):

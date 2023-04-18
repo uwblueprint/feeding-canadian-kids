@@ -72,7 +72,6 @@ class IAuthService(ABC):
         """
         pass
 
-
     @abstractmethod
     def reset_password(self, email):
         """

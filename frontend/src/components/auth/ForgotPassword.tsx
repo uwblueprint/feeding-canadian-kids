@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import {
   Button,
   Flex,
@@ -7,6 +8,7 @@ import {
   Link,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -14,8 +16,39 @@ import BackgroundImage from "../../assets/background.png";
 import { isValidEmail } from "../../utils/ValidationUtils";
 
 const ForgotPassword = () => {
+  const toast = useToast();
+
   const [email, setEmail] = React.useState("");
   const [emailError, setEmailError] = React.useState(false);
+
+  const FORGOT_PASSWORD = gql`
+    mutation ForgotPassword($email: String!) {
+      forgotPassword(email: $email) {
+        success
+      }
+    }
+  `;
+
+  const [forgotPassword, { loading: forgotPasswordLoading }] = useMutation(
+    FORGOT_PASSWORD,
+  );
+
+  const handleResetPassword = async () => {
+    try {
+      await forgotPassword({
+        variables: {
+          email,
+        },
+      });
+    } catch (e: unknown) {
+      console.log(e);
+      toast({
+        title: "Failed to send email. Please try again",
+        status: "error",
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <Flex
@@ -109,12 +142,13 @@ const ForgotPassword = () => {
           onClick={() => {
             if (isValidEmail(email)) {
               setEmailError(false);
+              handleResetPassword();
             } else {
               setEmailError(true);
             }
           }}
         >
-          Reset
+          {forgotPasswordLoading ? "Loading..." : "Reset"}
         </Button>
         {!emailError && (
           <Text

@@ -41,7 +41,7 @@ Please see our [Notion workspace](https://www.notion.so/uwblueprintexecs/Dev-e31
 git clone https://github.com/uwblueprint/feeding-canadian-kids.git
 cd feeding-canadian-kids
 ```
-2. Pull secrets from Vault
+2. Pull secrets from Vault (Skip this step for now)
 ```bash
 vault kv get -format=json kv/fck | python update_secret_files.py
 ```
@@ -62,16 +62,19 @@ docker ps
 ### Linting & Formatting
 Backend:
 ```bash
-docker exec -it fck_backend /bin/bash -c "black . && flake8 ."
+docker compose up backend # Run in a separate terminal first 
+docker exec -it fck_backend /bin/bash -c "black . && flake8 ." # Run in a separate terminal after the first command
 ```
 
 Frontend:
 ```bash
 # linting & formatting warnings only
-docker exec -it fck_backend /bin/bash -c "yarn lint"
+docker compose up frontend # Run in a separate terminal first
+docker exec -it fck_frontend /bin/bash -c "yarn lint" # Run in a separate terminal after the first command
 
 # linting with fix & formatting
-docker exec -it fck_backend /bin/bash -c "yarn fix"
+docker compose up frontend # Run in a separate terminal first
+docker exec -it fck_frontend /bin/bash -c "yarn fix" # Run in a separate terminal after the first command
 ```
 
 You can also use the Makefiles if you have `make` installed:
@@ -93,12 +96,14 @@ make lint
 ### Running Tests
 Backend:
 ```bash
-docker exec -it fck_backend /bin/bash -c "pip install -r requirements.txt && python -m pytest"
+docker compose up backend # Run in a separate terminal first 
+docker exec -it fck_backend /bin/bash -c "pip install -r requirements.txt && python -m pytest" # Run in a separate terminal after the first command
 ```
 
 Frontend:
 ```bash
-docker exec -it fck_frontend /bin/bash -c "yarn test"
+docker compose up frontend # Run in a separate terminal first 
+docker exec -it fck_frontend /bin/bash -c "yarn test" # Run in a separate terminal after the first command
 ```
 
 You can also use the Makefiles if you have `make` installed:

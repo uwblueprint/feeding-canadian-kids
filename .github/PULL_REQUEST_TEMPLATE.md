@@ -1,20 +1,20 @@
-## Zenhub ticket link
+## Notion Ticket Link
 <!-- Please replace with your ticket's URL -->
-[Ticket Name](https://app.zenhub.com/workspaces/fck-627480c10d8974001872b0ef/board)
+[Replace with Ticket URL](https://www.notion.so/uwblueprintexecs/Dev-e3112e78136f49b4b042e9a0d9df9723?pvs=4#659939ff45cd470a81d5ec2cda7ed52a)
 
 
 <!-- Give a quick summary of the implementation details, provide design justifications if necessary -->
-## Implementation description
+## Implementation Description
 *
 
 
 <!-- What should the reviewer do to verify your changes? Describe expected results and include screenshots when appropriate -->
-## Steps to test
+## Steps To Test
 1.
 
 
 <!-- Draw attention to the substantial parts of your PR or anything you'd like a second opinion on -->
-## What should reviewers focus on?
+## What Should Reviewers Focus On?
 *
 
 

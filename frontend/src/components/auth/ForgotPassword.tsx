@@ -41,7 +41,6 @@ const ForgotPassword = () => {
         },
       });
     } catch (e: unknown) {
-      console.log(e);
       toast({
         title: "Failed to send email. Please try again",
         status: "error",

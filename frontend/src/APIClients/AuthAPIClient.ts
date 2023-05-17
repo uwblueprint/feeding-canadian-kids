@@ -107,9 +107,7 @@ const register = async (
     }
   } catch (e: unknown) {
     // eslint-disable-next-line no-alert
-    // window.alert("Failed to sign up");
-    // eslint-disable-next-line no-console
-    console.log(e);
+    window.alert("Failed to sign up");
   }
   return user;
 };

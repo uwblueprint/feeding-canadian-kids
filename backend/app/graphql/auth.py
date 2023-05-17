@@ -56,7 +56,6 @@ class Register(Mutation):
     registered_user = graphene.Field(RegisteredUser)
 
     def mutate(self, info, email, password, request_id):
-        print("Doing register")
         kwargs = {
             "email": email,
             "password": password,

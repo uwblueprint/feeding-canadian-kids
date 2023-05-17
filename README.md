@@ -32,8 +32,8 @@ Please see our [Notion workspace](https://www.notion.so/uwblueprintexecs/Dev-e31
 ### Prerequisites
 
 - Install Docker Desktop ([MacOS](https://docs.docker.com/docker-for-mac/install/) | [Windows (Home)](https://docs.docker.com/docker-for-windows/install-windows-home/) | [Windows (Pro, Enterprise, Education)](https://docs.docker.com/docker-for-windows/install/) | [Linux](https://docs.docker.com/engine/install/#server)) and ensure that it is running
-- Ask a member of the Internal Tools team to be added to our Firebase and MongoDB Atlas projects
-- Set up Vault client for secret management, see instructions [here](https://www.notion.so/uwblueprintexecs/Secret-Management-2d5b59ef0987415e93ec951ce05bf03e)
+<!-- - Ask a member of the Internal Tools team to be added to our Firebase and MongoDB Atlas projects
+- Set up Vault client for secret management, see instructions [here](https://www.notion.so/uwblueprintexecs/Secret-Management-2d5b59ef0987415e93ec951ce05bf03e) -->
 
 ### Set up
 

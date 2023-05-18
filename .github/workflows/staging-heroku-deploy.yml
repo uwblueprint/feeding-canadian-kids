@@ -11,7 +11,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: rhs-staging
+    environment: fck-staging
     steps:
       - uses: actions/checkout@v2
         with:

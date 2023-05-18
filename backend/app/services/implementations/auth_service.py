@@ -2,8 +2,9 @@ import firebase_admin.auth
 
 from ..interfaces.auth_service import IAuthService
 from ...resources.auth_dto import AuthDTO
-from ...resources.create_user_dto import CreateUserDTO
-from ...resources.token import Token
+
+# from ...resources.create_user_dto import CreateUserDTO
+# from ...resources.token import Token
 from ...utilities.firebase_rest_client import FirebaseRestClient
 
 
@@ -41,39 +42,40 @@ class AuthService(IAuthService):
             )
             raise e
 
-    def generate_token_for_oauth(self, id_token, user_to_create=None, **_):
-        try:
-            google_user = self.firebase_rest_client.sign_in_with_google(id_token)
-            # google_user["idToken"] refers to the user's Firebase Auth access token
-            token = Token(google_user["idToken"], google_user["refreshToken"])
-            # If user already has a login with this email, just return the token
-            try:
-                # Note: an error message will be logged from UserService if this fails.
-                # You may want to silence the logger for this special OAuth lookup case
-                user = self.user_service.get_user_by_email(google_user["email"])
-                return AuthDTO(**{**token.__dict__, **user.__dict__})
-            except Exception:
-                if user_to_create is None:
-                    raise
+    # generate_token_for_oauth function is not being used
+    # def generate_token_for_oauth(self, id_token, user_to_create=None, **_):
+    #     try:
+    #         google_user = self.firebase_rest_client.sign_in_with_google(id_token)
+    #         # google_user["idToken"] refers to the user's Firebase Auth access token
+    #         token = Token(google_user["idToken"], google_user["refreshToken"])
+    #         # If user already has a login with this email, just return the token
+    #         try:
+    #             # Note: error message will be logged from UserService if this fails.
+    #             # May want to silence the logger for this special OAuth lookup case
+    #             user = self.user_service.get_user_by_email(google_user["email"])
+    #             return AuthDTO(**{**token.__dict__, **user.__dict__})
+    #         except Exception:
+    #             if user_to_create is None:
+    #                 raise
 
-            user = self.user_service.create_user(
-                CreateUserDTO(
-                    **{
-                        **user_to_create.__dict__,
-                        "email": google_user["email"],
-                    }
-                ),
-                auth_id=google_user["localId"],
-                signup_method="GOOGLE",
-            )
-            return AuthDTO(**{**token.__dict__, **user.__dict__})
-        except Exception as e:
-            reason = getattr(e, "message", None)
-            self.logger.error(
-                "Failed to generate token for user with OAuth id token. "
-                + "Reason = {reason}".format(reason=(reason if reason else str(e)))
-            )
-            raise e
+    #         user = self.user_service.create_user(
+    #             CreateUserDTO(
+    #                 **{
+    #                     **user_to_create.__dict__,
+    #                     "email": google_user["email"],
+    #                 }
+    #             ),
+    #             auth_id=google_user["localId"],
+    #             signup_method="GOOGLE",
+    #         )
+    #         return AuthDTO(**{**token.__dict__, **user.__dict__})
+    #     except Exception as e:
+    #         reason = getattr(e, "message", None)
+    #         self.logger.error(
+    #             "Failed to generate token for user with OAuth id token. "
+    #             + "Reason = {reason}".format(reason=(reason if reason else str(e)))
+    #         )
+    #         raise e
 
     def revoke_tokens(self, user_id):
         try:
@@ -95,6 +97,44 @@ class AuthService(IAuthService):
             return self.firebase_rest_client.refresh_token(refresh_token)
         except Exception as e:
             self.logger.error("Failed to refresh token")
+            raise e
+
+    def forgot_password(self, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call forgot_password but this instance of AuthService
+                does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            user = self.user_service.get_user_by_email(email)
+
+            url = "https://feeding-canadian-kids-staging.web.app"
+            set_password_link = "{url}/{ObjectID}/reset-password".format(
+                url=url, ObjectID=user.id
+            )
+
+            email_body = """
+            Hello,
+            <br><br>
+            We have received your reset password request.
+            Please reset your password using the following link.
+            <br><br>
+            <a href="{reset_link}">Reset Password</a>
+            """.format(
+                reset_link=set_password_link
+            )
+
+            self.email_service.send_email(email, "FCK Reset Password Link", email_body)
+
+        except Exception as e:
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                f"Failed to send password reset link for {email}. "
+                + f"Reason = {reason if reason else str(e)}"
+            )
             raise e
 
     def reset_password(self, email, password):
@@ -151,6 +191,42 @@ class AuthService(IAuthService):
             self.logger.error(
                 "Failed to generate email verification link for user "
                 + "with email {email}.".format(email=email)
+            )
+            raise e
+
+    def send_onboarding_request_approve_email(self, objectID, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call send_onboarding_request_approve_email but this
+                instance of AuthService does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            url = "https://feeding-canadian-kids-staging.web.app"
+            set_password_link = "{url}/{ObjectID}/set-password".format(
+                url=url, ObjectID=objectID
+            )
+
+            email_body = """
+            Hello,
+            <br><br>
+            We have received your onboarding request and it has been approved.
+            Please set your password using the following link.
+            <br><br>
+            <a href="{reset_link}">Reset Password</a>
+            """.format(
+                reset_link=set_password_link
+            )
+
+            self.email_service.send_email(
+                email, "Onboarding request approved. Set Password", email_body
+            )
+
+        except Exception as e:
+            self.logger.error(
+                "Failed to send onboarding request approved email for user "
             )
             raise e
 
@@ -224,39 +300,3 @@ class AuthService(IAuthService):
             )
         except Exception:
             return False
-
-    def send_onboarding_request_approve_email(self, objectID, email):
-        if not self.email_service:
-            error_message = """
-                Attempted to call send_onboarding_request_approve_email but this
-                instance of AuthService does not have an EmailService instance
-                """
-            self.logger.error(error_message)
-            raise Exception(error_message)
-
-        try:
-            url = "https://feeding-canadian-kids-staging.web.app"
-            set_password_link = "{url}/{ObjectID}/set-password".format(
-                url=url, ObjectID=objectID
-            )
-
-            email_body = """
-            Hello,
-            <br><br>
-            We have received your onboarding request and it has been approved.
-            Please set your password using the following link.
-            <br><br>
-            <a href="{reset_link}">Reset Password</a>
-            """.format(
-                reset_link=set_password_link
-            )
-
-            self.email_service.send_email(
-                email, "Onboarding request approved. Set Password", email_body
-            )
-
-        except Exception as e:
-            self.logger.error(
-                "Failed to send onboarding request approved email for user "
-            )
-            raise e

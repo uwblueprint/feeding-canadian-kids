@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: ./.github/actions/heroku-deploy
@@ -32,3 +32,4 @@ jobs:
           mailerId: "${{ secrets.DEV_MAILER_CLIENT_ID }}"
           mailerSecret: "${{ secrets.DEV_MAILER_CLIENT_SECRET }}"
           mailerRefreshToken: "${{ secrets.DEV_MAILER_REFRESH_TOKEN }}"
+          sourceBranch: "$GITHUB_REF"

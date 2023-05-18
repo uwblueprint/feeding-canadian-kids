@@ -69,5 +69,5 @@ runs:
           config PREVIEW_DEPLOY true
         shell: bash
       - name: Push to Heroku
-        run: git subtree push --prefix backend heroku main --force
+        run: git push heroku `git subtree split --prefix backend main`:main --force
         shell: bash

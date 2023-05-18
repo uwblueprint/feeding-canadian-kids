@@ -29,6 +29,9 @@ inputs:
     required: true
   mailerRefreshToken:
     required: true
+  sourceBranch:
+    required: false
+    default: main
 
 runs:
     using: composite
@@ -66,5 +69,5 @@ runs:
           config PREVIEW_DEPLOY true
         shell: bash
       - name: Push to Heroku
-        run: git push heroku `git subtree split --prefix backend release`:main --force
+        run: git push heroku `git subtree split --prefix backend ${{ inputs.sourceBranch }}`:main --force
         shell: bash

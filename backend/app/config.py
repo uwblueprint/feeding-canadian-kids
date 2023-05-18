@@ -34,7 +34,8 @@ class TestingConfig(Config):
 
     DEBUG = False
     TESTING = True
-    MONGODB_URL = "mongomock://localhost"
+    MONGODB_URL = "mongodb://localhost"
+    USE_MONGOMOCK_CLIENT = True
 
 
 app_config = {

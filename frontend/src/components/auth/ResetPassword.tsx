@@ -28,11 +28,25 @@ const ResetPassword = (): React.ReactElement => {
 
   const GET_USER = gql`
   query GetUserByID{
-    user(id: "${objectId}"
+    getUserById(id: "${objectId}"
       ) {
-        name
+      id
+      info {
         email
+        organizationAddress
+        organizationName
         role
+        primaryContact {
+            name
+            phone
+            email
+        }
+        onsiteContacts {
+            name
+            phone
+            email
+        }
+      }
     }
   }
 `;
@@ -55,7 +69,7 @@ const ResetPassword = (): React.ReactElement => {
     try {
       await resetPassword({
         variables: {
-          email: userData?.user.email,
+          email: userData?.getUserById.info.email,
           password,
         },
       });
@@ -194,6 +208,7 @@ const ResetPassword = (): React.ReactElement => {
             pt={1}
             pb={1}
             backgroundColor="primary.blue"
+            disabled={!!getUserError}
           >
             <Text
               variant={{

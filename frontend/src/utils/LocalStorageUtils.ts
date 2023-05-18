@@ -15,7 +15,8 @@ export const getLocalStorageObj = <O>(localStorageKey: string): O | null => {
 };
 
 // Get a property of an object value from localStorage
-export const getLocalStorageObjProperty = <O extends Record<string, P>, P>(
+// eslint-disable-next-line
+export const getLocalStorageObjProperty = <O extends Record<string, any>, P>(
   localStorageKey: string,
   property: string,
 ): P | null => {

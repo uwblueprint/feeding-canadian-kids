@@ -52,11 +52,12 @@ vault kv get -format=json kv/fck | python update_secret_files.py -->
 
 3. Run `npm install` in the root, and also run `cd frontend && npm install`
 
-````
-3. Run the application
-```bash
-docker-compose up --build
-````
+
+4. Run the application
+  ```bash
+  docker-compose up --build
+  ```
+
 
 The backend runs at http://localhost:5000 and the frontend runs at http://localhost:3000.
 

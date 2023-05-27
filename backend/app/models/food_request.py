@@ -3,18 +3,15 @@ from bson.objectid import ObjectId
 
 
 class MealType(mg.EmbeddedDocument):
-    tags = mg.ListField(mg.StringField(required=True))
     portions = mg.IntField(required=True)
-    portions_fulfilled = mg.IntField(required=True, default=0)
+    dietary_restrictions = mg.DictField(required=True) # make sure DictField is correct
+    meal_suggestions = mg.StringField(required=True)
+    
 
 
 class FoodRequest(mg.EmbeddedDocument):
     _id = mg.ObjectIdField(required=True, default=ObjectId)
-    donor = mg.ObjectIdField()
-    target_fulfillment_date = mg.DateTimeField(required=True)
-    actual_fulfillment_date = mg.DateTimeField()
-    meal_types = mg.EmbeddedDocumentListField(MealType, default=list)
-
+    donation_date = mg.DateTimeField(required=True)
     """
     Open: Request has not been completely fulfilled
     Fulfilled: All meal types have been fulfilled
@@ -23,6 +20,8 @@ class FoodRequest(mg.EmbeddedDocument):
     status = mg.StringField(
         choices=["Open", "Fulfilled", "Cancelled"], required=True, default="Open"
     )
+    donor_id = mg.ObjectIdField(required=True)
+    commitment_date = mg.DateTimeField(required=True)    
 
     def to_serializable_dict(self):
         """

@@ -1,11 +1,19 @@
 import { Button as ChakraButton, Wrap } from "@chakra-ui/react";
+
 import React, { useContext } from "react";
+
 import { useNavigate } from "react-router-dom";
 
+import MealRequestForm from "./MealRequestForm";
+
 import BackgroundImage from "../../assets/background.png";
+
 import * as Routes from "../../constants/Routes";
+
 import SampleContext from "../../contexts/SampleContext";
+
 import Logout from "../auth/Logout";
+
 import RefreshCredentials from "../auth/RefreshCredentials";
 
 type ButtonProps = { text: string; path: string };
@@ -67,6 +75,7 @@ const Default = (): React.ReactElement => {
         />
         <Button text="Edit Team" path={Routes.EDIT_TEAM_PAGE} />
         <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
+        <MealRequestForm />
       </Wrap>
       <div style={{ height: "2rem" }} />
 

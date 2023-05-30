@@ -53,7 +53,7 @@ function MealRequestForm() {
             >
               Meal Information
             </Text>
-            <FormControl mt={3}>
+            <FormControl mt={3} isRequired>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -65,7 +65,7 @@ function MealRequestForm() {
               <Input ref={initialRef} placeholder="Ex. 100" />
             </FormControl>
 
-            <FormControl mt={4}>
+            <FormControl mt={4} isRequired>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -80,7 +80,7 @@ function MealRequestForm() {
               />
             </FormControl>
 
-            <FormControl mt={4}>
+            <FormControl mt={4} isRequired>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -102,13 +102,13 @@ function MealRequestForm() {
               Contact Information
             </Text>
 
-            <FormControl mt={3}>
+            <FormControl mt={3} isRequired>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
                   md: "form-label-bold",
                 }}
-              >
+                >
                 1. Primary contact name
               </FormLabel>
               <Input ref={initialRef} placeholder="Steve Jobs" />

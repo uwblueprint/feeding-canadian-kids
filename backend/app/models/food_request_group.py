@@ -10,7 +10,7 @@ class FoodRequestGroup(mg.Document):
     requestor = mg.ObjectIdField()  # The ASP making the request
 
     # TODO: make this required=True when we have users populated
-    # requests = mg.EmbeddedDocumentListField(FoodRequest, default=list)
+    requests = mg.EmbeddedDocumentListField(FoodRequest, default=list)
 
     """
     Open: At least one FoodRequest is open

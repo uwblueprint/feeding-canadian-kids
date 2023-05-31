@@ -1,4 +1,5 @@
 import graphene
+import json
 
 from .types import (
     ContactInput,
@@ -47,15 +48,10 @@ class CreateFoodRequest(graphene.InputObjectType):
     donor_id = graphene.ID(required=True)
     commitment_date = graphene.DateTime(required=True)
     
-
-class DietaryRestrictionMap(graphene.InputObjectType):
-    key = graphene.String(required=True)
-    value = graphene.Int(required=True)
-
-    
 class MealTypeInput(graphene.InputObjectType):
     portions = graphene.Int(required=True)
-    dietary_restrictions = graphene.List(DietaryRestrictionMap, required=True)
+    # Dietary Restrictions are a map of string to int (e.g. "vegan": 1)
+    dietary_restrictions = graphene.JSONString(required=True)
     meal_suggestions = graphene.String(required=True)
     
 
@@ -64,7 +60,7 @@ class CreateFoodRequestGroup(Mutation):
     class Arguments:
         description = graphene.String(required=True)
         requestor = graphene.ID(required=True)
-        # requests = graphene.List(CreateFoodRequest, required=True)
+        requests = graphene.List(CreateFoodRequest, required=True)
         status = graphene.String(required=True)
 
         meal_info = MealTypeInput(required=True)
@@ -73,7 +69,7 @@ class CreateFoodRequestGroup(Mutation):
         drop_off_time = graphene.DateTime(required=True)
         drop_off_location = graphene.String(required=True)
         delivery_instructions = graphene.String()
-        # onsite_staff = graphene.List(ContactInput, required=True)
+        onsite_staff = graphene.List(ContactInput, required=True)
         
         start_date = graphene.DateTime(required=True)
         end_date = graphene.DateTime(required=True)
@@ -81,15 +77,17 @@ class CreateFoodRequestGroup(Mutation):
     # return values
     food_request_group = graphene.Field(CreateFoodRequestGroupResponse)
 
-    def mutate(self, info, description, requestor, status, meal_info, frequency,
+    def mutate(self, info, description, requestor, requests, status, meal_info, frequency,
                days, drop_off_time, drop_off_location, delivery_instructions,
-               start_date, end_date):
+               onsite_staff, start_date, end_date):
+
         result = services["food_request_service"].create_food_request_group(
-            description=description, requestor=requestor, status=status, meal_info=meal_info, frequency=frequency,
+            description=description, requestor=requestor, requests=requests, status=status, meal_info=meal_info, frequency=frequency,
             days=days, drop_off_time=drop_off_time, drop_off_location=drop_off_location,
-            delivery_instructions=delivery_instructions,
+            delivery_instructions=delivery_instructions, onsite_staff=onsite_staff,
             start_date=start_date, end_date=end_date
         )
+        
         return CreateFoodRequestGroup(food_request_group=result)
 
 

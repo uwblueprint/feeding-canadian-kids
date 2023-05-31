@@ -37,7 +37,7 @@ class FoodRequestService(IFoodRequestService):
 
     #     return new_food_request_group.to_serializable_dict()
     
-    def create_food_request_group(self, description, requestor, status, meal_info, frequency, days, drop_off_time, drop_off_location, delivery_instructions, start_date, end_date):
+    def create_food_request_group(self, description, requestor, requests, status, meal_info, frequency, days, drop_off_time, drop_off_location, delivery_instructions, onsite_staff, start_date, end_date):
         # print("The type of meal_info is ", type(meal_info)["dietary_restrictions"])
         try:
             # # Convert dietary restrictions from list to dictionary
@@ -56,7 +56,7 @@ class FoodRequestService(IFoodRequestService):
             new_food_request_group = FoodRequestGroup(
                 description=description,
                 requestor=requestor,
-                # requests=requests,
+                requests=requests,
                 status=status,
                 frequency=frequency,
                 days=days,

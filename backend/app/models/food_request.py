@@ -2,12 +2,14 @@ import mongoengine as mg
 from bson.objectid import ObjectId
 
 
+class DietaryRestrictionMap(mg.EmbeddedDocument):
+    key = mg.StringField(required=True)
+    value = mg.IntField(required=True)
+
 class MealType(mg.EmbeddedDocument):
     portions = mg.IntField(required=True)
-    dietary_restrictions = mg.DictField(required=True) # make sure DictField is correct
+    dietary_restrictions = mg.EmbeddedDocumentField(DietaryRestrictionMap, required=True)
     meal_suggestions = mg.StringField(required=True)
-    
-
 
 class FoodRequest(mg.EmbeddedDocument):
     _id = mg.ObjectIdField(required=True, default=ObjectId)

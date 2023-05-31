@@ -10,7 +10,7 @@ class FoodRequestGroup(mg.Document):
     requestor = mg.ObjectIdField()  # The ASP making the request
 
     # TODO: make this required=True when we have users populated
-    requests = mg.EmbeddedDocumentListField(FoodRequest, default=list)
+    # requests = mg.EmbeddedDocumentListField(FoodRequest, default=list)
 
     """
     Open: At least one FoodRequest is open
@@ -22,15 +22,15 @@ class FoodRequestGroup(mg.Document):
     )
     
     # Donation Details
-    meal_info = mg.EmbeddedDocumentField(MealType, required=True) # MealType was updated to new schema
+    # meal_info = mg.EmbeddedDocumentField(MealType, required=True) # MealType was updated to new schema
     frequency = mg.StringField(
         choices=["Does not repeat", "Weekly", "Monthly"], required=True, default="Does not repeat"
     )
     days = mg.ListField(mg.StringField(choices=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]))
-    drop_off_time = mg.StringField(required=True)
+    drop_off_time = mg.DateTimeField(required=True)
     drop_off_location = mg.StringField(required=True)
     delivery_instructions = mg.StringField(required=True)
-    onsite_staff = mg.EmbeddedDocumentField(Contact, required=True)
+    # onsite_staff = mg.EmbeddedDocumentField(Contact, required=True)
     
     # Start and end dates for recurring donations
     start_date = mg.DateTimeField(required=True)

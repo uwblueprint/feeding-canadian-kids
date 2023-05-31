@@ -8,6 +8,7 @@ import JoinSuccess from "./components/auth/JoinSuccess";
 import Login from "./components/auth/Login";
 import ResetPassword from "./components/auth/ResetPassword";
 import SetPassword from "./components/auth/SetPassword";
+import Settings from "./components/auth/Settings";
 import Signup from "./components/auth/Signup";
 import CreatePage from "./components/pages/CreatePage";
 import Dashboard from "./components/pages/Dashboard";
@@ -33,6 +34,7 @@ const Routes = (): React.ReactElement => (
     <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
     <Route path={Paths.RESET_PASSWORD_PAGE} element={<ResetPassword />} />
     <Route path={Paths.SET_PASSWORD_PAGE} element={<SetPassword />} />
+    <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
     <Route path={Paths.DASHBOARD_PAGE} element={<AuthWall />}>
       <Route path="" element={<Dashboard />} />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />

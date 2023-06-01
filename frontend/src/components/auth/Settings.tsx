@@ -25,7 +25,6 @@ import {
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import LargerBackgroundImage from "../../assets/largerbackground.png";
 import {
   DASHBOARD_PAGE,
   HOME_PAGE,
@@ -113,13 +112,13 @@ const Settings = (): React.ReactElement => {
 
   const getTitleSection = (): React.ReactElement => {
     return (
-        <Text
-          alignSelf={{ base: "center", lg: "unset" }}
-          variant="desktop-display-xl"
-          color="primary.blue"
-        >
-          User Settings
-        </Text>
+      <Text
+        alignSelf={{ base: "center", lg: "unset" }}
+        variant="desktop-display-xl"
+        color="primary.blue"
+      >
+        User Settings
+      </Text>
     );
   };
 
@@ -150,9 +149,7 @@ const Settings = (): React.ReactElement => {
               isRequired
               isInvalid={attemptedSubmit && primaryContact.phone === ""}
             >
-              <FormLabel variant="form-label-bold">
-                Phone number
-              </FormLabel>
+              <FormLabel variant="form-label-bold">Phone number</FormLabel>
               <Input
                 type="tel"
                 value={primaryContact.phone}
@@ -169,13 +166,9 @@ const Settings = (): React.ReactElement => {
           <Flex flexDir="column" w="519px">
             <FormControl
               isRequired
-              isInvalid={
-                attemptedSubmit && !isValidEmail(primaryContact.email)
-              }
+              isInvalid={attemptedSubmit && !isValidEmail(primaryContact.email)}
             >
-              <FormLabel variant="form-label-bold">
-                Email address
-              </FormLabel>
+              <FormLabel variant="form-label-bold">Email address</FormLabel>
               <Input
                 type="email"
                 value={primaryContact.email}
@@ -334,7 +327,6 @@ const Settings = (): React.ReactElement => {
       </Flex>
     );
   };
-
 
   const getMobileContactSection = (): React.ReactElement => {
     return (
@@ -781,9 +773,7 @@ const Settings = (): React.ReactElement => {
       {getUserTypeSection()}
       {getEmailSection()}
       {isWebView && <Divider />}
-      {isWebView
-        ? getWebOrganizationSection()
-        : getMobileOrganizationSection()}
+      {isWebView ? getWebOrganizationSection() : getMobileOrganizationSection()}
       {isWebView && <Divider />}
       {isWebView ? getWebOnsiteStaffSection() : getMobileOnsiteStaffSection()}
       {getSubmitSection()}

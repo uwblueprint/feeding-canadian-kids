@@ -2,6 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Center,
   Divider,
   Flex,
   FormControl,
@@ -757,27 +758,31 @@ const Settings = (): React.ReactElement => {
   };
 
   return (
-    <Flex
-      flexDir="column"
-      w={{ base: "100%", lg: "1440px" }}
-      p={{ base: "24px", sm: "48px", lg: "64px" }}
-      marginBottom="50px"
-      gap={{ base: "20px", lg: "32px" }}
-      borderRadius="8px"
-      style={{
-        backgroundColor: "white",
-      }}
-    >
-      {getTitleSection()}
-      {isWebView ? getWebContactSection() : getMobileContactSection()}
-      {getUserTypeSection()}
-      {getEmailSection()}
-      {isWebView && <Divider />}
-      {isWebView ? getWebOrganizationSection() : getMobileOrganizationSection()}
-      {isWebView && <Divider />}
-      {isWebView ? getWebOnsiteStaffSection() : getMobileOnsiteStaffSection()}
-      {getSubmitSection()}
-    </Flex>
+    <Center>
+      <Flex
+        flexDir="column"
+        w={{ base: "100%", lg: "1100px" }}
+        p={{ base: "24px", sm: "48px", lg: "64px" }}
+        marginBottom="50px"
+        gap={{ base: "20px", lg: "32px" }}
+        borderRadius="8px"
+        style={{
+          backgroundColor: "white",
+        }}
+      >
+        {getTitleSection()}
+        {isWebView ? getWebContactSection() : getMobileContactSection()}
+        {getUserTypeSection()}
+        {getEmailSection()}
+        {isWebView && <Divider />}
+        {isWebView
+          ? getWebOrganizationSection()
+          : getMobileOrganizationSection()}
+        {isWebView && <Divider />}
+        {isWebView ? getWebOnsiteStaffSection() : getMobileOnsiteStaffSection()}
+        {getSubmitSection()}
+      </Flex>
+    </Center>
   );
 };
 

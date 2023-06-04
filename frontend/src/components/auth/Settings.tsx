@@ -45,6 +45,7 @@ const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
 const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
 const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
 const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
+const PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS = "40";
 
 const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
@@ -84,6 +85,7 @@ const Settings = (): React.ReactElement => {
   const [role, setRole] = useState<Role>("ASP");
   const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
+  const [numberOfKids, setNumberOfKids] = useState("");
   const [organizationAddress, setOrganizationAddress] = useState("");
   const [primaryContact, setPrimaryContact] = useState<Contact>({
     name: "",
@@ -123,9 +125,34 @@ const Settings = (): React.ReactElement => {
     );
   };
 
+  const getWebLoginInfoSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column" gap="24px">
+        <Text variant="desktop-heading">Login Information</Text>
+        <Flex flexDir="column" gap="24px">
+          <Flex flexDir="column">
+              <Text variant="desktop-body-bold">Email Address</Text>
+              <Text variant="desktop-body">john.millersonberk@gmail.com</Text>    
+          </Flex>
+          <Button
+            w={{ base: "100%", lg: "190px" }}
+            h={{ base: "100%", lg: "45px" }}
+            variant="outline"
+            color="primary.green"
+            bgColor="background.white"
+            _hover={{ color: "background.white", bgColor: "primary.green" }}
+            borderRadius="6px"
+          >
+            Reset Password
+          </Button>
+        </Flex>
+      </Flex>
+    );
+  };
+
   const getWebContactSection = (): React.ReactElement => {
     return (
-      <>
+      <Flex flexDir="column" gap="24px">
         <Text variant="desktop-heading">Contact Information</Text>
         <Flex flexDir="row" gap="24px">
           <Flex flexDir="column" w="240px">
@@ -184,77 +211,13 @@ const Settings = (): React.ReactElement => {
             </FormControl>
           </Flex>
         </Flex>
-      </>
-    );
-  };
-
-  const getUserTypeSection = (): React.ReactElement => {
-    return (
-      <Flex flexDir="column">
-        <FormControl isRequired>
-          <FormLabel
-            variant={{
-              base: "mobile-form-label-bold",
-              lg: "form-label-bold",
-            }}
-          >
-            Type of user
-          </FormLabel>
-          <RadioGroup
-            onChange={(radioVal) => setRole(radioVal as Role)}
-            value={role}
-          >
-            <Stack direction={{ base: "column", lg: "row" }}>
-              <Radio value="ASP">
-                <Text variant="desktop-heading-6">After School Program</Text>
-              </Radio>
-              <Radio value="Donor">
-                <Text variant="desktop-heading-6">Meal Donor</Text>
-              </Radio>
-            </Stack>
-          </RadioGroup>
-        </FormControl>
-      </Flex>
-    );
-  };
-
-  const getEmailSection = (): React.ReactElement => {
-    return (
-      <Flex flexDir="column">
-        <FormControl
-          isRequired
-          isInvalid={attemptedSubmit && !isValidEmail(email)}
-        >
-          <FormLabel
-            variant={{
-              base: "mobile-form-label-bold",
-              lg: "desktop-button-bold",
-            }}
-          >
-            Email address
-          </FormLabel>
-          <Input
-            variant={{
-              base: "mobile-outline",
-              lg: "outline",
-            }}
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={
-              isWebView
-                ? PLACEHOLDER_WEB_EXAMPLE_EMAIL
-                : PLACEHOLDER_MOBILE_EXAMPLE_EMAIL
-            }
-          />
-        </FormControl>
       </Flex>
     );
   };
 
   const getWebOrganizationSection = (): React.ReactElement => {
     return (
-      <>
+      <Flex flexDir="column" gap="24px">
         <Text variant="desktop-heading">Organization Info</Text>
         <Flex flexDir="row" gap="24px">
           <Flex flexDir="column" w="240px">
@@ -262,13 +225,27 @@ const Settings = (): React.ReactElement => {
               isRequired
               isInvalid={attemptedSubmit && organizationName === ""}
             >
-              <FormLabel variant="desktop-button-bold">
+              <FormLabel variant="form-label-bold">
                 Name of organization
               </FormLabel>
               <Input
                 value={organizationName}
-                placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_NAME}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_ADDRESS}
                 onChange={(e) => setOrganizationName(e.target.value)}
+              />
+            </FormControl>
+          </Flex>
+          <Flex flexDir="column" w="240px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && numberOfKids === ""}
+            >
+              <FormLabel variant="form-label-bold">Number of kids</FormLabel>
+              <Input
+                type="tel"
+                value={numberOfKids}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
+                onChange={(e) => setNumberOfKids(e.target.value)}
               />
             </FormControl>
           </Flex>
@@ -277,10 +254,9 @@ const Settings = (): React.ReactElement => {
               isRequired
               isInvalid={attemptedSubmit && organizationAddress === ""}
             >
-              <FormLabel variant="desktop-button-bold">
-                Address of organization
-              </FormLabel>
+              <FormLabel variant="form-label-bold">Address of organization</FormLabel>
               <Input
+                type="email"
                 value={organizationAddress}
                 placeholder={PLACEHOLDER_WEB_EXAMPLE_ADDRESS}
                 onChange={(e) => setOrganizationAddress(e.target.value)}
@@ -288,7 +264,7 @@ const Settings = (): React.ReactElement => {
             </FormControl>
           </Flex>
         </Flex>
-      </>
+      </Flex>
     );
   };
 
@@ -771,10 +747,10 @@ const Settings = (): React.ReactElement => {
         }}
       >
         {getTitleSection()}
-        {isWebView ? getWebContactSection() : getMobileContactSection()}
-        {getUserTypeSection()}
-        {getEmailSection()}
+        {getWebLoginInfoSection()}
         {isWebView && <Divider />}
+        {isWebView ? getWebContactSection() : getMobileContactSection()}
+        {isWebView && <Divider/>}
         {isWebView
           ? getWebOrganizationSection()
           : getMobileOrganizationSection()}

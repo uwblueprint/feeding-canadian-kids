@@ -509,7 +509,7 @@ function MealRequestForm() {
               >
                 Number of meals
               </FormLabel>
-              <Input ref={initialRef} placeholder="Ex. 100" />
+              <Input ref={initialRef} w="200px" placeholder="Ex. 100" />
             </FormControl>
 
             <FormControl mt={4} isRequired>
@@ -553,7 +553,15 @@ function MealRequestForm() {
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={onClose} mr={3}>
+            <Button
+              onClick={onClose}
+              mr={3}
+              style={{
+                backgroundColor: "white",
+                color: "#3BA948",
+                borderColor: "#3BA948", borderWidth:"1.5px"
+              }}
+            >
               Cancel
             </Button>
             <Button colorScheme="blue">Save</Button>

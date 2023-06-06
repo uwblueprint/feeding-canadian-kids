@@ -3,6 +3,7 @@ Tests for FoodRequestGroup GraphQL schema and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
 """
 
+
 def test_create_food_request_group(graphql_schema):
     mutation = """
     mutation testCreateFoodRequestGroup {
@@ -47,7 +48,7 @@ def test_create_food_request_group(graphql_schema):
 
     assert result.errors is None
 
-   
+
 def test_get_food_request_group_failure(graphql_schema):
     mutation = """
     mutation testCreateFoodRequestGroup {

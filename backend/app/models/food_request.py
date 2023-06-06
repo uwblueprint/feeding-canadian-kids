@@ -6,10 +6,14 @@ class DietaryRestrictionMap(mg.EmbeddedDocument):
     key = mg.StringField(required=True)
     value = mg.IntField(required=True)
 
+
 class MealType(mg.EmbeddedDocument):
     portions = mg.IntField(required=True)
-    dietary_restrictions = mg.EmbeddedDocumentField(DietaryRestrictionMap, required=True)
+    dietary_restrictions = mg.EmbeddedDocumentField(
+        DietaryRestrictionMap, required=True
+    )
     meal_suggestions = mg.StringField(required=True)
+
 
 class FoodRequest(mg.EmbeddedDocument):
     _id = mg.ObjectIdField(required=True, default=ObjectId)
@@ -23,7 +27,7 @@ class FoodRequest(mg.EmbeddedDocument):
         choices=["Open", "Fulfilled", "Cancelled"], required=True, default="Open"
     )
     donor_id = mg.ObjectIdField(required=True)
-    commitment_date = mg.DateTimeField(required=True)    
+    commitment_date = mg.DateTimeField(required=True)
 
     def to_serializable_dict(self):
         """

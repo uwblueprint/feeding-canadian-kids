@@ -36,8 +36,23 @@ class FoodRequestService(IFoodRequestService):
     #         raise error
 
     #     return new_food_request_group.to_serializable_dict()
-    
-    def create_food_request_group(self, description, requestor, requests, status, meal_info, frequency, days, drop_off_time, drop_off_location, delivery_instructions, onsite_staff, start_date, end_date):
+
+    def create_food_request_group(
+        self,
+        description,
+        requestor,
+        requests,
+        status,
+        meal_info,
+        frequency,
+        days,
+        drop_off_time,
+        drop_off_location,
+        delivery_instructions,
+        onsite_staff,
+        start_date,
+        end_date,
+    ):
         # print("The type of meal_info is ", type(meal_info)["dietary_restrictions"])
         try:
             # # Convert dietary restrictions from list to dictionary
@@ -47,9 +62,9 @@ class FoodRequestService(IFoodRequestService):
             # for restriction in restrictions_old:
             #     restrictions[restriction['key']] = restriction['value']
             # meal_info['dietary_restrictions'] = restrictions
-                
+
             # print("The type of meal_info is ", type(meal_info))
-            
+
             # print("meal_info: ", meal_info)
 
             # Create FoodRequestGroup
@@ -70,7 +85,5 @@ class FoodRequestService(IFoodRequestService):
         except Exception as error:
             self.logger.error(str(error))
             raise error
-    
-        return new_food_request_group.to_serializable_dict()            
-                
-        
+
+        return new_food_request_group.to_serializable_dict()

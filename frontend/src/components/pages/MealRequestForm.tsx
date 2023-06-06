@@ -1,4 +1,5 @@
-import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+
 import {
   Button,
   Divider,
@@ -25,6 +26,7 @@ import {
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
+
 import React, { useContext, useState } from "react";
 
 import {
@@ -32,13 +34,16 @@ import {
   HOME_PAGE,
   JOIN_SUCCESS_PAGE,
 } from "../../constants/Routes";
+
 import AuthContext from "../../contexts/AuthContext";
+
 import {
   Contact,
   OnboardingRequest,
   Role,
   UserInfo,
 } from "../../types/AuthTypes";
+
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -89,6 +94,13 @@ function MealRequestForm() {
                   {`Additional Onsite Staff (${index + 1})`}
                 </FormLabel>
               </FormControl>
+              <EditIcon
+                h="16px"
+                  w="16px"
+                  color="gray.gray300"
+                  cursor="pointer"
+                  _hover={{ color: "primary.blue" }}
+              />
               {onsiteInfo.length >= 2 && (
                 <DeleteIcon
                   h="16px"
@@ -277,6 +289,7 @@ function MealRequestForm() {
                     >
                       <Input
                         h="37px"
+                        w="200px"
                         type="email"
                         value={onsiteInfo[index].email}
                         placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
@@ -287,6 +300,15 @@ function MealRequestForm() {
                       />
                     </FormControl>
                   </Td>
+                  <Td padding="0 4px">
+                  <EditIcon
+                        h="19.5px"
+                        w="100%"
+                        color="gray.gray300"
+                        cursor="pointer"
+                        _hover={{ color: "primary.blue" }}
+                      />
+                      </Td>
                   {onsiteInfo.length >= 2 ? (
                     <Td padding="0 4px">
                       <DeleteIcon
@@ -422,6 +444,7 @@ function MealRequestForm() {
               <FormControl
                 isRequired
                 isInvalid={attemptedSubmit && primaryContact.phone === ""}
+                mb={6}
               >
                 <FormLabel variant="desktop-button-bold">
                   Phone number
@@ -500,7 +523,7 @@ function MealRequestForm() {
             >
               Meal Information
             </Text>
-            <FormControl mt={3} isRequired>
+            <FormControl mt={3} mb={6} isRequired>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -512,12 +535,13 @@ function MealRequestForm() {
               <Input ref={initialRef} w="200px" placeholder="Ex. 100" />
             </FormControl>
 
-            <FormControl mt={4} isRequired>
+            <FormControl mt={3} mb={6} isRequired>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
                   md: "form-label-bold",
                 }}
+                mb={6}
               >
                 Dietary restrictions
               </FormLabel>
@@ -527,12 +551,13 @@ function MealRequestForm() {
               />
             </FormControl>
 
-            <FormControl mt={4} isRequired>
+            <FormControl isRequired>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
                   md: "form-label-bold",
                 }}
+                mb={6}
               >
                 Delivery Notes
               </FormLabel>
@@ -556,11 +581,7 @@ function MealRequestForm() {
             <Button
               onClick={onClose}
               mr={3}
-              style={{
-                backgroundColor: "white",
-                color: "#3BA948",
-                borderColor: "#3BA948", borderWidth:"1.5px"
-              }}
+              variant='outline'
             >
               Cancel
             </Button>

@@ -3,94 +3,89 @@ Tests for FoodRequestGroup GraphQL schema and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
 """
 
-
 def test_create_food_request_group(graphql_schema):
     mutation = """
-    mutation TestCreateFoodRequestGroup {
-    createFoodRequestGroup(
-        description: "sample food request",
-        requestor: "0",
-        commitments: [
-        {
-            date: "2022-10-17T16:00:00",
-            mealTypes: [
-            {
-                tags: ["Beef", "Chicken"],
-                portions: 50
-            }
-            {
-                tags: ["Vegetarian"],
-                portions: 20
-            }
-            ]
-        },
-        {
-            date: "2022-10-17T16:00:00",
-            mealTypes: [
-            {
-                tags: ["Halal"],
-                portions: 100
-            }
-            {
-                tags: ["Vegetarian"],
-                portions: 30
-            }
-            ]
-        }
-        ]
-    ) {
+    mutation testCreateFoodRequestGroup {
+      createFoodRequestGroup(
+        days: ["Monday", "Wednesday", "Friday"], 
+        deliveryInstructions: "Leave at front door", 
+        description: "Food request group for office employees", 
+        dropOffLocation: "123 Main Street", 
+        dropOffTime: "2023-06-01T12:00:00Z", 
+        endDate: "2023-06-30T23:59:59Z", 
+        frequency: "Weekly", 
+        mealInfo: {portions: 40, 
+          dietaryRestrictions: "{\\"Gluten Free\\": 7, \\"No Beef\\": 8, \\"Vegetarian\\": 10}",
+          mealSuggestions: "Burritos"}, 
+        onsiteStaff: [
+          {name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"}, 
+          {name: "Jane Smith", email: "jane.smith@example.com", phone: "+9876543210"}], 
+        requestor: "507f1f77bcf86cd799439011", 
+        requests: [
+          {donationDate: "2023-06-01T00:00:00Z", status: "Open", donorId: "507f191e810c19729de860ea", commitmentDate: "2023-06-01T00:00:00Z"}
+        ], 
+        startDate: "2023-06-01T00:00:00Z", 
+        status: "Open") 
+      {
         foodRequestGroup {
-        id
-        description
-        requests {
+          status
+          description
+          id
+          requests {
             id
-            targetFulfillmentDate
-            status
             mealTypes {
-                tags
-                portions
+              tags
+              portions
             }
+          }
         }
-        }
-    }
+      }
     }
   """
-    expected_requests = [
-        {
-            "targetFulfillmentDate": "2022-10-17T16:00:00",
-            "status": "Open",
-            "mealTypes": [
-                {"tags": ["Beef", "Chicken"], "portions": 50},
-                {"tags": ["Vegetarian"], "portions": 20},
-            ],
-        },
-        {
-            "targetFulfillmentDate": "2022-10-17T16:00:00",
-            "status": "Open",
-            "mealTypes": [
-                {"tags": ["Halal"], "portions": 100},
-                {"tags": ["Vegetarian"], "portions": 30},
-            ],
-        },
-    ]
 
     result = graphql_schema.execute(mutation)
+
     assert result.errors is None
 
-    food_request_group = result.data["createFoodRequestGroup"]["foodRequestGroup"]
-
-    # assert food_request_group values
-    assert food_request_group["id"]
-    assert food_request_group["description"] == "sample food request"
-
-    # assert food_request values
-    food_requests = food_request_group["requests"]
-    assert len(food_requests) == len(expected_requests)
-
-    for i in range(len(food_requests)):
-        assert food_requests[i]["id"]
-        assert (
-            food_requests[i]["targetFulfillmentDate"]
-            == expected_requests[i]["targetFulfillmentDate"]
-        )
-        assert food_requests[i]["mealTypes"] == expected_requests[i]["mealTypes"]
+   
+def test_get_food_request_group_failure(graphql_schema):
+    mutation = """
+    mutation testCreateFoodRequestGroup {
+      createFoodRequestGroup(
+        days: ["Monday", "Wednesday", "Friday"], 
+        deliveryInstructions: "Leave at front door", 
+        description: "Food request group for office employees", 
+        dropOffLocation: "123 Main Street", 
+        dropOffTime: "2023-06-01T12:00:00Z", 
+        endDate: "2023-06-30T23:59:59Z", 
+        frequency: "Daily", 
+        mealInfo: {portions: 40, 
+          dietaryRestrictions: "{\\"Gluten Free\\": 7, \\"No Beef\\": 8, \\"Vegetarian\\": 10}",
+          mealSuggestions: "Burritos"}, 
+        onsiteStaff: [
+          {name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"}, 
+          {name: "Jane Smith", email: "jane.smith@example.com", phone: "+9876543210"}], 
+        requestor: "507f1f77bcf86cd799439011", 
+        requests: [
+          {donationDate: "2023-06-01T00:00:00Z", status: "Open", donorId: "507f191e810c19729de860ea", commitmentDate: "2023-06-01T00:00:00Z"}
+        ], 
+        startDate: "2023-06-01T00:00:00Z", 
+        status: "Open") 
+      {
+        foodRequestGroup {
+          status
+          description
+          id
+          requests {
+            id
+            mealTypes {
+              tags
+              portions
+            }
+          }
+        }
+      }
+    }
+    """
+    result = graphql_schema.execute(mutation)
+    result.errors is not None

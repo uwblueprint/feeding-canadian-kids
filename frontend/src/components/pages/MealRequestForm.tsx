@@ -213,6 +213,7 @@ function MealRequestForm() {
               <Tr
                 borderRadius="8px 8px 0 0"
                 h="40px"
+                w="256px"
                 background="primary.lightblue"
               >
                 <Th
@@ -279,7 +280,7 @@ function MealRequestForm() {
                       />
                     </FormControl>
                   </Td>
-                  <Td padding="0 0 0 12px">
+                  <Td padding="0 0 0 8px">
                     <FormControl
                       isRequired={index === 0}
                       isInvalid={
@@ -289,7 +290,6 @@ function MealRequestForm() {
                     >
                       <Input
                         h="37px"
-                        w="200px"
                         type="email"
                         value={onsiteInfo[index].email}
                         placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
@@ -300,17 +300,18 @@ function MealRequestForm() {
                       />
                     </FormControl>
                   </Td>
-                  <Td padding="0 4px">
+                  <Td padding="0">
                   <EditIcon
                         h="19.5px"
                         w="100%"
                         color="gray.gray300"
                         cursor="pointer"
                         _hover={{ color: "primary.blue" }}
+                        pr={0}
                       />
                       </Td>
                   {onsiteInfo.length >= 2 ? (
-                    <Td padding="0 4px">
+                    <Td padding="0 2px">
                       <DeleteIcon
                         h="19.5px"
                         w="100%"
@@ -321,6 +322,7 @@ function MealRequestForm() {
                           onsiteInfo.splice(index, 1);
                           setOnsiteInfo([...onsiteInfo]);
                         }}
+                        pr={2}
                       />
                     </Td>
                   ) : (

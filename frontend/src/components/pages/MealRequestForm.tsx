@@ -175,7 +175,7 @@ function MealRequestForm() {
               ]);
             }}
           >
-            + Add onsite staff
+            + Add another contact
           </Text>
         )}
       </Flex>
@@ -325,7 +325,7 @@ function MealRequestForm() {
               ]);
             }}
           >
-            + Add onsite staff
+            + Add another contact
           </Text>
         )}
       </Flex>
@@ -525,6 +525,24 @@ function MealRequestForm() {
                 ref={initialRef}
                 placeholder="Ex. Nut allergy, gluten free"
               />
+            </FormControl>
+
+            <FormControl mt={4} isRequired>
+              <FormLabel
+                variant={{
+                  base: "mobile-form-label-bold",
+                  md: "form-label-bold",
+                }}
+              >
+                Delivery Notes
+              </FormLabel>
+              <Input
+                mb={6}
+                ref={initialRef}
+                placeholder="Ex. Nut allergy, gluten free"
+              />
+              <br />
+              <hr />
             </FormControl>
 
             {isWebView && <Divider />}

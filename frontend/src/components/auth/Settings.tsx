@@ -301,18 +301,13 @@ const Settings = (): React.ReactElement => {
             </FormControl>
           </Flex>
           <Flex flexDir="column" w="200px">
-            <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && numberOfKids === ""}
-            >
-              <FormLabel variant="form-label-bold">Number of kids</FormLabel>
-              <Input
-                type="tel"
-                value={numberOfKids}
-                placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
-                onChange={(e) => setNumberOfKids(e.target.value)}
-              />
-            </FormControl>
+            <FormLabel variant="form-label-bold">Number of kids</FormLabel>
+            <Input
+              type="number"
+              value={numberOfKids}
+              placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
+              onChange={(e) => setNumberOfKids(e.target.value)}
+            />
           </Flex>
           <Flex flexDir="column" w="350px">
             <FormControl

@@ -208,7 +208,7 @@ function MealRequestForm() {
           </Text>
         </Flex>
         <TableContainer border="1px solid #EDF2F7" borderRadius="8px">
-          <Table>
+          <Table background="primary.lightblue">
             <Thead>
               <Tr
                 borderRadius="8px 8px 0 0"
@@ -221,6 +221,7 @@ function MealRequestForm() {
                   padding="0 12px 0 24px"
                   w="256px"
                   textTransform="none"
+                  background="primary.lightblue"
                 >
                   <Text color="black" variant="desktop-xs">
                     Full Name
@@ -240,7 +241,7 @@ function MealRequestForm() {
               </Tr>
             </Thead>
 
-            <Tbody>
+            <Tbody background="white">
               {onsiteInfo.map((info, index) => (
                 <Tr h="58px" key={index}>
                   <Td padding="0 12px 0 24px" gap="24px">

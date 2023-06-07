@@ -47,7 +47,8 @@ const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
 const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
 const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
 const PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS = "40";
-const PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION = "Our organization helps feed Canadian kids!"
+const PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION =
+  "Our organization helps feed Canadian kids!";
 
 const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
@@ -55,37 +56,37 @@ const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
 
-const SIGNUP = gql`
-  mutation OnboardRequest($userInfo: UserInfoInput!) {
-    createOnboardingRequest(userInfo: $userInfo) {
-      onboardingRequest {
-        id
-        info {
-          email
-          organizationAddress
-          organizationName
-          role
-          primaryContact {
-            name
-            phone
-            email
-          }
-          onsiteContacts {
-            name
-            phone
-            email
-          }
-        }
-        dateSubmitted
-        status
-      }
-    }
-  }
-`;
+// const SIGNUP = gql`
+//   mutation OnboardRequest($userInfo: UserInfoInput!) {
+//     createOnboardingRequest(userInfo: $userInfo) {
+//       onboardingRequest {
+//         id
+//         info {
+//           email
+//           organizationAddress
+//           organizationName
+//           role
+//           primaryContact {
+//             name
+//             phone
+//             email
+//           }
+//           onsiteContacts {
+//             name
+//             phone
+//             email
+//           }
+//         }
+//         dateSubmitted
+//         status
+//       }
+//     }
+//   }
+// `;
 
 const Settings = (): React.ReactElement => {
-  const [role, setRole] = useState<Role>("ASP");
-  const [email, setEmail] = useState("");
+  // const [role, setRole] = useState<Role>("ASP");
+  // const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [numberOfKids, setNumberOfKids] = useState("");
   const [organizationAddress, setOrganizationAddress] = useState("");
@@ -105,11 +106,11 @@ const Settings = (): React.ReactElement => {
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [isWebView] = useMediaQuery("(min-width: 62em)");
-  const [signup] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
-    SIGNUP,
-  );
-  const toast = useToast();
-  const navigate = useNavigate();
+  // const [signup] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
+  //   SIGNUP,
+  // );
+  // const toast = useToast();
+  // const navigate = useNavigate();
   const { authenticatedUser } = useContext(AuthContext);
 
   if (authenticatedUser) {
@@ -134,8 +135,8 @@ const Settings = (): React.ReactElement => {
         <Text variant="desktop-heading">Login Information</Text>
         <Flex flexDir="column" gap="24px">
           <Flex flexDir="column">
-              <Text variant="desktop-body-bold">Email Address</Text>
-              <Text variant="desktop-body">john.millersonberk@gmail.com</Text>    
+            <Text variant="desktop-body-bold">Email Address</Text>
+            <Text variant="desktop-body">john.millersonberk@gmail.com</Text>
           </Flex>
           <Button
             w={{ base: "100%", lg: "190px" }}
@@ -158,7 +159,7 @@ const Settings = (): React.ReactElement => {
       <Flex flexDir="column" gap="24px">
         <Text variant="desktop-heading">Contact Information</Text>
         <Flex flexDir="row" gap="24px">
-          <Flex flexDir="column" w="240px">
+          <Flex flexDir="column" w="300px">
             <FormControl
               isRequired
               isInvalid={attemptedSubmit && primaryContact.name === ""}
@@ -175,7 +176,7 @@ const Settings = (): React.ReactElement => {
               />
             </FormControl>
           </Flex>
-          <Flex flexDir="column" w="240px">
+          <Flex flexDir="column" w="200px">
             <FormControl
               isRequired
               isInvalid={attemptedSubmit && primaryContact.phone === ""}
@@ -194,7 +195,7 @@ const Settings = (): React.ReactElement => {
               />
             </FormControl>
           </Flex>
-          <Flex flexDir="column" w="519px">
+          <Flex flexDir="column" w="350px">
             <FormControl
               isRequired
               isInvalid={attemptedSubmit && !isValidEmail(primaryContact.email)}
@@ -214,106 +215,6 @@ const Settings = (): React.ReactElement => {
             </FormControl>
           </Flex>
         </Flex>
-      </Flex>
-    );
-  };
-
-  const getWebOrganizationSection = (): React.ReactElement => {
-    return (
-      <Flex flexDir="column" gap="24px">
-        <Text variant="desktop-heading">Organization Info</Text>
-        <Flex flexDir="row" gap="24px">
-          <Flex flexDir="column" w="240px">
-            <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && organizationName === ""}
-            >
-              <FormLabel variant="form-label-bold">
-                Name of organization
-              </FormLabel>
-              <Input
-                value={organizationName}
-                placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_NAME}
-                onChange={(e) => setOrganizationName(e.target.value)}
-              />
-            </FormControl>
-          </Flex>
-          <Flex flexDir="column" w="240px">
-            <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && numberOfKids === ""}
-            >
-              <FormLabel variant="form-label-bold">Number of kids</FormLabel>
-              <Input
-                type="tel"
-                value={numberOfKids}
-                placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
-                onChange={(e) => setNumberOfKids(e.target.value)}
-              />
-            </FormControl>
-          </Flex>
-          <Flex flexDir="column" w="519px">
-            <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && organizationAddress === ""}
-            >
-              <FormLabel variant="form-label-bold">Address of organization</FormLabel>
-              <Input
-                type="email"
-                value={organizationAddress}
-                placeholder={PLACEHOLDER_WEB_EXAMPLE_ADDRESS}
-                onChange={(e) => setOrganizationAddress(e.target.value)}
-              />
-            </FormControl>
-          </Flex>
-        </Flex>
-        <Flex flexDir="column" w="60%" gap="8px">
-          <Text variant="desktop-body-bold">Description of organization</Text>
-          <Textarea
-            size="desktop-body"
-            p="12px"
-            placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION}
-            value={organizationDescription}
-            onChange={(e) => setOrganizationDescription(e.target.value)}
-          />
-        </Flex>
-      </Flex>
-    );
-  };
-
-  const getMobileOrganizationSection = (): React.ReactElement => {
-    return (
-      <Flex flexDir="column" gap="8px">
-        <FormControl isRequired>
-          <FormLabel variant="mobile-form-label-bold">
-            Organization Info
-          </FormLabel>
-
-          <Flex flexDir="column" gap="8px">
-            <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && organizationName === ""}
-            >
-              <Input
-                variant="mobile-outline"
-                value={organizationName}
-                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME}
-                onChange={(e) => setOrganizationName(e.target.value)}
-              />
-            </FormControl>
-            <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && organizationAddress === ""}
-            >
-              <Input
-                variant="mobile-outline"
-                value={organizationAddress}
-                onChange={(e) => setOrganizationAddress(e.target.value)}
-                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS}
-              />
-            </FormControl>
-          </Flex>
-        </FormControl>
       </Flex>
     );
   };
@@ -371,6 +272,108 @@ const Settings = (): React.ReactElement => {
                   })
                 }
                 placeholder={PLACEHOLDER_MOBILE_EXAMPLE_EMAIL}
+              />
+            </FormControl>
+          </Flex>
+        </FormControl>
+      </Flex>
+    );
+  };
+
+  const getWebOrganizationSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column" gap="24px">
+        <Text variant="desktop-heading">Organization Info</Text>
+        <Flex flexDir="row" gap="24px">
+          <Flex flexDir="column" w="300px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationName === ""}
+            >
+              <FormLabel variant="form-label-bold">
+                Name of organization
+              </FormLabel>
+              <Input
+                value={organizationName}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_NAME}
+                onChange={(e) => setOrganizationName(e.target.value)}
+              />
+            </FormControl>
+          </Flex>
+          <Flex flexDir="column" w="200px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && numberOfKids === ""}
+            >
+              <FormLabel variant="form-label-bold">Number of kids</FormLabel>
+              <Input
+                type="tel"
+                value={numberOfKids}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
+                onChange={(e) => setNumberOfKids(e.target.value)}
+              />
+            </FormControl>
+          </Flex>
+          <Flex flexDir="column" w="350px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationAddress === ""}
+            >
+              <FormLabel variant="form-label-bold">
+                Address of organization
+              </FormLabel>
+              <Input
+                type="email"
+                value={organizationAddress}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_ADDRESS}
+                onChange={(e) => setOrganizationAddress(e.target.value)}
+              />
+            </FormControl>
+          </Flex>
+        </Flex>
+        <Flex flexDir="column" w="60%" gap="8px">
+          <Text variant="desktop-body-bold">Description of organization</Text>
+          <Textarea
+            size="desktop-body"
+            p="12px"
+            placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION}
+            value={organizationDescription}
+            onChange={(e) => setOrganizationDescription(e.target.value)}
+          />
+        </Flex>
+      </Flex>
+    );
+  };
+
+  const getMobileOrganizationSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column" gap="8px">
+        <FormControl isRequired>
+          <FormLabel variant="mobile-form-label-bold">
+            Organization Info
+          </FormLabel>
+
+          <Flex flexDir="column" gap="8px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationName === ""}
+            >
+              <Input
+                variant="mobile-outline"
+                value={organizationName}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME}
+                onChange={(e) => setOrganizationName(e.target.value)}
+              />
+            </FormControl>
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationAddress === ""}
+            >
+              <Input
+                variant="mobile-outline"
+                value={organizationAddress}
+                onChange={(e) => setOrganizationAddress(e.target.value)}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS}
               />
             </FormControl>
           </Flex>
@@ -634,62 +637,61 @@ const Settings = (): React.ReactElement => {
     );
   };
 
-  const handleSignUp = async (userInfo: UserInfo) => {
-    try {
-      const response = await signup({ variables: { userInfo } });
-      // eslint-disable-next-line no-console
-      console.log(response);
-      navigate(JOIN_SUCCESS_PAGE);
-    } catch (e: unknown) {
-      toast({
-        title: "Failed to create account. Please try again.",
-        status: "error",
-        isClosable: true,
-      });
-      // eslint-disable-next-line no-console
-      console.log(e);
-    }
-  };
+  // const handleSignUp = async (userInfo: UserInfo) => {
+  //   try {
+  //     const response = await signup({ variables: { userInfo } });
+  //     // eslint-disable-next-line no-console
+  //     console.log(response);
+  //     navigate(JOIN_SUCCESS_PAGE);
+  //   } catch (e: unknown) {
+  //     toast({
+  //       title: "Failed to create account. Please try again.",
+  //       status: "error",
+  //       isClosable: true,
+  //     });
+  //     // eslint-disable-next-line no-console
+  //     console.log(e);
+  //   }
+  // };
 
-  const isRequestValid = () => {
-    const stringsToValidate = [
-      role,
-      organizationName,
-      organizationAddress,
-      primaryContact.name,
-    ];
-    const phoneNumsToValidate = [primaryContact.phone];
-    const emailsToValidate = [email, primaryContact.email];
+  // const isRequestValid = () => {
+  //   const stringsToValidate = [
+  //     role,
+  //     organizationName,
+  //     organizationAddress,
+  //     primaryContact.name,
+  //   ];
+  //   const phoneNumsToValidate = [primaryContact.phone];
+  //   const emailsToValidate = [email, primaryContact.email];
 
-    for (let i = 0; i < onsiteInfo.length; i += 1) {
-      stringsToValidate.push(onsiteInfo[i].name);
-      phoneNumsToValidate.push(onsiteInfo[i].phone);
-      emailsToValidate.push(onsiteInfo[i].email);
-    }
+  //   for (let i = 0; i < onsiteInfo.length; i += 1) {
+  //     stringsToValidate.push(onsiteInfo[i].name);
+  //     phoneNumsToValidate.push(onsiteInfo[i].phone);
+  //     emailsToValidate.push(onsiteInfo[i].email);
+  //   }
 
-    for (let i = 0; i < stringsToValidate.length; i += 1) {
-      if (stringsToValidate[i] === "") return false;
-    }
+  //   for (let i = 0; i < stringsToValidate.length; i += 1) {
+  //     if (stringsToValidate[i] === "") return false;
+  //   }
 
-    for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
-      if (phoneNumsToValidate[i] === "") return false;
-    }
+  //   for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
+  //     if (phoneNumsToValidate[i] === "") return false;
+  //   }
 
-    for (let i = 0; i < emailsToValidate.length; i += 1) {
-      if (!isValidEmail(emailsToValidate[i])) return false;
-    }
+  //   for (let i = 0; i < emailsToValidate.length; i += 1) {
+  //     if (!isValidEmail(emailsToValidate[i])) return false;
+  //   }
 
-    return true;
-  };
+  //   return true;
+  // };
 
   const handleSubmit = () => {
     setAttemptedSubmit(true);
-    if (!isRequestValid()) return;
-    const request: UserInfo = {
-      email: trimWhiteSpace(email),
-      organizationAddress: trimWhiteSpace(organizationAddress),
+    // if (!isRequestValid()) return;
+    const request = {
       organizationName: trimWhiteSpace(organizationName),
-      role,
+      numberOfKids: trimWhiteSpace(numberOfKids),
+      organizationAddress: trimWhiteSpace(organizationAddress),
       primaryContact: {
         name: trimWhiteSpace(primaryContact.name),
         email: trimWhiteSpace(primaryContact.email),
@@ -705,45 +707,28 @@ const Settings = (): React.ReactElement => {
     // eslint-disable-next-line no-console
     console.log(request);
 
-    handleSignUp(request);
+    // handleSignUp(request);
   };
 
   const getSubmitSection = (): React.ReactElement => {
     return (
-      <Flex flexDir="column" alignItems="center" gap="8px">
-        <Button
-          w={{ base: "100%", lg: "480px" }}
-          variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
-          color="white"
-          bgColor="primary.blue"
-          disabled={attemptedSubmit && !isRequestValid()}
-          _hover={{ bgColor: "primary.blue" }}
-          _disabled={{
-            bgColor: "#CCCCCC !important",
-            color: "#666666",
-            cursor: "auto",
-          }}
-          borderRadius="6px"
-          onClick={handleSubmit}
-        >
-          Create Account
-        </Button>
-        <Text
-          color="text.subtitle"
-          variant={{ base: "mobile-xs", lg: "desktop-xs" }}
-        >
-          {"By selecting Create Account, you agree to FCK's "}
-          {/* TODO: replace HOME_PAGE with actual terms & conditions route */}
-          <Link
-            color="primary.blue"
-            textDecoration="underline"
-            href={HOME_PAGE}
-            isExternal
-          >
-            Terms & Conditions
-          </Link>
-        </Text>
-      </Flex>
+      <Button
+        w={{ base: "100%", lg: "100px" }}
+        variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
+        color="white"
+        bgColor="primary.green"
+        // disabled={attemptedSubmit && !isRequestValid()}
+        // _hover={{ bgColor: "primary.green" }}
+        // _disabled={{
+        //   bgColor: "#CCCCCC !important",
+        //   color: "#666666",
+        //   cursor: "auto",
+        // }}
+        borderRadius="6px"
+        onClick={handleSubmit}
+      >
+        Save
+      </Button>
     );
   };
 
@@ -751,8 +736,8 @@ const Settings = (): React.ReactElement => {
     <Center>
       <Flex
         flexDir="column"
-        w={{ base: "100%", lg: "1100px" }}
-        p={{ base: "24px", sm: "48px", lg: "64px" }}
+        w={{ base: "100%", lg: "1000px" }}
+        p={{ base: "24px", sm: "36px", lg: "48px" }}
         marginBottom="50px"
         gap={{ base: "20px", lg: "32px" }}
         borderRadius="8px"
@@ -764,7 +749,7 @@ const Settings = (): React.ReactElement => {
         {getWebLoginInfoSection()}
         {isWebView && <Divider />}
         {isWebView ? getWebContactSection() : getMobileContactSection()}
-        {isWebView && <Divider/>}
+        {isWebView && <Divider />}
         {isWebView
           ? getWebOrganizationSection()
           : getMobileOrganizationSection()}

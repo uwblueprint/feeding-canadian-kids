@@ -1,5 +1,4 @@
 import graphene
-import json
 
 from .types import (
     ContactInput,
@@ -95,6 +94,12 @@ class CreateFoodRequestGroup(Mutation):
         start_date,
         end_date,
     ):
+        # Load the JSON string into a dictionary
+        # print(meal_info["dietary_restrictions"])
+        # dietary_restrictions = json.loads(meal_info["dietary_restrictions"])
+        # print(f"After: {dietary_restrictions}")
+        # meal_info["dietary_restrictions"] = dietary_restrictions
+
         result = services["food_request_service"].create_food_request_group(
             description=description,
             requestor=requestor,

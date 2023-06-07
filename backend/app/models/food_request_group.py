@@ -23,7 +23,7 @@ class FoodRequestGroup(mg.Document):
     )
 
     # Donation Details
-    # meal_info = mg.EmbeddedDocumentField(MealType, required=True) # MealType was updated to new schema
+    meal_info = mg.EmbeddedDocumentField(MealType, required=True)
     frequency = mg.StringField(
         choices=["Does not repeat", "Weekly", "Monthly"],
         required=True,
@@ -45,7 +45,7 @@ class FoodRequestGroup(mg.Document):
     drop_off_time = mg.DateTimeField(required=True)
     drop_off_location = mg.StringField(required=True)
     delivery_instructions = mg.StringField(required=True)
-    # onsite_staff = mg.EmbeddedDocumentField(Contact, required=True)
+    onsite_staff = mg.EmbeddedDocumentListField(Contact, required=True)
 
     # Start and end dates for recurring donations
     start_date = mg.DateTimeField(required=True)

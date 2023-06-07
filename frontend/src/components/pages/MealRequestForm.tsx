@@ -90,7 +90,7 @@ function MealRequestForm() {
           <Flex flexDir="column" gap="8px" key={index}>
             <Flex flexDir="row" justifyContent="space-between">
               <FormControl isRequired={index === 0}>
-                <FormLabel variant="mobile-form-label-bold" pt={3}>
+                <FormLabel variant="mobile-form-label-bold">
                   {`Additional Onsite Staff (${index + 1})`}
                 </FormLabel>
               </FormControl>
@@ -117,7 +117,7 @@ function MealRequestForm() {
             </Flex>
             {index === 0 && (
               <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
-                *Must add at least 1 onsite staff up to a maximum of 10.
+                *Must add at least 1 onsite staff. Maximum of 10.
               </Text>
             )}
             <FormControl
@@ -199,12 +199,12 @@ function MealRequestForm() {
       <Flex flexDir="column" gap="24px">
         <Flex flexDir="column" gap="8px">
           <FormControl isRequired>
-            <FormLabel variant="form-label-bold" pt={3}>
+            <FormLabel variant="form-label-bold">
               2. Additional onsite staff
             </FormLabel>
           </FormControl>
           <Text color="text.subtitle" variant="desktop-xs" mt="-12px">
-            *Must add at least 1 onsite staff up to a maximum of 10.
+            *Must add at least 1 onsite staff. Maximum of 10.
           </Text>
         </Flex>
         <TableContainer border="1px solid #EDF2F7" borderRadius="8px">
@@ -424,13 +424,19 @@ function MealRequestForm() {
         <Text variant="desktop-heading" pt={4} pb={3}>
           Contact Information
         </Text>
+
         <Flex flexDir="column" gap="24px">
           <Flex flexDir="column">
             <FormControl
               isRequired
               isInvalid={attemptedSubmit && primaryContact.name === ""}
             >
-              <FormLabel variant="desktop-button-bold">
+              <FormLabel
+                variant={{
+                  base: "mobile-form-label-bold",
+                  md: "form-label-bold",
+                }}
+              >
                 1. Primary contact name
               </FormLabel>
               <Input
@@ -442,6 +448,7 @@ function MealRequestForm() {
               />
             </FormControl>
           </Flex>
+
           <Flex flexDir="row" gap="24px">
             <Flex flexDir="column" w="240px">
               <FormControl
@@ -449,7 +456,12 @@ function MealRequestForm() {
                 isInvalid={attemptedSubmit && primaryContact.phone === ""}
                 mb={6}
               >
-                <FormLabel variant="desktop-button-bold">
+                <FormLabel
+                  variant={{
+                    base: "mobile-form-label-bold",
+                    md: "form-label-bold",
+                  }}
+                >
                   Phone number
                 </FormLabel>
                 <Input
@@ -465,6 +477,7 @@ function MealRequestForm() {
                 />
               </FormControl>
             </Flex>
+
             <Flex flexDir="column" w="519px">
               <FormControl
                 isRequired
@@ -472,7 +485,12 @@ function MealRequestForm() {
                   attemptedSubmit && !isValidEmail(primaryContact.email)
                 }
               >
-                <FormLabel variant="desktop-button-bold">
+                <FormLabel
+                  variant={{
+                    base: "mobile-form-label-bold",
+                    md: "form-label-bold",
+                  }}
+                >
                   Email address
                 </FormLabel>
                 <Input
@@ -514,7 +532,7 @@ function MealRequestForm() {
             pt={{ base: 2, md: 8 }}
             variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
           >
-            Edit Meal Request
+            Edit Meal Request 
           </Text>
           <ModalCloseButton />
           <ModalBody pb={6}>
@@ -526,6 +544,7 @@ function MealRequestForm() {
             >
               Meal Information
             </Text>
+            
             <FormControl mt={3} mb={6} isRequired>
               <FormLabel
                 variant={{
@@ -544,7 +563,6 @@ function MealRequestForm() {
                   base: "mobile-form-label-bold",
                   md: "form-label-bold",
                 }}
-                mb={6}
               >
                 Dietary restrictions
               </FormLabel>
@@ -554,23 +572,20 @@ function MealRequestForm() {
               />
             </FormControl>
 
-            <FormControl isRequired>
+            <FormControl mt={3} mb={6} isRequired>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
                   md: "form-label-bold",
                 }}
-                mb={6}
               >
                 Delivery Notes
               </FormLabel>
               <Input
-                mb={6}
                 ref={initialRef}
                 placeholder="Ex. Nut allergy, gluten free"
               />
               <br />
-              <hr />
             </FormControl>
 
             {isWebView && <Divider />}

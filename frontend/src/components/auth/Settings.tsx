@@ -17,6 +17,7 @@ import {
   Tbody,
   Td,
   Text,
+  Textarea,
   Th,
   Thead,
   Tr,
@@ -46,6 +47,7 @@ const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
 const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
 const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
 const PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS = "40";
+const PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION = "Our organization helps feed Canadian kids!"
 
 const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
@@ -87,6 +89,7 @@ const Settings = (): React.ReactElement => {
   const [organizationName, setOrganizationName] = useState("");
   const [numberOfKids, setNumberOfKids] = useState("");
   const [organizationAddress, setOrganizationAddress] = useState("");
+  const [organizationDescription, setOrganizationDescription] = useState("");
   const [primaryContact, setPrimaryContact] = useState<Contact>({
     name: "",
     phone: "",
@@ -230,7 +233,7 @@ const Settings = (): React.ReactElement => {
               </FormLabel>
               <Input
                 value={organizationName}
-                placeholder={PLACEHOLDER_WEB_EXAMPLE_ADDRESS}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_NAME}
                 onChange={(e) => setOrganizationName(e.target.value)}
               />
             </FormControl>
@@ -263,6 +266,16 @@ const Settings = (): React.ReactElement => {
               />
             </FormControl>
           </Flex>
+        </Flex>
+        <Flex flexDir="column" w="60%" gap="8px">
+          <Text variant="desktop-body-bold">Description of organization</Text>
+          <Textarea
+            size="desktop-body"
+            p="12px"
+            placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION}
+            value={organizationDescription}
+            onChange={(e) => setOrganizationDescription(e.target.value)}
+          />
         </Flex>
       </Flex>
     );
@@ -496,6 +509,7 @@ const Settings = (): React.ReactElement => {
         {onsiteInfo.length < 10 && (
           <Text
             variant="desktop-button-bold"
+            color="primary.blue"
             cursor="pointer"
             w="fit-content"
             onClick={() => {
@@ -509,7 +523,7 @@ const Settings = (): React.ReactElement => {
               ]);
             }}
           >
-            + Add onsite staff
+            + Add another contact
           </Text>
         )}
       </Flex>

@@ -136,20 +136,42 @@ const Settings = (): React.ReactElement => {
         <Flex flexDir="column" gap="24px">
           <Flex flexDir="column">
             <Text variant="desktop-body-bold">Email Address</Text>
-            <Text variant="desktop-body">john.millersonberk@gmail.com</Text>
+            <Text variant="desktop-body">example.login@gmail.com</Text>
           </Flex>
           <Button
             w={{ base: "100%", lg: "190px" }}
             h={{ base: "100%", lg: "45px" }}
-            variant="outline"
+            variant="desktop-button-bold"
             color="primary.green"
             bgColor="background.white"
-            _hover={{ color: "background.white", bgColor: "primary.green" }}
+            border="1px solid"
+            borderColor="primary.green"
             borderRadius="6px"
           >
             Reset Password
           </Button>
         </Flex>
+      </Flex>
+    );
+  };
+
+  const getMobileLoginInfoSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column" gap="8px">
+        <Text variant="mobile-body-bold">Email Address</Text>
+        <Text variant="desktop-xs">example.login@gmail.com</Text>
+        <Button
+          w={{ base: "100%", lg: "190px" }}
+          h={{ base: "100%", lg: "45px" }}
+          variant="mobile-button-bold"
+          color="primary.green"
+          bgColor="background.white"
+          border="1px solid"
+          borderColor="primary.green"
+          borderRadius="6px"
+        >
+          Reset Password
+        </Button>
       </Flex>
     );
   };
@@ -733,7 +755,6 @@ const Settings = (): React.ReactElement => {
         flexDir="column"
         w={{ base: "100%", lg: "1000px" }}
         p={{ base: "24px", sm: "36px", lg: "48px" }}
-        marginBottom="50px"
         gap={{ base: "20px", lg: "32px" }}
         borderRadius="8px"
         style={{
@@ -741,7 +762,7 @@ const Settings = (): React.ReactElement => {
         }}
       >
         {getTitleSection()}
-        {getWebLoginInfoSection()}
+        {isWebView ? getWebLoginInfoSection() : getMobileLoginInfoSection()}
         {isWebView && <Divider />}
         {isWebView ? getWebContactSection() : getMobileContactSection()}
         {isWebView && <Divider />}

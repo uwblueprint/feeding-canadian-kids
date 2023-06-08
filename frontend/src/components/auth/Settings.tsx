@@ -47,14 +47,15 @@ const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
 const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
 const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
 const PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS = "40";
-const PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION =
-  "Our organization helps feed Canadian kids!";
+const PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION = "Our organization helps feed Canadian kids!";
 
 const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
 const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
+const PLACEHOLDER_MOBILE_EXAMPLE_NUMBER_OF_KIDS = "Number of kids";
 const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
+const PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION = "Description of organization";
 
 // const SIGNUP = gql`
 //   mutation OnboardRequest($userInfo: UserInfoInput!) {
@@ -353,6 +354,8 @@ const Settings = (): React.ReactElement => {
           <Textarea
             size="desktop-body"
             p="12px"
+            borderWidth="2px"
+            borderRadius="4px"
             placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION}
             value={organizationDescription}
             onChange={(e) => setOrganizationDescription(e.target.value)}
@@ -367,7 +370,7 @@ const Settings = (): React.ReactElement => {
       <Flex flexDir="column" gap="8px">
         <FormControl isRequired>
           <FormLabel variant="mobile-form-label-bold">
-            Organization Info
+            Organization Information
           </FormLabel>
 
           <Flex flexDir="column" gap="8px">
@@ -384,6 +387,17 @@ const Settings = (): React.ReactElement => {
             </FormControl>
             <FormControl
               isRequired
+              isInvalid={attemptedSubmit && numberOfKids === ""}
+            >
+              <Input
+                variant="mobile-outline"
+                value={numberOfKids}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_NUMBER_OF_KIDS}
+                onChange={(e) => setNumberOfKids(e.target.value)}
+              />
+            </FormControl>
+            <FormControl
+              isRequired
               isInvalid={attemptedSubmit && organizationAddress === ""}
             >
               <Input
@@ -393,6 +407,17 @@ const Settings = (): React.ReactElement => {
                 placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS}
               />
             </FormControl>
+            <Textarea
+              size="xs"
+              p="12px"
+              borderWidth="2px"
+              focusBorderColor="gray.200"
+              boxShadow="none !important"
+              borderRadius="4px"
+              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION}
+              value={organizationDescription}
+              onChange={(e) => setOrganizationDescription(e.target.value)}
+          />
           </Flex>
         </FormControl>
       </Flex>
@@ -405,11 +430,11 @@ const Settings = (): React.ReactElement => {
         <Flex flexDir="column" gap="8px">
           <FormControl isRequired>
             <FormLabel variant="form-label-bold">
-              2. Additional onsite staff
+              Additional onsite staff
             </FormLabel>
           </FormControl>
           <Text color="text.subtitle" variant="desktop-xs" mt="-12px">
-            *Must add at least 1 onsite staff up to a maximum of 10.
+            *Must add at least 1 onsite staff. Maximum is 10.
           </Text>
         </Flex>
         <TableContainer border="1px solid #EDF2F7" borderRadius="8px">

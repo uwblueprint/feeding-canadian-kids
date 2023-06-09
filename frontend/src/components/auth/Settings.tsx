@@ -143,13 +143,16 @@ const Settings = (): React.ReactElement => {
           </Flex>
           <Button
             w={{ base: "100%", lg: "190px" }}
-            h={{ base: "100%", lg: "45px" }}
             variant="desktop-button-bold"
             color="primary.green"
             bgColor="background.white"
             border="1px solid"
             borderColor="primary.green"
             borderRadius="6px"
+            _hover={{
+              color: "text.white",
+              bgColor: "primary.green",
+            }}
           >
             Reset Password
           </Button>
@@ -172,6 +175,10 @@ const Settings = (): React.ReactElement => {
           border="1px solid"
           borderColor="primary.green"
           borderRadius="6px"
+          _hover={{
+            color: "text.white",
+            bgColor: "primary.green",
+          }}
         >
           Reset Password
         </Button>
@@ -759,11 +766,18 @@ const Settings = (): React.ReactElement => {
     return (
       <Button
         w={{ base: "100%", lg: "100px" }}
+        h={{ base: "100%", lg: "45px" }}
+        mt="24px"
         variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
-        color="white"
+        color="text.white"
         bgColor="primary.green"
+        border="1px solid"
+        borderColor="primary.green"
+        _hover={{
+          color: "primary.green",
+          bgColor: "background.white",
+        }}
         // disabled={attemptedSubmit && !isRequestValid()}
-        // _hover={{ bgColor: "primary.green" }}
         // _disabled={{
         //   bgColor: "#CCCCCC !important",
         //   color: "#666666",
@@ -786,7 +800,7 @@ const Settings = (): React.ReactElement => {
         gap={{ base: "20px", lg: "32px" }}
         borderRadius="8px"
         style={{
-          backgroundColor: "white",
+          backgroundColor: "background.white",
         }}
       >
         {getTitleSection()}

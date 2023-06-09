@@ -47,7 +47,8 @@ const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
 const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
 const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
 const PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS = "40";
-const PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION = "Our organization helps feed Canadian kids!";
+const PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION =
+  "Our organization helps feed Canadian kids!";
 
 const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
@@ -55,7 +56,8 @@ const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_NUMBER_OF_KIDS = "Number of kids";
 const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
-const PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION = "Description of organization";
+const PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION =
+  "Description of organization";
 
 // const SIGNUP = gql`
 //   mutation OnboardRequest($userInfo: UserInfoInput!) {
@@ -417,7 +419,7 @@ const Settings = (): React.ReactElement => {
               placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION}
               value={organizationDescription}
               onChange={(e) => setOrganizationDescription(e.target.value)}
-          />
+            />
           </Flex>
         </FormControl>
       </Flex>
@@ -602,7 +604,7 @@ const Settings = (): React.ReactElement => {
             </Flex>
             {index === 0 && (
               <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
-                *Must add at least 1 onsite staff up to a maximum of 10.
+                *Must add at least 1 onsite staff. Maximum is 10.
               </Text>
             )}
             <FormControl
@@ -659,6 +661,7 @@ const Settings = (): React.ReactElement => {
         {onsiteInfo.length < 10 && (
           <Text
             variant="mobile-body-bold"
+            color="primary.blue"
             cursor="pointer"
             w="fit-content"
             onClick={() => {
@@ -672,7 +675,7 @@ const Settings = (): React.ReactElement => {
               ]);
             }}
           >
-            + Add onsite staff
+            + Add another contact
           </Text>
         )}
       </Flex>

@@ -20,8 +20,12 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-import { Contact } from "../../types/AuthTypes";
-import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
+import { Contact, UserSettings } from "../../types/AuthTypes";
+import {
+  isNonNegativeInt,
+  isValidEmail,
+  trimWhiteSpace,
+} from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
@@ -269,13 +273,21 @@ const Settings = (): React.ReactElement => {
             </FormControl>
           </Flex>
           <Flex flexDir="column" w="200px">
-            <FormLabel variant="form-label-bold">Number of kids</FormLabel>
-            <Input
-              type="number"
-              value={numberOfKids}
-              placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
-              onChange={(e) => setNumberOfKids(e.target.value)}
-            />
+            <FormControl
+              isInvalid={
+                attemptedSubmit &&
+                numberOfKids !== "" &&
+                !isNonNegativeInt(numberOfKids)
+              }
+            >
+              <FormLabel variant="form-label-bold">Number of kids</FormLabel>
+              <Input
+                type="number"
+                value={numberOfKids}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
+                onChange={(e) => setNumberOfKids(e.target.value)}
+              />
+            </FormControl>
           </Flex>
           <Flex flexDir="column" w="350px">
             <FormControl
@@ -331,11 +343,15 @@ const Settings = (): React.ReactElement => {
               />
             </FormControl>
             <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && numberOfKids === ""}
+              isInvalid={
+                attemptedSubmit &&
+                numberOfKids !== "" &&
+                !isNonNegativeInt(numberOfKids)
+              }
             >
               <Input
                 variant="mobile-outline"
+                type="number"
                 value={numberOfKids}
                 placeholder={PLACEHOLDER_MOBILE_EXAMPLE_NUMBER_OF_KIDS}
                 onChange={(e) => setNumberOfKids(e.target.value)}
@@ -625,67 +641,52 @@ const Settings = (): React.ReactElement => {
     );
   };
 
-  // TODO: change this to handle "Save" for settings page
-  // const handleSignUp = async (userInfo: UserInfo) => {
-  //   try {
-  //     const response = await signup({ variables: { userInfo } });
-  //     // eslint-disable-next-line no-console
-  //     console.log(response);
-  //     navigate(JOIN_SUCCESS_PAGE);
-  //   } catch (e: unknown) {
-  //     toast({
-  //       title: "Failed to create account. Please try again.",
-  //       status: "error",
-  //       isClosable: true,
-  //     });
-  //     // eslint-disable-next-line no-console
-  //     console.log(e);
-  //   }
-  // };
+  const isRequestValid = (): boolean => {
+    const stringsToValidate = [
+      primaryContact.name,
+      organizationName,
+      organizationAddress,
+    ];
+    const phoneNumsToValidate = [primaryContact.phone];
+    const emailsToValidate = [primaryContact.email];
 
-  // const isRequestValid = () => {
-  //   const stringsToValidate = [
-  //     role,
-  //     organizationName,
-  //     organizationAddress,
-  //     primaryContact.name,
-  //   ];
-  //   const phoneNumsToValidate = [primaryContact.phone];
-  //   const emailsToValidate = [email, primaryContact.email];
+    for (let i = 0; i < onsiteInfo.length; i += 1) {
+      stringsToValidate.push(onsiteInfo[i].name);
+      phoneNumsToValidate.push(onsiteInfo[i].phone);
+      emailsToValidate.push(onsiteInfo[i].email);
+    }
 
-  //   for (let i = 0; i < onsiteInfo.length; i += 1) {
-  //     stringsToValidate.push(onsiteInfo[i].name);
-  //     phoneNumsToValidate.push(onsiteInfo[i].phone);
-  //     emailsToValidate.push(onsiteInfo[i].email);
-  //   }
+    for (let i = 0; i < stringsToValidate.length; i += 1) {
+      if (stringsToValidate[i] === "") return false;
+    }
 
-  //   for (let i = 0; i < stringsToValidate.length; i += 1) {
-  //     if (stringsToValidate[i] === "") return false;
-  //   }
+    for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
+      if (phoneNumsToValidate[i] === "") return false;
+    }
 
-  //   for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
-  //     if (phoneNumsToValidate[i] === "") return false;
-  //   }
+    for (let i = 0; i < emailsToValidate.length; i += 1) {
+      if (!isValidEmail(emailsToValidate[i])) return false;
+    }
 
-  //   for (let i = 0; i < emailsToValidate.length; i += 1) {
-  //     if (!isValidEmail(emailsToValidate[i])) return false;
-  //   }
+    if (numberOfKids !== "" && !isNonNegativeInt(numberOfKids)) return false;
 
-  //   return true;
-  // };
+    return true;
+  };
 
   const handleSubmit = () => {
     setAttemptedSave(true);
-    // if (!isRequestValid()) return;
-    const request = {
-      organizationName: trimWhiteSpace(organizationName),
-      numberOfKids: trimWhiteSpace(numberOfKids),
-      organizationAddress: trimWhiteSpace(organizationAddress),
+    if (!isRequestValid()) return;
+
+    const request: UserSettings = {
       primaryContact: {
         name: trimWhiteSpace(primaryContact.name),
         email: trimWhiteSpace(primaryContact.email),
         phone: trimWhiteSpace(primaryContact.phone),
       },
+      organizationName: trimWhiteSpace(organizationName),
+      numberOfKids: parseInt(trimWhiteSpace(numberOfKids), 10),
+      organizationAddress: trimWhiteSpace(organizationAddress),
+      organizationDescription: trimWhiteSpace(organizationDescription),
       onsiteContacts: onsiteInfo.map((obj) => ({
         name: trimWhiteSpace(obj.name),
         phone: trimWhiteSpace(obj.phone),
@@ -696,7 +697,7 @@ const Settings = (): React.ReactElement => {
     // eslint-disable-next-line no-console
     console.log(request);
 
-    // handleSignUp(request);
+    // TODO: handleSaveSettings(request);
   };
 
   const getSaveSection = (): React.ReactElement => {
@@ -714,6 +715,12 @@ const Settings = (): React.ReactElement => {
         _hover={{
           color: "primary.green",
           bgColor: "background.white",
+        }}
+        disabled={attemptedSubmit && !isRequestValid()}
+        _disabled={{
+          borderColor: "#CCCCCC !important",
+          bgColor: "#CCCCCC !important",
+          color: "#666666",
         }}
         onClick={handleSubmit}
       >

@@ -1,4 +1,3 @@
-import { gql, useMutation } from "@apollo/client";
 import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -18,23 +17,10 @@ import {
   Thead,
   Tr,
   useMediaQuery,
-  useToast,
 } from "@chakra-ui/react";
-import React, { useContext, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 
-import {
-  DASHBOARD_PAGE,
-  HOME_PAGE,
-  JOIN_SUCCESS_PAGE,
-} from "../../constants/Routes";
-import AuthContext from "../../contexts/AuthContext";
-import {
-  Contact,
-  OnboardingRequest,
-  Role,
-  UserInfo,
-} from "../../types/AuthTypes";
+import { Contact } from "../../types/AuthTypes";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -55,45 +41,16 @@ const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION =
   "Description of organization";
 
-// const SIGNUP = gql`
-//   mutation OnboardRequest($userInfo: UserInfoInput!) {
-//     createOnboardingRequest(userInfo: $userInfo) {
-//       onboardingRequest {
-//         id
-//         info {
-//           email
-//           organizationAddress
-//           organizationName
-//           role
-//           primaryContact {
-//             name
-//             phone
-//             email
-//           }
-//           onsiteContacts {
-//             name
-//             phone
-//             email
-//           }
-//         }
-//         dateSubmitted
-//         status
-//       }
-//     }
-//   }
-// `;
-
 const Settings = (): React.ReactElement => {
-  // const [email, setEmail] = useState("");
-  const [organizationName, setOrganizationName] = useState("");
-  const [numberOfKids, setNumberOfKids] = useState("");
-  const [organizationAddress, setOrganizationAddress] = useState("");
-  const [organizationDescription, setOrganizationDescription] = useState("");
   const [primaryContact, setPrimaryContact] = useState<Contact>({
     name: "",
     phone: "",
     email: "",
   });
+  const [organizationName, setOrganizationName] = useState("");
+  const [numberOfKids, setNumberOfKids] = useState("");
+  const [organizationAddress, setOrganizationAddress] = useState("");
+  const [organizationDescription, setOrganizationDescription] = useState("");
   const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>([
     {
       name: "",
@@ -104,16 +61,6 @@ const Settings = (): React.ReactElement => {
 
   const [attemptedSubmit, setAttemptedSave] = useState(false);
   const [isWebView] = useMediaQuery("(min-width: 62em)");
-  // const [signup] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
-  //   SIGNUP,
-  // );
-  // const toast = useToast();
-  // const navigate = useNavigate();
-  const { authenticatedUser } = useContext(AuthContext);
-
-  if (authenticatedUser) {
-    return <Navigate replace to={DASHBOARD_PAGE} />;
-  }
 
   const getTitleSection = (): React.ReactElement => {
     return (
@@ -137,14 +84,15 @@ const Settings = (): React.ReactElement => {
             <Text variant="desktop-body">example.login@gmail.com</Text>
           </Flex>
           <Button
-            w={{ base: "100%", lg: "190px" }}
-            h={{ base: "100%", lg: "45px" }}
+            width="190px"
+            height="45px"
             variant="desktop-button-bold"
             color="primary.green"
             bgColor="background.white"
             border="1px solid"
             borderColor="primary.green"
             borderRadius="6px"
+            _hover={{ color: "text.white", bgColor: "primary.green" }}
           >
             Reset Password
           </Button>
@@ -159,14 +107,14 @@ const Settings = (): React.ReactElement => {
         <Text variant="mobile-body-bold">Email Address</Text>
         <Text variant="desktop-xs">example.login@gmail.com</Text>
         <Button
-          w={{ base: "100%", lg: "190px" }}
-          h={{ base: "100%", lg: "45px" }}
+          w="100%"
           variant="mobile-button-bold"
           color="primary.green"
           bgColor="background.white"
           border="1px solid"
           borderColor="primary.green"
           borderRadius="6px"
+          _hover={{ color: "text.white", bgColor: "primary.green" }}
         >
           Reset Password
         </Button>
@@ -677,6 +625,7 @@ const Settings = (): React.ReactElement => {
     );
   };
 
+  // TODO: change this to handle "Save" for settings page
   // const handleSignUp = async (userInfo: UserInfo) => {
   //   try {
   //     const response = await signup({ variables: { userInfo } });
@@ -753,18 +702,19 @@ const Settings = (): React.ReactElement => {
   const getSaveSection = (): React.ReactElement => {
     return (
       <Button
-        w={{ base: "100%", lg: "100px" }}
+        width={{ base: "100%", lg: "100px" }}
+        height={{ base: "40px", lg: "45px" }}
+        mt="24px"
         variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
-        color="white"
+        color="text.white"
         bgColor="primary.green"
-        // disabled={attemptedSubmit && !isRequestValid()}
-        // _hover={{ bgColor: "primary.green" }}
-        // _disabled={{
-        //   bgColor: "#CCCCCC !important",
-        //   color: "#666666",
-        //   cursor: "auto",
-        // }}
         borderRadius="6px"
+        border="1px solid"
+        borderColor="primary.green"
+        _hover={{
+          color: "primary.green",
+          bgColor: "background.white",
+        }}
         onClick={handleSubmit}
       >
         Save
@@ -780,9 +730,7 @@ const Settings = (): React.ReactElement => {
         p={{ base: "24px", sm: "36px", lg: "48px" }}
         gap={{ base: "20px", lg: "32px" }}
         borderRadius="8px"
-        style={{
-          backgroundColor: "white",
-        }}
+        bgColor="background.white"
       >
         {getTitleSection()}
         {isWebView ? getWebLoginInfoSection() : getMobileLoginInfoSection()}

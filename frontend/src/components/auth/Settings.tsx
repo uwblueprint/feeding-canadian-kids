@@ -8,10 +8,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Link,
-  Radio,
-  RadioGroup,
-  Stack,
   Table,
   TableContainer,
   Tbody,
@@ -88,7 +84,6 @@ const PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION =
 // `;
 
 const Settings = (): React.ReactElement => {
-  // const [role, setRole] = useState<Role>("ASP");
   // const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [numberOfKids, setNumberOfKids] = useState("");
@@ -107,7 +102,7 @@ const Settings = (): React.ReactElement => {
     },
   ]);
 
-  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+  const [attemptedSubmit, setAttemptedSave] = useState(false);
   const [isWebView] = useMediaQuery("(min-width: 62em)");
   // const [signup] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
   //   SIGNUP,
@@ -143,16 +138,13 @@ const Settings = (): React.ReactElement => {
           </Flex>
           <Button
             w={{ base: "100%", lg: "190px" }}
+            h={{ base: "100%", lg: "45px" }}
             variant="desktop-button-bold"
             color="primary.green"
             bgColor="background.white"
             border="1px solid"
             borderColor="primary.green"
             borderRadius="6px"
-            _hover={{
-              color: "text.white",
-              bgColor: "primary.green",
-            }}
           >
             Reset Password
           </Button>
@@ -175,10 +167,6 @@ const Settings = (): React.ReactElement => {
           border="1px solid"
           borderColor="primary.green"
           borderRadius="6px"
-          _hover={{
-            color: "text.white",
-            bgColor: "primary.green",
-          }}
         >
           Reset Password
         </Button>
@@ -738,7 +726,7 @@ const Settings = (): React.ReactElement => {
   // };
 
   const handleSubmit = () => {
-    setAttemptedSubmit(true);
+    setAttemptedSave(true);
     // if (!isRequestValid()) return;
     const request = {
       organizationName: trimWhiteSpace(organizationName),
@@ -762,22 +750,15 @@ const Settings = (): React.ReactElement => {
     // handleSignUp(request);
   };
 
-  const getSubmitSection = (): React.ReactElement => {
+  const getSaveSection = (): React.ReactElement => {
     return (
       <Button
         w={{ base: "100%", lg: "100px" }}
-        h={{ base: "100%", lg: "45px" }}
-        mt="24px"
         variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
-        color="text.white"
+        color="white"
         bgColor="primary.green"
-        border="1px solid"
-        borderColor="primary.green"
-        _hover={{
-          color: "primary.green",
-          bgColor: "background.white",
-        }}
         // disabled={attemptedSubmit && !isRequestValid()}
+        // _hover={{ bgColor: "primary.green" }}
         // _disabled={{
         //   bgColor: "#CCCCCC !important",
         //   color: "#666666",
@@ -800,7 +781,7 @@ const Settings = (): React.ReactElement => {
         gap={{ base: "20px", lg: "32px" }}
         borderRadius="8px"
         style={{
-          backgroundColor: "background.white",
+          backgroundColor: "white",
         }}
       >
         {getTitleSection()}
@@ -813,7 +794,7 @@ const Settings = (): React.ReactElement => {
           : getMobileOrganizationSection()}
         {isWebView && <Divider />}
         {isWebView ? getWebOnsiteStaffSection() : getMobileOnsiteStaffSection()}
-        {getSubmitSection()}
+        {getSaveSection()}
       </Flex>
     </Center>
   );

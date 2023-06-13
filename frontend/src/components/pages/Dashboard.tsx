@@ -1,3 +1,7 @@
+import {
+  Text
+} from "@chakra-ui/react";
+
 import { Button as ChakraButton, Wrap } from "@chakra-ui/react";
 
 import React, { useContext } from "react";
@@ -54,8 +58,15 @@ const Default = (): React.ReactElement => {
         backgroundSize: "cover",
       }}
     >
-      <h1>Default Page</h1>
-      <Wrap>
+      <Text
+        pb={{ base: 1, md: 5 }}
+        pl={{ base: 1, md: 6 }}
+        pt={{ base: 2, md: 8 }}
+        variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
+      >
+        Your Dashboard 
+      </Text>
+      {/* <Wrap>
         <Logout />
         <RefreshCredentials />
         <Button text="Create Entity" path={Routes.CREATE_ENTITY_PAGE} />
@@ -79,7 +90,7 @@ const Default = (): React.ReactElement => {
       </Wrap>
       <div style={{ height: "2rem" }} />
 
-      <TeamInfoDisplay />
+      <TeamInfoDisplay /> */}
     </div>
   );
 };

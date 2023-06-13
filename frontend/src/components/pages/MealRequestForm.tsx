@@ -25,40 +25,37 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-// import {
-//   DASHBOARD_PAGE,
-//   HOME_PAGE,
-//   JOIN_SUCCESS_PAGE,
-// } from "../../constants/Routes";
-// import AuthContext from "../../contexts/AuthContext";
-// import {
-//   Contact,
-//   OnboardingRequest,
-//   Role,
-//   UserInfo,
-// } from "../../types/AuthTypes";
-// import { Contact, Role } from "../../types/AuthTypes";
-import { Contact } from "../../types/AuthTypes";
-// import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
-import { isValidEmail } from "../../utils/ValidationUtils";
+import {
+  DASHBOARD_PAGE,
+  HOME_PAGE,
+  JOIN_SUCCESS_PAGE,
+} from "../../constants/Routes";
+import AuthContext from "../../contexts/AuthContext";
+import {
+  Contact,
+  OnboardingRequest,
+  Role,
+  UserInfo,
+} from "../../types/AuthTypes";
+import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
 const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
-// const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
-// const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
+const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
+const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
 
 const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
 const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
-// const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
-// const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
+const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
+const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
 
 const MealRequestForm = () => {
-  // const [role, setRole] = useState<Role>("ASP");
-  // const [email, setEmail] = useState("");
-  // const [organizationName, setOrganizationName] = useState("");
-  // const [organizationAddress, setOrganizationAddress] = useState("");
+  const [role, setRole] = useState<Role>("ASP");
+  const [email, setEmail] = useState("");
+  const [organizationName, setOrganizationName] = useState("");
+  const [organizationAddress, setOrganizationAddress] = useState("");
   const [primaryContact, setPrimaryContact] = useState<Contact>({
     name: "",
     phone: "",
@@ -86,7 +83,7 @@ const MealRequestForm = () => {
           <Flex flexDir="column" gap="8px" key={index}>
             <Flex flexDir="row" justifyContent="space-between">
               <FormControl isRequired={index === 0}>
-                <FormLabel variant="mobile-form-label-bold">
+                <FormLabel variant="mobile-form-label-bold" pt="20px">
                   {`Additional Onsite Staff (${index + 1})`}
                 </FormLabel>
               </FormControl>
@@ -519,13 +516,13 @@ const MealRequestForm = () => {
       >
         <ModalOverlay />
         <ModalContent
-          maxWidth={{ base: "100px", md: "900px" }}
+          maxWidth={{ base: "100%", md: "900px" }}
           padding={{ base: "10px", md: "40px" }}
         >
           <Text
             pb={{ base: 1, md: 5 }}
-            pl={{ base: 1, md: 6 }}
-            pt={{ base: 2, md: 8 }}
+            pl={{ base: 6, md: 6 }}
+            pt={{ base: 5, md: 8 }}
             variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
           >
             Edit Meal Request
@@ -584,6 +581,10 @@ const MealRequestForm = () => {
               <br />
             </FormControl>
 
+            {isWebView && <Divider />}
+            {/* {isWebView
+          ? getWebOrganizationSection()
+          : getMobileOrganizationSection()} */}
             {isWebView && <Divider />}
             {isWebView ? getWebContactSection() : getMobileContactSection()}
             {isWebView

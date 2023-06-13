@@ -1,98 +1,126 @@
+import { 
+    CalendarIcon,
+    ChevronDownIcon,
+    HamburgerIcon
+} from '@chakra-ui/icons';
+
 import {
-  Text
-} from "@chakra-ui/react";
+    Box,
+    Tab,
+    Table,
+    TableContainer,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+    Tbody,
+    Text,
+    Td,
+    Tfoot,
+    Th,
+    Thead,
+    Tr
+} from '@chakra-ui/react';
 
-import { Button as ChakraButton, Wrap } from "@chakra-ui/react";
+import React from 'react';
 
-import React, { useContext } from "react";
-
-import { useNavigate } from "react-router-dom";
-
-import MealRequestForm from "./MealRequestForm";
-
-import BackgroundImage from "../../assets/background.png";
-
-import * as Routes from "../../constants/Routes";
-
-import SampleContext from "../../contexts/SampleContext";
-
-import Logout from "../auth/Logout";
-
-import RefreshCredentials from "../auth/RefreshCredentials";
-
-type ButtonProps = { text: string; path: string };
-
-const Button = ({ text, path }: ButtonProps) => {
-  const navigate = useNavigate();
-  return <ChakraButton onClick={() => navigate(path)}>{text}</ChakraButton>;
-};
-
-const TeamInfoDisplay = () => {
-  const { teamName, numTerms, members, isActive } = useContext(SampleContext);
+function App() {
   return (
-    <div>
-      <h2>Team Info</h2>
-      <div>Name: {teamName}</div>
-      <div># terms: {numTerms}</div>
-      <div>
-        Members:{" "}
-        {members.map(
-          (name, i) => ` ${name}${i === members.length - 1 ? "" : ","}`,
-        )}
-      </div>
-      <div>Active: {isActive ? "Yes" : "No"}</div>
-    </div>
+      <Box margin="150px" textAlign="center">
+        <Text
+            pb={{ base: 1, md: 5 }}
+            pl={{ base: 1, md: 6 }}
+            pt={{ base: 2, md: 8 }}
+            variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
+        >
+            Your Dashboard 
+        </Text>
+
+        <Text fontSize="xs" marginBottom="20px">
+            Use this page to see your upcoming food deliveries.
+        </Text>
+
+        {/* tabs */}
+        <Tabs>
+          <TabList>
+            <Tab>
+                <Text
+                    variant={{
+                        base: "mobile-heading",
+                        md: "desktop-heading",
+                    }}
+                >
+                <CalendarIcon boxSize={5} mr={2} />
+                Calendar
+                </Text>
+            </Tab>
+            <Tab>
+                <Text
+                    variant={{
+                        base: "mobile-heading",
+                        md: "desktop-heading",
+                    }}
+                >
+                <HamburgerIcon boxSize={5} mr={2} />
+                List
+                </Text>
+            </Tab>
+          </TabList>
+
+          <TabPanels>
+            <TabPanel>
+              <p>Content for Tab 2</p>
+            </TabPanel>
+            
+            <TabPanel>
+                <TableContainer>
+                    <Table variant='simple'>
+                        <Thead>
+                        {/* should abstract the rows into a react component */}
+                        <Tr>
+                            <Th>Date Requested</Th>
+                            <Th>Time Requested</Th>
+                            <Th>Donor's Name</Th>
+                            <Th>Number of Meals</Th>
+                            <Th></Th>
+                        </Tr>
+                        </Thead>
+                        <Tbody>
+                        <Tr>
+                            <Td>Oct 27, 2022</Td>
+                            <Td>5:00-6:00 PM</Td>
+                            <Td>Harvey's</Td>
+                            <Td>5</Td>
+                            <Td>
+                                <ChevronDownIcon boxSize={6} />
+                            </Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Oct 27, 2022</Td>
+                            <Td>5:00-6:00 PM</Td>
+                            <Td>Harvey's</Td>
+                            <Td>5</Td>
+                            <Td>
+                                <ChevronDownIcon boxSize={6} />
+                            </Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Oct 27, 2022</Td>
+                            <Td>5:00-6:00 PM</Td>
+                            <Td>Harvey's</Td>
+                            <Td>5</Td>
+                            <Td>
+                                <ChevronDownIcon boxSize={6} />
+                            </Td>
+                        </Tr>
+                        </Tbody>
+                    </Table>
+                </TableContainer>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Box>
   );
-};
+}
 
-const Default = (): React.ReactElement => {
-  return (
-    <div
-      style={{
-        textAlign: "center",
-        paddingTop: "20px",
-        height: "100vh",
-        backgroundImage: `url(${BackgroundImage})`,
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      }}
-    >
-      <Text
-        pb={{ base: 1, md: 5 }}
-        pl={{ base: 1, md: 6 }}
-        pt={{ base: 2, md: 8 }}
-        variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
-      >
-        Your Dashboard 
-      </Text>
-      {/* <Wrap>
-        <Logout />
-        <RefreshCredentials />
-        <Button text="Create Entity" path={Routes.CREATE_ENTITY_PAGE} />
-        <Button text="Update Entity" path={Routes.UPDATE_ENTITY_PAGE} />
-        <Button text="Display Entities" path={Routes.DISPLAY_ENTITY_PAGE} />
-        <Button
-          text="Create Simple Entity"
-          path={Routes.CREATE_SIMPLE_ENTITY_PAGE}
-        />
-        <Button
-          text="Update Simple Entity"
-          path={Routes.UPDATE_SIMPLE_ENTITY_PAGE}
-        />
-        <Button
-          text="Display Simple Entities"
-          path={Routes.DISPLAY_SIMPLE_ENTITY_PAGE}
-        />
-        <Button text="Edit Team" path={Routes.EDIT_TEAM_PAGE} />
-        <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
-        <MealRequestForm />
-      </Wrap>
-      <div style={{ height: "2rem" }} />
-
-      <TeamInfoDisplay /> */}
-    </div>
-  );
-};
-
-export default Default;
+export default App;

@@ -51,7 +51,7 @@ const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
 
-const MealRequestForm = () => {
+const EditMealRequestForm = () => {
   const [role, setRole] = useState<Role>("ASP");
   const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
@@ -604,4 +604,4 @@ const MealRequestForm = () => {
   );
 };
 
-export default MealRequestForm;
+export default EditMealRequestForm;

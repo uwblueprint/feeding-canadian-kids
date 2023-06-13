@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Routes as RouteContainer } from "react-router-dom";
 
+import CreateMealRequest from "./components/asp/requests/scheduling"
 import AuthWall from "./components/auth/AuthWall";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import Join from "./components/auth/Join";
@@ -33,6 +34,7 @@ const Routes = (): React.ReactElement => (
     <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
     <Route path={Paths.RESET_PASSWORD_PAGE} element={<ResetPassword />} />
     <Route path={Paths.SET_PASSWORD_PAGE} element={<SetPassword />} />
+    <Route path={Paths.CREATE_MEAL_REQUEST_PAGE} element={<CreateMealRequest />} />
     <Route path={Paths.DASHBOARD_PAGE} element={<AuthWall />}>
       <Route path="" element={<Dashboard />} />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />

@@ -8,7 +8,7 @@ import JoinSuccess from "./components/auth/JoinSuccess";
 import Login from "./components/auth/Login";
 import ResetPassword from "./components/auth/ResetPassword";
 import SetPassword from "./components/auth/SetPassword";
-import Settings from "./components/auth/Settings";
+import Settings from "./components/pages/Settings";
 import Signup from "./components/auth/Signup";
 import CreatePage from "./components/pages/CreatePage";
 import Dashboard from "./components/pages/Dashboard";

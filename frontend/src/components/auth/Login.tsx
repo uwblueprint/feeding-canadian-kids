@@ -15,7 +15,7 @@ import { Link, Navigate } from "react-router-dom";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import BackgroundImage from "../../assets/background.png";
-import { DASHBOARD_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
+import { DASHBOARD_PAGE, JOIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
@@ -194,7 +194,7 @@ const Login = (): React.ReactElement => {
             <Text variant={{ base: "mobile-xs", md: "desktop-xs" }}>
               Don’t have an account?
             </Text>
-            <Link to={SIGNUP_PAGE}>
+            <Link to={JOIN_PAGE}>
               <Text
                 variant={{ base: "mobile-xs", md: "desktop-xs" }}
                 textDecoration="underline"

@@ -1,0 +1,35 @@
+name: "Staging: Deploy backend"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/heroku-deploy
+        with:
+          email: "${{ secrets.HEROKU_EMAIL }}"
+          apiKey: "${{ secrets.HEROKU_API_KEY }}"
+          appName: "${{ secrets.DEV_PROJECT_ID }}"
+          databaseUrl: "${{ secrets.DEV_MG_DATABASE_URL }}"
+          firebaseApiKey: "${{ secrets.DEV_FIREBASE_WEB_API_KEY }}"
+          firebaseRequestUri: "${{ secrets.DEV_FIREBASE_REQUEST_URI }}"
+          firebaseBucket: "${{ secrets.DEV_FIREBASE_STORAGE_DEFAULT_BUCKET }}"
+          firebaseProject: "${{ secrets.DEV_PROJECT_ID }}"
+          firebasePrivateKey: "${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_PRIVATE_KEY }}"
+          firebaseEmail: "${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL }}"
+          mailerUser: "${{ secrets.DEV_MAILER_USER }}"
+          mailerId: "${{ secrets.DEV_MAILER_CLIENT_ID }}"
+          mailerSecret: "${{ secrets.DEV_MAILER_CLIENT_SECRET }}"
+          mailerRefreshToken: "${{ secrets.DEV_MAILER_REFRESH_TOKEN }}"
+          sourceBranch: "main"

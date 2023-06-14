@@ -23,6 +23,7 @@ def test_update_user_by_id(user_setup, mocker):
                     email: "test4@organization.com",
                     organizationAddress: "789 Anywhere Street",
                     organizationName: "Test3 Org",
+                    organizationDesc: "Testing 123",
                     role: "Admin",
                     primaryContact: {{
                         name: "Anon ymous",
@@ -49,7 +50,17 @@ def test_update_user_by_id(user_setup, mocker):
                         email
                         organizationAddress
                         organizationName
+                        organizationDesc
                         role
+                         roleInfo {{
+                            aspInfo {{
+                                numKids
+                            }}
+                            donorInfo {{
+                                type
+                                tags
+                            }}
+                        }}
                         primaryContact {{
                             name
                             phone
@@ -66,7 +77,6 @@ def test_update_user_by_id(user_setup, mocker):
         }}"""
     )
 
-    print(update_to_user_4_info)
     user_result4 = update_to_user_4_info.data["updateUserByID"]["user"]
     assert user_result4["id"] == str(user_1.id)
     MOCK_INFO4_CAMEL = deepcopy(MOCK_INFO3_CAMEL)
@@ -82,7 +92,14 @@ def test_update_user_by_id(user_setup, mocker):
                     email: "test1@organization.com",
                     organizationAddress: "123 Anywhere Street",
                     organizationName: "Test1 Org",
+                    organizationDesc: "Testing123",
                     role: "ASP",
+                    roleInfo: {{
+                       aspInfo: {{
+                         numKids: 4,
+                       }},
+                        donorInfo: null,
+                    }},
                     primaryContact: {{
                         name: "Jessie",
                         phone: "123456",
@@ -108,7 +125,17 @@ def test_update_user_by_id(user_setup, mocker):
                         email
                         organizationAddress
                         organizationName
+                        organizationDesc
                         role
+                        roleInfo {{
+                            aspInfo {{
+                                numKids
+                            }}
+                            donorInfo {{
+                                type
+                                tags
+                            }}
+                        }}
                         primaryContact {{
                             name
                             phone

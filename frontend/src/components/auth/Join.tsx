@@ -17,6 +17,7 @@ import {
   Tbody,
   Td,
   Text,
+  Textarea,
   Th,
   Thead,
   Tr,
@@ -45,13 +46,18 @@ const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
 const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
 const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
+const PLACEHOLDER_WEB_EXAMPLE_NUM_KIDS = "50";
 const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
+const PLACEHOLDER_WEB_EXAMPLE_DESCRIPTION =
+  "Non-Profit Organization in Alberta";
 
 const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
 const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
+const PLACEHOLDER_MOBILE_EXAMPLE_NUM_KIDS = "Number of kids";
+const PLACEHOLDER_MOBILE_EXAMPLE_DESCRIPTION = "Description of organization";
 
 const SIGNUP = gql`
   mutation OnboardRequest($userInfo: UserInfoInput!) {
@@ -62,7 +68,17 @@ const SIGNUP = gql`
           email
           organizationAddress
           organizationName
+          organizationDesc
           role
+          roleInfo {
+            aspInfo {
+              numKids
+            }
+            donorInfo {
+              type
+              tags
+            }
+          }
           primaryContact {
             name
             phone
@@ -85,7 +101,9 @@ const Join = (): React.ReactElement => {
   const [role, setRole] = useState<Role>("ASP");
   const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
+  const [organizationDesc, setOrganizationDesc] = useState("");
   const [organizationAddress, setOrganizationAddress] = useState("");
+  const [numKids, setNumKids] = useState("");
   const [primaryContact, setPrimaryContact] = useState<Contact>({
     name: "",
     phone: "",
@@ -204,7 +222,10 @@ const Join = (): React.ReactElement => {
       <>
         <Text variant="desktop-heading">Organization Info</Text>
         <Flex flexDir="row" gap="24px">
-          <Flex flexDir="column" w="240px">
+          <Flex
+            flexDir="column"
+            w={role !== "ASP" ? "240px" : "-webkit-fit-content"}
+          >
             <FormControl
               isRequired
               isInvalid={attemptedSubmit && organizationName === ""}
@@ -219,7 +240,27 @@ const Join = (): React.ReactElement => {
               />
             </FormControl>
           </Flex>
-          <Flex flexDir="column" w="519px">
+          {role === "ASP" && (
+            <Flex flexDir="column" w="-webkit-fit-content">
+              <FormControl
+                isRequired
+                isInvalid={attemptedSubmit && numKids === ""}
+              >
+                <FormLabel variant="desktop-button-bold">
+                  Number of Kids
+                </FormLabel>
+                <Input
+                  value={numKids}
+                  placeholder={PLACEHOLDER_WEB_EXAMPLE_NUM_KIDS}
+                  onChange={(e) => setNumKids(e.target.value)}
+                />
+              </FormControl>
+            </Flex>
+          )}
+          <Flex
+            flexDir="column"
+            w={role !== "ASP" ? "519px" : "-webkit-fit-content"}
+          >
             <FormControl
               isRequired
               isInvalid={attemptedSubmit && organizationAddress === ""}
@@ -231,6 +272,20 @@ const Join = (): React.ReactElement => {
                 value={organizationAddress}
                 placeholder={PLACEHOLDER_WEB_EXAMPLE_ADDRESS}
                 onChange={(e) => setOrganizationAddress(e.target.value)}
+              />
+            </FormControl>
+          </Flex>
+        </Flex>
+        <Flex flexDir="row">
+          <Flex flexDir="column" w="480px">
+            <FormControl>
+              <FormLabel variant="desktop-button-bold">
+                Description of organization
+              </FormLabel>
+              <Textarea
+                value={organizationDesc}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_DESCRIPTION}
+                onChange={(e) => setOrganizationDesc(e.target.value)}
               />
             </FormControl>
           </Flex>
@@ -268,6 +323,27 @@ const Join = (): React.ReactElement => {
                 value={organizationAddress}
                 onChange={(e) => setOrganizationAddress(e.target.value)}
                 placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS}
+              />
+            </FormControl>
+            {role === "ASP" && (
+              <FormControl
+                isRequired
+                isInvalid={attemptedSubmit && numKids === ""}
+              >
+                <Input
+                  variant="mobile-outline"
+                  value={numKids}
+                  onChange={(e) => setNumKids(e.target.value)}
+                  placeholder={PLACEHOLDER_MOBILE_EXAMPLE_NUM_KIDS}
+                />
+              </FormControl>
+            )}
+            <FormControl>
+              <Textarea
+                variant="mobile-outline"
+                value={organizationDesc}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_DESCRIPTION}
+                onChange={(e) => setOrganizationDesc(e.target.value)}
               />
             </FormControl>
           </Flex>
@@ -709,6 +785,8 @@ const Join = (): React.ReactElement => {
       if (!isValidEmail(emailsToValidate[i])) return false;
     }
 
+    if (Number.isNaN(parseInt(numKids, 10))) return false;
+
     return true;
   };
 
@@ -719,7 +797,17 @@ const Join = (): React.ReactElement => {
       email: trimWhiteSpace(email),
       organizationAddress: trimWhiteSpace(organizationAddress),
       organizationName: trimWhiteSpace(organizationName),
+      organizationDesc: trimWhiteSpace(organizationDesc),
       role,
+      roleInfo: {
+        aspInfo:
+          role === "ASP"
+            ? {
+                numKids: parseInt(numKids, 10),
+              }
+            : null,
+        donorInfo: null,
+      },
       primaryContact: {
         name: trimWhiteSpace(primaryContact.name),
         email: trimWhiteSpace(primaryContact.email),

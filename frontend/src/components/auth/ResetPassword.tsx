@@ -35,16 +35,26 @@ const ResetPassword = (): React.ReactElement => {
         email
         organizationAddress
         organizationName
+        organizationDesc
         role
+        roleInfo {
+          aspInfo {
+            numKids
+          }
+          donorInfo {
+            type
+            tags
+          }
+        }
         primaryContact {
-            name
-            phone
-            email
+          name
+          phone
+          email
         }
         onsiteContacts {
-            name
-            phone
-            email
+          name
+          phone
+          email
         }
       }
     }

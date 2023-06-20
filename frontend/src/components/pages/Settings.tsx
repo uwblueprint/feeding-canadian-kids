@@ -720,7 +720,8 @@ const Settings = (): React.ReactElement => {
         _disabled={{
           borderColor: "#CCCCCC !important",
           bgColor: "#CCCCCC !important",
-          color: "#666666",
+          color: "#666666 !important",
+          cursor: "default",
         }}
         onClick={handleSubmit}
       >

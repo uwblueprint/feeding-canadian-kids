@@ -1,4 +1,3 @@
-import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
   Center,
@@ -7,15 +6,8 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
   Textarea,
-  Th,
-  Thead,
-  Tr,
   useMediaQuery,
 } from "@chakra-ui/react";
 import React, { useState } from "react";

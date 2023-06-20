@@ -1,5 +1,4 @@
 import { gql, useMutation } from "@apollo/client";
-import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
   Center,
@@ -12,14 +11,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
   useMediaQuery,
   useToast,
 } from "@chakra-ui/react";

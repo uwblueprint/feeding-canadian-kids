@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-import { Contact, UserSettings } from "../../types/AuthTypes";
+import { Contact, UserSettings } from "../../types/UserTypes";
 import {
   isNonNegativeInt,
   isValidEmail,

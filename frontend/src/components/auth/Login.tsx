@@ -17,7 +17,7 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import BackgroundImage from "../../assets/background.png";
 import { DASHBOARD_PAGE, JOIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { AuthenticatedUser } from "../../types/AuthTypes";
+import { AuthenticatedUser } from "../../types/UserTypes";
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!, $idToken: String!) {

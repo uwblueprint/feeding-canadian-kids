@@ -36,9 +36,3 @@ export type UserSettings = {
   organizationDescription: string;
   onsiteContacts: Array<Contact>;
 };
-
-export type OnsiteStaffSectionProps = {
-  onsiteInfo: Array<Contact>;
-  setOnsiteInfo: React.Dispatch<React.SetStateAction<Contact[]>>;
-  attemptedSubmit: boolean;
-};

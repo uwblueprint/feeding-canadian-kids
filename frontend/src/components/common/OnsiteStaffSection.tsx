@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import { OnsiteStaffSectionProps } from "../../types/UserTypes";
+import { Contact } from "../../types/UserTypes";
 import { isValidEmail } from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -27,6 +27,12 @@ const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
 const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
 const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
+
+type OnsiteStaffSectionProps = {
+  onsiteInfo: Array<Contact>;
+  setOnsiteInfo: React.Dispatch<React.SetStateAction<Contact[]>>;
+  attemptedSubmit: boolean;
+};
 
 const OnsiteStaffSection = ({
   onsiteInfo,

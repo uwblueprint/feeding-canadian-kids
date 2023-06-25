@@ -52,13 +52,15 @@ vault kv get -format=json kv/fck | python update_secret_files.py -->
 
 3. Run `npm install` in the root, and also run `cd frontend && npm install`
 
-````
-3. Run the application
+4. Run the application
+
 ```bash
 docker-compose up --build
-````
+```
 
 The backend runs at http://localhost:5000 and the frontend runs at http://localhost:3000.
+
+If you need to login as a user, there is a user in the development db: `test@test.com` with password `12345678`.
 
 ## Useful Commands
 

@@ -11,7 +11,7 @@ import SampleContext, {
 } from "./contexts/SampleContext";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
 import sampleContextReducer from "./reducers/SampleContextReducer";
-import { AuthenticatedUser } from "./types/AuthTypes";
+import { AuthenticatedUser } from "./types/UserTypes";
 import { getLocalStorageObj } from "./utils/LocalStorageUtils";
 
 const App = (): React.ReactElement => {

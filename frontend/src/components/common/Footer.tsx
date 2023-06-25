@@ -6,7 +6,6 @@ import {
   Stack,
   Text,
   VStack,
-  useMediaQuery,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -15,9 +14,10 @@ import { InstagramIcon } from "../../assets/icons/Instagram";
 import { LinkedinIcon } from "../../assets/icons/LinkedIn";
 import { TwitterIcon } from "../../assets/icons/TwitterSquare";
 import Logo from "../../assets/logo.png";
+import useIsWebView from "../../utils/useIsWebView";
 
 const Footer = () => {
-  const [isWebView] = useMediaQuery("(min-width: 56em)");
+  const isWebView = useIsWebView();
 
   return isWebView ? (
     <VStack width="100wh" bg="#F8F8FB">

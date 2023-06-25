@@ -8,7 +8,6 @@ import {
   Input,
   Text,
   Textarea,
-  useMediaQuery,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
@@ -18,6 +17,7 @@ import {
   isValidEmail,
   trimWhiteSpace,
 } from "../../utils/ValidationUtils";
+import useIsWebView from "../../utils/useIsWebView";
 import OnsiteStaffSection from "../common/OnsiteStaffSection";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -57,7 +57,7 @@ const Settings = (): React.ReactElement => {
   ]);
 
   const [attemptedSubmit, setAttemptedSave] = useState(false);
-  const [isWebView] = useMediaQuery("(min-width: 62em)");
+  const isWebView = useIsWebView();
 
   const getTitleSection = (): React.ReactElement => {
     return (
@@ -471,7 +471,7 @@ const Settings = (): React.ReactElement => {
     <Center>
       <Flex
         flexDir="column"
-        w={{ base: "100%", lg: "1000px" }}
+        w={{ base: "100%", lg: "980px" }}
         p={{ base: "24px", sm: "36px", lg: "48px" }}
         gap={{ base: "20px", lg: "32px" }}
         borderRadius="8px"

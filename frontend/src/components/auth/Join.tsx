@@ -12,7 +12,6 @@ import {
   RadioGroup,
   Stack,
   Text,
-  useMediaQuery,
   useToast,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
@@ -32,6 +31,7 @@ import {
   UserInfo,
 } from "../../types/UserTypes";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
+import useIsWebView from "../../utils/useIsWebView";
 import OnsiteStaffSection from "../common/OnsiteStaffSection";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -93,7 +93,7 @@ const Join = (): React.ReactElement => {
   ]);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
-  const [isWebView] = useMediaQuery("(min-width: 62em)");
+  const isWebView = useIsWebView();
   const [signup] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
     SIGNUP,
   );

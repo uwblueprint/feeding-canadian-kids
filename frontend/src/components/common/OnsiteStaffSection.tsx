@@ -13,12 +13,12 @@ import {
   Th,
   Thead,
   Tr,
-  useMediaQuery,
 } from "@chakra-ui/react";
 import React from "react";
 
 import { Contact } from "../../types/UserTypes";
 import { isValidEmail } from "../../utils/ValidationUtils";
+import useIsWebView from "../../utils/useIsWebView";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
@@ -39,7 +39,7 @@ const OnsiteStaffSection = ({
   setOnsiteInfo,
   attemptedSubmit,
 }: OnsiteStaffSectionProps): React.ReactElement => {
-  const [isWebView] = useMediaQuery("(min-width: 62em)");
+  const isWebView = useIsWebView();
 
   if (isWebView) {
     return (

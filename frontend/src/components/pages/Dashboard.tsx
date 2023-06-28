@@ -1,3 +1,4 @@
+
 import { 
     CalendarIcon,
     ChevronDownIcon,
@@ -6,6 +7,7 @@ import {
 
 import {
     Box,
+    Button,
     Tab,
     Table,
     TableContainer,
@@ -19,10 +21,37 @@ import {
     Tfoot,
     Th,
     Thead,
-    Tr
+    Tr,
+    Wrap
 } from '@chakra-ui/react';
 
 import React from 'react';
+
+// eslint-disable-next-line import/order
+import dayGridPlugin from "@fullcalendar/daygrid";
+// eslint-disable-next-line import/order
+import FullCalendar from "@fullcalendar/react";
+
+import { useNavigate } from "react-router-dom";
+
+import MealRequestForm from "./MealRequestForm";
+
+import BackgroundImage from "../../assets/background.png";
+
+import * as Routes from "../../constants/Routes";
+
+import SampleContext from "../../contexts/SampleContext";
+
+import Logout from "../auth/Logout";
+
+import RefreshCredentials from "../auth/RefreshCredentials";
+
+type ButtonProps = { text: string; path: string };
+
+const NavButton = ({ text, path }: ButtonProps) => {
+  const navigate = useNavigate();
+  return <Button onClick={() => navigate(path)}>{text}</Button>;
+};
 
 function App() {
   return (
@@ -65,11 +94,24 @@ function App() {
                 List
                 </Text>
             </Tab>
+            <Tab>
+                <Text
+                    variant={{
+                        base: "mobile-heading",
+                        md: "desktop-heading",
+                    }}
+                >
+                Test Buttons
+                </Text>
+            </Tab>
           </TabList>
 
           <TabPanels>
             <TabPanel>
-              <p>Content for Tab 2</p>
+            <FullCalendar
+      plugins={[ dayGridPlugin ]}
+      initialView="dayGridMonth"
+    />
             </TabPanel>
             
             <TabPanel>
@@ -116,6 +158,30 @@ function App() {
                         </Tbody>
                     </Table>
                 </TableContainer>
+            </TabPanel>
+            <TabPanel>
+            <Wrap>
+        <Logout />
+        <RefreshCredentials />
+        <NavButton text="Create Entity" path={Routes.CREATE_ENTITY_PAGE} />
+        <NavButton text="Update Entity" path={Routes.UPDATE_ENTITY_PAGE} />
+        <NavButton text="Display Entities" path={Routes.DISPLAY_ENTITY_PAGE} />
+        <NavButton
+          text="Create Simple Entity"
+          path={Routes.CREATE_SIMPLE_ENTITY_PAGE}
+        />
+        <NavButton
+          text="Update Simple Entity"
+          path={Routes.UPDATE_SIMPLE_ENTITY_PAGE}
+        />
+        <NavButton
+          text="Display Simple Entities"
+          path={Routes.DISPLAY_SIMPLE_ENTITY_PAGE}
+        />
+        <NavButton text="Edit Team" path={Routes.EDIT_TEAM_PAGE} />
+        <NavButton text="Hooks Demo" path={Routes.HOOKS_PAGE} />
+        <MealRequestForm />
+        </Wrap>
             </TabPanel>
           </TabPanels>
         </Tabs>

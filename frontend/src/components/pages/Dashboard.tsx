@@ -70,7 +70,7 @@ function App() {
         </Text>
 
         {/* tabs */}
-        <Tabs>
+        <Tabs colorScheme='black'>
           <TabList>
             <Tab>
                 <Text

@@ -45,3 +45,12 @@ export type OnboardingRequest = {
   dateSubmitted: string;
   status: string;
 } | null;
+
+export type UserSettings = {
+  primaryContact: Contact;
+  organizationName: string;
+  numberOfKids: number;
+  organizationAddress: string;
+  organizationDescription: string;
+  onsiteContacts: Array<Contact>;
+};

@@ -33,6 +33,7 @@ def validate_role_info(role, role_info, role_info_str, error_list):
     if role == USERINFO_ROLE_ASP:
         for field in asp_info_fields:
             role_info = role_info["asp_info"]
+            print(f"validating role_info {role_info} for field {field}")
             if field not in role_info:
                 error_list.append(
                     f'The {role_info_str} supplied does not have field "{field}".'
@@ -43,7 +44,7 @@ def validate_role_info(role, role_info, role_info_str, error_list):
                 )
             elif (field == "num_kids" and role_info["num_kids"] < 0 ):
                 error_list.append(
-                    f'num_kids must be greater than or equal to zero..'
+                    f'num_kids must be greater than or equal to zero.'
                 )
     # TODO: Add donor info validation once meal donor schema is finalized
     return error_list

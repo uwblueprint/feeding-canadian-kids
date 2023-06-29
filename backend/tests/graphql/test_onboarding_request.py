@@ -15,6 +15,7 @@ def test_create_onboarding_request():
                                 email: "test3@organization.com",
                                 organizationAddress: "789 Anywhere Street",
                                 organizationName: "Test3 Org",
+                                organizationDesc: "Testing 123",
                                 role: "Admin",
                                 primaryContact: {
                                     name: "Anon ymous",
@@ -41,7 +42,17 @@ def test_create_onboarding_request():
                                     email
                                     organizationAddress
                                     organizationName
+                                    organizationDesc
                                     role
+                                    roleInfo {
+                                        aspInfo {
+                                            numKids
+                                        }
+                                        donorInfo {
+                                            type
+                                            tags
+                                        }
+                                    }
                                     primaryContact {
                                         name
                                         phone
@@ -69,57 +80,75 @@ def test_create_onboarding_request():
 
 
 def test_create_onboarding_request_with_existing_email_errors():
-    mutation_string = """mutation testCreateOnboardingRequest {
-                        createOnboardingRequest (
-                            userInfo: {
-                                email: "test1@organization.com",
-                                organizationAddress: "123 Anywhere Street",
-                                organizationName: "Test1 Org",
-                                role: "ASP",
-                                primaryContact: {
-                                    name: "Jessie",
-                                    phone: "123456",
-                                    email: "jessie123@gmail.com"
-                                },
-                                onsiteContacts: [
-                                    {
-                                        name: "abc",
-                                        phone: "123-456-7890",
-                                        email: "abc@uwblueprint.org"
-                                    },
-                                    {
-                                        name: "Jane Doe",
-                                        phone: "111-222-3333",
-                                        email: "example@domain.com"
-                                    }
-                                ]
-                            }
-                        ) {
-                            onboardingRequest {
-                                id
-                                info {
-                                    email
-                                    organizationAddress
-                                    organizationName
-                                    role
-                                    primaryContact {
-                                        name
-                                        phone
-                                        email
-                                    }
-                                    onsiteContacts {
-                                        name
-                                        phone
-                                        email
-                                    }
-                                }
-                                dateSubmitted
-                                status
-                            }
-                        }
-                }"""
-
-    result = graphql_schema.execute(mutation_string)
+    num_of_kids = 50
+    result = graphql_schema.execute(
+        f"""mutation testCreateOnboardingRequest {{
+            createOnboardingRequest (
+                userInfo: {{
+                    email: "test1@organization.com",
+                    organizationAddress: "123 Anywhere Street",
+                    organizationName: "Test1 Org",
+                    organizationDesc: "Testing 123",
+                    role: "ASP",
+                    roleInfo: {{
+                        aspInfo: {{
+                            numKids: {num_of_kids},
+                        }},
+                        donorInfo: null,
+                    }},
+                    primaryContact: {{
+                        name: "Jessie",
+                        phone: "123456",
+                        email: "jessie123@gmail.com"
+                    }},
+                    onsiteContacts: [
+                        {{
+                            name: "abc",
+                            phone: "123-456-7890",
+                            email: "abc@uwblueprint.org"
+                        }},
+                        {{
+                            name: "Jane Doe",
+                            phone: "111-222-3333",
+                            email: "example@domain.com"
+                        }}
+                    ]
+                }}
+            ) {{
+                onboardingRequest {{
+                    id
+                    info {{
+                        email
+                        organizationAddress
+                        organizationName
+                        organizationDesc
+                        role
+                        roleInfo {{
+                            aspInfo {{
+                                numKids
+                            }}
+                            donorInfo {{
+                                type
+                                tags
+                            }}
+                        }}
+                        primaryContact {{
+                            name
+                            phone
+                            email
+                        }}
+                        onsiteContacts {{
+                            name
+                            phone
+                            email
+                        }}
+                    }}
+                    dateSubmitted
+                    status
+                }}
+            }}
+        }}"""
+    )
     assert result.errors is not None
     assert len(result.errors) == 1
     assert result.errors[0].message == ONBOARDING_REQUEST_EMAIL_ALREADY_EXISTS_ERROR
@@ -135,7 +164,17 @@ def test_get_all_requests(onboarding_request_setup):
                         email
                         organizationAddress
                         organizationName
+                        organizationDesc
                         role
+                        roleInfo {
+                            aspInfo {
+                                numKids
+                            }
+                            donorInfo {
+                                type
+                                tags
+                            }
+                        }
                         primaryContact {
                             name
                             phone
@@ -175,7 +214,17 @@ def test_filter_requests_by_role(onboarding_request_setup):
                         email
                         organizationAddress
                         organizationName
+                        organizationDesc
                         role
+                        roleInfo {
+                            aspInfo {
+                                numKids
+                            }
+                            donorInfo {
+                                type
+                                tags
+                            }
+                        }
                         primaryContact {
                             name
                             phone
@@ -210,7 +259,17 @@ def test_filter_requests_by_status(onboarding_request_setup):
                         email
                         organizationAddress
                         organizationName
+                        organizationDesc
                         role
+                        roleInfo {
+                            aspInfo {
+                                numKids
+                            }
+                            donorInfo {
+                                type
+                                tags
+                            }
+                        }
                         primaryContact {
                             name
                             phone
@@ -245,7 +304,17 @@ def test_get_requests_by_id(onboarding_request_setup):
                     email
                     organizationAddress
                     organizationName
+                    organizationDesc
                     role
+                    roleInfo {{
+                        aspInfo {{
+                            numKids
+                        }}
+                        donorInfo {{
+                            type
+                            tags
+                        }}
+                    }}
                     primaryContact {{
                         name
                         phone

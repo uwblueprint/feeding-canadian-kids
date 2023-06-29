@@ -13,7 +13,15 @@ test_user_info = {
     "email": "ansonjwhe@gmail.com",
     "organization_address": "123 Waterloo, ON",
     "organization_name": "Feeding Canadian Kids",
+    "organization_desc": "Testing123",
     "role": "Donor",
+    "role_info": {
+        "asp_info": None,
+        "donor_info": {
+            "type": "Restaurant",
+            "tags": ["Halal", "Vegan"],
+        },
+    },
     "primary_contact": {
         "name": "Anson He",
         "phone": "123-456-7890",
@@ -47,7 +55,19 @@ def test_create_onboarding_request():
     assert (
         onboarding_request.info.organization_name == test_user_info["organization_name"]
     )
+    assert (
+        onboarding_request.info.organization_desc == test_user_info["organization_desc"]
+    )
     assert onboarding_request.info.role == test_user_info["role"]
+    assert (
+        onboarding_request.info.role_info.donor_info.type
+        == test_user_info["role_info"]["donor_info"]["type"]
+    )
+    for i in range(len(test_user_info["role_info"]["donor_info"]["tags"])):
+        assert (
+            onboarding_request.info.role_info.donor_info.tags[i]
+            == test_user_info["role_info"]["donor_info"]["tags"][i]
+        )
     assert (
         onboarding_request.info.primary_contact.name
         == test_user_info["primary_contact"]["name"]

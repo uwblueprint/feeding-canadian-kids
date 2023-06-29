@@ -30,8 +30,6 @@ def validate_role_info(role, role_info, role_info_str, error_list):
         return error_list
 
     asp_info_fields = ["num_kids"]
-    # donor_info_fields = ["type", "tags"]
-
     if role == USERINFO_ROLE_ASP:
         for field in asp_info_fields:
             role_info = role_info["asp_info"]
@@ -43,26 +41,8 @@ def validate_role_info(role, role_info, role_info_str, error_list):
                 error_list.append(
                     f'The field "{field}" in {role_info_str} is not a string.'
                 )
-            elif role_info[field] == "":
-                error_list.append(
-                    f'The field "{field}" in {role_info_str} must not be empty.'
-                )
 
-    # elif role == USERINFO_ROLE_DONOR:
-    #     for field in donor_info_fields:
-    #         role_info = role_info["donor_info"]
-    #         if field not in role_info:
-    #             error_list.append(
-    #                 f'The {role_info_str} supplied does not have field "{field}".'
-    #             )
-    #         elif type(role_info[field]) is not str:
-    #             error_list.append(f'The field "{field}" in {role_info_str}
-    #               is not a string.')
-    #         elif role_info[field] == "":
-    #             error_list.append(
-    #                 f'The field "{field}" in {role_info_str} must not be empty.'
-    #             )
-
+    # TODO: Add doner info validation once meal doner schema is finalized
     return error_list
 
 

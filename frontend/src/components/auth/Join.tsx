@@ -785,7 +785,8 @@ const Join = (): React.ReactElement => {
       if (!isValidEmail(emailsToValidate[i])) return false;
     }
 
-    if (Number.isNaN(parseInt(numKids, 10))) return false;
+    const numKidsToValidate = parseInt(numKids, 10);
+    if (Number.isNaN(numKidsToValidate) || numKidsToValidate < 0) return false;
 
     return true;
   };

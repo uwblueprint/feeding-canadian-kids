@@ -9,6 +9,7 @@ import {
   Grid,
   GridItem,
   HStack,
+  Input,
   Select,
   SimpleGrid,
   Spacer,
@@ -107,7 +108,7 @@ const SchedulingForm = (): React.ReactElement => {
               colorScheme="primary.blue"
               size="xs"
               height={{ base: "2rem", md: "3rem" }}
-              rounded="none"
+              rounded="md"
             >
               {day}
             </Button>
@@ -120,48 +121,46 @@ const SchedulingForm = (): React.ReactElement => {
           <Box>
             <Text as="b">Start Date</Text>
             <br />
-            <Button
+            <Input
               size="xs"
               height={{ base: "2rem", md: "3rem" }}
               variant="outline"
               colorScheme="primary.blue"
-              rounded="none"
+              type="date"
+              rounded="md"
               width={{ base: "100%", md: "100%" }}
-            >
-              Select a date
-            </Button>
+              placeholder="Select a date"
+            />
           </Box>
 
           <Box>
             <Text as="b">End Date</Text>
             <br />
-            <Button
+            <Input
               size="xs"
               height={{ base: "2rem", md: "3rem" }}
               variant="outline"
               colorScheme="primary.blue"
-              rounded="none"
+              type="date"
+              rounded="md"
               width={{ base: "100%", md: "100%" }}
-            >
-              Select a date
-            </Button>
+              placeholder="Select a date"
+            />
+          </Box>
+
+          <Box>
+            <Text as="b">Scheduled drop-off time</Text>
+            <Input
+              height={{ base: "2rem", md: "3rem" }}
+              size="xs"
+              type="time"
+              placeholder="Select a time"
+              width={{ base: "100%", md: "100%" }}
+            />
           </Box>
         </SimpleGrid>
 
         <br />
-
-        <Text as="b">Scheduled drop-off time</Text>
-        <br />
-        <Select
-          height={{ base: "2rem", md: "2.5rem" }}
-          size="xs"
-          placeholder="Select a time"
-          width={{ base: "50%", md: "50%" }}
-        >
-          <option value="Morning">Morning</option>
-          <option value="Afternoon">Afternoon</option>
-          <option value="Evening">Evening</option>
-        </Select>
       </GridItem>
 
       {/* Next button that is right aligned */}
@@ -259,6 +258,36 @@ const mealFormProgress = (): React.ReactElement => {
       </Center>
     </div>
   );
+
+  /* const steps = [
+    { title: "First", description: "Contact Info" },
+    { title: "Second", description: "Date & Time" },
+    { title: "Third", description: "Select Rooms" },
+  ];
+  return (
+    <div>
+      <Stepper size="lg" index={activeStep}>
+        {steps.map((step, index) => (
+          <Step key={index}>
+            <StepIndicator>
+              <StepStatus
+                complete={<StepIcon />}
+                incomplete={<StepNumber />}
+                active={<StepNumber />}
+              />
+            </StepIndicator>
+
+            <Box flexShrink="0">
+              <StepTitle>{step.title}</StepTitle>
+              <StepDescription>{step.description}</StepDescription>
+            </Box>
+
+            <StepSeparator />
+          </Step>
+        ))}
+      </Stepper>
+    </div>
+  ); */
 };
 
 const CreateMealRequest = (): React.ReactElement => {

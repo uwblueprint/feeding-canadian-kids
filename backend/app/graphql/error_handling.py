@@ -22,7 +22,7 @@ def call_and_log_errors(resolve):
         except Exception as error:
             logger.error(error, exc_info=error)
             raise GraphQLError(
-                # Returning the error the the FE helps with development, but may be a security vunraliblity
+                # Returning the error the the FE helps with development, but may be a security vulnerability
                 message="Unexpected error: " + str(error),
                 original_error=None,
             )

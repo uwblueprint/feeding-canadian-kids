@@ -278,7 +278,10 @@ const Join = (): React.ReactElement => {
         </Flex>
         <Flex flexDir="row">
           <Flex flexDir="column" w="480px">
-            <FormControl>
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationDesc === ""}
+            >
               <FormLabel variant="desktop-button-bold">
                 Description of organization
               </FormLabel>
@@ -763,6 +766,7 @@ const Join = (): React.ReactElement => {
       organizationName,
       organizationAddress,
       primaryContact.name,
+      organizationDesc,
     ];
     const phoneNumsToValidate = [primaryContact.phone];
     const emailsToValidate = [email, primaryContact.email];

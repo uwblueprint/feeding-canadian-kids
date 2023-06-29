@@ -42,10 +42,8 @@ def validate_role_info(role, role_info, role_info_str, error_list):
                 error_list.append(
                     f'The field "{field}" in {role_info_str} is not a string.'
                 )
-            elif (field == "num_kids" and role_info["num_kids"] < 0 ):
-                error_list.append(
-                    f'num_kids must be greater than or equal to zero.'
-                )
+            elif field == "num_kids" and role_info["num_kids"] < 0:
+                error_list.append("num_kids must be greater than or equal to zero.")
     # TODO: Add donor info validation once meal donor schema is finalized
     return error_list
 

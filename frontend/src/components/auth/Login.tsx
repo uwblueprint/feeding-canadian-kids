@@ -72,8 +72,8 @@ const Login = (): React.ReactElement => {
   return (
     <Flex
       flexDirection="column"
-      width="100wh"
       height="100vh"
+      padding="100px 0px"
       justifyContent={{ base: "center", md: "flex-start" }}
       alignItems="center"
       style={{

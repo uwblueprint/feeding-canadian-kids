@@ -20,6 +20,8 @@ import {
   Tabs,
   Text,
   VStack,
+  useBreakpointValue,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import React from "react";
 import { Form } from "react-router-dom";
@@ -187,11 +189,20 @@ const SchedulingForm = (): React.ReactElement => {
   );
 };
 
-const mealFormProgress = (): React.ReactElement => {
+const MealFormProgress = (): React.ReactElement => {
+  const fontSize = useBreakpointValue({ base: "12px", sm: "16px", md: "20px" });
+
   return (
     <div>
       <Center>
-        <Tabs bg="gray" size="sm" variant="unstyled" align="center">
+        <Tabs
+          bg="blue"
+          size="sm"
+          variant="unstyled"
+          align="center"
+          overflowX="auto"
+          overflowY="hidden"
+        >
           <TabList>
             <Tab>
               <HStack direction="row" spacing={4}>
@@ -201,12 +212,7 @@ const mealFormProgress = (): React.ReactElement => {
                   src="https://bit.ly/broken-link"
                   size="xs"
                 />
-                <Text
-                  as="b"
-                  fontSize="20px"
-                  color="primary.blue"
-                  variant="desktop-body"
-                >
+                <Text as="b" color="primary.blue" fontSize={fontSize}>
                   Scheduling
                 </Text>
               </HStack>
@@ -221,8 +227,7 @@ const mealFormProgress = (): React.ReactElement => {
                   size="xs"
                 />
 
-                <Text as="b" color="gray" fontSize="20px">
-                  {" "}
+                <Text as="b" color="gray" fontSize={fontSize}>
                   Meal Donation Information
                 </Text>
               </HStack>
@@ -237,8 +242,7 @@ const mealFormProgress = (): React.ReactElement => {
                   size="xs"
                 />
 
-                <Text as="b" color="gray" fontSize="20px">
-                  {" "}
+                <Text as="b" color="gray" fontSize={fontSize}>
                   Review & Submit
                 </Text>
               </HStack>
@@ -258,8 +262,9 @@ const mealFormProgress = (): React.ReactElement => {
       </Center>
     </div>
   );
+};
 
-  /* const steps = [
+/* const steps = [
     { title: "First", description: "Contact Info" },
     { title: "Second", description: "Date & Time" },
     { title: "Third", description: "Select Rooms" },
@@ -288,7 +293,6 @@ const mealFormProgress = (): React.ReactElement => {
       </Stepper>
     </div>
   ); */
-};
 
 const CreateMealRequest = (): React.ReactElement => {
   return (
@@ -296,13 +300,12 @@ const CreateMealRequest = (): React.ReactElement => {
       {/* <Flex
         flexDirection="column"
         width="100vw"
-        height="100vh"
         justifyContent={{ base: "center", md: "flex-start" }}
         alignItems="center"
       > */}
       {titleSection()}
 
-      {mealFormProgress()}
+      {MealFormProgress()}
       {/* </Flex> */}
     </div>
   );

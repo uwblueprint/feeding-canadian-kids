@@ -64,9 +64,19 @@ const titleSection = (): React.ReactElement => {
 const SchedulingForm = (): React.ReactElement => {
   const dayNames = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
 
+  // Button state (array of booleans)
+  const [buttonState, setButtonState] = React.useState(Array(7).fill(false));
+
+  // Turn button to solid variant when clicked
+  const handleClick = (index: number) => {
+    const newButtonState = [...buttonState];
+    newButtonState[index] = !newButtonState[index];
+    setButtonState(newButtonState);
+  };
+
   return (
     <Grid
-      templateColumns="repeat(3, 1fr)"
+      templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(3, 1fr)" }}
       gap={4}
       paddingLeft={{ base: "1rem", md: "2rem" }}
       paddingRight={{ base: "1rem", md: "2rem" }}
@@ -76,7 +86,7 @@ const SchedulingForm = (): React.ReactElement => {
         <Text as="b">Date and Time</Text>
         <Text>Please select the date for the meal drop-off.</Text>
       </GridItem>
-      <GridItem colStart={2} colEnd={4} bg="papayawhip">
+      <GridItem colSpan={{ base: 1, md: 2 }} bg="papayawhip">
         <Text color="primary.blue" fontSize="xs">
           If this is not a weekly donation,&nbsp;
           <a
@@ -106,11 +116,21 @@ const SchedulingForm = (): React.ReactElement => {
           {dayNames.map((day) => (
             <Button
               key={day}
-              variant="outline"
+              variant={buttonState[dayNames.indexOf(day)] ? "solid" : "outline"}
               colorScheme="primary.blue"
-              size="xs"
+              borderColor="primary.blue"
+              textColor={
+                buttonState[dayNames.indexOf(day)] ? "white" : "primary.blue"
+              }
+              backgroundColor={
+                buttonState[dayNames.indexOf(day)] ? "primary.blue" : "white"
+              }
+              onClick={() => handleClick(dayNames.indexOf(day))}
+              color="primary.blue"
               height={{ base: "2rem", md: "3rem" }}
               rounded="md"
+              fontSize="xs"
+              fontWeight={600}
             >
               {day}
             </Button>
@@ -119,7 +139,7 @@ const SchedulingForm = (): React.ReactElement => {
 
         <br />
 
-        <SimpleGrid columns={{ base: 2, md: 2 }} spacing={{ base: 4, md: 4 }}>
+        <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 4, md: 4 }}>
           <Box>
             <Text as="b">Start Date</Text>
             <br />
@@ -167,8 +187,7 @@ const SchedulingForm = (): React.ReactElement => {
 
       {/* Next button that is right aligned */}
       <GridItem
-        colStart={1}
-        colEnd={4}
+        colSpan={{ base: 1, md: 3 }}
         bg="papayawhip"
         display="flex"
         justifyContent="flex-end"

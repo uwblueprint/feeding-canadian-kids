@@ -6,7 +6,7 @@ import {
 import { googleLogout } from "@react-oauth/google";
 
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { AuthenticatedUser } from "../types/AuthTypes";
+import { AuthenticatedUser } from "../types/UserTypes";
 import { setLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 
 type LoginFunction = (

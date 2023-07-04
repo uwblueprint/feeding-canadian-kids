@@ -44,6 +44,20 @@ const Text = {
       fontSize: "14px",
       lineHeight: "21px",
     },
+    "desktop-body": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "400",
+      fontSize: "18px",
+      lineHeight: "27px",
+    },
+    "desktop-body-bold": {
+      fontFamily: "Inter",
+      fontStyle: "normal",
+      fontWeight: "600",
+      fontSize: "18px",
+      lineHeight: "27px",
+    },
     "mobile-body-bold": {
       fontFamily: "Inter",
       fontStyle: "normal",

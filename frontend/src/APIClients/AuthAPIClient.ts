@@ -6,16 +6,16 @@ import {
 import { googleLogout } from "@react-oauth/google";
 
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { AuthenticatedUser } from "../types/UserTypes";
+import { AuthenticatedUser, LoginData } from "../types/UserTypes";
 import { setLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 
 type LoginFunction = (
   options?:
-    | MutationFunctionOptions<{ login: AuthenticatedUser }, OperationVariables>
+    | MutationFunctionOptions<{ login: LoginData }, OperationVariables>
     | undefined,
 ) => Promise<
   FetchResult<
-    { login: AuthenticatedUser },
+    { login: LoginData },
     Record<string, unknown>,
     Record<string, unknown>
   >
@@ -31,7 +31,7 @@ const login = async (
   const result = await loginFunction({
     variables: { email, password, idToken },
   });
-  user = result.data?.login ?? null;
+  user = result.data?.login?.registeredUser ?? null;
   if (user) {
     localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(user));
   }

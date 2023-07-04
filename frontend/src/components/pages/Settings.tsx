@@ -9,9 +9,12 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Navigate } from "react-router-dom";
 
-import { Contact, UserSettings } from "../../types/UserTypes";
+import { LOGIN_PAGE } from "../../constants/Routes";
+import AuthContext from "../../contexts/AuthContext";
+import { Contact, UserInfo, UserSettings } from "../../types/UserTypes";
 import {
   isNonNegativeInt,
   isValidEmail,
@@ -39,25 +42,46 @@ const PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION =
   "Description of organization";
 
 const Settings = (): React.ReactElement => {
-  const [primaryContact, setPrimaryContact] = useState<Contact>({
-    name: "",
-    phone: "",
-    email: "",
-  });
-  const [organizationName, setOrganizationName] = useState("");
-  const [numberOfKids, setNumberOfKids] = useState("");
-  const [organizationAddress, setOrganizationAddress] = useState("");
-  const [organizationDescription, setOrganizationDescription] = useState("");
-  const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>([
-    {
+  // Assumption: user has the roleInfo: ASPInfo
+  const { authenticatedUser } = useContext(AuthContext);
+  const userInfo: UserInfo = authenticatedUser?.info || null;
+
+  const [primaryContact, setPrimaryContact] = useState<Contact>(
+    userInfo?.primaryContact || {
       name: "",
       phone: "",
       email: "",
     },
-  ]);
+  );
+  const [organizationName, setOrganizationName] = useState(
+    userInfo?.organizationName || "",
+  );
+  const [numberOfKids, setNumberOfKids] = useState(
+    userInfo?.roleInfo?.aspInfo?.numKids?.toString() || "",
+  );
+  const [organizationAddress, setOrganizationAddress] = useState(
+    userInfo?.organizationAddress || "",
+  );
+  const [organizationDescription, setOrganizationDescription] = useState(
+    userInfo?.organizationDesc || "",
+  );
+  const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>(
+    userInfo?.onsiteContacts || [
+      {
+        name: "",
+        phone: "",
+        email: "",
+      },
+    ],
+  );
 
   const [attemptedSubmit, setAttemptedSave] = useState(false);
   const isWebView = useIsWebView();
+
+  if (!authenticatedUser) {
+    return <Navigate replace to={LOGIN_PAGE} />;
+  }
+
 
   const getTitleSection = (): React.ReactElement => {
     return (
@@ -78,7 +102,7 @@ const Settings = (): React.ReactElement => {
         <Flex flexDir="column" gap="24px">
           <Flex flexDir="column">
             <Text variant="desktop-body-bold">Email Address</Text>
-            <Text variant="desktop-body">example.login@gmail.com</Text>
+            <Text variant="desktop-body">{userInfo?.email}</Text>
           </Flex>
           <Button
             width="190px"
@@ -102,7 +126,7 @@ const Settings = (): React.ReactElement => {
     return (
       <Flex flexDir="column" gap="8px">
         <Text variant="mobile-body-bold">Email Address</Text>
-        <Text variant="desktop-xs">example.login@gmail.com</Text>
+        <Text variant="desktop-xs">{userInfo?.email}</Text>
         <Button
           w="100%"
           variant="mobile-button-bold"

@@ -1,3 +1,11 @@
+export type LoginData = {
+  registeredUser: {
+    accessToken: string;
+    id: string;
+    info: UserInfo;
+  };
+} | null;
+
 export type AuthenticatedUser = {
   accessToken: string;
   id: string;
@@ -37,7 +45,7 @@ export type UserInfo = {
   roleInfo: RoleInfo;
   primaryContact: Contact;
   onsiteContacts: Array<Contact>;
-};
+} | null;
 
 export type OnboardingRequest = {
   id: string;

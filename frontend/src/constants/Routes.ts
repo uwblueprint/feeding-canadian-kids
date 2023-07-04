@@ -18,7 +18,18 @@ export const SETTINGS_PAGE = "/settings";
 
 export const DASHBOARD_PAGE = "/dashboard";
 
-export const HOOKS_PAGE = "/dashboard/hooks";
+export const EDIT_TEAM_PAGE = "/dashboard/edit-team";
 
-export const TEMP_ONBOARDING_REQUEST_PAGE =
-  "/dashboard/temp/onboardingRequests";
+export const DISPLAY_ENTITY_PAGE = "/dashboard/entity";
+
+export const CREATE_ENTITY_PAGE = "/dashboard/entity/create";
+
+export const UPDATE_ENTITY_PAGE = "/dashboard/entity/update";
+
+export const DISPLAY_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity";
+
+export const CREATE_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity/create";
+
+export const UPDATE_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity/update";
+
+export const HOOKS_PAGE = "/dashboard/hooks";

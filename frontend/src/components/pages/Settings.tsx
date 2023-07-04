@@ -19,7 +19,6 @@ import {
 } from "../../utils/ValidationUtils";
 import useIsWebView from "../../utils/useIsWebView";
 import OnsiteStaffSection from "../common/OnsiteStaffSection";
-import PageTitle from "../common/PageTitle";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
@@ -59,6 +58,18 @@ const Settings = (): React.ReactElement => {
 
   const [attemptedSubmit, setAttemptedSave] = useState(false);
   const isWebView = useIsWebView();
+
+  const getTitleSection = (): React.ReactElement => {
+    return (
+      <Text
+        alignSelf={{ base: "center", lg: "unset" }}
+        variant="desktop-display-xl"
+        color="primary.blue"
+      >
+        User Settings
+      </Text>
+    );
+  };
 
   const getWebLoginInfoSection = (): React.ReactElement => {
     return (
@@ -466,7 +477,7 @@ const Settings = (): React.ReactElement => {
         borderRadius="8px"
         bgColor="background.white"
       >
-        <PageTitle>User Settings</PageTitle>
+        {getTitleSection()}
         {isWebView ? getWebLoginInfoSection() : getMobileLoginInfoSection()}
         {isWebView && <Divider />}
         {isWebView ? getWebContactSection() : getMobileContactSection()}

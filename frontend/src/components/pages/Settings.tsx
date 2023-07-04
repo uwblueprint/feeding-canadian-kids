@@ -10,7 +10,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 import { LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
@@ -77,11 +77,15 @@ const Settings = (): React.ReactElement => {
 
   const [attemptedSubmit, setAttemptedSave] = useState(false);
   const isWebView = useIsWebView();
+  const navigate = useNavigate();
 
   if (!authenticatedUser) {
     return <Navigate replace to={LOGIN_PAGE} />;
   }
 
+  const onClickResetPassword = () => {
+    navigate(`/${authenticatedUser?.id}/reset-password`);
+  };
 
   const getTitleSection = (): React.ReactElement => {
     return (
@@ -114,6 +118,7 @@ const Settings = (): React.ReactElement => {
             borderColor="primary.green"
             borderRadius="6px"
             _hover={{ color: "text.white", bgColor: "primary.green" }}
+            onClick={onClickResetPassword}
           >
             Reset Password
           </Button>
@@ -136,6 +141,7 @@ const Settings = (): React.ReactElement => {
           borderColor="primary.green"
           borderRadius="6px"
           _hover={{ color: "text.white", bgColor: "primary.green" }}
+          onClick={onClickResetPassword}
         >
           Reset Password
         </Button>

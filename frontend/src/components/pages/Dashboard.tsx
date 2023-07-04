@@ -1,4 +1,3 @@
-
 import { 
     CalendarIcon,
     ChevronDownIcon,
@@ -8,6 +7,7 @@ import {
 import {
     Box,
     Button,
+    Flex,
     Tab,
     Table,
     TableContainer,
@@ -55,19 +55,33 @@ const NavButton = ({ text, path }: ButtonProps) => {
 
 function App() {
   return (
-      <Box margin="150px" textAlign="center">
+      <Box 
+        marginLeft={['15px', '150px']} 
+        marginRight={['15px', '150px']} 
+        marginTop={['50px', '150px']} 
+        marginBottom={['50px', '150px']} 
+        textAlign="center"
+    >
         <Text
-            pb={{ base: 1, md: 5 }}
-            pl={{ base: 1, md: 6 }}
-            pt={{ base: 2, md: 8 }}
-            variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
+            fontFamily="Dimbo"
+            fontStyle="normal"
+            fontWeight="400"
+            fontSize={['26px', '40px']}
+            pb = {['8px', '10px']}
         >
             Your Dashboard 
         </Text>
 
-        <Text fontSize="xs" marginBottom="20px">
+        <Text
+            fontFamily="Inter"
+            fontSize={['12px', '16px']}
+        >
             Use this page to see your upcoming food deliveries.
         </Text>
+
+        <Flex justifyContent="flex-end">
+            <Button colorScheme='green'>Create Request</Button>
+        </Flex>
 
         {/* tabs */}
         <Tabs colorScheme='black'>
@@ -109,9 +123,9 @@ function App() {
           <TabPanels>
             <TabPanel>
             <FullCalendar
-      plugins={[ dayGridPlugin ]}
-      initialView="dayGridMonth"
-    />
+                plugins={[ dayGridPlugin ]}
+                initialView="dayGridMonth"
+            />
             </TabPanel>
             
             <TabPanel>

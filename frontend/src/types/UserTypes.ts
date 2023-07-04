@@ -10,13 +10,31 @@ export type Contact = {
   email: string;
 };
 
+type Donor = "Restaurant" | "Individual";
+
+type ASPInfo = {
+  numKids: number;
+};
+
+type DonorInfo = {
+  type: Donor;
+  tags: Array<string>;
+};
+
+type RoleInfo = {
+  aspInfo: ASPInfo | null;
+  donorInfo: DonorInfo | null;
+};
+
 export type Role = "ASP" | "Donor" | "Admin";
 
 export type UserInfo = {
   email: string;
   organizationAddress: string;
   organizationName: string;
+  organizationDesc: string;
   role: Role;
+  roleInfo: RoleInfo;
   primaryContact: Contact;
   onsiteContacts: Array<Contact>;
 };

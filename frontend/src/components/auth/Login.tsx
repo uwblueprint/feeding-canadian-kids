@@ -29,7 +29,17 @@ const LOGIN = gql`
           email
           organizationAddress
           organizationName
+          organizationDesc
           role
+          roleInfo {
+            aspInfo {
+              numKids
+            }
+            donorInfo {
+              type
+              tags
+            }
+          }
           primaryContact {
             name
             phone

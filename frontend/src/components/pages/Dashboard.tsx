@@ -56,13 +56,14 @@ function App() {
   const [isWebView] = useMediaQuery("(min-width: 62em)");
 
   return (
-      <Box 
+    <Box 
         marginLeft={['15px', '150px']} 
         marginRight={['15px', '150px']} 
         marginTop={['50px', '150px']} 
         marginBottom={['50px', '150px']} 
         textAlign="center"
     >
+
         <Text
             fontFamily="Dimbo"
             fontStyle="normal"
@@ -75,13 +76,21 @@ function App() {
 
         <Text
             fontFamily="Inter"
+            fontWeight="400"
             fontSize={['12px', '16px']}
+            pb = '10px'
         >
             Use this page to see your upcoming food deliveries.
         </Text>
 
-        <Flex justifyContent="flex-end">
-            <Button colorScheme='green'>Create Request</Button>
+        <Flex justifyContent={['center', 'flex-end']}>
+          <Button 
+            size = {['sm', 'md']}
+            colorScheme="green" 
+            fontSize={['10px', '14px']}
+          >
+            Create Request
+          </Button>
         </Flex>
 
         {/* tabs */}

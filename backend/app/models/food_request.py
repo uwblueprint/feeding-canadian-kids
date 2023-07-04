@@ -4,8 +4,7 @@ from bson.objectid import ObjectId
 
 class MealType(mg.EmbeddedDocument):
     portions = mg.IntField(required=True)
-    dietary_restrictions = mg.StringField(
-        required=True, default="No restrictions")
+    dietary_restrictions = mg.StringField(required=True, default="No restrictions")
     meal_suggestions = mg.StringField(required=True)
 
 

@@ -93,7 +93,6 @@ class CreateFoodRequestGroup(Mutation):
         start_date,
         end_date,
     ):
-
         result = services["food_request_service"].create_food_request_group(
             description=description,
             requestor=requestor,

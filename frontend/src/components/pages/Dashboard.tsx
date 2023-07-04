@@ -2,6 +2,11 @@ import { CalendarIcon, ChevronDownIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Stack,
   Tab,
   TabList,
   TabPanel,
@@ -43,7 +48,7 @@ const NavButton = ({ text, path }: ButtonProps) => {
 
 function App() {
   const [isWebView] = useMediaQuery("(min-width: 62em)");
-  
+
   return (
     <Box margin="150px" textAlign="center">
       <Text
@@ -99,11 +104,23 @@ function App() {
         <TabPanels>
           <TabPanel>
             {isWebView && (
-              <FullCalendar
-                plugins={[dayGridPlugin]}
-                initialView="dayGridMonth"
-                height="600px"
-              />
+              <Stack direction="row">
+                <div style={{ width: "70%" }}>
+                  <FullCalendar
+                    plugins={[dayGridPlugin]}
+                    initialView="dayGridMonth"
+                  />
+                </div>
+                <div style={{ width: "30%", margin: "20px" }}>
+                  <Card padding={5}>
+                    <CardBody>
+                      <Text>
+                        Hey
+                      </Text>
+                    </CardBody>
+                  </Card>
+                </div>
+              </Stack>
             )}
           </TabPanel>
 

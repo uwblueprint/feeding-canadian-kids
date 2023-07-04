@@ -1,4 +1,9 @@
-import { CalendarIcon, ChevronDownIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { 
+    CalendarIcon,
+    ChevronDownIcon,
+    HamburgerIcon
+} from '@chakra-ui/icons';
+
 import {
   Box,
   Button,
@@ -50,56 +55,70 @@ function App() {
   const [isWebView] = useMediaQuery("(min-width: 62em)");
 
   return (
-    <Box margin="150px" textAlign="center">
-      <Text
-        pb={{ base: 1, md: 5 }}
-        pl={{ base: 1, md: 6 }}
-        pt={{ base: 2, md: 8 }}
-        variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
-      >
-        Your Dashboard
-      </Text>
+      <Box 
+        marginLeft={['15px', '150px']} 
+        marginRight={['15px', '150px']} 
+        marginTop={['50px', '150px']} 
+        marginBottom={['50px', '150px']} 
+        textAlign="center"
+    >
+        <Text
+            fontFamily="Dimbo"
+            fontStyle="normal"
+            fontWeight="400"
+            fontSize={['26px', '40px']}
+            pb = {['8px', '10px']}
+        >
+            Your Dashboard 
+        </Text>
 
-      <Text fontSize="xs" marginBottom="20px">
-        Use this page to see your upcoming food deliveries.
-      </Text>
+        <Text
+            fontFamily="Inter"
+            fontSize={['12px', '16px']}
+        >
+            Use this page to see your upcoming food deliveries.
+        </Text>
 
-      {/* tabs */}
-      <Tabs colorScheme="black">
-        <TabList>
-          <Tab>
-            <Text
-              variant={{
-                base: "mobile-heading",
-                md: "desktop-heading",
-              }}
-            >
-              <CalendarIcon boxSize={5} mr={2} />
-              Calendar
-            </Text>
-          </Tab>
-          <Tab>
-            <Text
-              variant={{
-                base: "mobile-heading",
-                md: "desktop-heading",
-              }}
-            >
-              <HamburgerIcon boxSize={5} mr={2} />
-              List
-            </Text>
-          </Tab>
-          <Tab>
-            <Text
-              variant={{
-                base: "mobile-heading",
-                md: "desktop-heading",
-              }}
-            >
-              Test Buttons
-            </Text>
-          </Tab>
-        </TabList>
+        <Flex justifyContent="flex-end">
+            <Button colorScheme='green'>Create Request</Button>
+        </Flex>
+
+        {/* tabs */}
+        <Tabs colorScheme='black'>
+          <TabList>
+            <Tab>
+                <Text
+                    variant={{
+                        base: "mobile-heading",
+                        md: "desktop-heading",
+                    }}
+                >
+                <CalendarIcon boxSize={5} mr={2} />
+                Calendar
+                </Text>
+            </Tab>
+            <Tab>
+                <Text
+                    variant={{
+                        base: "mobile-heading",
+                        md: "desktop-heading",
+                    }}
+                >
+                <HamburgerIcon boxSize={5} mr={2} />
+                List
+                </Text>
+            </Tab>
+            <Tab>
+                <Text
+                    variant={{
+                        base: "mobile-heading",
+                        md: "desktop-heading",
+                    }}
+                >
+                Test Buttons
+                </Text>
+            </Tab>
+          </TabList>
 
         <TabPanels>
           <TabPanel>

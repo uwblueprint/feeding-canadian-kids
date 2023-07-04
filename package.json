@@ -3,6 +3,9 @@
     "@chakra-ui/react": "^2.4.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@fullcalendar/core": "^6.1.8",
+    "@fullcalendar/daygrid": "^6.1.8",
+    "@fullcalendar/react": "^6.1.8",
     "bootstrap": "3",
     "framer-motion": "^7.6.9",
     "react-bootstrap": "^2.7.0"

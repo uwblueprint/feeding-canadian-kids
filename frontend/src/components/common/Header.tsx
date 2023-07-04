@@ -1,13 +1,21 @@
 import { Button, Divider, Flex, Image } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import greenGear from "../../assets/greenGear.svg";
 import Logo from "../../assets/logo.png";
 import whiteGear from "../../assets/whiteGear.svg";
-import { DASHBOARD_PAGE, HOME_PAGE, SETTINGS_PAGE } from "../../constants/Routes";
+import {
+  DASHBOARD_PAGE,
+  HOME_PAGE,
+  SETTINGS_PAGE,
+} from "../../constants/Routes";
+import AuthContext from "../../contexts/AuthContext";
+import Logout from "../auth/Logout";
 
 const Header = () => {
+  const { authenticatedUser } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -34,7 +42,12 @@ const Header = () => {
       padding={{ base: "12px 24px", md: "12px 24px" }}
       bgColor="background.grey"
     >
-      <Flex flexDir="row" height={{ base: "50px", md: "70px" }} gap="24px" alignItems="center">
+      <Flex
+        flexDir="row"
+        height={{ base: "50px", md: "70px" }}
+        gap="24px"
+        alignItems="center"
+      >
         <Image
           src={Logo}
           alt="Logo"
@@ -69,57 +82,38 @@ const Header = () => {
           >
             Home
           </Button>
-          <Divider
-            borderColor="gray.gray600"
-            borderWidth="1.5px"
-          />
+          <Divider borderColor="gray.gray600" borderWidth="1.5px" />
         </Flex>
       </Flex>
 
-      <Flex flexDir="row" gap="24px">
-        <Button
-          width={{ base: "30px", md: "60px" }}
-          height={{ base: "40px", md: "50px" }}
-          p="0"
-          bgColor="background.grey"
-          border="2px solid"
-          borderColor="primary.green"
-          _hover={{
-            color: "background.grey",
-            bgColor: "primary.green",
-          }}
-          onMouseEnter={handleHover}
-          onMouseLeave={handleMouseLeave}
-          onClick={() => {
-            navigate(SETTINGS_PAGE);
-          }}
-        >
-          <Image
-            width={{ base: "18px", md: "24px" }}
-            src={getImageSrc()}
-            alt="User Settings Button"
-          />
-        </Button>
-        <Button
-          width={{ base: "90px", md: "120px" }}
-          height={{ base: "40px", md: "50px" }}
-          p="0"
-          variant="desktop-button-bold"
-          bgColor="background.grey"
-          border="2px solid"
-          borderColor="primary.green"
-          color="primary.green"
-          _hover={{
-            color: "background.grey",
-            bgColor: "primary.green",
-          }}
-          onClick={() => {
-            navigate(SETTINGS_PAGE);
-          }}
-        >
-          Logout
-        </Button>
-      </Flex>
+      {authenticatedUser && (
+        <Flex flexDir="row" gap="24px">
+          <Button
+            width={{ base: "30px", md: "60px" }}
+            height={{ base: "40px", md: "50px" }}
+            p="0"
+            bgColor="background.grey"
+            border="2px solid"
+            borderColor="primary.green"
+            _hover={{
+              color: "background.grey",
+              bgColor: "primary.green",
+            }}
+            onMouseEnter={handleHover}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => {
+              navigate(SETTINGS_PAGE);
+            }}
+          >
+            <Image
+              width={{ base: "18px", md: "24px" }}
+              src={getImageSrc()}
+              alt="User Settings Button"
+            />
+          </Button>
+          <Logout />
+        </Flex>
+      )}
     </Flex>
   );
 };

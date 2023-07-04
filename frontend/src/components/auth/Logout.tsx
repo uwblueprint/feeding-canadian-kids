@@ -28,7 +28,25 @@ const Logout = (): React.ReactElement => {
     }
   };
 
-  return <Button onClick={onLogOutClick}>Log Out</Button>;
+  return (
+    <Button
+      width={{ base: "90px", md: "120px" }}
+      height={{ base: "40px", md: "50px" }}
+      p="0"
+      variant="desktop-button-bold"
+      bgColor="background.grey"
+      border="2px solid"
+      borderColor="primary.green"
+      color="primary.green"
+      _hover={{
+        color: "background.grey",
+        bgColor: "primary.green",
+      }}
+      onClick={onLogOutClick}
+    >
+      Log Out
+    </Button>
+  );
 };
 
 export default Logout;

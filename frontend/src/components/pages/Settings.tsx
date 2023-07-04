@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import {
   Button,
   Center,
@@ -8,13 +9,17 @@ import {
   Input,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
+import { GraphQLError } from "graphql";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
+import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { Contact, UserInfo, UserSettings } from "../../types/UserTypes";
+import { Contact, UserInfo } from "../../types/UserTypes";
+import { setLocalStorageObjProperty } from "../../utils/LocalStorageUtils";
 import {
   isNonNegativeInt,
   isValidEmail,
@@ -41,9 +46,49 @@ const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION =
   "Description of organization";
 
+const UPDATEUSERBYID = gql`
+  mutation UpdateUserById(
+    $requestorId: String!
+    $id: String!
+    $userInfo: UserInfoInput!
+  ) {
+    updateUserByID(requestorId: $requestorId, id: $id, userInfo: $userInfo) {
+      user {
+        id
+        info {
+          email
+          organizationAddress
+          organizationName
+          organizationDesc
+          role
+          roleInfo {
+            aspInfo {
+              numKids
+            }
+            donorInfo {
+              type
+              tags
+            }
+          }
+          primaryContact {
+            name
+            phone
+            email
+          }
+          onsiteContacts {
+            name
+            phone
+            email
+          }
+        }
+      }
+    }
+  }
+`;
+
 const Settings = (): React.ReactElement => {
   // Assumption: user has the roleInfo: ASPInfo
-  const { authenticatedUser } = useContext(AuthContext);
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const userInfo: UserInfo = authenticatedUser?.info || null;
 
   const [primaryContact, setPrimaryContact] = useState<Contact>(
@@ -78,6 +123,9 @@ const Settings = (): React.ReactElement => {
   const [attemptedSubmit, setAttemptedSave] = useState(false);
   const isWebView = useIsWebView();
   const navigate = useNavigate();
+  const toast = useToast();
+
+  const [updateUserByID] = useMutation(UPDATEUSERBYID);
 
   if (!authenticatedUser) {
     return <Navigate replace to={LOGIN_PAGE} />;
@@ -431,20 +479,63 @@ const Settings = (): React.ReactElement => {
     return true;
   };
 
+  const handleSaveSettings = async (
+    requestorId: string,
+    requestUserInfo: UserInfo,
+  ) => {
+    try {
+      const response = await updateUserByID({
+        variables: {
+          requestorId,
+          id: requestorId,
+          userInfo: requestUserInfo,
+        },
+      });
+
+      const newInfo = response.data.updateUserByID?.user?.info;
+      if (newInfo) {
+        setAuthenticatedUser({ ...authenticatedUser, info: newInfo });
+        setLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "info", newInfo);
+        toast({
+          title: "Saved settings successfully",
+          status: "success",
+          isClosable: true,
+        });
+      } else {
+        throw new GraphQLError("Failed to save settings");
+      }
+    } catch (e: unknown) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+      toast({
+        title: "Failed to save settings",
+        status: "error",
+        isClosable: true,
+      });
+    }
+  };
+
   const handleSubmit = () => {
     setAttemptedSave(true);
     if (!isRequestValid()) return;
 
-    const request: UserSettings = {
+    const requestUserInfo: UserInfo = {
+      email: userInfo?.email || "",
+      organizationAddress: trimWhiteSpace(organizationAddress),
+      organizationName: trimWhiteSpace(organizationName),
+      organizationDesc: trimWhiteSpace(organizationDescription),
+      role: userInfo?.role || "ASP",
+      roleInfo: {
+        aspInfo: {
+          numKids: parseInt(trimWhiteSpace(numberOfKids), 10),
+        },
+        donorInfo: null,
+      },
       primaryContact: {
         name: trimWhiteSpace(primaryContact.name),
         email: trimWhiteSpace(primaryContact.email),
         phone: trimWhiteSpace(primaryContact.phone),
       },
-      organizationName: trimWhiteSpace(organizationName),
-      numberOfKids: parseInt(trimWhiteSpace(numberOfKids), 10),
-      organizationAddress: trimWhiteSpace(organizationAddress),
-      organizationDescription: trimWhiteSpace(organizationDescription),
       onsiteContacts: onsiteInfo.map((obj) => ({
         name: trimWhiteSpace(obj.name),
         phone: trimWhiteSpace(obj.phone),
@@ -452,10 +543,8 @@ const Settings = (): React.ReactElement => {
       })),
     };
 
-    // eslint-disable-next-line no-console
-    console.log(request);
-
-    // TODO: handleSaveSettings(request);
+    const requestorId = authenticatedUser?.id;
+    handleSaveSettings(requestorId, requestUserInfo);
   };
 
   const getSaveSection = (): React.ReactElement => {

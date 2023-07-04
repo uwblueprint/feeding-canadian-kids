@@ -41,9 +41,9 @@ const NavButton = ({ text, path }: ButtonProps) => {
   return <Button onClick={() => navigate(path)}>{text}</Button>;
 };
 
-const [isWebView] = useMediaQuery("(min-width: 62em)");
-
 function App() {
+  const [isWebView] = useMediaQuery("(min-width: 62em)");
+  
   return (
     <Box margin="150px" textAlign="center">
       <Text

@@ -37,7 +37,8 @@
     "test:ci": " react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --cache",
-    "fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix --cache"
+    "fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix --cache",
+    "genTypes": "graphql-codegen --config codegen.ts"
   },
   "eslintConfig": {
     "extends": [

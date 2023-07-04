@@ -332,10 +332,6 @@ const Settings = (): React.ReactElement => {
         <Flex flexDir="column" w="60%" gap="8px">
           <Text variant="desktop-body-bold">Description of organization</Text>
           <Textarea
-            size="desktop-body"
-            p="12px"
-            borderWidth="2px"
-            borderRadius="4px"
             placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION}
             value={organizationDescription}
             onChange={(e) => setOrganizationDescription(e.target.value)}
@@ -392,12 +388,7 @@ const Settings = (): React.ReactElement => {
               />
             </FormControl>
             <Textarea
-              size="xs"
-              p="12px"
-              borderWidth="2px"
-              focusBorderColor="gray.200"
-              boxShadow="none !important"
-              borderRadius="4px"
+              variant="mobile-outline"
               placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION}
               value={organizationDescription}
               onChange={(e) => setOrganizationDescription(e.target.value)}

@@ -50,8 +50,7 @@ class CreateFoodRequest(graphene.InputObjectType):
 
 class MealTypeInput(graphene.InputObjectType):
     portions = graphene.Int(required=True)
-    # Dietary Restrictions are a map of string to int (e.g. "vegan": 1)
-    dietary_restrictions = graphene.JSONString(required=True)
+    dietary_restrictions = graphene.String(required=True)
     meal_suggestions = graphene.String(required=True)
 
 
@@ -94,11 +93,6 @@ class CreateFoodRequestGroup(Mutation):
         start_date,
         end_date,
     ):
-        # Load the JSON string into a dictionary
-        # print(meal_info["dietary_restrictions"])
-        # dietary_restrictions = json.loads(meal_info["dietary_restrictions"])
-        # print(f"After: {dietary_restrictions}")
-        # meal_info["dietary_restrictions"] = dietary_restrictions
 
         result = services["food_request_service"].create_food_request_group(
             description=description,

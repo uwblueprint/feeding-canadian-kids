@@ -66,7 +66,7 @@ def test_get_food_request_group_failure(graphql_schema):
         endDate: "2023-06-30T23:59:59Z",
         frequency: "Daily",
         mealInfo: {portions: 40,
-          dietaryRestrictions: "{\\"Gluten Free\\": 7, \\"No Beef\\": 8}",
+          dietaryRestrictions: "7 gluten free, 7 no beef",
           mealSuggestions: "Burritos"},
         onsiteStaff: [
           {name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"},

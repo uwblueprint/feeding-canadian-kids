@@ -194,7 +194,7 @@ const SchedulingForm = (): React.ReactElement => {
       >
         <Spacer />
         <Button
-          colorScheme="primary.blue"
+          colorScheme="primary.green"
           variant="solid"
           size="xs"
           height={{ base: "2rem", md: "3rem" }}

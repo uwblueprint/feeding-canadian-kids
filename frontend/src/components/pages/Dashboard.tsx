@@ -104,32 +104,26 @@ function App() {
           <TabList>
             <Tab>
                 <Text
-                    variant={{
-                        base: "mobile-heading",
-                        md: "desktop-heading",
-                    }}
+                    fontFamily="Inter"
+                    fontSize={['14px', '18px']}
                 >
-                <CalendarIcon boxSize={5} mr={2} />
+                <CalendarIcon boxSize={4} mr={2} />
                 Calendar
                 </Text>
             </Tab>
             <Tab>
                 <Text
-                    variant={{
-                        base: "mobile-heading",
-                        md: "desktop-heading",
-                    }}
+                    fontFamily="Inter"
+                    fontSize={['14px', '18px']}
                 >
-                <HamburgerIcon boxSize={5} mr={2} />
+                <HamburgerIcon boxSize={4} mr={2} />
                 List
                 </Text>
             </Tab>
             <Tab>
                 <Text
-                    variant={{
-                        base: "mobile-heading",
-                        md: "desktop-heading",
-                    }}
+                    fontFamily="Inter"
+                    fontSize={['14px', '18px']}
                 >
                 Test Buttons
                 </Text>

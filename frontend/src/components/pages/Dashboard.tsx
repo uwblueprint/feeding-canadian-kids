@@ -57,8 +57,8 @@ function App() {
 
   return (
     <Box 
-        marginLeft={['15px', '150px']} 
-        marginRight={['15px', '150px']} 
+        marginLeft={['20px', '20px', '150px', '150px']} 
+        marginRight={['20px', '20px', '150px', '150px']} 
         marginTop={['50px', '150px']} 
         marginBottom={['50px', '150px']} 
         textAlign="center"
@@ -83,13 +83,19 @@ function App() {
             Use this page to see your upcoming food deliveries.
         </Text>
 
-        <Flex justifyContent={['center', 'flex-end']}>
-          <Button 
-            size = {['sm', 'md']}
-            colorScheme="green" 
-            fontSize={['10px', '14px']}
+        <Flex
+          justifyContent={['center', 'flex-end']}
+          flexDirection={['column', 'row']}
+          alignItems={['center', 'flex-start']}
+        >
+          <Button
+            colorScheme="green"
+            fontSize={['12px', '14px', '14px', '14px']}
+            width={['100%', '100%', '100%', 'auto']}
+            mt={'10px'}
+            mb={'20px'}
           >
-            Create Request
+            + Create Request
           </Button>
         </Flex>
 

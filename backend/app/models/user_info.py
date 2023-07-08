@@ -12,7 +12,7 @@ DONOR_TYPES = [DONOR_TYPE_RESTAURANT, DONOR_TYPE_INDIVIDUAL]
 
 
 class ASPInfo(mg.EmbeddedDocument):
-    num_kids = mg.IntField()
+    num_kids = mg.IntField(required=True)
 
 
 class DonorInfo(mg.EmbeddedDocument):

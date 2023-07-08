@@ -1,9 +1,12 @@
 import { gql, useMutation } from "@apollo/client";
 import { Button } from "@chakra-ui/react";
 import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
+import { LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
+
 
 const LOGOUT = gql`
   mutation Logout($userId: String!) {
@@ -15,6 +18,8 @@ const LOGOUT = gql`
 
 const Logout = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const [logout] = useMutation<{ logout: { success: boolean } }>(LOGOUT);
 
@@ -42,7 +47,10 @@ const Logout = (): React.ReactElement => {
         color: "background.grey",
         bgColor: "primary.green",
       }}
-      onClick={onLogOutClick}
+      onClick={() => {
+        onLogOutClick()
+        navigate(LOGIN_PAGE);
+      }}
     >
       Log Out
     </Button>

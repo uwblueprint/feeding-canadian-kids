@@ -7,7 +7,6 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import { LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 
-
 const LOGOUT = gql`
   mutation Logout($userId: String!) {
     logout(userId: $userId) {
@@ -48,7 +47,7 @@ const Logout = (): React.ReactElement => {
         bgColor: "primary.green",
       }}
       onClick={() => {
-        onLogOutClick()
+        onLogOutClick();
         navigate(LOGIN_PAGE);
       }}
     >

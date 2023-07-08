@@ -27,6 +27,7 @@ import {
 } from "../../utils/ValidationUtils";
 import useIsWebView from "../../utils/useIsWebView";
 import OnsiteStaffSection from "../common/OnsiteStaffSection";
+import QuitEditing from "./QuitEditing";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
@@ -577,6 +578,7 @@ const Settings = (): React.ReactElement => {
     );
   };
 
+
   return (
     <Center>
       <Flex
@@ -602,6 +604,7 @@ const Settings = (): React.ReactElement => {
           attemptedSubmit={attemptedSubmit}
         />
         {getSaveSection()}
+        <QuitEditing/>
       </Flex>
     </Center>
   );

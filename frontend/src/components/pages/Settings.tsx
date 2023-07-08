@@ -110,14 +110,17 @@ const Settings = (): React.ReactElement => {
   const [organizationDescription, setOrganizationDescription] = useState(
     userInfo?.organizationDesc || "",
   );
+  // json parse/stringify creates a deep copy of the array of contacts
   const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>(
-    userInfo?.onsiteContacts || [
-      {
-        name: "",
-        phone: "",
-        email: "",
-      },
-    ],
+    userInfo
+      ? JSON.parse(JSON.stringify(userInfo.onsiteContacts))
+      : [
+          {
+            name: "",
+            phone: "",
+            email: "",
+          },
+        ],
   );
 
   const [attemptedSubmit, setAttemptedSave] = useState(false);
@@ -447,6 +450,53 @@ const Settings = (): React.ReactElement => {
     );
   };
 
+  const haveSettingsChanged = (): boolean => {
+    if (!userInfo) return false;
+
+    const defaultValues: Array<string | number> = [
+      userInfo.organizationAddress,
+      userInfo.organizationName,
+      userInfo.organizationDesc,
+      userInfo.roleInfo?.aspInfo?.numKids?.toString() || "",
+    ];
+    const currentValues: Array<string | number> = [
+      trimWhiteSpace(organizationAddress),
+      trimWhiteSpace(organizationName),
+      organizationDescription,
+      trimWhiteSpace(numberOfKids),
+    ];
+
+    for (let i = 0; i < defaultValues.length; i += 1) {
+      if (defaultValues[i] !== currentValues[i]) {
+        return true;
+      }
+    }
+
+    const defaultContactValues: Array<Contact> = [
+      userInfo.primaryContact,
+      ...userInfo.onsiteContacts,
+    ];
+    const currentContactValues: Array<Contact> = [
+      primaryContact,
+      ...onsiteInfo,
+    ];
+
+    if (defaultContactValues.length !== currentContactValues.length)
+      return true;
+
+    for (let i = 0; i < defaultContactValues.length; i += 1) {
+      if (
+        defaultContactValues[i].name !== currentContactValues[i].name ||
+        defaultContactValues[i].email !== currentContactValues[i].email ||
+        defaultContactValues[i].phone !== currentContactValues[i].phone
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const isRequestValid = (): boolean => {
     const stringsToValidate = [
       primaryContact.name,
@@ -523,7 +573,7 @@ const Settings = (): React.ReactElement => {
       email: userInfo?.email || "",
       organizationAddress: trimWhiteSpace(organizationAddress),
       organizationName: trimWhiteSpace(organizationName),
-      organizationDesc: trimWhiteSpace(organizationDescription),
+      organizationDesc: organizationDescription,
       role: userInfo?.role || "ASP",
       roleInfo: {
         aspInfo: {
@@ -563,7 +613,9 @@ const Settings = (): React.ReactElement => {
           color: "primary.green",
           bgColor: "background.white",
         }}
-        disabled={attemptedSubmit && !isRequestValid()}
+        disabled={
+          !haveSettingsChanged() || (attemptedSubmit && !isRequestValid())
+        }
         _disabled={{
           borderColor: "#CCCCCC !important",
           bgColor: "#CCCCCC !important",

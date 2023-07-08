@@ -101,13 +101,13 @@ const Settings = (): React.ReactElement => {
   const [organizationName, setOrganizationName] = useState(
     userInfo?.organizationName || "",
   );
-  const [numberOfKids, setNumberOfKids] = useState(
+  const [numKids, setNumKids] = useState(
     userInfo?.roleInfo?.aspInfo?.numKids?.toString() || "",
   );
   const [organizationAddress, setOrganizationAddress] = useState(
     userInfo?.organizationAddress || "",
   );
-  const [organizationDescription, setOrganizationDescription] = useState(
+  const [organizationDesc, setOrganizationDesc] = useState(
     userInfo?.organizationDesc || "",
   );
   // json parse/stringify creates a deep copy of the array of contacts
@@ -348,18 +348,15 @@ const Settings = (): React.ReactElement => {
           </Flex>
           <Flex flexDir="column" w="200px">
             <FormControl
-              isInvalid={
-                attemptedSubmit &&
-                numberOfKids !== "" &&
-                !isNonNegativeInt(numberOfKids)
-              }
+              isRequired
+              isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
             >
               <FormLabel variant="form-label-bold">Number of kids</FormLabel>
               <Input
                 type="number"
-                value={numberOfKids}
+                value={numKids}
                 placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
-                onChange={(e) => setNumberOfKids(e.target.value)}
+                onChange={(e) => setNumKids(e.target.value)}
               />
             </FormControl>
           </Flex>
@@ -372,7 +369,6 @@ const Settings = (): React.ReactElement => {
                 Address of organization
               </FormLabel>
               <Input
-                type="email"
                 value={organizationAddress}
                 placeholder={PLACEHOLDER_WEB_EXAMPLE_ADDRESS}
                 onChange={(e) => setOrganizationAddress(e.target.value)}
@@ -380,13 +376,20 @@ const Settings = (): React.ReactElement => {
             </FormControl>
           </Flex>
         </Flex>
-        <Flex flexDir="column" w="60%" gap="8px">
-          <Text variant="desktop-body-bold">Description of organization</Text>
-          <Textarea
-            placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION}
-            value={organizationDescription}
-            onChange={(e) => setOrganizationDescription(e.target.value)}
-          />
+        <Flex flexDir="column" w="480px">
+          <FormControl
+            isRequired
+            isInvalid={attemptedSubmit && organizationDesc === ""}
+          >
+            <FormLabel variant="desktop-button-bold">
+              Description of organization
+            </FormLabel>
+            <Textarea
+              placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION}
+              value={organizationDesc}
+              onChange={(e) => setOrganizationDesc(e.target.value)}
+            />
+          </FormControl>
         </Flex>
       </Flex>
     );
@@ -413,18 +416,15 @@ const Settings = (): React.ReactElement => {
               />
             </FormControl>
             <FormControl
-              isInvalid={
-                attemptedSubmit &&
-                numberOfKids !== "" &&
-                !isNonNegativeInt(numberOfKids)
-              }
+              isRequired
+              isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
             >
               <Input
                 variant="mobile-outline"
                 type="number"
-                value={numberOfKids}
+                value={numKids}
                 placeholder={PLACEHOLDER_MOBILE_EXAMPLE_NUMBER_OF_KIDS}
-                onChange={(e) => setNumberOfKids(e.target.value)}
+                onChange={(e) => setNumKids(e.target.value)}
               />
             </FormControl>
             <FormControl
@@ -438,12 +438,17 @@ const Settings = (): React.ReactElement => {
                 placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS}
               />
             </FormControl>
-            <Textarea
-              variant="mobile-outline"
-              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION}
-              value={organizationDescription}
-              onChange={(e) => setOrganizationDescription(e.target.value)}
-            />
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationDesc === ""}
+            >
+              <Textarea
+                variant="mobile-outline"
+                value={organizationDesc}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION}
+                onChange={(e) => setOrganizationDesc(e.target.value)}
+              />
+            </FormControl>
           </Flex>
         </FormControl>
       </Flex>
@@ -462,8 +467,8 @@ const Settings = (): React.ReactElement => {
     const currentValues: Array<string | number> = [
       trimWhiteSpace(organizationAddress),
       trimWhiteSpace(organizationName),
-      organizationDescription,
-      trimWhiteSpace(numberOfKids),
+      organizationDesc,
+      trimWhiteSpace(numKids),
     ];
 
     for (let i = 0; i < defaultValues.length; i += 1) {
@@ -502,6 +507,7 @@ const Settings = (): React.ReactElement => {
       primaryContact.name,
       organizationName,
       organizationAddress,
+      organizationDesc,
     ];
     const phoneNumsToValidate = [primaryContact.phone];
     const emailsToValidate = [primaryContact.email];
@@ -524,7 +530,7 @@ const Settings = (): React.ReactElement => {
       if (!isValidEmail(emailsToValidate[i])) return false;
     }
 
-    if (numberOfKids !== "" && !isNonNegativeInt(numberOfKids)) return false;
+    if (!isNonNegativeInt(numKids)) return false;
 
     return true;
   };
@@ -573,11 +579,11 @@ const Settings = (): React.ReactElement => {
       email: userInfo?.email || "",
       organizationAddress: trimWhiteSpace(organizationAddress),
       organizationName: trimWhiteSpace(organizationName),
-      organizationDesc: organizationDescription,
+      organizationDesc,
       role: userInfo?.role || "ASP",
       roleInfo: {
         aspInfo: {
-          numKids: parseInt(trimWhiteSpace(numberOfKids), 10),
+          numKids: parseInt(trimWhiteSpace(numKids), 10),
         },
         donorInfo: null,
       },

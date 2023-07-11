@@ -20,20 +20,6 @@ const Header = () => {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleHover = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
-  const getImageSrc = () => {
-    if (isHovered) {
-      return whiteGear;
-    }
-    return greenGear;
-  };
 
   return (
     <Flex
@@ -99,15 +85,15 @@ const Header = () => {
               color: "background.grey",
               bgColor: "primary.green",
             }}
-            onMouseEnter={handleHover}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             onClick={() => {
               navigate(SETTINGS_PAGE);
             }}
           >
             <Image
               width={{ base: "18px", md: "24px" }}
-              src={getImageSrc()}
+              src={isHovered ? whiteGear : greenGear}
               alt="User Settings Button"
             />
           </Button>

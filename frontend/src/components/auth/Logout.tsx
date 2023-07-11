@@ -30,6 +30,7 @@ const Logout = (): React.ReactElement => {
     if (success) {
       setAuthenticatedUser(null);
     }
+    navigate(LOGIN_PAGE);
   };
 
   return (
@@ -46,10 +47,7 @@ const Logout = (): React.ReactElement => {
         color: "background.grey",
         bgColor: "primary.green",
       }}
-      onClick={() => {
-        onLogOutClick();
-        navigate(LOGIN_PAGE);
-      }}
+      onClick={onLogOutClick}
     >
       Log Out
     </Button>

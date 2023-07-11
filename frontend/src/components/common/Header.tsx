@@ -20,7 +20,6 @@ const Header = () => {
 
   const [isHovered, setIsHovered] = useState(false);
 
-
   return (
     <Flex
       justifyContent="space-between"

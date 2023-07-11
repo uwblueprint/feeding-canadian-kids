@@ -1,4 +1,8 @@
-from ..models.user_info import USERINFO_ROLES
+from ..models.user_info import (
+    USERINFO_ROLES,
+    USERINFO_ROLE_ASP,
+    USERINFO_ROLE_ADMIN,
+)
 
 
 def validate_contact(contact, contact_str, error_list):
@@ -20,12 +24,38 @@ def validate_contact(contact, contact_str, error_list):
     return error_list
 
 
+def validate_role_info(role, role_info, role_info_str, error_list):
+    if not isinstance(role_info, dict) and role != USERINFO_ROLE_ADMIN:
+        error_list.append(f"The {role_info_str} supplied is not a dict.")
+        return error_list
+
+    asp_info_fields = ["num_kids"]
+    if role == USERINFO_ROLE_ASP:
+        for field in asp_info_fields:
+            role_info = role_info["asp_info"]
+            print(f"validating role_info {role_info} for field {field}")
+            if field not in role_info:
+                error_list.append(
+                    f'The {role_info_str} supplied does not have field "{field}".'
+                )
+            elif type(role_info[field]) is not int:
+                error_list.append(
+                    f'The field "{field}" in {role_info_str} is not a string.'
+                )
+            elif field == "num_kids" and role_info["num_kids"] < 0:
+                error_list.append("num_kids must be greater than or equal to zero.")
+    # TODO: Add donor info validation once meal donor schema is finalized
+    return error_list
+
+
 def validate_userinfo(userinfo, error_list):
     userinfo_fields = [
         "email",
         "organization_address",
         "organization_name",
+        "organization_desc",
         "role",
+        "role_info",
         "primary_contact",
         "onsite_contacts",
     ]
@@ -34,7 +64,9 @@ def validate_userinfo(userinfo, error_list):
         return error_list
 
     for field in userinfo_fields:
-        if field not in userinfo:
+        if field not in userinfo and (
+            field != "role_info" or userinfo["role"] != USERINFO_ROLE_ADMIN
+        ):
             error_list.append(f'The info supplied does not have field "{field}".')
     for key, val in userinfo.items():
         if key == "primary_contact":
@@ -47,6 +79,10 @@ def validate_userinfo(userinfo, error_list):
                     error_list = validate_contact(
                         val[i], f"index {i} of info.onsite_contacts", error_list
                     )
+        elif key == "role_info":
+            error_list = validate_role_info(
+                userinfo["role"], val, "info.role_info", error_list
+            )
         elif type(val) is not str:
             error_list.append(f"The field info.{key} supplied is not a string.")
         elif val == "":

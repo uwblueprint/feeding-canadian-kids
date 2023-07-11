@@ -12,7 +12,7 @@ import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import defaultTheme from "./theme";
-import { AuthenticatedUser } from "./types/AuthTypes";
+import { AuthenticatedUser } from "./types/UserTypes";
 import * as auth from "./utils/AuthUtils";
 import {
   getLocalStorageObjProperty,

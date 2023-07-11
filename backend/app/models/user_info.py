@@ -12,7 +12,7 @@ DONOR_TYPES = [DONOR_TYPE_RESTAURANT, DONOR_TYPE_INDIVIDUAL]
 
 
 class ASPInfo(mg.EmbeddedDocument):
-    num_kids = mg.IntField()
+    num_kids = mg.IntField(required=True)
 
 
 class DonorInfo(mg.EmbeddedDocument):
@@ -37,7 +37,7 @@ class UserInfo(mg.EmbeddedDocument):
     organization_name = mg.StringField(required=True)
     organization_desc = mg.StringField(required=True)
     role = mg.StringField(choices=USERINFO_ROLES, required=True)
-    role_info = mg.EmbeddedDocumentField(RoleInfo)
+    role_info = mg.EmbeddedDocumentField(RoleInfo, required=True)
     primary_contact = mg.EmbeddedDocumentField(Contact, required=True)
     onsite_contacts = mg.EmbeddedDocumentListField(Contact, required=True)
 

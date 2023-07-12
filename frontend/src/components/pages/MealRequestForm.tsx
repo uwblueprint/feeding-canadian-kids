@@ -42,7 +42,7 @@ import {
   OnboardingRequest,
   Role,
   UserInfo,
-} from "../../types/AuthTypes";
+} from "../../types/UserTypes";
 
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 

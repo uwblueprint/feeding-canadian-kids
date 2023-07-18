@@ -1,9 +1,4 @@
-import { 
-    CalendarIcon,
-    ChevronDownIcon,
-    HamburgerIcon
-} from '@chakra-ui/icons';
-
+import { CalendarIcon, ChevronDownIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -31,9 +26,9 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 // eslint-disable-next-line import/order
-import dayGridPlugin from "@fullcalendar/daygrid";
-// eslint-disable-next-line import/order
 import FullCalendar from "@fullcalendar/react";
+// eslint-disable-next-line import/order
+import dayGridPlugin from "@fullcalendar/daygrid";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -55,80 +50,86 @@ const NavButton = ({ text, path }: ButtonProps) => {
 function App() {
   const [isWebView] = useMediaQuery("(min-width: 62em)");
 
+  interface event {
+    timeText: string;
+    event: {
+      title: string;
+    };
+  }
+
+  function renderEventContent(eventInfo: event) {
+    return (
+      <>
+        <b>{eventInfo.timeText}</b>
+        <i>{eventInfo.event.title}</i>
+      </>
+    );
+  }
+
   return (
-    <Box 
-        marginLeft={['20px', '20px', '150px', '150px']} 
-        marginRight={['20px', '20px', '150px', '150px']} 
-        marginTop={['50px', '150px']} 
-        marginBottom={['50px', '150px']} 
-        textAlign="center"
+    <Box
+      marginLeft={["20px", "20px", "150px", "150px"]}
+      marginRight={["20px", "20px", "150px", "150px"]}
+      marginTop={["50px", "150px"]}
+      marginBottom={["50px", "150px"]}
+      textAlign="center"
     >
+      <Text
+        fontFamily="Dimbo"
+        fontStyle="normal"
+        fontWeight="400"
+        fontSize={["26px", "40px"]}
+        pb={["8px", "10px"]}
+      >
+        Your Dashboard
+      </Text>
 
-        <Text
-            fontFamily="Dimbo"
-            fontStyle="normal"
-            fontWeight="400"
-            fontSize={['26px', '40px']}
-            pb = {['8px', '10px']}
+      <Text
+        fontFamily="Inter"
+        fontWeight="400"
+        fontSize={["12px", "16px"]}
+        pb="10px"
+      >
+        Use this page to see your upcoming food deliveries.
+      </Text>
+
+      <Flex
+        justifyContent={["center", "flex-end"]}
+        flexDirection={["column", "row"]}
+        alignItems={["center", "flex-start"]}
+      >
+        <Button
+          colorScheme="green"
+          fontSize={["12px", "14px", "14px", "14px"]}
+          width={["100%", "100%", "100%", "auto"]}
+          mt={"10px"}
+          mb={"20px"}
         >
-            Your Dashboard 
-        </Text>
+          + Create Request
+        </Button>
+      </Flex>
 
-        <Text
-            fontFamily="Inter"
-            fontWeight="400"
-            fontSize={['12px', '16px']}
-            pb = '10px'
-        >
-            Use this page to see your upcoming food deliveries.
-        </Text>
-
-        <Flex
-          justifyContent={['center', 'flex-end']}
-          flexDirection={['column', 'row']}
-          alignItems={['center', 'flex-start']}
-        >
-          <Button
-            colorScheme="green"
-            fontSize={['12px', '14px', '14px', '14px']}
-            width={['100%', '100%', '100%', 'auto']}
-            mt={'10px'}
-            mb={'20px'}
-          >
-            + Create Request
-          </Button>
-        </Flex>
-
-        {/* tabs */}
-        <Tabs colorScheme='black'>
-          <TabList>
-            <Tab>
-                <Text
-                    fontFamily="Inter"
-                    fontSize={['14px', '18px']}
-                >
-                <CalendarIcon boxSize={4} mr={2} />
-                Calendar
-                </Text>
-            </Tab>
-            <Tab>
-                <Text
-                    fontFamily="Inter"
-                    fontSize={['14px', '18px']}
-                >
-                <HamburgerIcon boxSize={4} mr={2} />
-                List
-                </Text>
-            </Tab>
-            <Tab>
-                <Text
-                    fontFamily="Inter"
-                    fontSize={['14px', '18px']}
-                >
-                Test Buttons
-                </Text>
-            </Tab>
-          </TabList>
+      {/* tabs */}
+      <Tabs colorScheme="black">
+        <TabList>
+          <Tab>
+            <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
+              <CalendarIcon boxSize={4} mr={2} />
+              Calendar
+            </Text>
+          </Tab>
+          <Tab>
+            <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
+              <HamburgerIcon boxSize={4} mr={2} />
+              List
+            </Text>
+          </Tab>
+          <Tab>
+            <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
+              Test Buttons
+            </Text>
+          </Tab>
+        </TabList>
 
         <TabPanels>
           <TabPanel>
@@ -138,18 +139,18 @@ function App() {
                   <FullCalendar
                     plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
+                    weekends={false}
                     events={[
-    { title: 'event 1', date: '2019-07-01' },
-    { title: 'event 2', date: '2019-07-02' }
-  ]}
+                      { title: "event 1", date: "2023-07-01" },
+                      { title: "event 2", date: "2023-07-08" },
+                    ]}
+                    eventContent={renderEventContent}
                   />
                 </div>
                 <div style={{ width: "30%", margin: "20px" }}>
                   <Card padding={5}>
                     <CardBody>
-                      <Text>
-                        yo
-                      </Text>
+                      <Text>yo</Text>
                     </CardBody>
                   </Card>
                 </div>

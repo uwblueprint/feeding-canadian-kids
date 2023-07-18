@@ -16,6 +16,7 @@ import DisplayPage from "./components/pages/DisplayPage";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
 import NotFound from "./components/pages/NotFound";
+import Settings from "./components/pages/Settings";
 import SimpleEntityCreatePage from "./components/pages/SimpleEntityCreatePage";
 import SimpleEntityDisplayPage from "./components/pages/SimpleEntityDisplayPage";
 import SimpleEntityUpdatePage from "./components/pages/SimpleEntityUpdatePage";
@@ -33,6 +34,7 @@ const Routes = (): React.ReactElement => (
     <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
     <Route path={Paths.RESET_PASSWORD_PAGE} element={<ResetPassword />} />
     <Route path={Paths.SET_PASSWORD_PAGE} element={<SetPassword />} />
+    <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
     <Route path={Paths.DASHBOARD_PAGE} element={<AuthWall />}>
       <Route path="" element={<Dashboard />} />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />

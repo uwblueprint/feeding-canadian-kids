@@ -138,13 +138,17 @@ function App() {
                   <FullCalendar
                     plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
+                    events={[
+    { title: 'event 1', date: '2019-07-01' },
+    { title: 'event 2', date: '2019-07-02' }
+  ]}
                   />
                 </div>
                 <div style={{ width: "30%", margin: "20px" }}>
                   <Card padding={5}>
                     <CardBody>
                       <Text>
-                        Hey
+                        yo
                       </Text>
                     </CardBody>
                   </Card>

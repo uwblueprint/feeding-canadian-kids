@@ -13,14 +13,10 @@ class FoodRequestService(IFoodRequestService):
         requests,
         status,
         meal_info,
-        frequency,
-        days,
         drop_off_time,
         drop_off_location,
         delivery_instructions,
         onsite_staff,
-        start_date,
-        end_date,
     ):
         try:
             # Create FoodRequestGroup
@@ -30,14 +26,10 @@ class FoodRequestService(IFoodRequestService):
                 requests=requests,
                 status=status,
                 meal_info=meal_info,
-                frequency=frequency,
-                days=days,
                 drop_off_time=drop_off_time,
                 drop_off_location=drop_off_location,
                 delivery_instructions=delivery_instructions,
                 onsite_staff=onsite_staff,
-                start_date=start_date,
-                end_date=end_date,
             )
             new_food_request_group.save()
         except Exception as error:

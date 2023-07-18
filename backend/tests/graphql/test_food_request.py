@@ -8,13 +8,10 @@ def test_create_food_request_group(graphql_schema):
     mutation = """
     mutation testCreateFoodRequestGroup {
       createFoodRequestGroup(
-        days: ["Monday", "Wednesday", "Friday"],
         deliveryInstructions: "Leave at front door",
         description: "Food request group for office employees",
         dropOffLocation: "123 Main Street",
         dropOffTime: "2023-06-01T12:00:00Z",
-        endDate: "2023-06-30T23:59:59Z",
-        frequency: "Weekly",
         mealInfo: {portions: 40,
           dietaryRestrictions: "{\\"Gluten Free\\": 7, \\"No Beef\\": 8}",
           mealSuggestions: "Burritos"},
@@ -30,7 +27,6 @@ def test_create_food_request_group(graphql_schema):
             commitmentDate: "2023-06-01T00:00:00Z"
           }
         ],
-        startDate: "2023-06-01T00:00:00Z",
         status: "Open")
       {
         foodRequestGroup {
@@ -58,13 +54,10 @@ def test_get_food_request_group_failure(graphql_schema):
     mutation = """
     mutation testCreateFoodRequestGroup {
       createFoodRequestGroup(
-        days: ["Monday", "Wednesday", "Friday"],
         deliveryInstructions: "Leave at front door",
         description: "Food request group for office employees",
         dropOffLocation: "123 Main Street",
         dropOffTime: "2023-06-01T12:00:00Z",
-        endDate: "2023-06-30T23:59:59Z",
-        frequency: "Daily",
         mealInfo: {portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
           mealSuggestions: "Burritos"},
@@ -80,7 +73,6 @@ def test_get_food_request_group_failure(graphql_schema):
             commitmentDate: "2023-06-01T00:00:00Z"
           }
         ],
-        startDate: "2023-06-01T00:00:00Z",
         status: "Open")
       {
         foodRequestGroup {

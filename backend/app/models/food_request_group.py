@@ -24,32 +24,10 @@ class FoodRequestGroup(mg.Document):
 
     # Donation Details
     meal_info = mg.EmbeddedDocumentField(MealType, required=True)
-    frequency = mg.StringField(
-        choices=["Does not repeat", "Weekly", "Monthly"],
-        required=True,
-        default="Does not repeat",
-    )
-    days = mg.ListField(
-        mg.StringField(
-            choices=[
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday",
-            ]
-        )
-    )
     drop_off_time = mg.DateTimeField(required=True)
     drop_off_location = mg.StringField(required=True)
     delivery_instructions = mg.StringField(required=True)
     onsite_staff = mg.EmbeddedDocumentListField(Contact, required=True)
-
-    # Start and end dates for recurring donations
-    start_date = mg.DateTimeField(required=True)
-    end_date = mg.DateTimeField(required=True)
 
     # Timestamps
     date_created = mg.DateTimeField(required=True, default=datetime.utcnow)

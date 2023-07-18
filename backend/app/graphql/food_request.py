@@ -63,15 +63,10 @@ class CreateFoodRequestGroup(Mutation):
         status = graphene.String(required=True)
 
         meal_info = MealTypeInput(required=True)
-        frequency = graphene.String(required=True)
-        days = graphene.List(graphene.String, required=True)
         drop_off_time = graphene.DateTime(required=True)
         drop_off_location = graphene.String(required=True)
         delivery_instructions = graphene.String()
         onsite_staff = graphene.List(ContactInput, required=True)
-
-        start_date = graphene.DateTime(required=True)
-        end_date = graphene.DateTime(required=True)
 
     # return values
     food_request_group = graphene.Field(CreateFoodRequestGroupResponse)
@@ -84,14 +79,10 @@ class CreateFoodRequestGroup(Mutation):
         requests,
         status,
         meal_info,
-        frequency,
-        days,
         drop_off_time,
         drop_off_location,
         delivery_instructions,
         onsite_staff,
-        start_date,
-        end_date,
     ):
         result = services["food_request_service"].create_food_request_group(
             description=description,
@@ -99,14 +90,10 @@ class CreateFoodRequestGroup(Mutation):
             requests=requests,
             status=status,
             meal_info=meal_info,
-            frequency=frequency,
-            days=days,
             drop_off_time=drop_off_time,
             drop_off_location=drop_off_location,
             delivery_instructions=delivery_instructions,
             onsite_staff=onsite_staff,
-            start_date=start_date,
-            end_date=end_date,
         )
 
         return CreateFoodRequestGroup(food_request_group=result)

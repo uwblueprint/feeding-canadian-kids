@@ -160,47 +160,49 @@ function App() {
 
           <TabPanel>
             <TableContainer>
-              <Table variant="simple">
-                <Thead>
-                  {/* should abstract the rows into a react component */}
-                  <Tr>
-                    <Th>Date Requested</Th>
-                    <Th>Time Requested</Th>
-                    <Th>Donor's Name</Th>
-                    <Th>Number of Meals</Th>
-                    <Th></Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  <Tr>
-                    <Td>Oct 27, 2022</Td>
-                    <Td>5:00-6:00 PM</Td>
-                    <Td>Harvey's</Td>
-                    <Td>5</Td>
-                    <Td>
-                      <ChevronDownIcon boxSize={6} />
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Oct 27, 2022</Td>
-                    <Td>5:00-6:00 PM</Td>
-                    <Td>Harvey's</Td>
-                    <Td>5</Td>
-                    <Td>
-                      <ChevronDownIcon boxSize={6} />
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Oct 27, 2022</Td>
-                    <Td>5:00-6:00 PM</Td>
-                    <Td>Harvey's</Td>
-                    <Td>5</Td>
-                    <Td>
-                      <ChevronDownIcon boxSize={6} />
-                    </Td>
-                  </Tr>
-                </Tbody>
-              </Table>
+            <Table style={{ fontFamily: "Inter" }}>
+              <Thead style={{ fontSize: '18px' }}>
+                {/* should abstract the rows into a react component */}
+                <Tr>
+                  <Th style={{ fontFamily: 'Inter' }}>Date Requested</Th>
+                  <Th style={{ fontFamily: 'Inter' }}>Time Requested</Th>
+                  <Th style={{ fontFamily: 'Inter' }}>Donor's Name</Th>
+                  <Th style={{ fontFamily: 'Inter' }}>Number of Meals</Th>
+                  <Th></Th>
+                </Tr>
+              </Thead>
+
+              <Tbody style={{ fontSize: '16px' }}>
+                <Tr>
+                  <Td>Oct 27, 2022</Td>
+                  <Td>5:00-6:00 PM</Td>
+                  <Td>Harvey's</Td>
+                  <Td>5</Td>
+                  <Td>
+                    <ChevronDownIcon boxSize={6} />
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td>Oct 27, 2022</Td>
+                  <Td>5:00-6:00 PM</Td>
+                  <Td>Harvey's</Td>
+                  <Td>5</Td>
+                  <Td>
+                    <ChevronDownIcon boxSize={6} />
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td>Oct 27, 2022</Td>
+                  <Td>5:00-6:00 PM</Td>
+                  <Td>Harvey's</Td>
+                  <Td>5</Td>
+                  <Td>
+                    <ChevronDownIcon boxSize={6} />
+                  </Td>
+                </Tr>
+              </Tbody>
+            </Table>
+
             </TableContainer>
           </TabPanel>
           <TabPanel>

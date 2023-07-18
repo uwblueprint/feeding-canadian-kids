@@ -1,5 +1,7 @@
 from ...models.food_request_group import FoodRequestGroup
+from ...models.food_request import FoodRequest
 from ..interfaces.food_request_service import IFoodRequestService
+from datetime import datetime
 
 
 class FoodRequestService(IFoodRequestService):
@@ -10,8 +12,7 @@ class FoodRequestService(IFoodRequestService):
         self,
         description,
         requestor,
-        requests,
-        status,
+        request_dates,
         meal_info,
         drop_off_time,
         drop_off_location,
@@ -23,10 +24,13 @@ class FoodRequestService(IFoodRequestService):
             new_food_request_group = FoodRequestGroup(
                 description=description,
                 requestor=requestor,
-                requests=requests,
-                status=status,
+                requests=[
+                    FoodRequest(donation_date=request_date)
+                    for request_date in request_dates
+                ],
                 meal_info=meal_info,
-                drop_off_time=drop_off_time,
+                # Convert the time into a datetime object (date does not matter here)
+                drop_off_time=datetime.combine(datetime.today().date(), drop_off_time),
                 drop_off_location=drop_off_location,
                 delivery_instructions=delivery_instructions,
                 onsite_staff=onsite_staff,

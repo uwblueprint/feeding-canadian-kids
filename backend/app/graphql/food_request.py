@@ -15,11 +15,6 @@ class MealRequestTypeInput(graphene.InputObjectType):
     portions = graphene.Int(required=True)
 
 
-class CreateFoodRequestDatesInput(graphene.InputObjectType):
-    date = graphene.DateTime(required=True)
-    meal_types = graphene.List(MealRequestTypeInput, required=True)
-
-
 # Response Types
 class MealRequestTypeResponse(graphene.ObjectType):
     tags = graphene.List(graphene.String, required=True)
@@ -40,14 +35,6 @@ class CreateFoodRequestGroupResponse(graphene.ObjectType):
     status = graphene.String()
 
 
-class CreateFoodRequest(graphene.InputObjectType):
-    id = graphene.ID()
-    donation_date = graphene.DateTime(required=True)
-    status = graphene.String(required=True)
-    donor_id = graphene.ID(required=True)
-    commitment_date = graphene.DateTime(required=True)
-
-
 class MealTypeInput(graphene.InputObjectType):
     portions = graphene.Int(required=True)
     dietary_restrictions = graphene.String(required=True)
@@ -59,11 +46,11 @@ class CreateFoodRequestGroup(Mutation):
     class Arguments:
         description = graphene.String(required=True)
         requestor = graphene.ID(required=True)
-        requests = graphene.List(CreateFoodRequest, required=True)
-        status = graphene.String(required=True)
+        # request_dates is a list of dates
+        request_dates = graphene.List(graphene.Date, required=True)
 
         meal_info = MealTypeInput(required=True)
-        drop_off_time = graphene.DateTime(required=True)
+        drop_off_time = graphene.Time(required=True)
         drop_off_location = graphene.String(required=True)
         delivery_instructions = graphene.String()
         onsite_staff = graphene.List(ContactInput, required=True)
@@ -76,8 +63,7 @@ class CreateFoodRequestGroup(Mutation):
         info,
         description,
         requestor,
-        requests,
-        status,
+        request_dates,
         meal_info,
         drop_off_time,
         drop_off_location,
@@ -87,8 +73,7 @@ class CreateFoodRequestGroup(Mutation):
         result = services["food_request_service"].create_food_request_group(
             description=description,
             requestor=requestor,
-            requests=requests,
-            status=status,
+            request_dates=request_dates,
             meal_info=meal_info,
             drop_off_time=drop_off_time,
             drop_off_location=drop_off_location,

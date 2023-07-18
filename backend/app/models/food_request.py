@@ -10,7 +10,8 @@ class MealType(mg.EmbeddedDocument):
 
 class FoodRequest(mg.EmbeddedDocument):
     _id = mg.ObjectIdField(required=True, default=ObjectId)
-    donation_date = mg.DateTimeField(required=True)
+    # The date that the food is being
+    donation_date = mg.DateField(required=True)
     """
     Open: Request has not been completely fulfilled
     Fulfilled: All meal types have been fulfilled
@@ -19,8 +20,8 @@ class FoodRequest(mg.EmbeddedDocument):
     status = mg.StringField(
         choices=["Open", "Fulfilled", "Cancelled"], required=True, default="Open"
     )
-    donor_id = mg.ObjectIdField(required=True)
-    commitment_date = mg.DateTimeField(required=True)
+    donor_id = mg.ObjectIdField(required=False)
+    commitment_date = mg.DateTimeField(required=False)
 
     def to_serializable_dict(self):
         """

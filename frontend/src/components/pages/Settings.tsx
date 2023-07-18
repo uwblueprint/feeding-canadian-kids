@@ -27,7 +27,6 @@ import {
 } from "../../utils/ValidationUtils";
 import useIsWebView from "../../utils/useIsWebView";
 import OnsiteStaffSection from "../common/OnsiteStaffSection";
-import QuitEditing from "./QuitEditing";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
@@ -90,7 +89,9 @@ const UPDATEUSERBYID = gql`
 const Settings = (): React.ReactElement => {
   // Assumption: user has the roleInfo: ASPInfo
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
-  const userInfo: UserInfo = authenticatedUser?.info || null;
+  const [userInfo, setUserInfo] = useState<UserInfo>(
+    authenticatedUser?.info || null,
+  );
 
   const [primaryContact, setPrimaryContact] = useState<Contact>(
     userInfo?.primaryContact || {
@@ -552,6 +553,7 @@ const Settings = (): React.ReactElement => {
       const newInfo = response.data.updateUserByID?.user?.info;
       if (newInfo) {
         setAuthenticatedUser({ ...authenticatedUser, info: newInfo });
+        setUserInfo(newInfo);
         setLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "info", newInfo);
         toast({
           title: "Saved settings successfully",
@@ -636,7 +638,6 @@ const Settings = (): React.ReactElement => {
     );
   };
 
-
   return (
     <Center>
       <Flex
@@ -662,7 +663,6 @@ const Settings = (): React.ReactElement => {
           attemptedSubmit={attemptedSubmit}
         />
         {getSaveSection()}
-        <QuitEditing/>
       </Flex>
     </Center>
   );

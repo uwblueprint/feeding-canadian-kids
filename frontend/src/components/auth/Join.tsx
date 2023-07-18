@@ -217,7 +217,7 @@ const Join = (): React.ReactElement => {
   const getWebOrganizationSection = (): React.ReactElement => {
     return (
       <>
-        <Text variant="desktop-heading">Organization Info</Text>
+        <Text variant="desktop-heading">Organization Information</Text>
         <Flex flexDir="row" gap="24px">
           <Flex
             flexDir="column"
@@ -298,7 +298,7 @@ const Join = (): React.ReactElement => {
       <Flex flexDir="column" gap="8px">
         <FormControl isRequired>
           <FormLabel variant="mobile-form-label-bold">
-            Organization Info
+            Organization Information
           </FormLabel>
 
           <Flex flexDir="column" gap="8px">

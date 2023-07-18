@@ -136,6 +136,53 @@ const Settings = (): React.ReactElement => {
     return <Navigate replace to={LOGIN_PAGE} />;
   }
 
+  const haveSettingsChanged = (): boolean => {
+    if (!userInfo) return false;
+
+    const defaultValues: Array<string | number> = [
+      userInfo.organizationAddress,
+      userInfo.organizationName,
+      userInfo.organizationDesc,
+      userInfo.roleInfo?.aspInfo?.numKids?.toString() || "",
+    ];
+    const currentValues: Array<string | number> = [
+      trimWhiteSpace(organizationAddress),
+      trimWhiteSpace(organizationName),
+      organizationDesc,
+      trimWhiteSpace(numKids),
+    ];
+
+    for (let i = 0; i < defaultValues.length; i += 1) {
+      if (defaultValues[i] !== currentValues[i]) {
+        return true;
+      }
+    }
+
+    const defaultContactValues: Array<Contact> = [
+      userInfo.primaryContact,
+      ...userInfo.onsiteContacts,
+    ];
+    const currentContactValues: Array<Contact> = [
+      primaryContact,
+      ...onsiteInfo,
+    ];
+
+    if (defaultContactValues.length !== currentContactValues.length)
+      return true;
+
+    for (let i = 0; i < defaultContactValues.length; i += 1) {
+      if (
+        defaultContactValues[i].name !== currentContactValues[i].name ||
+        defaultContactValues[i].email !== currentContactValues[i].email ||
+        defaultContactValues[i].phone !== currentContactValues[i].phone
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const onClickResetPassword = () => {
     navigate(`/${authenticatedUser?.id}/reset-password`);
   };
@@ -205,6 +252,12 @@ const Settings = (): React.ReactElement => {
   const getWebContactSection = (): React.ReactElement => {
     return (
       <Flex flexDir="column" gap="24px">
+        {haveSettingsChanged() && (
+          <Text color="secondary.critical" variant="desktop-xs">
+            You have unsaved changes. Make sure to click save at the bottom
+            before leaving!
+          </Text>
+        )}
         <Text variant="desktop-heading">Contact Information</Text>
         <Flex flexDir="row" gap="24px">
           <Flex flexDir="column" w="300px">
@@ -455,53 +508,6 @@ const Settings = (): React.ReactElement => {
         </FormControl>
       </Flex>
     );
-  };
-
-  const haveSettingsChanged = (): boolean => {
-    if (!userInfo) return false;
-
-    const defaultValues: Array<string | number> = [
-      userInfo.organizationAddress,
-      userInfo.organizationName,
-      userInfo.organizationDesc,
-      userInfo.roleInfo?.aspInfo?.numKids?.toString() || "",
-    ];
-    const currentValues: Array<string | number> = [
-      trimWhiteSpace(organizationAddress),
-      trimWhiteSpace(organizationName),
-      organizationDesc,
-      trimWhiteSpace(numKids),
-    ];
-
-    for (let i = 0; i < defaultValues.length; i += 1) {
-      if (defaultValues[i] !== currentValues[i]) {
-        return true;
-      }
-    }
-
-    const defaultContactValues: Array<Contact> = [
-      userInfo.primaryContact,
-      ...userInfo.onsiteContacts,
-    ];
-    const currentContactValues: Array<Contact> = [
-      primaryContact,
-      ...onsiteInfo,
-    ];
-
-    if (defaultContactValues.length !== currentContactValues.length)
-      return true;
-
-    for (let i = 0; i < defaultContactValues.length; i += 1) {
-      if (
-        defaultContactValues[i].name !== currentContactValues[i].name ||
-        defaultContactValues[i].email !== currentContactValues[i].email ||
-        defaultContactValues[i].phone !== currentContactValues[i].phone
-      ) {
-        return true;
-      }
-    }
-
-    return false;
   };
 
   const isRequestValid = (): boolean => {

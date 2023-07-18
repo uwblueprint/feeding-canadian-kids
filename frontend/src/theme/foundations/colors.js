@@ -20,5 +20,7 @@ export default {
   },
   gray: {
     gray300: "#CBD5E0",
+    gray600: "#4A5568",
+    gray83: "#D4D4D4",
   },
 };

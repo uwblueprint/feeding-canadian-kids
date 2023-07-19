@@ -6,6 +6,8 @@ import {
   Center,
   Container,
   Flex,
+  FormControl,
+  FormLabel,
   Grid,
   GridItem,
   HStack,
@@ -23,8 +25,7 @@ import {
   useBreakpointValue,
   useMediaQuery,
 } from "@chakra-ui/react";
-import React from "react";
-import { Form } from "react-router-dom";
+import React, { useEffect } from "react";
 
 const titleSection = (): React.ReactElement => {
   return (
@@ -62,7 +63,13 @@ const titleSection = (): React.ReactElement => {
 };
 
 const SchedulingForm = (): React.ReactElement => {
+  const [donationFrequency, setDonationFrequency] = React.useState("");
+  const [donationDays, setDonationDays] = React.useState([] as string[]);
+  const [startDate, setStartDate] = React.useState("");
+  const [endDate, setEndDate] = React.useState("");
+  const [scheduledDropOffTime, setScheduledDropOffTime] = React.useState("");
   const dayNames = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
+  const [nextButton, setNextButton] = React.useState(false);
 
   // Button state (array of booleans)
   const [buttonState, setButtonState] = React.useState(Array(7).fill(false));
@@ -72,7 +79,36 @@ const SchedulingForm = (): React.ReactElement => {
     const newButtonState = [...buttonState];
     newButtonState[index] = !newButtonState[index];
     setButtonState(newButtonState);
+
+    // update the donationDays list on which days are selected from the boolean array
+    const selectedDays = newButtonState
+      .map((state, i) => (state ? dayNames[i] : "") as string)
+      .filter((day) => day !== "");
+
+    setDonationDays(selectedDays);
   };
+
+  const validateData = () => {
+    if (
+      donationFrequency === "" ||
+      donationDays.length === 0 ||
+      startDate === "" ||
+      endDate === "" ||
+      scheduledDropOffTime === ""
+    ) {
+      // Handle validation error, display error message or prevent form submission
+      setNextButton(true);
+      console.log("Please fill in all the required fields.");
+      return;
+    }
+    setNextButton(false);
+
+    // Data is valid, continue to the next step
+    console.log("Data is valid!");
+    // Proceed with further actions or form submission
+  };
+
+  // confirm leaving page if user leaves without submitting form
 
   return (
     <Grid
@@ -82,11 +118,12 @@ const SchedulingForm = (): React.ReactElement => {
       paddingRight={{ base: "1rem", md: "2rem" }}
       textAlign={{ base: "left", md: "left" }}
     >
-      <GridItem colSpan={1} bg="tomato">
+      <GridItem colSpan={1}>
         <Text as="b">Date and Time</Text>
         <Text>Please select the date for the meal drop-off.</Text>
       </GridItem>
-      <GridItem colSpan={{ base: 1, md: 2 }} bg="papayawhip">
+
+      <GridItem colSpan={{ base: 1, md: 2 }}>
         <Text color="primary.blue" fontSize="xs">
           If this is not a weekly donation,&nbsp;
           <a
@@ -98,19 +135,32 @@ const SchedulingForm = (): React.ReactElement => {
           .
         </Text>
         <br />
-        <Text as="b">Donation Frequency</Text>
 
+        <Text
+          color={donationFrequency === "" && nextButton ? "red" : "black"}
+          as="b"
+        >
+          Donation Frequency*
+        </Text>
         <Select
+          required
           height={{ base: "2rem", md: "2.5rem" }}
           size="xs"
+          onChange={(e) => setDonationFrequency(e.target.value)}
           placeholder="Select a donation frequency"
         >
           <option value="Weekly">Weekly</option>
           <option value="Monthly">Monthly</option>
           <option value="Does not repeat">Does not repeat</option>
         </Select>
+
         <br />
-        <Text as="b">Days of Donation</Text>
+        <Text
+          color={donationDays.length === 0 && nextButton ? "red" : "black"}
+          as="b"
+        >
+          Days of Donation*
+        </Text>
 
         <SimpleGrid columns={{ base: 4, md: 7 }} spacing={{ base: 3, md: 3 }}>
           {dayNames.map((day) => (
@@ -141,12 +191,38 @@ const SchedulingForm = (): React.ReactElement => {
 
         <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 4, md: 4 }}>
           <Box>
-            <Text as="b">Start Date</Text>
+            <Text
+              color={startDate === "" && nextButton ? "red" : "black"}
+              as="b"
+            >
+              Start Date
+            </Text>
             <br />
             <Input
+              required
               size="xs"
               height={{ base: "2rem", md: "3rem" }}
               variant="outline"
+              colorScheme="primary.blue"
+              onChange={(e) => setStartDate(e.target.value)}
+              type="date"
+              rounded="md"
+              width={{ base: "100%", md: "100%" }}
+              placeholder="Select a date"
+            />
+          </Box>
+
+          <Box>
+            <Text color={endDate === "" && nextButton ? "red" : "black"} as="b">
+              End Date*
+            </Text>
+            <br />
+            <Input
+              required
+              size="xs"
+              height={{ base: "2rem", md: "3rem" }}
+              variant="outline"
+              onChange={(e) => setEndDate(e.target.value)}
               colorScheme="primary.blue"
               type="date"
               rounded="md"
@@ -156,25 +232,19 @@ const SchedulingForm = (): React.ReactElement => {
           </Box>
 
           <Box>
-            <Text as="b">End Date</Text>
-            <br />
+            <Text
+              color={
+                scheduledDropOffTime === "" && nextButton ? "red" : "black"
+              }
+              as="b"
+            >
+              Scheduled drop-off time*
+            </Text>
             <Input
-              size="xs"
-              height={{ base: "2rem", md: "3rem" }}
-              variant="outline"
-              colorScheme="primary.blue"
-              type="date"
-              rounded="md"
-              width={{ base: "100%", md: "100%" }}
-              placeholder="Select a date"
-            />
-          </Box>
-
-          <Box>
-            <Text as="b">Scheduled drop-off time</Text>
-            <Input
+              required
               height={{ base: "2rem", md: "3rem" }}
               size="xs"
+              onChange={(e) => setScheduledDropOffTime(e.target.value)}
               type="time"
               placeholder="Select a time"
               width={{ base: "100%", md: "100%" }}
@@ -188,7 +258,6 @@ const SchedulingForm = (): React.ReactElement => {
       {/* Next button that is right aligned */}
       <GridItem
         colSpan={{ base: 1, md: 3 }}
-        bg="papayawhip"
         display="flex"
         justifyContent="flex-end"
       >
@@ -197,9 +266,11 @@ const SchedulingForm = (): React.ReactElement => {
           colorScheme="primary.green"
           variant="solid"
           size="xs"
+          onSubmit={(e) => e.preventDefault()}
           height={{ base: "2rem", md: "3rem" }}
           width={{ base: "10%", md: "10%" }}
           bg="primary.blue"
+          onClick={validateData}
         >
           Next
         </Button>
@@ -215,7 +286,6 @@ const MealFormProgress = (): React.ReactElement => {
     <div>
       <Center>
         <Tabs
-          bg="blue"
           size="sm"
           variant="unstyled"
           align="center"
@@ -312,6 +382,8 @@ const MealFormProgress = (): React.ReactElement => {
       </Stepper>
     </div>
   ); */
+
+// How can I implement this?
 
 const CreateMealRequest = (): React.ReactElement => {
   return (

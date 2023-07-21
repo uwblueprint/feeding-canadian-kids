@@ -23,7 +23,6 @@ class MealRequestTypeResponse(graphene.ObjectType):
 
 class CreateFoodRequestResponse(graphene.ObjectType):
     id = graphene.ID()
-    target_fulfillment_date = graphene.DateTime()
     meal_types = graphene.List(MealRequestTypeResponse)
     status = graphene.String()
 

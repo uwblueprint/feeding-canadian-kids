@@ -34,11 +34,27 @@ class Contact(graphene.ObjectType):
     phone = graphene.String()
 
 
+class ASPInfo(graphene.ObjectType):
+    num_kids = graphene.Int()
+
+
+class DonorInfo(graphene.ObjectType):
+    type = graphene.String()
+    tags = graphene.List(graphene.String)
+
+
+class RoleInfo(graphene.ObjectType):
+    asp_info = graphene.Field(ASPInfo)
+    donor_info = graphene.Field(DonorInfo)
+
+
 class UserInfo(graphene.ObjectType):
     email = graphene.String()
     organization_address = graphene.String()
     organization_name = graphene.String()
+    organization_desc = graphene.String()
     role = graphene.String()
+    role_info = graphene.Field(RoleInfo)
     primary_contact = graphene.Field(Contact)
     onsite_contacts = graphene.List(Contact)
 
@@ -49,11 +65,27 @@ class ContactInput(graphene.InputObjectType):
     phone = graphene.String(required=True)
 
 
+class ASPInfoInput(graphene.InputObjectType):
+    num_kids = graphene.Int()
+
+
+class DonorInfoInput(graphene.InputObjectType):
+    type = graphene.String()
+    tags = graphene.List(graphene.String)
+
+
+class RoleInfoInput(graphene.InputObjectType):
+    asp_info = graphene.Field(ASPInfoInput)
+    donor_info = graphene.Field(DonorInfoInput)
+
+
 class UserInfoInput(graphene.InputObjectType):
     email = graphene.String(required=True)
     organization_address = graphene.String(required=True)
     organization_name = graphene.String(required=True)
+    organization_desc = graphene.String(required=True)
     role = graphene.String(required=True)
+    role_info = graphene.Field(RoleInfoInput)
     primary_contact = graphene.Field(ContactInput, required=True)
     onsite_contacts = graphene.List(ContactInput, required=True)
 

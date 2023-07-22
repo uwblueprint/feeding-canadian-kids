@@ -17,13 +17,14 @@ class MealRequestTypeInput(graphene.InputObjectType):
 
 # Response Types
 class MealRequestTypeResponse(graphene.ObjectType):
-    tags = graphene.List(graphene.String, required=True)
     portions = graphene.Int(required=True)
+    dietary_restrictions = graphene.String(required=True)
+    meal_suggestions = graphene.String(required=True)
 
 
 class CreateFoodRequestResponse(graphene.ObjectType):
     id = graphene.ID()
-    meal_types = graphene.List(MealRequestTypeResponse)
+    donation_date = graphene.Date()
     status = graphene.String()
 
 
@@ -31,6 +32,7 @@ class CreateFoodRequestGroupResponse(graphene.ObjectType):
     id = graphene.ID()
     description = graphene.String()
     requests = graphene.List(CreateFoodRequestResponse)
+    meal_info = graphene.Field(MealRequestTypeResponse)
     status = graphene.String()
 
 

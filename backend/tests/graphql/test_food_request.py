@@ -13,7 +13,7 @@ def test_create_food_request_group(graphql_schema):
         dropOffLocation: "123 Main Street",
         dropOffTime: "12:00:00Z",
         mealInfo: {portions: 40,
-          dietaryRestrictions: "{\\"Gluten Free\\": 7, \\"No Beef\\": 8}",
+          dietaryRestrictions: "7 gluten free, 7 no beef",
           mealSuggestions: "Burritos"},
         onsiteStaff: [
           {name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"},
@@ -29,12 +29,15 @@ def test_create_food_request_group(graphql_schema):
           status
           description
           id
+          mealInfo {
+            portions
+            dietaryRestrictions
+            mealSuggestions
+          }
           requests {
             id
-            mealTypes {
-              tags
-              portions
-            }
+            donationDate
+            status
           }
         }
       }
@@ -44,6 +47,51 @@ def test_create_food_request_group(graphql_schema):
     result = graphql_schema.execute(mutation)
 
     assert result.errors is None
+    assert result.data["createFoodRequestGroup"]["foodRequestGroup"]["status"] == "Open"
+    assert (
+        result.data["createFoodRequestGroup"]["foodRequestGroup"]["description"]
+        == "Food request group for office employees"
+    )
+    assert (
+        result.data["createFoodRequestGroup"]["foodRequestGroup"]["mealInfo"]["portions"]
+        == 40
+    )
+    assert (
+        result.data["createFoodRequestGroup"]["foodRequestGroup"]["mealInfo"][
+            "dietaryRestrictions"
+        ]
+        == "7 gluten free, 7 no beef"
+    )
+    assert (
+        result.data["createFoodRequestGroup"]["foodRequestGroup"]["mealInfo"][
+            "mealSuggestions"
+        ]
+        == "Burritos"
+    )
+    assert (
+        result.data["createFoodRequestGroup"]["foodRequestGroup"]["requests"][0][
+            "donationDate"
+        ]
+        == "2023-06-01"
+    )
+    assert (
+        result.data["createFoodRequestGroup"]["foodRequestGroup"]["requests"][0][
+            "status"
+        ]
+        == "Open"
+    )
+    assert (
+        result.data["createFoodRequestGroup"]["foodRequestGroup"]["requests"][1][
+            "donationDate"
+        ]
+        == "2023-06-02"
+    )
+    assert (
+        result.data["createFoodRequestGroup"]["foodRequestGroup"]["requests"][1][
+            "status"
+        ]
+        == "Open"
+    )
 
 
 def test_get_food_request_group_failure(graphql_schema):
@@ -71,12 +119,15 @@ def test_get_food_request_group_failure(graphql_schema):
           status
           description
           id
+          mealInfo {
+            portions
+            dietaryRestrictions
+            mealSuggestions
+          }
           requests {
             id
-            mealTypes {
-              tags
-              portions
-            }
+            donationDate
+            status
           }
         }
       }

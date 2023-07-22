@@ -53,7 +53,9 @@ def test_create_food_request_group(graphql_schema):
         == "Food request group for office employees"
     )
     assert (
-        result.data["createFoodRequestGroup"]["foodRequestGroup"]["mealInfo"]["portions"]
+        result.data["createFoodRequestGroup"]["foodRequestGroup"]["mealInfo"][
+            "portions"
+        ]
         == 40
     )
     assert (

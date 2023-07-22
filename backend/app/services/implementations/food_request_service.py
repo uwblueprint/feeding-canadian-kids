@@ -30,8 +30,7 @@ class FoodRequestService(IFoodRequestService):
                 ],
                 meal_info=meal_info,
                 # Convert the time into a datetime object (date does not matter here)
-                drop_off_time=datetime.combine(
-                    datetime.today().date(), drop_off_time),
+                drop_off_time=datetime.combine(datetime.today().date(), drop_off_time),
                 drop_off_location=drop_off_location,
                 delivery_instructions=delivery_instructions,
                 onsite_staff=onsite_staff,

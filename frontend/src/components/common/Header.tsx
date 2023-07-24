@@ -1,4 +1,5 @@
-import { Button, Divider, Flex, Image } from "@chakra-ui/react";
+import { ArrowBackIcon, HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
+import { Button, Divider, Flex, IconButton, Image, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,34 +12,36 @@ import {
   SETTINGS_PAGE,
 } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
+import useIsWebView from "../../utils/useIsWebView";
 import Logout from "../auth/Logout";
 
+
 const Header = () => {
+  const isWebView = useIsWebView();
   const { authenticatedUser } = useContext(AuthContext);
-
   const navigate = useNavigate();
-
   const [isHovered, setIsHovered] = useState(false);
 
+  
   const headerDesktop = (): React.ReactElement => {
     return (
       <Flex
         justifyContent="space-between"
         alignItems="center"
-        padding={{ base: "12px 24px", md: "12px 24px" }}
+        padding="12px 24px"
         bgColor="background.grey"
       >
         <Flex
           flexDir="row"
-          height={{ base: "50px", md: "70px" }}
+          height="70px"
           gap="24px"
           alignItems="center"
         >
           <Image
             src={Logo}
             alt="Logo"
-            width={{ base: "50px", md: "70px" }}
-            height={{ base: "50px", md: "70px" }}
+            width="70px"
+            height="70px"
             onClick={() => {
               navigate(HOME_PAGE);
             }}
@@ -53,8 +56,8 @@ const Header = () => {
           />
           <Flex flexDir="column">
             <Button
-              width={{ base: "60px", md: "60px" }}
-              height={{ base: "40px", md: "40px" }}
+              width="60px"
+              height="40px"
               p="0"
               color="gray.gray600"
               bgColor="background.grey"
@@ -75,8 +78,8 @@ const Header = () => {
         {authenticatedUser && (
           <Flex flexDir="row" gap="24px">
             <Button
-              width={{ base: "30px", md: "60px" }}
-              height={{ base: "40px", md: "50px" }}
+              width="60px"
+              height="50px"
               p="0"
               bgColor="background.grey"
               border="2px solid"
@@ -92,7 +95,7 @@ const Header = () => {
               }}
             >
               <Image
-                width={{ base: "18px", md: "24px" }}
+                width="24px"
                 src={isHovered ? whiteGear : greenGear}
                 alt="User Settings Button"
               />
@@ -104,8 +107,94 @@ const Header = () => {
     );
   };
 
+  const headerMobile = (): React.ReactElement => {
+    return (
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        padding="12px 24px"
+        bgColor="background.grey"
+      >
+        <Flex
+          flexDir="row"
+          height="50px"
+          gap="24px"
+          alignItems="center"
+        >
+          <Image
+            src={Logo}
+            alt="Logo"
+            width="50px"
+            height="50px"
+            onClick={() => {
+              navigate(HOME_PAGE);
+            }}
+            _hover={{
+              cursor: "pointer",
+            }}
+          />
+          <Divider
+            orientation="vertical"
+            borderColor="gray.gray83"
+            borderWidth="1.5px"
+          />
+          <Flex flexDir="column">
+            <Button
+              width="60px"
+              height="40px"
+              p="0"
+              color="gray.gray600"
+              bgColor="background.grey"
+              _hover={{
+                color: "gray.gray83",
+              }}
+              onClick={() => {
+                navigate(DASHBOARD_PAGE);
+              }}
+            >
+              Home
+            </Button>
+            <Divider borderColor="gray.gray600" borderWidth="1.5px" />
+          </Flex>
+        </Flex>
+
+        {authenticatedUser && (
+          <Flex flexDir="row" gap="24px">
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                aria-label='Options'
+                icon={<HamburgerIcon boxSize={9} />}
+                color="gray.gray600"
+                bgColor="background.grey"
+                variant="desktop-button-bold"
+              />
+              <MenuList>
+                <MenuItem 
+                  icon={<SettingsIcon/>}
+                  onClick={() => {
+                    navigate(SETTINGS_PAGE);
+                  }}
+                >
+                  Settings
+                </MenuItem>
+                <MenuItem icon={<ArrowBackIcon/>}>
+                  Log Out 
+                </MenuItem>
+                <MenuItem >
+                  <Logout /> 
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Flex>
+        )}
+      </Flex>
+    );
+  };
+
+
   return (
-    headerDesktop()
+    isWebView ? headerDesktop() : headerMobile()
   );
 };
 

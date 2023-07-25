@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import {
   Button,
   Center,
@@ -8,10 +9,17 @@ import {
   Input,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { GraphQLError } from "graphql";
+import React, { useContext, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
-import { Contact, UserSettings } from "../../types/UserTypes";
+import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
+import { LOGIN_PAGE } from "../../constants/Routes";
+import AuthContext from "../../contexts/AuthContext";
+import { Contact, UserInfo } from "../../types/UserTypes";
+import { setLocalStorageObjProperty } from "../../utils/LocalStorageUtils";
 import {
   isNonNegativeInt,
   isValidEmail,
@@ -38,26 +46,147 @@ const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION =
   "Description of organization";
 
+const UPDATEUSERBYID = gql`
+  mutation UpdateUserById(
+    $requestorId: String!
+    $id: String!
+    $userInfo: UserInfoInput!
+  ) {
+    updateUserByID(requestorId: $requestorId, id: $id, userInfo: $userInfo) {
+      user {
+        id
+        info {
+          email
+          organizationAddress
+          organizationName
+          organizationDesc
+          role
+          roleInfo {
+            aspInfo {
+              numKids
+            }
+            donorInfo {
+              type
+              tags
+            }
+          }
+          primaryContact {
+            name
+            phone
+            email
+          }
+          onsiteContacts {
+            name
+            phone
+            email
+          }
+        }
+      }
+    }
+  }
+`;
+
 const Settings = (): React.ReactElement => {
-  const [primaryContact, setPrimaryContact] = useState<Contact>({
-    name: "",
-    phone: "",
-    email: "",
-  });
-  const [organizationName, setOrganizationName] = useState("");
-  const [numberOfKids, setNumberOfKids] = useState("");
-  const [organizationAddress, setOrganizationAddress] = useState("");
-  const [organizationDescription, setOrganizationDescription] = useState("");
-  const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>([
-    {
+  // Assumption: user has the roleInfo: ASPInfo
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const [userInfo, setUserInfo] = useState<UserInfo>(
+    authenticatedUser?.info || null,
+  );
+
+  const [primaryContact, setPrimaryContact] = useState<Contact>(
+    userInfo?.primaryContact || {
       name: "",
       phone: "",
       email: "",
     },
-  ]);
+  );
+  const [organizationName, setOrganizationName] = useState(
+    userInfo?.organizationName || "",
+  );
+  const [numKids, setNumKids] = useState(
+    userInfo?.roleInfo?.aspInfo?.numKids?.toString() || "",
+  );
+  const [organizationAddress, setOrganizationAddress] = useState(
+    userInfo?.organizationAddress || "",
+  );
+  const [organizationDesc, setOrganizationDesc] = useState(
+    userInfo?.organizationDesc || "",
+  );
+  // json parse/stringify creates a deep copy of the array of contacts
+  // this prevents setOnsiteInfo from mutating the original state of userInfo.onsiteContacts
+  const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>(
+    userInfo
+      ? JSON.parse(JSON.stringify(userInfo.onsiteContacts))
+      : [
+          {
+            name: "",
+            phone: "",
+            email: "",
+          },
+        ],
+  );
 
   const [attemptedSubmit, setAttemptedSave] = useState(false);
   const isWebView = useIsWebView();
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  const [updateUserByID] = useMutation(UPDATEUSERBYID);
+
+  if (!authenticatedUser) {
+    return <Navigate replace to={LOGIN_PAGE} />;
+  }
+
+  const haveSettingsChanged = (): boolean => {
+    if (!userInfo) return false;
+
+    const defaultValues: Array<string | number> = [
+      userInfo.organizationAddress,
+      userInfo.organizationName,
+      userInfo.organizationDesc,
+      userInfo.roleInfo?.aspInfo?.numKids?.toString() || "",
+    ];
+    const currentValues: Array<string | number> = [
+      trimWhiteSpace(organizationAddress),
+      trimWhiteSpace(organizationName),
+      organizationDesc,
+      trimWhiteSpace(numKids),
+    ];
+
+    for (let i = 0; i < defaultValues.length; i += 1) {
+      if (defaultValues[i] !== currentValues[i]) {
+        return true;
+      }
+    }
+
+    const defaultContactValues: Array<Contact> = [
+      userInfo.primaryContact,
+      ...userInfo.onsiteContacts,
+    ];
+    const currentContactValues: Array<Contact> = [
+      primaryContact,
+      ...onsiteInfo,
+    ];
+
+    if (defaultContactValues.length !== currentContactValues.length)
+      return true;
+
+    for (let i = 0; i < defaultContactValues.length; i += 1) {
+      if (
+        defaultContactValues[i].name !== currentContactValues[i].name ||
+        defaultContactValues[i].email !== currentContactValues[i].email ||
+        defaultContactValues[i].phone !== currentContactValues[i].phone
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  const onClickResetPassword = () => {
+    navigate(`/${authenticatedUser?.id}/reset-password`);
+  };
 
   const getTitleSection = (): React.ReactElement => {
     return (
@@ -78,7 +207,7 @@ const Settings = (): React.ReactElement => {
         <Flex flexDir="column" gap="24px">
           <Flex flexDir="column">
             <Text variant="desktop-body-bold">Email Address</Text>
-            <Text variant="desktop-body">example.login@gmail.com</Text>
+            <Text variant="desktop-body">{userInfo?.email}</Text>
           </Flex>
           <Button
             width="190px"
@@ -90,6 +219,7 @@ const Settings = (): React.ReactElement => {
             borderColor="primary.green"
             borderRadius="6px"
             _hover={{ color: "text.white", bgColor: "primary.green" }}
+            onClick={onClickResetPassword}
           >
             Reset Password
           </Button>
@@ -102,7 +232,7 @@ const Settings = (): React.ReactElement => {
     return (
       <Flex flexDir="column" gap="8px">
         <Text variant="mobile-body-bold">Email Address</Text>
-        <Text variant="desktop-xs">example.login@gmail.com</Text>
+        <Text variant="desktop-xs">{userInfo?.email}</Text>
         <Button
           w="100%"
           variant="mobile-button-bold"
@@ -112,6 +242,7 @@ const Settings = (): React.ReactElement => {
           borderColor="primary.green"
           borderRadius="6px"
           _hover={{ color: "text.white", bgColor: "primary.green" }}
+          onClick={onClickResetPassword}
         >
           Reset Password
         </Button>
@@ -122,6 +253,12 @@ const Settings = (): React.ReactElement => {
   const getWebContactSection = (): React.ReactElement => {
     return (
       <Flex flexDir="column" gap="24px">
+        {haveSettingsChanged() && (
+          <Text color="secondary.critical" variant="desktop-xs">
+            You have unsaved changes. Make sure to click save at the bottom
+            before leaving!
+          </Text>
+        )}
         <Text variant="desktop-heading">Contact Information</Text>
         <Flex flexDir="row" gap="24px">
           <Flex flexDir="column" w="300px">
@@ -267,18 +404,15 @@ const Settings = (): React.ReactElement => {
           </Flex>
           <Flex flexDir="column" w="200px">
             <FormControl
-              isInvalid={
-                attemptedSubmit &&
-                numberOfKids !== "" &&
-                !isNonNegativeInt(numberOfKids)
-              }
+              isRequired
+              isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
             >
               <FormLabel variant="form-label-bold">Number of kids</FormLabel>
               <Input
                 type="number"
-                value={numberOfKids}
+                value={numKids}
                 placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
-                onChange={(e) => setNumberOfKids(e.target.value)}
+                onChange={(e) => setNumKids(e.target.value)}
               />
             </FormControl>
           </Flex>
@@ -291,7 +425,6 @@ const Settings = (): React.ReactElement => {
                 Address of organization
               </FormLabel>
               <Input
-                type="email"
                 value={organizationAddress}
                 placeholder={PLACEHOLDER_WEB_EXAMPLE_ADDRESS}
                 onChange={(e) => setOrganizationAddress(e.target.value)}
@@ -299,17 +432,20 @@ const Settings = (): React.ReactElement => {
             </FormControl>
           </Flex>
         </Flex>
-        <Flex flexDir="column" w="60%" gap="8px">
-          <Text variant="desktop-body-bold">Description of organization</Text>
-          <Textarea
-            size="desktop-body"
-            p="12px"
-            borderWidth="2px"
-            borderRadius="4px"
-            placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION}
-            value={organizationDescription}
-            onChange={(e) => setOrganizationDescription(e.target.value)}
-          />
+        <Flex flexDir="column" w="480px">
+          <FormControl
+            isRequired
+            isInvalid={attemptedSubmit && organizationDesc === ""}
+          >
+            <FormLabel variant="desktop-button-bold">
+              Description of organization
+            </FormLabel>
+            <Textarea
+              placeholder={PLACEHOLDER_WEB_EXAMPLE_ORG_DESCRIPTION}
+              value={organizationDesc}
+              onChange={(e) => setOrganizationDesc(e.target.value)}
+            />
+          </FormControl>
         </Flex>
       </Flex>
     );
@@ -336,18 +472,15 @@ const Settings = (): React.ReactElement => {
               />
             </FormControl>
             <FormControl
-              isInvalid={
-                attemptedSubmit &&
-                numberOfKids !== "" &&
-                !isNonNegativeInt(numberOfKids)
-              }
+              isRequired
+              isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
             >
               <Input
                 variant="mobile-outline"
                 type="number"
-                value={numberOfKids}
+                value={numKids}
                 placeholder={PLACEHOLDER_MOBILE_EXAMPLE_NUMBER_OF_KIDS}
-                onChange={(e) => setNumberOfKids(e.target.value)}
+                onChange={(e) => setNumKids(e.target.value)}
               />
             </FormControl>
             <FormControl
@@ -361,17 +494,17 @@ const Settings = (): React.ReactElement => {
                 placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS}
               />
             </FormControl>
-            <Textarea
-              size="xs"
-              p="12px"
-              borderWidth="2px"
-              focusBorderColor="gray.200"
-              boxShadow="none !important"
-              borderRadius="4px"
-              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION}
-              value={organizationDescription}
-              onChange={(e) => setOrganizationDescription(e.target.value)}
-            />
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationDesc === ""}
+            >
+              <Textarea
+                variant="mobile-outline"
+                value={organizationDesc}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_ORG_DESCRIPTION}
+                onChange={(e) => setOrganizationDesc(e.target.value)}
+              />
+            </FormControl>
           </Flex>
         </FormControl>
       </Flex>
@@ -383,6 +516,7 @@ const Settings = (): React.ReactElement => {
       primaryContact.name,
       organizationName,
       organizationAddress,
+      organizationDesc,
     ];
     const phoneNumsToValidate = [primaryContact.phone];
     const emailsToValidate = [primaryContact.email];
@@ -405,25 +539,72 @@ const Settings = (): React.ReactElement => {
       if (!isValidEmail(emailsToValidate[i])) return false;
     }
 
-    if (numberOfKids !== "" && !isNonNegativeInt(numberOfKids)) return false;
+    if (!isNonNegativeInt(numKids)) return false;
 
     return true;
+  };
+
+  const handleSaveSettings = async (
+    requestorId: string,
+    requestUserInfo: UserInfo,
+  ) => {
+    try {
+      const response = await updateUserByID({
+        variables: {
+          requestorId,
+          id: requestorId,
+          userInfo: requestUserInfo,
+        },
+      });
+
+      const newInfo = response.data.updateUserByID?.user?.info;
+      if (newInfo) {
+        setAuthenticatedUser({ ...authenticatedUser, info: newInfo });
+        setUserInfo(newInfo);
+        // Need to override local storage to persist new changes on page refresh/navigation
+        // without this change, the initial state of userinfo will not include new changes
+        // because local storage only updates after the user logs in
+        setLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "info", newInfo);
+        toast({
+          title: "Saved settings successfully",
+          status: "success",
+          isClosable: true,
+        });
+      } else {
+        throw new GraphQLError("Failed to save settings");
+      }
+    } catch (e: unknown) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+      toast({
+        title: "Failed to save settings",
+        status: "error",
+        isClosable: true,
+      });
+    }
   };
 
   const handleSubmit = () => {
     setAttemptedSave(true);
     if (!isRequestValid()) return;
 
-    const request: UserSettings = {
+    const requestUserInfo: UserInfo = {
+      email: userInfo?.email || "",
+      organizationAddress: trimWhiteSpace(organizationAddress),
+      organizationName: trimWhiteSpace(organizationName),
+      organizationDesc,
+      role: userInfo?.role || "ASP",
+      roleInfo: {
+        aspInfo: {
+          numKids: parseInt(trimWhiteSpace(numKids), 10),
+        },
+        donorInfo: null,
+      },
       primaryContact: {
         name: trimWhiteSpace(primaryContact.name),
         email: trimWhiteSpace(primaryContact.email),
         phone: trimWhiteSpace(primaryContact.phone),
       },
-      organizationName: trimWhiteSpace(organizationName),
-      numberOfKids: parseInt(trimWhiteSpace(numberOfKids), 10),
-      organizationAddress: trimWhiteSpace(organizationAddress),
-      organizationDescription: trimWhiteSpace(organizationDescription),
       onsiteContacts: onsiteInfo.map((obj) => ({
         name: trimWhiteSpace(obj.name),
         phone: trimWhiteSpace(obj.phone),
@@ -431,10 +612,8 @@ const Settings = (): React.ReactElement => {
       })),
     };
 
-    // eslint-disable-next-line no-console
-    console.log(request);
-
-    // TODO: handleSaveSettings(request);
+    const requestorId = authenticatedUser?.id;
+    handleSaveSettings(requestorId, requestUserInfo);
   };
 
   const getSaveSection = (): React.ReactElement => {
@@ -453,7 +632,9 @@ const Settings = (): React.ReactElement => {
           color: "primary.green",
           bgColor: "background.white",
         }}
-        disabled={attemptedSubmit && !isRequestValid()}
+        disabled={
+          !haveSettingsChanged() || (attemptedSubmit && !isRequestValid())
+        }
         _disabled={{
           borderColor: "#CCCCCC !important",
           bgColor: "#CCCCCC !important",

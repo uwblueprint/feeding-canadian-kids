@@ -59,6 +59,7 @@ const Routes = (): React.ReactElement => (
       />
       <Route path={Paths.EDIT_TEAM_PAGE} element={<EditTeamInfoPage />} />
       <Route path={Paths.HOOKS_PAGE} element={<HooksDemo />} />
+      <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
     </Route>
     <Route path="*" element={<NotFound />} />
   </RouteContainer>

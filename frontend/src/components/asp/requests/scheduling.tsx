@@ -1,17 +1,19 @@
 import {
   Avatar,
-  AvatarGroup,
   Box,
   Button,
   Center,
-  Container,
-  Flex,
-  FormControl,
-  FormLabel,
   Grid,
   GridItem,
   HStack,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Select,
   SimpleGrid,
   Spacer,
@@ -23,9 +25,8 @@ import {
   Text,
   VStack,
   useBreakpointValue,
-  useMediaQuery,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const titleSection = (): React.ReactElement => {
   return (
@@ -107,8 +108,6 @@ const SchedulingForm = (): React.ReactElement => {
     console.log("Data is valid!");
     // Proceed with further actions or form submission
   };
-
-  // confirm leaving page if user leaves without submitting form
 
   return (
     <Grid
@@ -353,6 +352,39 @@ const MealFormProgress = (): React.ReactElement => {
   );
 };
 
+const QuitModal = ({
+  isOpen,
+  onClose,
+  onQuit,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onQuit: () => void;
+}): React.ReactElement => {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Quit Editing?</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Text>Your changes will not be saved if you leave this page.</Text>
+        </ModalBody>
+
+        <ModalFooter>
+          <Button bgColor="red" mr={3} onClick={onQuit}>
+            Quit
+          </Button>
+
+          <Button colorScheme="red" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
 /* const steps = [
     { title: "First", description: "Contact Info" },
     { title: "Second", description: "Date & Time" },
@@ -386,18 +418,43 @@ const MealFormProgress = (): React.ReactElement => {
 // How can I implement this?
 
 const CreateMealRequest = (): React.ReactElement => {
+  const [showQuitModal, setShowQuitModal] = useState(false);
+
+  const handleQuitEditing = () => {
+    setShowQuitModal(false);
+  };
+
+  const handleCancelQuit = () => {
+    setShowQuitModal(false);
+  };
+
+  const alertUser = (e: {
+    returnValue: string;
+    preventDefault: () => void;
+  }) => {
+    e.preventDefault();
+    e.returnValue = "";
+    // setShowQuitModal(true);
+  };
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", (e) => alertUser(e));
+    return () => {
+      window.removeEventListener("beforeunload", alertUser);
+    };
+  }, []);
+
   return (
     <div>
-      {/* <Flex
-        flexDirection="column"
-        width="100vw"
-        justifyContent={{ base: "center", md: "flex-start" }}
-        alignItems="center"
-      > */}
       {titleSection()}
 
       {MealFormProgress()}
-      {/* </Flex> */}
+
+      <QuitModal
+        isOpen={showQuitModal}
+        onClose={handleCancelQuit}
+        onQuit={handleQuitEditing}
+      />
     </div>
   );
 };

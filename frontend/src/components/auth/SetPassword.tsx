@@ -110,8 +110,6 @@ const SetPassword = (): React.ReactElement => {
     GET_ONBOARDING_REQUEST,
   );
 
-  
-
   const [register, { loading: registerLoading }] = useMutation(REGISTER_USER);
 
   console.log(onboardingData);

@@ -113,6 +113,7 @@ const Settings = (): React.ReactElement => {
     userInfo?.organizationDesc || "",
   );
   // json parse/stringify creates a deep copy of the array of contacts
+  // this prevents setOnsiteInfo from mutating the original state of userInfo.onsiteContacts
   const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>(
     userInfo
       ? JSON.parse(JSON.stringify(userInfo.onsiteContacts))
@@ -560,6 +561,9 @@ const Settings = (): React.ReactElement => {
       if (newInfo) {
         setAuthenticatedUser({ ...authenticatedUser, info: newInfo });
         setUserInfo(newInfo);
+        // Need to override local storage to persist new changes on page refresh/navigation
+        // without this change, the initial state of userinfo will not include new changes
+        // because local storage only updates after the user logs in
         setLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "info", newInfo);
         toast({
           title: "Saved settings successfully",

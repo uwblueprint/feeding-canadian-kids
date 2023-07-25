@@ -1,17 +1,17 @@
 import mongoengine as mg
-from .food_request import FoodRequest
+from .food_request import FoodRequest, MealType
 from datetime import datetime
+from .user_info import Contact
+from bson.objectid import ObjectId
 
 
 class FoodRequestGroup(mg.Document):
+    _id = mg.ObjectIdField(required=True, default=ObjectId)
     description = mg.StringField(required=True)
+    requestor = mg.ObjectIdField()  # The ASP making the request
 
     # TODO: make this required=True when we have users populated
-    requestor = mg.ObjectIdField()
     requests = mg.EmbeddedDocumentListField(FoodRequest, default=list)
-
-    date_created = mg.DateTimeField(required=True, default=datetime.utcnow)
-    date_updated = mg.DateTimeField(required=True, default=datetime.utcnow)
 
     """
     Open: At least one FoodRequest is open
@@ -21,6 +21,17 @@ class FoodRequestGroup(mg.Document):
     status = mg.StringField(
         choices=["Open", "Fulfilled", "Cancelled"], required=True, default="Open"
     )
+
+    # Donation Details
+    meal_info = mg.EmbeddedDocumentField(MealType, required=True)
+    drop_off_time = mg.DateTimeField(required=True)
+    drop_off_location = mg.StringField(required=True)
+    delivery_instructions = mg.StringField(required=True)
+    onsite_staff = mg.EmbeddedDocumentListField(Contact, required=True)
+
+    # Timestamps
+    date_created = mg.DateTimeField(required=True, default=datetime.utcnow)
+    date_updated = mg.DateTimeField(required=True, default=datetime.utcnow)
 
     def to_serializable_dict(self):
         """

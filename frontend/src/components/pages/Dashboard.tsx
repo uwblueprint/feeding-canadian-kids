@@ -1,4 +1,5 @@
-import { CalendarIcon, ChevronUpIcon, ChevronDownIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { CalendarIcon, ChevronDownIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { AtSignIcon, EmailIcon, InfoIcon } from "@chakra-ui/icons";
 import {
   Accordion,
   AccordionItem,
@@ -33,10 +34,10 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 // eslint-disable-next-line import/order
-import FullCalendar from "@fullcalendar/react";
-// eslint-disable-next-line import/order
 import dayGridPlugin from "@fullcalendar/daygrid";
-import React from "react";
+// eslint-disable-next-line import/order
+import FullCalendar from "@fullcalendar/react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import MealRequestForm from "./MealRequestForm";
@@ -49,6 +50,48 @@ import RefreshCredentials from "../auth/RefreshCredentials";
 
 type ButtonProps = { text: string; path: string };
 
+type Staff = {
+  name: string;
+  email: string;
+  phone: string;
+};
+
+type MealRequest = {
+  date: Date;
+  onsiteStaff: Staff[];
+  dropOffTime: Date;
+  dropOffLocation: string;
+  deliveryInstructions: string;
+};
+
+const SAMPLE_ONSITE_STAFF_1: Staff = {
+  name: "John D.",
+  email: "john@email.com",
+  phone: "123-456-7890",
+};
+
+const SAMPLE_ONSITE_STAFF_2: Staff = {
+  name: "Alice F.",
+  email: "alice@email.com",
+  phone: "123-456-7890",
+};
+
+const SAMPLE_MEAL_REQUEST_1: MealRequest = {
+  date: new Date(2023, 7, 18, 12, 30, 0),
+  onsiteStaff: [SAMPLE_ONSITE_STAFF_1, SAMPLE_ONSITE_STAFF_2],
+  dropOffTime: new Date(2023, 7, 18, 12, 30, 0),
+  dropOffLocation: "20 Main St.",
+  deliveryInstructions: "Leave at the main entrance.",
+};
+
+const SAMPLE_MEAL_REQUEST_2: MealRequest = {
+  date: new Date(2023, 7, 22, 12, 30, 0),
+  onsiteStaff: [SAMPLE_ONSITE_STAFF_1, SAMPLE_ONSITE_STAFF_2],
+  dropOffTime: new Date(2023, 7, 22, 12, 30, 0),
+  dropOffLocation: "20 Main St.",
+  deliveryInstructions: "Leave at the main entrance.",
+};
+
 const NavButton = ({ text, path }: ButtonProps) => {
   const navigate = useNavigate();
   return <Button onClick={() => navigate(path)}>{text}</Button>;
@@ -57,21 +100,9 @@ const NavButton = ({ text, path }: ButtonProps) => {
 function App() {
   const [isWebView] = useMediaQuery("(min-width: 62em)");
 
-  interface event {
-    timeText: string;
-    event: {
-      title: string;
-    };
-  }
-
-  function renderEventContent(eventInfo: event) {
-    return (
-      <>
-        <b>{eventInfo.timeText}</b>
-        <i>{eventInfo.event.title}</i>
-      </>
-    );
-  }
+  const [selectedMealRequest, setSelectedMealRequest] = useState<
+    MealRequest | undefined
+  >(undefined);
 
   const listData = [
     { title: 'Item 1', content: 'Content for Item 1' },
@@ -148,25 +179,84 @@ function App() {
           <TabPanel>
             {isWebView && (
               <Stack direction="row">
-                <div style={{ width: "70%" }}>
+                <div style={{ width: "100%" }}>
                   <FullCalendar
+                    headerToolbar={{
+                      left: "prev",
+                      center: "title",
+                      right: "next"
+                    }}
+                    themeSystem="Simplex"
                     plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
-                    weekends={false}
                     events={[
-                      { title: "event 1", date: "2023-07-01" },
-                      { title: "event 2", date: "2023-07-08" },
+                      {
+                        title: "event 1",
+                        date: "2023-07-01",
+                        extendedProps: { mealRequest: SAMPLE_MEAL_REQUEST_1 },
+                      },
+                      {
+                        title: "event 2",
+                        date: "2023-07-08",
+                        extendedProps: { mealRequest: SAMPLE_MEAL_REQUEST_2 },
+                      },
                     ]}
-                    eventContent={renderEventContent}
+                    // eventContent={renderEventContent}
+                    eventClick={(info) => {
+                      setSelectedMealRequest(
+                        info.event.extendedProps.mealRequest,
+                      );
+                      // info.el.style.borderColor = "red";
+                    }}
+                    eventMouseLeave={() => {
+                      setSelectedMealRequest(undefined);
+                    }}
                   />
                 </div>
-                <div style={{ width: "30%", margin: "20px" }}>
-                  <Card padding={5}>
-                    <CardBody>
-                      <Text>yo</Text>
-                    </CardBody>
-                  </Card>
-                </div>
+                {selectedMealRequest && (
+                  <div style={{ width: "30%", margin: "20px" }}>
+                    <Text><strong>Upcoming Delivery</strong></Text>
+                    <Card padding={3}>
+                      <CardBody>
+                        <Table variant="unstyled" size='lg'>
+                          <Tr>
+                            <Td >
+                              <AtSignIcon />
+                            </Td>
+                            <Text>
+                            <strong>Location:{" "}<br /></strong>{selectedMealRequest.date.toLocaleString()}
+                            </Text>
+                          </Tr>
+                          <Tr>
+                            <Td>
+                              <InfoIcon />
+                            </Td>
+                            <Text><strong>Onsite Staff:</strong></Text>
+                            {selectedMealRequest.onsiteStaff.map(
+                              (staffMember) => (
+                                <>
+                                  <Text>{staffMember.name}</Text>
+                                  <Text>{staffMember.email}</Text>
+                                  <Text>{staffMember.phone}</Text>
+                                </>
+                              ),
+                            )}
+                          </Tr>
+
+                          <Tr>
+                            <Td>
+                              <EmailIcon />
+                            </Td>
+                            <Text>
+                            <strong>Delivery notes:{" "}</strong><br />
+                              {selectedMealRequest.deliveryInstructions}
+                            </Text>
+                          </Tr>
+                        </Table>
+                      </CardBody>
+                    </Card>
+                  </div>
+                )}
               </Stack>
             )}
           </TabPanel>

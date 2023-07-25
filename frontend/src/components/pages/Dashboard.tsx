@@ -1,5 +1,10 @@
-import { CalendarIcon, ChevronDownIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { CalendarIcon, ChevronUpIcon, ChevronDownIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Box,
   Button,
   Card,
@@ -7,6 +12,8 @@ import {
   CardFooter,
   CardHeader,
   Flex,
+  List,
+  ListItem,
   Stack,
   Tab,
   TabList,
@@ -66,6 +73,12 @@ function App() {
     );
   }
 
+  const listData = [
+    { title: 'Item 1', content: 'Content for Item 1' },
+    { title: 'Item 2', content: 'Content for Item 2' },
+    { title: 'Item 3', content: 'Content for Item 3' },
+  ];
+
   return (
     <Box
       marginLeft={["20px", "20px", "150px", "150px"]}
@@ -100,7 +113,7 @@ function App() {
       >
         <Button
           colorScheme="green"
-          fontSize={["12px", "14px", "14px", "14px"]}
+          fontSize={["12px", "16px", "16px", "16px"]}
           width={["100%", "100%", "100%", "auto"]}
           mt={"10px"}
           mb={"20px"}
@@ -159,51 +172,126 @@ function App() {
           </TabPanel>
 
           <TabPanel>
+            {/* ORIGINAL TABLE *********************************** */}
             <TableContainer>
-            <Table style={{ fontFamily: "Inter" }}>
-              <Thead style={{ fontSize: '18px' }}>
-                {/* should abstract the rows into a react component */}
-                <Tr>
-                  <Th style={{ fontFamily: 'Inter' }}>Date Requested</Th>
-                  <Th style={{ fontFamily: 'Inter' }}>Time Requested</Th>
-                  <Th style={{ fontFamily: 'Inter' }}>Donor's Name</Th>
-                  <Th style={{ fontFamily: 'Inter' }}>Number of Meals</Th>
-                  <Th></Th>
-                </Tr>
-              </Thead>
+              <Table style={{ fontFamily: "Inter" }}>
+                <Thead style={{ fontSize: '18px' }}>
+                  <Tr>
+                    <Th style={{ fontFamily: 'Inter' }}>Date Requested</Th>
+                    <Th style={{ fontFamily: 'Inter' }}>Time Requested</Th>
+                    <Th style={{ fontFamily: 'Inter' }}>Donor's Name</Th>
+                    <Th style={{ fontFamily: 'Inter' }}>Number of Meals</Th>
+                    <Th></Th>
+                  </Tr>
+                </Thead>
 
-              <Tbody style={{ fontSize: '16px' }}>
-                <Tr>
-                  <Td>Oct 27, 2022</Td>
-                  <Td>5:00-6:00 PM</Td>
-                  <Td>Harvey's</Td>
-                  <Td>5</Td>
-                  <Td>
-                    <ChevronDownIcon boxSize={6} />
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td>Oct 27, 2022</Td>
-                  <Td>5:00-6:00 PM</Td>
-                  <Td>Harvey's</Td>
-                  <Td>5</Td>
-                  <Td>
-                    <ChevronDownIcon boxSize={6} />
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td>Oct 27, 2022</Td>
-                  <Td>5:00-6:00 PM</Td>
-                  <Td>Harvey's</Td>
-                  <Td>5</Td>
-                  <Td>
-                    <ChevronDownIcon boxSize={6} />
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
-
+                <Tbody style={{ fontSize: '16px' }}>
+                  <Accordion defaultIndex={[0]} allowMultiple>
+                    <Tr>
+                      <AccordionButton>
+                        <Box as="span" flex='1' textAlign='left'>
+                          <Td>Oct 27, 2022</Td>
+                          <Td>5:00-6:00 PM</Td>
+                          <Td>Harvey's</Td>
+                          <Td>5</Td>
+                          <Td>
+                            <ChevronDownIcon boxSize={6} />
+                          </Td>
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </Tr>
+                    <Tr>
+                      <Td>Oct 27, 2022</Td>
+                      <Td>5:00-6:00 PM</Td>
+                      <Td>Harvey's</Td>
+                      <Td>5</Td>
+                      <Td>
+                        <ChevronDownIcon boxSize={6} />
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td>Oct 27, 2022</Td>
+                      <Td>5:00-6:00 PM</Td>
+                      <Td>Harvey's</Td>
+                      <Td>5</Td>
+                      <Td>
+                        <ChevronDownIcon boxSize={6} />
+                      </Td>
+                    </Tr>
+                  </Accordion>
+                </Tbody>
+              </Table>
             </TableContainer>
+
+            {/* BASIC ACCORDION &********************** */}
+            {/* <Accordion defaultIndex={[0]} allowMultiple>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton>
+                    <Box as="span" flex='1' textAlign='left'>
+                      Section 1 title
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+                  veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                  commodo consequat.
+                </AccordionPanel>
+              </AccordionItem>
+
+              <AccordionItem>
+                <h2>
+                  <AccordionButton>
+                    <Box as="span" flex='1' textAlign='left'>
+                      Section 2 title
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+                  veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                  commodo consequat.
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion> */}
+
+      {/* ATTEMPT AT LIST ACCORDION ******************************** */}
+      {/* <List spacing={4}>
+            {listData.map((item, index) => (
+              <Accordion key={index} defaultIndex={0}>
+                <AccordionItem>
+                  {({ isExpanded }) => (
+                    <>
+                      <h2>
+                        <AccordionButton>
+                          <Box flex="1" textAlign="left">
+                            {item.title}
+                          </Box>
+                          {isExpanded ? (
+                            <ChevronUpIcon boxSize={6} />
+                          ) : (
+                            <ChevronDownIcon boxSize={6} />
+                          )}
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel>
+                        <p>{item.content}</p>
+                      </AccordionPanel>
+                    </>
+                  )}
+                </AccordionItem>
+              </Accordion>
+            ))}
+          </List>
+          */}
+
+           
           </TabPanel>
           <TabPanel>
             <Wrap>

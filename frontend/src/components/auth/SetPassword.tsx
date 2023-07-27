@@ -34,20 +34,30 @@ const SetPassword = (): React.ReactElement => {
         ) {
         id
         info {
+          email
+          organizationAddress
+          organizationName
+          organizationDesc
+          role
+          roleInfo {
+            aspInfo {
+              numKids
+            }
+            donorInfo {
+              type
+              tags
+            }
+          }
+          primaryContact {
+            name
+            phone
             email
-            organizationAddress
-            organizationName
-            role
-            primaryContact {
-                name
-                phone
-                email
-            }
-            onsiteContacts {
-                name
-                phone
-                email
-            }
+          }
+          onsiteContacts {
+            name
+            phone
+            email
+          }
         }
         dateSubmitted
         status
@@ -69,7 +79,17 @@ const SetPassword = (): React.ReactElement => {
             email
             organizationAddress
             organizationName
+            organizationDesc
             role
+            roleInfo {
+              aspInfo {
+                numKids
+              }
+              donorInfo {
+                type
+                tags
+              }
+            }
             primaryContact {
               name
               phone

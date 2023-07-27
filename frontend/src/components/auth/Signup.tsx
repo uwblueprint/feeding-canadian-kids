@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { AuthenticatedUser } from "../../types/AuthTypes";
+import { AuthenticatedUser } from "../../types/UserTypes";
 
 const REGISTER = gql`
   mutation Signup_Register(

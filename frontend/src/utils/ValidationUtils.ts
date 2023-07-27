@@ -8,3 +8,10 @@ export const isValidEmail = (emailStr: string): boolean => {
 export const trimWhiteSpace = (s: string): string => {
   return s.replace(/\s+/g, " ").trim();
 };
+
+// returns true if string is a valid non-negative integer
+export const isNonNegativeInt = (s: string): boolean => {
+  const parsedInt = parseInt(trimWhiteSpace(s), 10);
+  if (Number.isNaN(parsedInt) || parsedInt < 0) return false;
+  return true;
+};

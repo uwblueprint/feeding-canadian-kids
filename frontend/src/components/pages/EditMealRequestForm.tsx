@@ -38,7 +38,6 @@ import {
   UserInfo,
 } from "../../types/UserTypes";
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
-
 import OnsiteStaffSection from "../common/OnsiteStaffSection";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";

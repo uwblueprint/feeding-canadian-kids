@@ -47,7 +47,7 @@ const OnsiteStaffSection = ({
         <Flex flexDir="column" gap="8px">
           <FormControl isRequired>
             <FormLabel variant="form-label-bold">
-              Additional onsite staff
+              2. Additional onsite staff
             </FormLabel>
           </FormControl>
           <Text color="text.subtitle" variant="desktop-xs" mt="-12px">

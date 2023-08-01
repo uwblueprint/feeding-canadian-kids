@@ -18,16 +18,18 @@ const SchedulingForm = () => {
   const [endDate, setEndDate] = useState("");
   const [scheduledDropOffTime, setScheduledDropOffTime] = useState("");
   const dayNames = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
-  const [nextButtonValid, setNextButtonValid] = useState(false);
+  const [nextButtonEnabled, setNextButtonEnabled] = useState(false);
 
   // Button state (array of booleans)
-  const [buttonState, setButtonState] = useState(Array(7).fill(false));
+  const [weekdayButtonStates, setWeekdayButtonStates] = useState(
+    Array(7).fill(false),
+  );
 
   // Turn button to solid variant when clicked
   const handleClick = (index: number) => {
-    const newButtonState = [...buttonState];
+    const newButtonState = [...weekdayButtonStates];
     newButtonState[index] = !newButtonState[index];
-    setButtonState(newButtonState);
+    setWeekdayButtonStates(newButtonState);
 
     // update the donationDays list on which days are selected from the boolean array
     const selectedDays = newButtonState
@@ -46,11 +48,11 @@ const SchedulingForm = () => {
       scheduledDropOffTime === ""
     ) {
       // Handle validation error, display error message or prevent form submission
-      setNextButtonValid(true);
+      setNextButtonEnabled(true);
       console.log("Please fill in all the required fields.");
       return;
     }
-    setNextButtonValid(false);
+    setNextButtonEnabled(false);
 
     // Data is valid, continue to the next step
     console.log("Data is valid!");
@@ -84,7 +86,9 @@ const SchedulingForm = () => {
         <br />
 
         <Text
-          color={donationFrequency === "" && nextButtonValid ? "red" : "black"}
+          color={
+            donationFrequency === "" && nextButtonEnabled ? "red" : "black"
+          }
           as="b"
         >
           Donation Frequency*
@@ -103,7 +107,9 @@ const SchedulingForm = () => {
 
         <br />
         <Text
-          color={donationDays.length === 0 && nextButtonValid ? "red" : "black"}
+          color={
+            donationDays.length === 0 && nextButtonEnabled ? "red" : "black"
+          }
           as="b"
         >
           Days of Donation*
@@ -113,14 +119,20 @@ const SchedulingForm = () => {
           {dayNames.map((day) => (
             <Button
               key={day}
-              variant={buttonState[dayNames.indexOf(day)] ? "solid" : "outline"}
+              variant={
+                weekdayButtonStates[dayNames.indexOf(day)] ? "solid" : "outline"
+              }
               colorScheme="primary.blue"
               borderColor="primary.blue"
               textColor={
-                buttonState[dayNames.indexOf(day)] ? "white" : "primary.blue"
+                weekdayButtonStates[dayNames.indexOf(day)]
+                  ? "white"
+                  : "primary.blue"
               }
               backgroundColor={
-                buttonState[dayNames.indexOf(day)] ? "primary.blue" : "white"
+                weekdayButtonStates[dayNames.indexOf(day)]
+                  ? "primary.blue"
+                  : "white"
               }
               onClick={() => handleClick(dayNames.indexOf(day))}
               color="primary.blue"
@@ -139,7 +151,7 @@ const SchedulingForm = () => {
         <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 4, md: 4 }}>
           <Box>
             <Text
-              color={startDate === "" && nextButtonValid ? "red" : "black"}
+              color={startDate === "" && nextButtonEnabled ? "red" : "black"}
               as="b"
             >
               Start Date
@@ -161,7 +173,7 @@ const SchedulingForm = () => {
 
           <Box>
             <Text
-              color={endDate === "" && nextButtonValid ? "red" : "black"}
+              color={endDate === "" && nextButtonEnabled ? "red" : "black"}
               as="b"
             >
               End Date*
@@ -184,7 +196,9 @@ const SchedulingForm = () => {
           <Box>
             <Text
               color={
-                scheduledDropOffTime === "" && nextButtonValid ? "red" : "black"
+                scheduledDropOffTime === "" && nextButtonEnabled
+                  ? "red"
+                  : "black"
               }
               as="b"
             >

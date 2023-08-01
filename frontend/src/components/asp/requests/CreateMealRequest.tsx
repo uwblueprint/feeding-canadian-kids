@@ -10,13 +10,42 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import SchedulingForm from "./SchedulingForm";
+import SchedulingFormWeekly from "./SchedulingFormWeekly";
 import TitleSection from "./TitleSection";
 
 const CreateMealRequest = (): React.ReactElement => {
   const fontSize = useBreakpointValue({ base: "12px", sm: "16px", md: "20px" });
+
+  const [tabIndex, setTabIndex] = useState(0);
+  const [completedTab, setCompletedTab] = useState(-1); // The highest tab index that has been completed
+
+  // Part 1: Scheduling
+  const [isWeeklyInput, setIsWeeklyInput] = useState(true); // Are we in weekly input mode (false means we are in calendar mode)
+  const [donationFrequency, setDonationFrequency] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [scheduledDropOffTime, setScheduledDropOffTime] = useState("");
+
+  // Button state (array of booleans)
+  const [weekdayButtonStates, setWeekdayButtonStates] = useState(
+    Array(7).fill(false),
+  );
+
+  const handleNext = () => {
+    const thisTab = tabIndex;
+    setTabIndex((prevIndex) => prevIndex + 1);
+    setCompletedTab((prevIndex) => Math.max(prevIndex, thisTab));
+
+    // TODO: once the last tab is reached, submit the form
+    // Below is a way to get a list of days, i.e. the indexes of the true values in the boolean array
+    const selectedDays = weekdayButtonStates
+      .map((state, i) => (state ? i : -1))
+      .filter((day) => day !== -1);
+
+    console.log(selectedDays);
+  };
 
   const alertUser = (e: {
     returnValue: string;
@@ -46,46 +75,60 @@ const CreateMealRequest = (): React.ReactElement => {
             align="center"
             overflowX="auto"
             overflowY="hidden"
+            index={tabIndex}
+            onChange={setTabIndex}
           >
             <TabList>
               <Tab>
                 <HStack direction="row" spacing={4}>
                   <Avatar
-                    bgColor="primary.blue"
+                    bgColor={tabIndex === 0 ? "primary.blue" : "gray"}
                     name="1"
                     src="https://bit.ly/broken-link"
                     size="xs"
                   />
-                  <Text as="b" color="primary.blue" fontSize={fontSize}>
+                  <Text
+                    as="b"
+                    color={tabIndex === 0 ? "primary.blue" : "gray"}
+                    fontSize={fontSize}
+                  >
                     Scheduling
                   </Text>
                 </HStack>
               </Tab>
 
-              <Tab isDisabled>
+              <Tab isDisabled={completedTab < 0}>
                 <HStack direction="row" spacing={4}>
                   <Avatar
-                    bgColor="gray"
+                    bgColor={tabIndex === 1 ? "primary.blue" : "gray"}
                     name="2"
                     src="https://bit.ly/broken-link"
                     size="xs"
                   />
 
-                  <Text as="b" color="gray" fontSize={fontSize}>
+                  <Text
+                    as="b"
+                    color={tabIndex === 1 ? "primary.blue" : "gray"}
+                    fontSize={fontSize}
+                  >
                     Meal Donation Information
                   </Text>
                 </HStack>
               </Tab>
 
-              <Tab isDisabled>
+              <Tab isDisabled={completedTab < 1}>
                 <HStack direction="row" spacing={4}>
                   <Avatar
-                    bgColor="gray"
+                    bgColor={tabIndex === 2 ? "primary.blue" : "gray"}
                     name="3"
                     src="https://bit.ly/broken-link"
                     size="xs"
                   />
-                  <Text as="b" color="gray" fontSize={fontSize}>
+                  <Text
+                    as="b"
+                    color={tabIndex === 2 ? "primary.blue" : "gray"}
+                    fontSize={fontSize}
+                  >
                     Review & Submit
                   </Text>
                 </HStack>
@@ -94,7 +137,24 @@ const CreateMealRequest = (): React.ReactElement => {
 
             <TabPanels>
               <TabPanel>
-                <SchedulingForm />
+                {isWeeklyInput ? (
+                  <SchedulingFormWeekly
+                    donationFrequency={donationFrequency}
+                    setDonationFrequency={setDonationFrequency}
+                    weekdayButtonStates={weekdayButtonStates}
+                    setWeekdayButtonStates={setWeekdayButtonStates}
+                    startDate={startDate}
+                    setStartDate={setStartDate}
+                    endDate={endDate}
+                    setEndDate={setEndDate}
+                    scheduledDropOffTime={scheduledDropOffTime}
+                    setScheduledDropOffTime={setScheduledDropOffTime}
+                    setIsWeeklyInput={setIsWeeklyInput}
+                    onComplete={handleNext}
+                  />
+                ) : (
+                  <p>one!</p>
+                )}
               </TabPanel>
               <TabPanel>
                 <p>two!</p>

@@ -11,38 +11,53 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-const SchedulingForm = () => {
-  const [donationFrequency, setDonationFrequency] = useState("");
-  const [donationDays, setDonationDays] = useState([] as string[]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [scheduledDropOffTime, setScheduledDropOffTime] = useState("");
+type SchedulingFormWeeklyProps = {
+  donationFrequency: string;
+  setDonationFrequency: (donationFrequency: string) => void;
+  weekdayButtonStates: boolean[];
+  setWeekdayButtonStates: (weekdayButtonStates: boolean[]) => void;
+  startDate: string;
+  setStartDate: (startDate: string) => void;
+  endDate: string;
+  setEndDate: (endDate: string) => void;
+  scheduledDropOffTime: string;
+  setScheduledDropOffTime: (scheduledDropOffTime: string) => void;
+  setIsWeeklyInput: (isWeeklyInput: boolean) => void;
+  onComplete: () => void;
+};
+
+const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> = ({
+  donationFrequency,
+  setDonationFrequency,
+  weekdayButtonStates,
+  setWeekdayButtonStates,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+  scheduledDropOffTime,
+  setScheduledDropOffTime,
+  setIsWeeklyInput,
+  onComplete,
+}) => {
   const dayNames = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
+
   const [nextButtonEnabled, setNextButtonEnabled] = useState(false);
 
-  // Button state (array of booleans)
-  const [weekdayButtonStates, setWeekdayButtonStates] = useState(
-    Array(7).fill(false),
-  );
+  const numberOfChosenDays = weekdayButtonStates.filter((state) => state)
+    .length;
 
   // Turn button to solid variant when clicked
   const handleClick = (index: number) => {
     const newButtonState = [...weekdayButtonStates];
     newButtonState[index] = !newButtonState[index];
     setWeekdayButtonStates(newButtonState);
-
-    // update the donationDays list on which days are selected from the boolean array
-    const selectedDays = newButtonState
-      .map((state, i) => (state ? dayNames[i] : "") as string)
-      .filter((day) => day !== "");
-
-    setDonationDays(selectedDays);
   };
 
   const validateData = () => {
     if (
       donationFrequency === "" ||
-      donationDays.length === 0 ||
+      numberOfChosenDays === 0 ||
       startDate === "" ||
       endDate === "" ||
       scheduledDropOffTime === ""
@@ -56,7 +71,8 @@ const SchedulingForm = () => {
 
     // Data is valid, continue to the next step
     console.log("Data is valid!");
-    // Proceed with further actions or form submission
+
+    onComplete();
   };
 
   return (
@@ -75,12 +91,13 @@ const SchedulingForm = () => {
       <GridItem colSpan={{ base: 1, md: 2 }}>
         <Text color="primary.blue" fontSize="xs">
           If this is not a weekly donation,&nbsp;
-          <a
-            href="https://www.google.com"
+          <button
             style={{ textDecoration: "underline" }}
+            onClick={() => setIsWeeklyInput(false)}
+            type="button"
           >
             click here to enter dates manually
-          </a>
+          </button>
           .
         </Text>
         <br />
@@ -108,7 +125,7 @@ const SchedulingForm = () => {
         <br />
         <Text
           color={
-            donationDays.length === 0 && nextButtonEnabled ? "red" : "black"
+            numberOfChosenDays === 0 && nextButtonEnabled ? "red" : "black"
           }
           as="b"
         >
@@ -243,4 +260,4 @@ const SchedulingForm = () => {
   );
 };
 
-export default SchedulingForm;
+export default SchedulingFormWeekly;

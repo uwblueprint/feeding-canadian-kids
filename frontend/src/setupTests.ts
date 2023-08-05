@@ -7,3 +7,21 @@
 // "normal .ts file."
 // eslint-disable-next-line import/no-extraneous-dependencies
 import "@testing-library/jest-dom";
+
+// To fix issue in some tests with not finding "matchMedia"
+// https://stackoverflow.com/questions/39830580/jest-test-fails-typeerror-window-matchmedia-is-not-a-function
+// https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
+// https://github.com/facebook/create-react-app/issues/10126
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: (query: any) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // Deprecated
+    removeListener: jest.fn(), // Deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  }),
+});

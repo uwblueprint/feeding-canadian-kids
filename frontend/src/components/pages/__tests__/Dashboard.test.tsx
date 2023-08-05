@@ -15,14 +15,13 @@ jest.mock("@apollo/client", () => ({
 }));
 
 describe("Dashboard page", () => {
-  // No FE tests for now
-  // it("Should render Create Entity button", () => {
-  //   const page = render(
-  //     <BrowserRouter>
-  //       <Dashboard />
-  //     </BrowserRouter>,
-  //   );
-  //   const button = page.queryByText("Create Entity");
-  //   expect(button).toBeVisible();
-  // });
+  it("Should render Create Entity button", () => {
+    const page = render(
+      <BrowserRouter>
+        <Dashboard />
+      </BrowserRouter>,
+    );
+    const button = page.queryByText("Create Entity");
+    expect(button).toBeVisible();
+  });
 });

@@ -1,4 +1,3 @@
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Button,
   Divider,
@@ -12,51 +11,25 @@ import {
   ModalContent,
   ModalFooter,
   ModalOverlay,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
   useDisclosure,
-  useMediaQuery,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-import {
-  DASHBOARD_PAGE,
-  HOME_PAGE,
-  JOIN_SUCCESS_PAGE,
-} from "../../constants/Routes";
-import AuthContext from "../../contexts/AuthContext";
-import {
-  Contact,
-  OnboardingRequest,
-  Role,
-  UserInfo,
-} from "../../types/UserTypes";
-import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
+import { Contact } from "../../types/UserTypes";
+import { isValidEmail } from "../../utils/ValidationUtils";
+import useIsWebView from "../../utils/useIsWebView";
 import OnsiteStaffSection from "../common/OnsiteStaffSection";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
 const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
-const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
-const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
 
 const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
 const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
-const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
-const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
 
 const EditMealRequestForm = () => {
-  const [role, setRole] = useState<Role>("ASP");
-  const [email, setEmail] = useState("");
-  const [organizationName, setOrganizationName] = useState("");
-  const [organizationAddress, setOrganizationAddress] = useState("");
   const [primaryContact, setPrimaryContact] = useState<Contact>({
     name: "",
     phone: "",
@@ -71,137 +44,15 @@ const EditMealRequestForm = () => {
   ]);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
-  const [isWebView] = useMediaQuery("(min-width: 62em)");
+  const isWebView = useIsWebView();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const initialRef = React.useRef(null);
-  const finalRef = React.useRef(null);
-
-  const getMobileOnsiteStaffSection = (): React.ReactElement => {
-    return (
-      <Flex flexDir="column" gap="20px">
-        {onsiteInfo.map((info, index) => (
-          <Flex flexDir="column" gap="8px" key={index}>
-            <Flex flexDir="row" justifyContent="space-between">
-              <FormControl isRequired={index === 0}>
-                <FormLabel variant="mobile-form-label-bold" pt="20px">
-                  {`Additional Onsite Staff (${index + 1})`}
-                </FormLabel>
-              </FormControl>
-              <EditIcon
-                h="16px"
-                w="16px"
-                color="gray.gray300"
-                cursor="pointer"
-                _hover={{ color: "primary.blue" }}
-              />
-              {onsiteInfo.length >= 2 && (
-                <DeleteIcon
-                  h="16px"
-                  w="16px"
-                  color="gray.gray300"
-                  cursor="pointer"
-                  _hover={{ color: "primary.blue" }}
-                  onClick={() => {
-                    onsiteInfo.splice(index, 1);
-                    setOnsiteInfo([...onsiteInfo]);
-                  }}
-                />
-              )}
-            </Flex>
-            {index === 0 && (
-              <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
-                *Must add at least 1 onsite staff. Maximum of 10.
-              </Text>
-            )}
-            <FormControl
-              isRequired={index === 0}
-              isInvalid={attemptedSubmit && onsiteInfo[index].name === ""}
-            >
-              <Input
-                h="37px"
-                variant="mobile-outline"
-                value={onsiteInfo[index].name}
-                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME}
-                onChange={(e) => {
-                  onsiteInfo[index].name = e.target.value;
-                  setOnsiteInfo([...onsiteInfo]);
-                }}
-              />
-            </FormControl>
-            <FormControl
-              isRequired={index === 0}
-              isInvalid={attemptedSubmit && onsiteInfo[index].phone === ""}
-            >
-              <Input
-                h="37px"
-                variant="mobile-outline"
-                type="tel"
-                value={onsiteInfo[index].phone}
-                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER}
-                onChange={(e) => {
-                  onsiteInfo[index].phone = e.target.value;
-                  setOnsiteInfo([...onsiteInfo]);
-                }}
-              />
-            </FormControl>
-            <FormControl
-              isRequired={index === 0}
-              isInvalid={
-                attemptedSubmit && !isValidEmail(onsiteInfo[index].email)
-              }
-            >
-              <Input
-                h="37px"
-                variant="mobile-outline"
-                type="email"
-                value={onsiteInfo[index].email}
-                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_EMAIL}
-                onChange={(e) => {
-                  onsiteInfo[index].email = e.target.value;
-                  setOnsiteInfo([...onsiteInfo]);
-                }}
-              />
-            </FormControl>
-          </Flex>
-        ))}
-        {onsiteInfo.length < 10 && (
-          <Text
-            variant="mobile-body-bold"
-            cursor="pointer"
-            w="fit-content"
-            onClick={() => {
-              setOnsiteInfo([
-                ...onsiteInfo,
-                {
-                  name: "",
-                  phone: "",
-                  email: "",
-                },
-              ]);
-            }}
-          >
-            + Add another contact
-          </Text>
-        )}
-      </Flex>
-    );
-  };
-
-  const getWebOnsiteStaffSection = (): React.ReactElement => {
-    return (
-      <OnsiteStaffSection
-        onsiteInfo={onsiteInfo}
-        setOnsiteInfo={setOnsiteInfo}
-        attemptedSubmit={attemptedSubmit}
-      />
-    );
-  };
+  const initialFocusRef = React.useRef(null);
 
   const getMobileContactSection = (): React.ReactElement => {
     return (
       <Flex flexDir="column" gap="8px">
-        <FormControl isRequired>
+        <FormControl isRequired mb={6}>
           <FormLabel variant="mobile-form-label-bold">
             Primary Contact
           </FormLabel>
@@ -357,8 +208,7 @@ const EditMealRequestForm = () => {
     <>
       <Button onClick={onOpen}>Edit Meal Request</Button>
       <Modal
-        initialFocusRef={initialRef}
-        finalFocusRef={finalRef}
+        initialFocusRef={initialFocusRef}
         isOpen={isOpen}
         onClose={onClose}
       >
@@ -392,10 +242,14 @@ const EditMealRequestForm = () => {
                   base: "mobile-form-label-bold",
                   md: "form-label-bold",
                 }}
+
+                // TODO: Hook this up to a state variable
+                // TODO: Setup correct validation for this
+                // isInvalid={attemptedSubmit && }
               >
                 Number of meals
               </FormLabel>
-              <Input ref={initialRef} w="200px" placeholder="Ex. 100" />
+              <Input ref={initialFocusRef} w="200px" placeholder="Ex. 100" />
             </FormControl>
 
             <FormControl mt={3} mb={6} isRequired>
@@ -404,13 +258,14 @@ const EditMealRequestForm = () => {
                   base: "mobile-form-label-bold",
                   md: "form-label-bold",
                 }}
+
+                // TODO: Hook this up to a state variable
+                // TODO: Setup correct validation for this
+                // isInvalid={attemptedSubmit && }
               >
                 Dietary restrictions
               </FormLabel>
-              <Input
-                ref={initialRef}
-                placeholder="Ex. Nut allergy, gluten free"
-              />
+              <Input placeholder="Ex. Nut allergy, gluten free" />
             </FormControl>
 
             <FormControl mt={3} mb={6} isRequired>
@@ -419,32 +274,37 @@ const EditMealRequestForm = () => {
                   base: "mobile-form-label-bold",
                   md: "form-label-bold",
                 }}
+                // TODO: Hook this up to a state variable
+                // TODO: Setup correct validation for this
+                // isInvalid={attemptedSubmit && }
               >
                 Delivery Notes
               </FormLabel>
-              <Input
-                ref={initialRef}
-                placeholder="Ex. Nut allergy, gluten free"
-              />
+              <Input placeholder="Ex. Nut allergy, gluten free" />
               <br />
             </FormControl>
-
-            {isWebView && <Divider />}
-            {/* {isWebView
-          ? getWebOrganizationSection()
-          : getMobileOrganizationSection()} */}
             {isWebView && <Divider />}
             {isWebView ? getWebContactSection() : getMobileContactSection()}
-            {isWebView
-              ? getWebOnsiteStaffSection()
-              : getMobileOnsiteStaffSection()}
+
+            <OnsiteStaffSection
+              onsiteInfo={onsiteInfo}
+              setOnsiteInfo={setOnsiteInfo}
+              attemptedSubmit={attemptedSubmit}
+            />
           </ModalBody>
 
           <ModalFooter>
             <Button onClick={onClose} mr={3} variant="outline">
               Cancel
             </Button>
-            <Button colorScheme="blue">Save</Button>
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                setAttemptedSubmit(true);
+              }}
+            >
+              Save
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

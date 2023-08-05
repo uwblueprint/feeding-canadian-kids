@@ -129,7 +129,7 @@ const EditMealRequestForm = () => {
                   md: "form-label-bold",
                 }}
               >
-                1. Primary contact name
+                Primary contact name
               </FormLabel>
               <Input
                 value={primaryContact.name}

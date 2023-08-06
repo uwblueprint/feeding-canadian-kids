@@ -34,9 +34,8 @@ const Routes = (): React.ReactElement => (
     <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
     <Route path={Paths.RESET_PASSWORD_PAGE} element={<ResetPassword />} />
     <Route path={Paths.SET_PASSWORD_PAGE} element={<SetPassword />} />
-    <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
-    <Route path={Paths.DASHBOARD_PAGE} element={<AuthWall />}>
-      <Route path="" element={<Dashboard />} />
+    <Route path="" element={<AuthWall />}>
+      <Route path={Paths.DASHBOARD_PAGE} element={<Dashboard />} />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
       <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />
       <Route path={Paths.DISPLAY_ENTITY_PAGE} element={<DisplayPage />} />
@@ -54,6 +53,7 @@ const Routes = (): React.ReactElement => (
       />
       <Route path={Paths.EDIT_TEAM_PAGE} element={<EditTeamInfoPage />} />
       <Route path={Paths.HOOKS_PAGE} element={<HooksDemo />} />
+      <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
     </Route>
     <Route path="*" element={<NotFound />} />
   </RouteContainer>

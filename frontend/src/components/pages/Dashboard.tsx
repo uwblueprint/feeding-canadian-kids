@@ -1,16 +1,24 @@
 import {
+  CalendarIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   DeleteIcon,
   EditIcon,
+  HamburgerIcon,
 } from "@chakra-ui/icons";
 import {
   Box,
+  Center,
   Button as ChakraButton,
   Collapse,
   Flex,
   HStack,
   Heading,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
   VStack,
   Wrap,
@@ -26,7 +34,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import EditMealRequestForm from "./EditMealRequestForm";
-import mealRequests from "./MealRequestSampleData.json";
+import mealRequestsJSON from "./MealRequestSampleData.json";
 
 import BackgroundImage from "../../assets/background.png";
 import * as Routes from "../../constants/Routes";
@@ -60,7 +68,7 @@ const TeamInfoDisplay = () => {
   );
 };
 
-const Default = (): React.ReactElement => {
+const OldDashboard = (): React.ReactElement => {
   return (
     <div
       style={{
@@ -104,7 +112,6 @@ const Default = (): React.ReactElement => {
 };
 
 const ListView = () => {
-  // const [page, setPage] = useState(1);
   const chakraTheme = getTheme(DEFAULT_OPTIONS);
   const customTheme = {
     Table: `
@@ -152,12 +159,16 @@ const ListView = () => {
   };
 
   const handleEdit = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
+    // eslint-disable-next-line no-console
     console.log("edit clicked for item", item.id);
   };
 
   const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
+    // eslint-disable-next-line no-console
     console.log("delete clicked for item", item.id);
   };
+
+  const mealRequests = mealRequestsJSON;
 
   const data = {
     nodes: mealRequests.map(
@@ -297,13 +308,7 @@ const ListView = () => {
   };
 
   return (
-    <Flex flexDir="column" alignItems="center" w="80vw" mx="auto" mb="100px">
-      <Text variant="desktop-display-xl" my="20px">
-        Your Dashboard
-      </Text>
-      <Text variant="desktop-caption" mb="20px">
-        Use this page to see your upcoming food deliveries
-      </Text>
+    <Box mt="24px">
       <Box
         display="flex"
         alignItems="center"
@@ -323,8 +328,56 @@ const ListView = () => {
         theme={theme}
         layout={{ custom: true }}
       />
+      {mealRequests.length === 0 && (
+        <Center h="100px">
+          <Text>No meal requests to display</Text>
+        </Center>
+      )}
+    </Box>
+  );
+};
+
+const Dashboard = (): React.ReactElement => {
+  return (
+    <Flex flexDir="column" alignItems="center" w="80vw" mx="auto" mb="100px">
+      <Text variant="desktop-display-xl" my="20px">
+        Your Dashboard
+      </Text>
+      <Text variant="desktop-caption" mb="20px">
+        Use this page to see your upcoming food deliveries
+      </Text>
+      <Tabs defaultIndex={1} w="100%">
+        <Flex flexDir="row" justifyContent="space-between">
+          <TabList>
+            <Tab gap="8px">
+              <CalendarIcon w="16px" />
+              <Text variant="desktop-button-bold">Calendar</Text>
+            </Tab>
+            <Tab gap="8px">
+              <HamburgerIcon w="16px" />
+              <Text variant="desktop-button-bold">List</Text>
+            </Tab>
+            <Tab>
+              <Text variant="desktop-button-bold">Old Dashboard</Text>
+            </Tab>
+          </TabList>
+          <ChakraButton>+ Create Request</ChakraButton>
+        </Flex>
+
+        <TabPanels>
+          <TabPanel>
+            <p>Insert Calendar Here</p>
+          </TabPanel>
+          <TabPanel p="0">
+            <ListView />
+          </TabPanel>
+          <TabPanel>
+            <OldDashboard />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Flex>
   );
 };
 
-export default ListView;
+export default Dashboard;

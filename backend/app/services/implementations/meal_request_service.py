@@ -26,8 +26,7 @@ class MealRequestService(IMealRequestService):
                     description=description,
                     requestor=requestor,
                     meal_info=meal_info,
-                    donation_datetime=datetime.combine(
-                        request_date, drop_off_time),
+                    donation_datetime=datetime.combine(request_date, drop_off_time),
                     drop_off_location=drop_off_location,
                     delivery_instructions=delivery_instructions,
                     onsite_staff=onsite_staff,

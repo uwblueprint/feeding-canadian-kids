@@ -49,7 +49,8 @@ def test_create_meal_request(graphql_schema):
         == "Meal requests for office employees"
     )
     assert (
-        result.data["createMealRequest"]["mealRequests"][0]["mealInfo"]["portions"] == 40
+        result.data["createMealRequest"]["mealRequests"][0]["mealInfo"]["portions"]
+        == 40
     )
     assert (
         result.data["createMealRequest"]["mealRequests"][0]["mealInfo"][

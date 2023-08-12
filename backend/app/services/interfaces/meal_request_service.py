@@ -7,13 +7,13 @@ class IMealRequestService(ABC):
     """
 
     @abstractmethod
-    def create_meal_request_group(self, meal_request_details):
-        """Create a new MealRequestGroup object and corresponding MealRequests
+    def create_meal_request(self, meal_request_details):
+        """Create a new MealRequest object and corresponding MealRequests
 
         :param meal_request_details: recipient's email
         :type meal_request_details: dict containing fields like description,
-        :return: dict of MealRequestGroup object
+        :return: dict of MealRequest object
         :rtype: dict
-        :raises Exception: if MealRequestGroup was not created successfully
+        :raises Exception: if MealRequest was not created successfully
         """
         pass

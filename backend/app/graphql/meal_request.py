@@ -15,8 +15,14 @@ class MealRequestTypeInput(graphene.InputObjectType):
     portions = graphene.Int(required=True)
 
 
+class MealTypeInput(graphene.InputObjectType):
+    portions = graphene.Int(required=True)
+    dietary_restrictions = graphene.String(required=True)
+    meal_suggestions = graphene.String(required=True)
+
+
 # Response Types
-class MealRequestTypeResponse(graphene.ObjectType):
+class MealInfoResponse(graphene.ObjectType):
     portions = graphene.Int(required=True)
     dietary_restrictions = graphene.String(required=True)
     meal_suggestions = graphene.String(required=True)
@@ -24,26 +30,17 @@ class MealRequestTypeResponse(graphene.ObjectType):
 
 class CreateMealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
-    donation_date = graphene.Date()
-    status = graphene.String()
-
-
-class CreateMealRequestGroupResponse(graphene.ObjectType):
-    id = graphene.ID()
-    description = graphene.String()
-    requests = graphene.List(CreateMealRequestResponse)
-    meal_info = graphene.Field(MealRequestTypeResponse)
-    status = graphene.String()
-
-
-class MealTypeInput(graphene.InputObjectType):
+    donation_datetime = graphene.DateTime(required=True)
+    status = graphene.String(required=True)
+    description = graphene.String(required=True)
     portions = graphene.Int(required=True)
     dietary_restrictions = graphene.String(required=True)
     meal_suggestions = graphene.String(required=True)
+    meal_info = graphene.Field(MealInfoResponse, required=True)
 
 
 # Mutations
-class CreateMealRequestGroup(Mutation):
+class CreateMealRequests(Mutation):
     class Arguments:
         description = graphene.String(required=True)
         requestor = graphene.ID(required=True)
@@ -57,7 +54,7 @@ class CreateMealRequestGroup(Mutation):
         onsite_staff = graphene.List(ContactInput, required=True)
 
     # return values
-    meal_request_group = graphene.Field(CreateMealRequestGroupResponse)
+    meal_requests = graphene.List(CreateMealRequestResponse)
 
     def mutate(
         self,
@@ -71,7 +68,7 @@ class CreateMealRequestGroup(Mutation):
         delivery_instructions,
         onsite_staff,
     ):
-        result = services["meal_request_service"].create_meal_request_group(
+        result = services["meal_request_service"].create_meal_request(
             description=description,
             requestor=requestor,
             request_dates=request_dates,
@@ -82,8 +79,8 @@ class CreateMealRequestGroup(Mutation):
             onsite_staff=onsite_staff,
         )
 
-        return CreateMealRequestGroup(meal_request_group=result)
+        return CreateMealRequests(meal_requests=result)
 
 
 class MealRequestMutations(MutationList):
-    create_meal_request_group = CreateMealRequestGroup.Field()
+    create_meal_request = CreateMealRequests.Field()

@@ -22,16 +22,16 @@ class MealRequestTypeResponse(graphene.ObjectType):
     meal_suggestions = graphene.String(required=True)
 
 
-class CreateFoodRequestResponse(graphene.ObjectType):
+class CreateMealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
     donation_date = graphene.Date()
     status = graphene.String()
 
 
-class CreateFoodRequestGroupResponse(graphene.ObjectType):
+class CreateMealRequestGroupResponse(graphene.ObjectType):
     id = graphene.ID()
     description = graphene.String()
-    requests = graphene.List(CreateFoodRequestResponse)
+    requests = graphene.List(CreateMealRequestResponse)
     meal_info = graphene.Field(MealRequestTypeResponse)
     status = graphene.String()
 
@@ -43,7 +43,7 @@ class MealTypeInput(graphene.InputObjectType):
 
 
 # Mutations
-class CreateFoodRequestGroup(Mutation):
+class CreateMealRequestGroup(Mutation):
     class Arguments:
         description = graphene.String(required=True)
         requestor = graphene.ID(required=True)
@@ -57,7 +57,7 @@ class CreateFoodRequestGroup(Mutation):
         onsite_staff = graphene.List(ContactInput, required=True)
 
     # return values
-    food_request_group = graphene.Field(CreateFoodRequestGroupResponse)
+    meal_request_group = graphene.Field(CreateMealRequestGroupResponse)
 
     def mutate(
         self,
@@ -71,7 +71,7 @@ class CreateFoodRequestGroup(Mutation):
         delivery_instructions,
         onsite_staff,
     ):
-        result = services["food_request_service"].create_food_request_group(
+        result = services["meal_request_service"].create_meal_request_group(
             description=description,
             requestor=requestor,
             request_dates=request_dates,
@@ -82,8 +82,8 @@ class CreateFoodRequestGroup(Mutation):
             onsite_staff=onsite_staff,
         )
 
-        return CreateFoodRequestGroup(food_request_group=result)
+        return CreateMealRequestGroup(meal_request_group=result)
 
 
-class FoodRequestMutations(MutationList):
-    create_food_request_group = CreateFoodRequestGroup.Field()
+class MealRequestMutations(MutationList):
+    create_meal_request_group = CreateMealRequestGroup.Field()

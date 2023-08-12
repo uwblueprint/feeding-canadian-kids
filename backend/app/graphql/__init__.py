@@ -10,8 +10,8 @@ from ..services.implementations.user_service import UserService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.auth_service import AuthService
 from .auth import AuthMutations
-from .food_request import FoodRequestMutations
-from ..services.implementations.food_request_service import FoodRequestService
+from .meal_request import MealRequestMutations
+from ..services.implementations.meal_request_service import MealRequestService
 from ..services.implementations.onboarding_request_service import (
     OnboardingRequestService,
 )
@@ -32,7 +32,7 @@ class RootMutation(
     ExampleMutations,
     AuthMutations,
     OnboardingRequestMutations,
-    FoodRequestMutations,
+    MealRequestMutations,
     UserMutations,
 ):
     pass
@@ -67,5 +67,6 @@ def init_app(app):
         services["onboarding_request_service"] = OnboardingRequestService(
             logger=current_app.logger, email_service=services["email_service"]
         )
-        services["food_request_service"] = FoodRequestService(logger=current_app.logger)
+        services["meal_request_service"] = MealRequestService(
+            logger=current_app.logger)
         services["user_service"] = UserService(logger=current_app.logger)

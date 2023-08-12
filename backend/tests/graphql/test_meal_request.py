@@ -1,15 +1,15 @@
 """
-Tests for FoodRequestGroup GraphQL schema and query/mutation logic
+Tests for MealRequestGroup GraphQL schema and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
 """
 
 
-def test_create_food_request_group(graphql_schema):
+def test_create_meal_request_group(graphql_schema):
     mutation = """
-    mutation testCreateFoodRequestGroup {
-      createFoodRequestGroup(
+    mutation testCreateMealRequestGroup {
+      createMealRequestGroup(
         deliveryInstructions: "Leave at front door",
-        description: "Food request group for office employees",
+        description: "Meal request group for office employees",
         dropOffLocation: "123 Main Street",
         dropOffTime: "12:00:00Z",
         mealInfo: {portions: 40,
@@ -25,7 +25,7 @@ def test_create_food_request_group(graphql_schema):
         ],
       )
       {
-        foodRequestGroup {
+        mealRequestGroup {
           status
           description
           id
@@ -47,61 +47,61 @@ def test_create_food_request_group(graphql_schema):
     result = graphql_schema.execute(mutation)
 
     assert result.errors is None
-    assert result.data["createFoodRequestGroup"]["foodRequestGroup"]["status"] == "Open"
+    assert result.data["createMealRequestGroup"]["mealRequestGroup"]["status"] == "Open"
     assert (
-        result.data["createFoodRequestGroup"]["foodRequestGroup"]["description"]
-        == "Food request group for office employees"
+        result.data["createMealRequestGroup"]["mealRequestGroup"]["description"]
+        == "Meal request group for office employees"
     )
     assert (
-        result.data["createFoodRequestGroup"]["foodRequestGroup"]["mealInfo"][
+        result.data["createMealRequestGroup"]["mealRequestGroup"]["mealInfo"][
             "portions"
         ]
         == 40
     )
     assert (
-        result.data["createFoodRequestGroup"]["foodRequestGroup"]["mealInfo"][
+        result.data["createMealRequestGroup"]["mealRequestGroup"]["mealInfo"][
             "dietaryRestrictions"
         ]
         == "7 gluten free, 7 no beef"
     )
     assert (
-        result.data["createFoodRequestGroup"]["foodRequestGroup"]["mealInfo"][
+        result.data["createMealRequestGroup"]["mealRequestGroup"]["mealInfo"][
             "mealSuggestions"
         ]
         == "Burritos"
     )
     assert (
-        result.data["createFoodRequestGroup"]["foodRequestGroup"]["requests"][0][
+        result.data["createMealRequestGroup"]["mealRequestGroup"]["requests"][0][
             "donationDate"
         ]
         == "2023-06-01"
     )
     assert (
-        result.data["createFoodRequestGroup"]["foodRequestGroup"]["requests"][0][
+        result.data["createMealRequestGroup"]["mealRequestGroup"]["requests"][0][
             "status"
         ]
         == "Open"
     )
     assert (
-        result.data["createFoodRequestGroup"]["foodRequestGroup"]["requests"][1][
+        result.data["createMealRequestGroup"]["mealRequestGroup"]["requests"][1][
             "donationDate"
         ]
         == "2023-06-02"
     )
     assert (
-        result.data["createFoodRequestGroup"]["foodRequestGroup"]["requests"][1][
+        result.data["createMealRequestGroup"]["mealRequestGroup"]["requests"][1][
             "status"
         ]
         == "Open"
     )
 
 
-def test_get_food_request_group_failure(graphql_schema):
+def test_get_meal_request_group_failure(graphql_schema):
     mutation = """
-    mutation testCreateFoodRequestGroup {
-      createFoodRequestGroup(
+    mutation testCreateMealRequestGroup {
+      createMealRequestGroup(
         deliveryInstructions: "Leave at front door",
-        description: "Food request group for office employees",
+        description: "Meal request group for office employees",
         dropOffLocation: "123 Main Street",
         dropOffTime: "12:00:00Z",
         mealInfo: {portions: 40,
@@ -117,7 +117,7 @@ def test_get_food_request_group_failure(graphql_schema):
         ],
       )
       {
-        foodRequestGroup {
+        mealRequestGroup {
           status
           description
           id

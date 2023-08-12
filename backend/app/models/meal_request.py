@@ -4,18 +4,19 @@ from bson.objectid import ObjectId
 
 class MealType(mg.EmbeddedDocument):
     portions = mg.IntField(required=True)
-    dietary_restrictions = mg.StringField(required=True, default="No restrictions")
+    dietary_restrictions = mg.StringField(
+        required=True, default="No restrictions")
     meal_suggestions = mg.StringField(required=True)
 
 
-class FoodRequest(mg.EmbeddedDocument):
+class MealRequest(mg.EmbeddedDocument):
     _id = mg.ObjectIdField(required=True, default=ObjectId)
-    # The date that the food is being
+    # The date that the meal is being delivered
     donation_date = mg.DateField(required=True)
     """
     Open: Request has not been completely fulfilled
     Fulfilled: All meal types have been fulfilled
-    Cancelled: FoodRequest has been cancelled by the ASP
+    Cancelled: MealRequest has been cancelled by the ASP
     """
     status = mg.StringField(
         choices=["Open", "Fulfilled", "Cancelled"], required=True, default="Open"
@@ -29,7 +30,7 @@ class FoodRequest(mg.EmbeddedDocument):
 
         ObjectId must be converted to a string.
         """
-        food_request_dict = self.to_mongo().to_dict()
-        id = food_request_dict.pop("_id", None)
-        food_request_dict["id"] = str(id)
-        return food_request_dict
+        meal_request_dict = self.to_mongo().to_dict()
+        id = meal_request_dict.pop("_id", None)
+        meal_request_dict["id"] = str(id)
+        return meal_request_dict

@@ -15,13 +15,13 @@ jest.mock("@apollo/client", () => ({
 }));
 
 describe("Dashboard page", () => {
-  it("Should render Create Entity button", () => {
+  it("Should render Create Request button", () => {
     const page = render(
       <BrowserRouter>
         <Dashboard />
       </BrowserRouter>,
     );
-    const button = page.queryByText("Create Entity");
+    const button = page.queryByText("+ Create Request");
     expect(button).toBeVisible();
   });
 });

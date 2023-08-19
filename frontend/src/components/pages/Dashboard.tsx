@@ -173,18 +173,17 @@ const ListView = () => {
   const data = {
     nodes: mealRequests.map(
       (mealRequest, index): TABLE_LIBRARY_TYPES.TableNode => ({
-        // dateRequested: new Date().toString(),
-        // donorName: `donor-name-${letter}`,
-        // numMeals: Math.floor(Math.random() * 100),
         id: index,
         date_requested: new Date(mealRequest.drop_off_time.$date),
         time_requested: new Date(mealRequest.drop_off_time.$date),
         // donor_name: donor_name ? donor_name : null,
         donor_name: index % 2 ? null : "Placeholder Name",
         num_meals: mealRequest.meal_info.portions,
+        primary_contact: mealRequest.primary_contact,
         onsite_staff: mealRequest.onsite_staff,
         meal_description: mealRequest.description,
         delivery_instructions: mealRequest.delivery_instructions,
+        // pending: mealRequest.pending,
         pending: index % 2,
         _hasContent: false,
         nodes: null,
@@ -279,9 +278,15 @@ const ListView = () => {
             </Text>
             <Text variant="mobile-caption-bold">Primary:</Text>
             <Box mb="8px">
-              <Text variant="mobile-caption-2">Primary Name</Text>
-              <Text variant="mobile-caption-2">primary@email.com</Text>
-              <Text variant="mobile-caption-2">(888) PRI MARY</Text>
+              <Text variant="mobile-caption-2">
+                {item.primary_contact.name}
+              </Text>
+              <Text variant="mobile-caption-2">
+                {item.primary_contact.email}
+              </Text>
+              <Text variant="mobile-caption-2">
+                {item.primary_contact.phone}
+              </Text>
             </Box>
             <Text variant="mobile-caption-bold">Onsite:</Text>
             {item.onsite_staff.map((staff: Contact) => (
@@ -298,9 +303,7 @@ const ListView = () => {
           </Box>
           <Box flex={1} p="8px">
             <Text variant="mobile-button-bold">Meal Donor Notes:</Text>
-            <Text variant="mobile-caption-2">
-              Meal donor notes will go here, if applicable.
-            </Text>
+            <Text variant="mobile-caption-2">{item.delivery_instructions}</Text>
           </Box>
         </Flex>
       </Collapse>

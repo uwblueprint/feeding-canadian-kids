@@ -33,9 +33,6 @@ class CreateMealRequestResponse(graphene.ObjectType):
     donation_datetime = graphene.DateTime(required=True)
     status = graphene.String(required=True)
     description = graphene.String(required=True)
-    portions = graphene.Int(required=True)
-    dietary_restrictions = graphene.String(required=True)
-    meal_suggestions = graphene.String(required=True)
     meal_info = graphene.Field(MealInfoResponse, required=True)
 
 

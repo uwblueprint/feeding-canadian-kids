@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.1",
+    "@babel/preset-env": "^7.22.14",
     "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/react": "^2.4.1",
     "@emotion/react": "^11.10.5",
@@ -34,7 +35,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@codemirror)/\"",
     "test:ci": " react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --cache",

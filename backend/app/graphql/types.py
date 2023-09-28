@@ -57,6 +57,7 @@ class UserInfo(graphene.ObjectType):
     role_info = graphene.Field(RoleInfo)
     primary_contact = graphene.Field(Contact)
     onsite_contacts = graphene.List(Contact)
+    active = graphene.Boolean()
 
 
 class ContactInput(graphene.InputObjectType):
@@ -88,6 +89,7 @@ class UserInfoInput(graphene.InputObjectType):
     role_info = graphene.Field(RoleInfoInput)
     primary_contact = graphene.Field(ContactInput, required=True)
     onsite_contacts = graphene.List(ContactInput, required=True)
+    active = graphene.Boolean()
 
 
 class User(graphene.ObjectType):

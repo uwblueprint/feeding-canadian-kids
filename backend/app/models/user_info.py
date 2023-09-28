@@ -40,5 +40,6 @@ class UserInfo(mg.EmbeddedDocument):
     role_info = mg.EmbeddedDocumentField(RoleInfo)
     primary_contact = mg.EmbeddedDocumentField(Contact, required=True)
     onsite_contacts = mg.EmbeddedDocumentListField(Contact, required=True)
+    active = mg.BooleanField(default=True)
 
     meta = {"allow_inheritance": True}

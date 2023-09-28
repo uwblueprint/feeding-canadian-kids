@@ -42,6 +42,7 @@ def test_update_user_by_id(user_setup, mocker):
                             email: "com@domain.email"
                         }},
                     ],
+                    active: false
                 }}
             ) {{
                 user {{
@@ -71,6 +72,7 @@ def test_update_user_by_id(user_setup, mocker):
                             phone
                             email
                         }}
+                        active
                     }}
                 }}
             }}
@@ -116,7 +118,8 @@ def test_update_user_by_id(user_setup, mocker):
                             phone: "111-222-3333",
                             email: "example@domain.com"
                         }}
-                    ]
+                    ],
+                    active: true
                 }}
             ) {{
                 user {{
@@ -146,6 +149,7 @@ def test_update_user_by_id(user_setup, mocker):
                             phone
                             email
                         }}
+                        active
                     }}
                 }}
             }}
@@ -198,7 +202,8 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
                             phone: "111-222-3333",
                             email: "example@domain.com"
                         }}
-                    ]
+                    ],
+                    active: true
                 }}
             ) {{
                 user {{
@@ -228,6 +233,7 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
                             phone
                             email
                         }}
+                        active
                     }}
                 }}
             }}

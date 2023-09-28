@@ -34,6 +34,7 @@ def test_create_onboarding_request():
                                         email: "com@domain.email"
                                     },
                                 ],
+                                active: false
                             }
                         ) {
                             onboardingRequest {
@@ -63,6 +64,7 @@ def test_create_onboarding_request():
                                         phone
                                         email
                                     }
+                                    active
                                 }
                                 dateSubmitted
                                 status
@@ -112,7 +114,8 @@ def test_create_onboarding_request_with_existing_email_errors():
                             phone: "111-222-3333",
                             email: "example@domain.com"
                         }}
-                    ]
+                    ],
+                    active: true
                 }}
             ) {{
                 onboardingRequest {{
@@ -142,6 +145,7 @@ def test_create_onboarding_request_with_existing_email_errors():
                             phone
                             email
                         }}
+                        active
                     }}
                     dateSubmitted
                     status
@@ -185,6 +189,7 @@ def test_get_all_requests(onboarding_request_setup):
                             phone
                             email
                         }
+                        active
                     }
                     dateSubmitted
                     status
@@ -235,6 +240,7 @@ def test_filter_requests_by_role(onboarding_request_setup):
                             phone
                             email
                         }
+                        active
                     }
                     dateSubmitted
                     status
@@ -280,6 +286,7 @@ def test_filter_requests_by_status(onboarding_request_setup):
                             phone
                             email
                         }
+                        active
                     }
                     dateSubmitted
                     status
@@ -325,6 +332,7 @@ def test_get_requests_by_id(onboarding_request_setup):
                         phone
                         email
                     }}
+                    active
                 }}
                 dateSubmitted
                 status

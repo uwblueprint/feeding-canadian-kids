@@ -37,6 +37,7 @@ def test_all_users(user_setup):
                         phone
                         email
                     }
+                    active
                 }
             }
         }"""
@@ -86,6 +87,7 @@ def test_all_users_filter_by_role(user_setup):
                     phone
                     email
                 }
+                active
             }
         }}"""
     )
@@ -127,6 +129,7 @@ def test_get_user_by_id(user_setup):
                         phone
                         email
                     }}
+                    active
                 }}
             }}
         }}"""

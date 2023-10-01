@@ -14,9 +14,11 @@ export const RESET_PASSWORD_PAGE = "/:objectID/reset-password";
 
 export const SET_PASSWORD_PAGE = "/:objectID/set-password";
 
-export const SETTINGS_PAGE = "/settings";
+export const CREATE_MEAL_REQUEST_PAGE = "/request/scheduling";
 
 export const DASHBOARD_PAGE = "/dashboard";
+
+export const SETTINGS_PAGE = "/settings";
 
 export const EDIT_TEAM_PAGE = "/dashboard/edit-team";
 

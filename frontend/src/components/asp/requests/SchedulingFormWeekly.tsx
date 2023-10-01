@@ -23,7 +23,7 @@ type SchedulingFormWeeklyProps = {
   scheduledDropOffTime: string;
   setScheduledDropOffTime: (scheduledDropOffTime: string) => void;
   setIsWeeklyInput: (isWeeklyInput: boolean) => void;
-  onComplete: () => void;
+  handleNext: () => void;
 };
 
 const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> = ({
@@ -38,7 +38,7 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
   scheduledDropOffTime,
   setScheduledDropOffTime,
   setIsWeeklyInput,
-  onComplete,
+  handleNext,
 }) => {
   const dayNames = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
 
@@ -64,15 +64,11 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
     ) {
       // Handle validation error, display error message or prevent form submission
       setNextButtonEnabled(true);
-      console.log("Please fill in all the required fields.");
       return;
     }
     setNextButtonEnabled(false);
 
-    // Data is valid, continue to the next step
-    console.log("Data is valid!");
-
-    onComplete();
+    handleNext();
   };
 
   return (

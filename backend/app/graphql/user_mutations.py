@@ -40,6 +40,37 @@ class UpdateUserByID(Mutation):
                 )
             )
 
+class ActivateUserByID(Mutation):
+    class Arguments:
+        id = graphene.String(required=True)
+    
+    user = graphene.Field(User)
+
+    def mutate(self, info, id):
+        activate_user_dto = services["user_service"].activate_user_by_id(id)
+        return ActivateUserByID(
+            user=User(
+                id=activate_user_dto.id,
+                info=activate_user_dto.info
+            )
+        )
+
+class DeactivateUserByID(Mutation):
+    class Arguments:
+        id = graphene.String(required=True)
+    
+    user = graphene.Field(User)
+
+    def mutate(self, info, id):
+        deactivate_user_dto = services["user_service"].deactivate_user_by_id(id)
+        return ActivateUserByID(
+            user=User(
+                id=deactivate_user_dto.id,
+                info=deactivate_user_dto.info
+            )
+        )
 
 class UserMutations(MutationList):
     updateUserByID = UpdateUserByID.Field()
+    activateUserByID = ActivateUserByID.Field()
+    deactivateUserByID = DeactivateUserByID.Field()

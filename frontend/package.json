@@ -88,6 +88,7 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.2.1",
+    "react-multi-date-picker": "^4.3.2",
     "react-test-renderer": "^18.2.0"
   },
   "resolutions": {

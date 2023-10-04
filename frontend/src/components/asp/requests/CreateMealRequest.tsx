@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+import SchedulingFormCalendar from "./SchedulingFormCalendar";
 import SchedulingFormWeekly from "./SchedulingFormWeekly";
 import TitleSection from "./TitleSection";
 
@@ -65,7 +66,12 @@ const CreateMealRequest = (): React.ReactElement => {
               handleNext={() => {}} // Will be assigned by three step form
             />
           ) : (
-            <p>one!</p>
+            <SchedulingFormCalendar
+                scheduledDropOffTime={scheduledDropOffTime}
+                setScheduledDropOffTime={setScheduledDropOffTime}
+                setIsWeeklyInput={setIsWeeklyInput}
+                handleNext={() => {}} // Will be assigned by three step form
+             />
           )
         }
         panel2={<p>two!</p>}

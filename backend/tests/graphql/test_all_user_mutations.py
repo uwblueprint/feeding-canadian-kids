@@ -246,3 +246,176 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
 
     # Check error message is appropriate
     assert "num_kids must be greater than or equal to zero" in error
+
+def test_activate_user_by_id(user_setup, mocker):
+    _, _, user_3 = user_setup
+
+    activate_user = graphql_schema.execute(
+        f"""mutation testActivateUserById {{
+            activateUserByID (
+                requestorId: "{str(user_3.id)}",
+                id: "{str(user_3.id)}"
+            ) {{
+                user {{
+                    id
+                    info {{
+                        email
+                        organizationAddress
+                        organizationName
+                        organizationDesc
+                        role
+                         roleInfo {{
+                            aspInfo {{
+                                numKids
+                            }}
+                            donorInfo {{
+                                type
+                                tags
+                            }}
+                        }}
+                        primaryContact {{
+                            name
+                            phone
+                            email
+                        }}
+                        onsiteContacts {{
+                            name
+                            phone
+                            email
+                        }}
+                        active
+                    }}
+                }}
+            }}
+        }}"""
+    )
+
+    assert activate_user.data["activateUserByID"]["user"]["info"]["active"] == True
+
+def test_deactivate_user_by_id(user_setup, mocker):
+    user_1, user_2, user_3 = user_setup
+
+    deactivate_user = graphql_schema.execute(
+        f"""mutation testDeactivateUserById {{
+            deactivateUserByID (
+                requestorId: "{str(user_1.id)}",
+                id: "{str(user_1.id)}"
+            ) {{
+                user {{
+                    id
+                    info {{
+                        email
+                        organizationAddress
+                        organizationName
+                        organizationDesc
+                        role
+                         roleInfo {{
+                            aspInfo {{
+                                numKids
+                            }}
+                            donorInfo {{
+                                type
+                                tags
+                            }}
+                        }}
+                        primaryContact {{
+                            name
+                            phone
+                            email
+                        }}
+                        onsiteContacts {{
+                            name
+                            phone
+                            email
+                        }}
+                        active
+                    }}
+                }}
+            }}
+        }}"""
+    )
+
+    assert deactivate_user.data["deactivateUserByID"]["user"]["info"]["active"] == False
+
+    deactivate_user = graphql_schema.execute(
+        f"""mutation testDeactivateUserById {{
+            deactivateUserByID (
+                requestorId: "{str(user_3.id)}",
+                id: "{str(user_3.id)}"
+            ) {{
+                user {{
+                    id
+                    info {{
+                        email
+                        organizationAddress
+                        organizationName
+                        organizationDesc
+                        role
+                         roleInfo {{
+                            aspInfo {{
+                                numKids
+                            }}
+                            donorInfo {{
+                                type
+                                tags
+                            }}
+                        }}
+                        primaryContact {{
+                            name
+                            phone
+                            email
+                        }}
+                        onsiteContacts {{
+                            name
+                            phone
+                            email
+                        }}
+                        active
+                    }}
+                }}
+            }}
+        }}"""
+    )
+
+    assert deactivate_user.data["deactivateUserByID"]["user"]["info"]["active"] == False
+
+    # necessary to prevent further tests from failing
+    reactivate_user = graphql_schema.execute(
+        f"""mutation testActivateUserById {{
+            activateUserByID (
+                requestorId: "{str(user_3.id)}",
+                id: "{str(user_1.id)}"
+            ) {{
+                user {{
+                    id
+                    info {{
+                        email
+                        organizationAddress
+                        organizationName
+                        organizationDesc
+                        role
+                         roleInfo {{
+                            aspInfo {{
+                                numKids
+                            }}
+                            donorInfo {{
+                                type
+                                tags
+                            }}
+                        }}
+                        primaryContact {{
+                            name
+                            phone
+                            email
+                        }}
+                        onsiteContacts {{
+                            name
+                            phone
+                            email
+                        }}
+                        active
+                    }}
+                }}
+            }}
+        }}"""
+    )

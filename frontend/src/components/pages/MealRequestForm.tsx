@@ -1,5 +1,4 @@
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-
 import {
   Button,
   Divider,
@@ -26,7 +25,6 @@ import {
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
-
 import React, { useContext, useState } from "react";
 
 import {
@@ -34,16 +32,13 @@ import {
   HOME_PAGE,
   JOIN_SUCCESS_PAGE,
 } from "../../constants/Routes";
-
 import AuthContext from "../../contexts/AuthContext";
-
 import {
   Contact,
   OnboardingRequest,
   Role,
   UserInfo,
 } from "../../types/UserTypes";
-
 import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -58,7 +53,7 @@ const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
 
-function MealRequestForm() {
+const MealRequestForm = () => {
   const [role, setRole] = useState<Role>("ASP");
   const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
@@ -96,10 +91,10 @@ function MealRequestForm() {
               </FormControl>
               <EditIcon
                 h="16px"
-                  w="16px"
-                  color="gray.gray300"
-                  cursor="pointer"
-                  _hover={{ color: "primary.blue" }}
+                w="16px"
+                color="gray.gray300"
+                cursor="pointer"
+                _hover={{ color: "primary.blue" }}
               />
               {onsiteInfo.length >= 2 && (
                 <DeleteIcon
@@ -302,15 +297,15 @@ function MealRequestForm() {
                     </FormControl>
                   </Td>
                   <Td padding="0">
-                  <EditIcon
-                        h="19.5px"
-                        w="100%"
-                        color="gray.gray300"
-                        cursor="pointer"
-                        _hover={{ color: "primary.blue" }}
-                        pr={0}
-                      />
-                      </Td>
+                    <EditIcon
+                      h="19.5px"
+                      w="100%"
+                      color="gray.gray300"
+                      cursor="pointer"
+                      _hover={{ color: "primary.blue" }}
+                      pr={0}
+                    />
+                  </Td>
                   {onsiteInfo.length >= 2 ? (
                     <Td padding="0 2px">
                       <DeleteIcon
@@ -532,7 +527,7 @@ function MealRequestForm() {
             pt={{ base: 2, md: 8 }}
             variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
           >
-            Edit Meal Request 
+            Edit Meal Request
           </Text>
           <ModalCloseButton />
           <ModalBody pb={6}>
@@ -544,7 +539,7 @@ function MealRequestForm() {
             >
               Meal Information
             </Text>
-            
+
             <FormControl mt={3} mb={6} isRequired>
               <FormLabel
                 variant={{
@@ -596,11 +591,7 @@ function MealRequestForm() {
           </ModalBody>
 
           <ModalFooter>
-            <Button
-              onClick={onClose}
-              mr={3}
-              variant='outline'
-            >
+            <Button onClick={onClose} mr={3} variant="outline">
               Cancel
             </Button>
             <Button colorScheme="blue">Save</Button>
@@ -609,6 +600,6 @@ function MealRequestForm() {
       </Modal>
     </>
   );
-}
+};
 
 export default MealRequestForm;

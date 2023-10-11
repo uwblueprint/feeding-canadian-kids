@@ -1,34 +1,25 @@
-import { CalendarIcon, ChevronDownIcon, HamburgerIcon } from "@chakra-ui/icons";
-import { AtSignIcon, EmailIcon, InfoIcon } from "@chakra-ui/icons";
 import {
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
+  AtSignIcon,
+  CalendarIcon,
+  EmailIcon,
+  HamburgerIcon,
+  InfoIcon,
+} from "@chakra-ui/icons";
+import {
   Box,
   Button,
   Card,
   CardBody,
-  CardFooter,
-  CardHeader,
   Flex,
-  List,
-  ListItem,
   Stack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Table,
-  TableContainer,
   Tabs,
-  Tbody,
   Td,
   Text,
-  Tfoot,
-  Th,
-  Thead,
   Tr,
   Wrap,
   useMediaQuery,
@@ -42,9 +33,7 @@ import { useNavigate } from "react-router-dom";
 
 import MealRequestForm from "./MealRequestForm";
 
-import BackgroundImage from "../../assets/background.png";
 import * as Routes from "../../constants/Routes";
-import SampleContext from "../../contexts/SampleContext";
 import Logout from "../auth/Logout";
 import RefreshCredentials from "../auth/RefreshCredentials";
 
@@ -97,18 +86,12 @@ const NavButton = ({ text, path }: ButtonProps) => {
   return <Button onClick={() => navigate(path)}>{text}</Button>;
 };
 
-function App() {
+const App = () => {
   const [isWebView] = useMediaQuery("(min-width: 62em)");
 
   const [selectedMealRequest, setSelectedMealRequest] = useState<
     MealRequest | undefined
   >(undefined);
-
-  const listData = [
-    { title: 'Item 1', content: 'Content for Item 1' },
-    { title: 'Item 2', content: 'Content for Item 2' },
-    { title: 'Item 3', content: 'Content for Item 3' },
-  ];
 
   return (
     <Box
@@ -146,8 +129,8 @@ function App() {
           colorScheme="green"
           fontSize={["12px", "16px", "16px", "16px"]}
           width={["100%", "100%", "100%", "auto"]}
-          mt={"10px"}
-          mb={"20px"}
+          mt="10px"
+          mb="20px"
         >
           + Create Request
         </Button>
@@ -184,7 +167,7 @@ function App() {
                     headerToolbar={{
                       left: "prev",
                       center: "title",
-                      right: "next"
+                      right: "next",
                     }}
                     themeSystem="Simplex"
                     plugins={[dayGridPlugin]}
@@ -215,23 +198,30 @@ function App() {
                 </div>
                 {selectedMealRequest && (
                   <div style={{ width: "30%", margin: "20px" }}>
-                    <Text><strong>Upcoming Delivery</strong></Text>
+                    <Text>
+                      <strong>Upcoming Delivery</strong>
+                    </Text>
                     <Card padding={3}>
                       <CardBody>
-                        <Table variant="unstyled" size='lg'>
+                        <Table variant="unstyled" size="lg">
                           <Tr>
-                            <Td >
+                            <Td>
                               <AtSignIcon />
                             </Td>
                             <Text>
-                            <strong>Location:{" "}<br /></strong>{selectedMealRequest.date.toLocaleString()}
+                              <strong>
+                                Location: <br />
+                              </strong>
+                              {selectedMealRequest.date.toLocaleString()}
                             </Text>
                           </Tr>
                           <Tr>
                             <Td>
                               <InfoIcon />
                             </Td>
-                            <Text><strong>Onsite Staff:</strong></Text>
+                            <Text>
+                              <strong>Onsite Staff:</strong>
+                            </Text>
                             {selectedMealRequest.onsiteStaff.map(
                               (staffMember) => (
                                 <>
@@ -248,7 +238,8 @@ function App() {
                               <EmailIcon />
                             </Td>
                             <Text>
-                            <strong>Delivery notes:{" "}</strong><br />
+                              <strong>Delivery notes: </strong>
+                              <br />
                               {selectedMealRequest.deliveryInstructions}
                             </Text>
                           </Tr>
@@ -259,129 +250,6 @@ function App() {
                 )}
               </Stack>
             )}
-          </TabPanel>
-
-          <TabPanel>
-            {/* ORIGINAL TABLE *********************************** */}
-            <TableContainer>
-              <Table style={{ fontFamily: "Inter" }}>
-                <Thead style={{ fontSize: '18px' }}>
-                  <Tr>
-                    <Th style={{ fontFamily: 'Inter' }}>Date Requested</Th>
-                    <Th style={{ fontFamily: 'Inter' }}>Time Requested</Th>
-                    <Th style={{ fontFamily: 'Inter' }}>Donor's Name</Th>
-                    <Th style={{ fontFamily: 'Inter' }}>Number of Meals</Th>
-                    <Th></Th>
-                  </Tr>
-                </Thead>
-
-                <Tbody style={{ fontSize: '16px' }}>
-                  <Accordion defaultIndex={[0]} allowMultiple>
-                    <Tr>
-                      <AccordionButton>
-                        <Box as="span" flex='1' textAlign='left'>
-                          <Td>Oct 27, 2022</Td>
-                          <Td>5:00-6:00 PM</Td>
-                          <Td>Harvey's</Td>
-                          <Td>5</Td>
-                          <Td>
-                            <ChevronDownIcon boxSize={6} />
-                          </Td>
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                    </Tr>
-                    <Tr>
-                      <Td>Oct 27, 2022</Td>
-                      <Td>5:00-6:00 PM</Td>
-                      <Td>Harvey's</Td>
-                      <Td>5</Td>
-                      <Td>
-                        <ChevronDownIcon boxSize={6} />
-                      </Td>
-                    </Tr>
-                    <Tr>
-                      <Td>Oct 27, 2022</Td>
-                      <Td>5:00-6:00 PM</Td>
-                      <Td>Harvey's</Td>
-                      <Td>5</Td>
-                      <Td>
-                        <ChevronDownIcon boxSize={6} />
-                      </Td>
-                    </Tr>
-                  </Accordion>
-                </Tbody>
-              </Table>
-            </TableContainer>
-
-            {/* BASIC ACCORDION &********************** */}
-            {/* <Accordion defaultIndex={[0]} allowMultiple>
-              <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box as="span" flex='1' textAlign='left'>
-                      Section 1 title
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                  veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                  commodo consequat.
-                </AccordionPanel>
-              </AccordionItem>
-
-              <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box as="span" flex='1' textAlign='left'>
-                      Section 2 title
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                  veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                  commodo consequat.
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion> */}
-
-      {/* ATTEMPT AT LIST ACCORDION ******************************** */}
-      {/* <List spacing={4}>
-            {listData.map((item, index) => (
-              <Accordion key={index} defaultIndex={0}>
-                <AccordionItem>
-                  {({ isExpanded }) => (
-                    <>
-                      <h2>
-                        <AccordionButton>
-                          <Box flex="1" textAlign="left">
-                            {item.title}
-                          </Box>
-                          {isExpanded ? (
-                            <ChevronUpIcon boxSize={6} />
-                          ) : (
-                            <ChevronDownIcon boxSize={6} />
-                          )}
-                        </AccordionButton>
-                      </h2>
-                      <AccordionPanel>
-                        <p>{item.content}</p>
-                      </AccordionPanel>
-                    </>
-                  )}
-                </AccordionItem>
-              </Accordion>
-            ))}
-          </List>
-          */}
-
-           
           </TabPanel>
           <TabPanel>
             <Wrap>
@@ -420,6 +288,6 @@ function App() {
       </Tabs>
     </Box>
   );
-}
+};
 
 export default App;

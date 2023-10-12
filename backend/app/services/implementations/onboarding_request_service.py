@@ -33,6 +33,7 @@ class OnboardingRequestService(IOnboardingRequestService):
                 role_info=userInfo.role_info,
                 primary_contact=userInfo.primary_contact,
                 onsite_contacts=userInfo.onsite_contacts,
+                active=userInfo.active,
             )
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(

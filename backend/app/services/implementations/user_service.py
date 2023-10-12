@@ -264,6 +264,48 @@ class UserService(IUserService):
         }
         return UserDTO(**kwargs)
 
+    def activate_user_by_id(self, user_id):
+        try:
+            user = User.objects(id=user_id).first()
+            if not user:
+                raise Exception(f"user_id {user_id} not found")
+
+            user.info.active = True  # activate user
+
+            user.save()  # save changes
+
+            updated_user_dict = (
+                UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+            )
+            kwargs = {"id": updated_user_dict["id"], "info": updated_user_dict["info"]}
+
+            return UserDTO(**kwargs)
+
+        except Exception as e:
+            self.logger.error(f"Failed to activate user. Reason = {e}")
+            raise e
+
+    def deactivate_user_by_id(self, user_id):
+        try:
+            user = User.objects(id=user_id).first()
+            if not user:
+                raise Exception(f"user_id {user_id} not found")
+
+            user.info.active = False  # deactivate user
+
+            user.save()  # save changes
+
+            updated_user_dict = (
+                UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+            )
+            kwargs = {"id": updated_user_dict["id"], "info": updated_user_dict["info"]}
+
+            return UserDTO(**kwargs)
+
+        except Exception as e:
+            self.logger.error(f"Failed to deactivate user. Reason = {e}")
+            raise e
+
     def delete_user_by_id(self, user_id):
         try:
             deleted_user = User.objects(id=user_id).modify(remove=True, new=False)

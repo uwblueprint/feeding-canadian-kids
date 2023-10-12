@@ -9,12 +9,15 @@ from ..services.interfaces.meal_request_service import IMealRequestService
 Global services for GraphQL that will be initialized with
 live app loggers during __init__.py
 """
+
+
 class ServicesObject(TypedDict):
     user_service: IUserService
     email_service: IEmailService
     auth_service: IAuthService
     onboarding_request_service: IOnboardingRequestService
     meal_request_service: IMealRequestService
+
 
 services: ServicesObject = {
     "user_service": None,

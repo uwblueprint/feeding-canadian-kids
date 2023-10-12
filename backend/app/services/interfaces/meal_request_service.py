@@ -7,7 +7,8 @@ class IMealRequestService(ABC):
     """
 
     @abstractmethod
-    def create_meal_request(self, 
+    def create_meal_request(
+        self,
         description: str,
         requestor,
         request_dates,
@@ -15,7 +16,8 @@ class IMealRequestService(ABC):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff):
+        onsite_staff,
+    ):
         """Create a new MealRequest object and corresponding MealRequests
 
         :param meal_request_details: recipient's email

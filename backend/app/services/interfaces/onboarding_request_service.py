@@ -50,7 +50,7 @@ class IOnboardingRequestService(ABC):
         """
 
     @abstractmethod
-    def approve_onboarding_request(self, id: str):
+    def approve_onboarding_request(self, id):
         """
         Approves an onboarding request
 

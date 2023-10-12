@@ -6,11 +6,6 @@ import Footer from "./components/common/Footer";
 import Header from "./components/common/Header";
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
 import AuthContext from "./contexts/AuthContext";
-import SampleContext, {
-  DEFAULT_SAMPLE_CONTEXT,
-} from "./contexts/SampleContext";
-import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
-import sampleContextReducer from "./reducers/SampleContextReducer";
 import { AuthenticatedUser } from "./types/UserTypes";
 import { getLocalStorageObj } from "./utils/LocalStorageUtils";
 
@@ -27,30 +22,16 @@ const App = (): React.ReactElement => {
     [authenticatedUser],
   );
 
-  // Some sort of global state. Context API replaces redux.
-  // Split related states into different contexts as necessary.
-  // Split dispatcher and state into separate contexts as necessary.
-  const [sampleContext, dispatchSampleContextUpdate] = useReducer(
-    sampleContextReducer,
-    DEFAULT_SAMPLE_CONTEXT,
-  );
-
   // Providers for app-specific state like contexts are here.
   // For providers for libraries like Apollo and OAuth, see index.tsx.
   return (
-    <SampleContext.Provider value={sampleContext}>
-      <SampleContextDispatcherContext.Provider
-        value={dispatchSampleContextUpdate}
-      >
-        <AuthContext.Provider value={currentAuthContext}>
-          <BrowserRouter>
-            <Header />
-            <Routes />
-            <Footer />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      </SampleContextDispatcherContext.Provider>
-    </SampleContext.Provider>
+    <AuthContext.Provider value={currentAuthContext}>
+      <BrowserRouter>
+        <Header />
+        <Routes />
+        <Footer />
+      </BrowserRouter>
+    </AuthContext.Provider>
   );
 };
 

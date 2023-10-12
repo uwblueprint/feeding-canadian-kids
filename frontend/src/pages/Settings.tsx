@@ -80,6 +80,7 @@ const UPDATEUSERBYID = gql`
             phone
             email
           }
+          active
         }
       }
     }
@@ -610,6 +611,7 @@ const Settings = (): React.ReactElement => {
         phone: trimWhiteSpace(obj.phone),
         email: trimWhiteSpace(obj.email),
       })),
+      active: userInfo?.active,
     };
 
     const requestorId = authenticatedUser?.id;

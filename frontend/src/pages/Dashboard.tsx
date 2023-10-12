@@ -1,14 +1,12 @@
 import { Button as ChakraButton, Wrap } from "@chakra-ui/react";
-import React, { useContext } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import EditMealRequestForm from "./EditMealRequestForm";
 
 import BackgroundImage from "../assets/background.png";
-import Logout from "../components/auth/Logout";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
 import * as Routes from "../constants/Routes";
-import SampleContext from "../contexts/SampleContext";
 
 type ButtonProps = { text: string; path: string };
 

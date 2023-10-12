@@ -29,6 +29,7 @@ class OnboardingRequestService(IOnboardingRequestService):
                 organization_address=userInfo.organization_address,
                 organization_name=userInfo.organization_name,
                 organization_desc=userInfo.organization_desc,
+                organization_coordinates=userInfo.organization_coordinates,
                 role=userInfo.role,
                 role_info=userInfo.role_info,
                 primary_contact=userInfo.primary_contact,

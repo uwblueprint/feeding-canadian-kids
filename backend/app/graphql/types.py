@@ -47,12 +47,12 @@ class RoleInfo(graphene.ObjectType):
     asp_info = graphene.Field(ASPInfo)
     donor_info = graphene.Field(DonorInfo)
 
-
 class UserInfo(graphene.ObjectType):
     email = graphene.String()
     organization_address = graphene.String()
     organization_name = graphene.String()
     organization_desc = graphene.String()
+    organization_coordinates = graphene.List(graphene.Float)
     role = graphene.String()
     role_info = graphene.Field(RoleInfo)
     primary_contact = graphene.Field(Contact)
@@ -85,6 +85,7 @@ class UserInfoInput(graphene.InputObjectType):
     organization_address = graphene.String(required=True)
     organization_name = graphene.String(required=True)
     organization_desc = graphene.String(required=True)
+    organization_coordinates = graphene.List(graphene.Float, required=True)
     role = graphene.String(required=True)
     role_info = graphene.Field(RoleInfoInput)
     primary_contact = graphene.Field(ContactInput, required=True)

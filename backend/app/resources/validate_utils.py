@@ -58,7 +58,7 @@ def validate_userinfo(userinfo, error_list):
         "role_info",
         "primary_contact",
         "onsite_contacts",
-        "active"
+        "active",
     ]
     if not isinstance(userinfo, dict):
         error_list.append("The info supplied is not a dict.")
@@ -85,7 +85,7 @@ def validate_userinfo(userinfo, error_list):
                 userinfo["role"], val, "info.role_info", error_list
             )
         elif key == "active" and type(val) is not bool:
-            error_list.append(f"The field info.active supplied is not a boolean.")
+            error_list.append("The field info.active supplied is not a boolean.")
         elif type(val) is not str and key != "active":
             error_list.append(f"The field info.{key} supplied is not a string.")
         elif val == "":

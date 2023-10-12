@@ -19,7 +19,7 @@ MOCK_INFO1_SNAKE = {
         {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"},
         {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
     ],
-    "active": True
+    "active": True,
 }
 
 MOCK_INFO1_CAMEL = {
@@ -43,7 +43,7 @@ MOCK_INFO1_CAMEL = {
         {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"},
         {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
     ],
-    "active": True
+    "active": True,
 }
 
 MOCK_INFO2_SNAKE = {
@@ -68,7 +68,7 @@ MOCK_INFO2_SNAKE = {
         {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
         {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
     ],
-    "active": True
+    "active": True,
 }
 
 MOCK_INFO2_CAMEL = {
@@ -93,7 +93,7 @@ MOCK_INFO2_CAMEL = {
         {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
         {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
     ],
-    "active": True
+    "active": True,
 }
 
 MOCK_INFO3_SNAKE = {
@@ -112,7 +112,7 @@ MOCK_INFO3_SNAKE = {
         {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
         {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
     ],
-    "active": False
+    "active": False,
 }
 
 MOCK_INFO3_CAMEL = {
@@ -131,7 +131,7 @@ MOCK_INFO3_CAMEL = {
         {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
         {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
     ],
-    "active": False
+    "active": False,
 }
 
 MOCK_USER1_SNAKE = {

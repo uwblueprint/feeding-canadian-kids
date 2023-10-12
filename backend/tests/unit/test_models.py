@@ -31,7 +31,7 @@ test_user_info = {
         {"name": "Abu", "phone": "123-456-7890", "email": "abu@uwblueprint.org"},
         {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
     ],
-    "active": True
+    "active": True,
 }
 
 
@@ -97,7 +97,4 @@ def test_create_onboarding_request():
             onboarding_request.info.onsite_contacts[i].email
             == test_user_info["onsite_contacts"][i]["email"]
         )
-    assert (
-        onboarding_request.info.active
-        == test_user_info["active"]
-    )
+    assert onboarding_request.info.active == test_user_info["active"]

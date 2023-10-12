@@ -247,6 +247,7 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
     # Check error message is appropriate
     assert "num_kids must be greater than or equal to zero" in error
 
+
 def test_activate_user_by_id(user_setup, mocker):
     _, _, user_3 = user_setup
 
@@ -290,7 +291,8 @@ def test_activate_user_by_id(user_setup, mocker):
         }}"""
     )
 
-    assert activate_user.data["activateUserByID"]["user"]["info"]["active"] == True
+    assert activate_user.data["activateUserByID"]["user"]["info"]["active"] is True
+
 
 def test_deactivate_user_by_id(user_setup, mocker):
     user_1, user_2, user_3 = user_setup
@@ -335,7 +337,7 @@ def test_deactivate_user_by_id(user_setup, mocker):
         }}"""
     )
 
-    assert deactivate_user.data["deactivateUserByID"]["user"]["info"]["active"] == False
+    assert deactivate_user.data["deactivateUserByID"]["user"]["info"]["active"] is False
 
     deactivate_user = graphql_schema.execute(
         f"""mutation testDeactivateUserById {{
@@ -377,10 +379,10 @@ def test_deactivate_user_by_id(user_setup, mocker):
         }}"""
     )
 
-    assert deactivate_user.data["deactivateUserByID"]["user"]["info"]["active"] == False
+    assert deactivate_user.data["deactivateUserByID"]["user"]["info"]["active"] is False
 
     # necessary to prevent further tests from failing
-    reactivate_user = graphql_schema.execute(
+    graphql_schema.execute(
         f"""mutation testActivateUserById {{
             activateUserByID (
                 requestorId: "{str(user_3.id)}",

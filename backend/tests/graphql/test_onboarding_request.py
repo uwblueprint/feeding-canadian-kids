@@ -16,6 +16,7 @@ def test_create_onboarding_request():
                                 organizationAddress: "789 Anywhere Street",
                                 organizationName: "Test3 Org",
                                 organizationDesc: "Testing 123",
+                                organizationCoordinates: [12.345, 67.890],
                                 role: "Admin",
                                 primaryContact: {
                                     name: "Anon ymous",
@@ -44,6 +45,7 @@ def test_create_onboarding_request():
                                     organizationAddress
                                     organizationName
                                     organizationDesc
+                                    organizationCoordinates
                                     role
                                     roleInfo {
                                         aspInfo {
@@ -91,6 +93,7 @@ def test_create_onboarding_request_with_existing_email_errors():
                     organizationAddress: "123 Anywhere Street",
                     organizationName: "Test1 Org",
                     organizationDesc: "Testing 123",
+                    organizationCoordinates: [12.345, 67.890],
                     role: "ASP",
                     roleInfo: {{
                         aspInfo: {{
@@ -125,6 +128,7 @@ def test_create_onboarding_request_with_existing_email_errors():
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                         roleInfo {{
                             aspInfo {{
@@ -169,6 +173,7 @@ def test_get_all_requests(onboarding_request_setup):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                         roleInfo {
                             aspInfo {
@@ -220,6 +225,7 @@ def test_filter_requests_by_role(onboarding_request_setup):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                         roleInfo {
                             aspInfo {
@@ -266,6 +272,7 @@ def test_filter_requests_by_status(onboarding_request_setup):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                         roleInfo {
                             aspInfo {
@@ -312,6 +319,7 @@ def test_get_requests_by_id(onboarding_request_setup):
                     organizationAddress
                     organizationName
                     organizationDesc
+                    organizationCoordinates
                     role
                     roleInfo {{
                         aspInfo {{

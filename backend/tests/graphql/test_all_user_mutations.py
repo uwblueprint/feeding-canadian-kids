@@ -24,6 +24,7 @@ def test_update_user_by_id(user_setup, mocker):
                     organizationAddress: "789 Anywhere Street",
                     organizationName: "Test3 Org",
                     organizationDesc: "Testing 123",
+                    organizationCoordinates: [12.345, 67.890],
                     role: "Admin",
                     primaryContact: {{
                         name: "Anon ymous",
@@ -52,6 +53,7 @@ def test_update_user_by_id(user_setup, mocker):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                          roleInfo {{
                             aspInfo {{
@@ -95,6 +97,7 @@ def test_update_user_by_id(user_setup, mocker):
                     organizationAddress: "123 Anywhere Street",
                     organizationName: "Test1 Org",
                     organizationDesc: "Testing123",
+                    organizationCoordinates: [12.345, 67.890]
                     role: "ASP",
                     roleInfo: {{
                        aspInfo: {{
@@ -129,6 +132,7 @@ def test_update_user_by_id(user_setup, mocker):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                         roleInfo {{
                             aspInfo {{
@@ -179,6 +183,7 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
                     organizationAddress: "123 Anywhere Street",
                     organizationName: "Test1 Org",
                     organizationDesc: "Testing123",
+                    organizationCoordinates: [12.345, 67.890]
                     role: "ASP",
                     roleInfo: {{
                        aspInfo: {{
@@ -213,6 +218,7 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                          roleInfo {{
                             aspInfo {{

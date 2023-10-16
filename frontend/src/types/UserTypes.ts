@@ -45,6 +45,7 @@ export type UserInfo = {
   roleInfo: RoleInfo;
   primaryContact: Contact;
   onsiteContacts: Array<Contact>;
+  active?: boolean;
 } | null;
 
 export type OnboardingRequest = {

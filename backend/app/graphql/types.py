@@ -47,6 +47,7 @@ class RoleInfo(graphene.ObjectType):
     asp_info = graphene.Field(ASPInfo)
     donor_info = graphene.Field(DonorInfo)
 
+
 class UserInfo(graphene.ObjectType):
     email = graphene.String()
     organization_address = graphene.String()

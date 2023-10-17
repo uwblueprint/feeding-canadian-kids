@@ -61,7 +61,8 @@ def test_create_onboarding_request():
         onboarding_request.info.organization_desc == test_user_info["organization_desc"]
     )
     assert (
-        onboarding_request.info.organization_coordinates == test_user_info["organization_coordinates"]
+        onboarding_request.info.organization_coordinates
+        == test_user_info["organization_coordinates"]
     )
     assert onboarding_request.info.role == test_user_info["role"]
     assert (

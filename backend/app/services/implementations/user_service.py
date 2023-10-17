@@ -151,10 +151,12 @@ class UserService(IUserService):
                 raise e
 
         return user_dtos
-    
+
     def update_user_coordinates(self, user_dto):
         try:
-            organization_coordinates = getGeocodeFromAddress(user_dto.info.organization_address)
+            organization_coordinates = getGeocodeFromAddress(
+                user_dto.info.organization_address
+            )
             user_dto.info["organization_coordinates"] = organization_coordinates
             return user_dto
         except Exception as e:

@@ -14,7 +14,6 @@ test_user_info = {
     "organization_address": "123 Waterloo, ON",
     "organization_name": "Feeding Canadian Kids",
     "organization_desc": "Testing123",
-    "organization_coordinates": [12.345, 67.890],
     "role": "Donor",
     "role_info": {
         "asp_info": None,
@@ -59,10 +58,6 @@ def test_create_onboarding_request():
     )
     assert (
         onboarding_request.info.organization_desc == test_user_info["organization_desc"]
-    )
-    assert (
-        onboarding_request.info.organization_coordinates
-        == test_user_info["organization_coordinates"]
     )
     assert onboarding_request.info.role == test_user_info["role"]
     assert (

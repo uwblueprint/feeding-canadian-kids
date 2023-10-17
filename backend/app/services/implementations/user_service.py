@@ -219,7 +219,6 @@ class UserService(IUserService):
     def update_user_by_id(self, user_id, update_user_dto):
         try:
             update_user_dto = self.update_user_coordinates(update_user_dto)
-            print(update_user_dto.info)
             old_user = User.objects(id=user_id).modify(
                 new=False,
                 auth_id=update_user_dto.auth_id,

@@ -59,11 +59,13 @@ def validate_coordinates(coordinates, error_list):
         coordinates[1], float
     ):
         error_list.append(
-            "The info.organization_coordinates supplied does not contain a list of floats."
+            "The info.organization_coordinates supplied"
+            " does not contain a list of floats."
         )
     elif not (-180 <= coordinates[0] <= 180) and not (-180 <= coordinates[1] <= 180):
         error_list.append(
-            "The info.organization_coordinates supplied are not in the interval [-180, 180]."
+            "The info.organization_coordinates supplied are not"
+            " in the interval [-180, 180]."
         )
     return error_list
 

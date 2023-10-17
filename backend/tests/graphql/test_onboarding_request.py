@@ -16,7 +16,9 @@ def test_create_onboarding_request():
                                 organizationAddress: "170 University Ave W",
                                 organizationName: "Test3 Org",
                                 organizationDesc: "Testing 123",
-                                organizationCoordinates: [43.472995850000004, -80.5373252901463],
+                                organizationCoordinates: [
+                                    43.472995850000004, -80.5373252901463
+                                ],
                                 role: "Admin",
                                 primaryContact: {
                                     name: "Anon ymous",

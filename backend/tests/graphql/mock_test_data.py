@@ -1,9 +1,9 @@
 MOCK_INFO1_SNAKE = {
     "email": "test1@organization.com",
-    "organization_address": "123 Anywhere Street",
+    "organization_address": "255 King St N",
     "organization_name": "Test1 Org",
     "organization_desc": "Testing123",
-    "organization_coordinates": [12.345, 67.890],
+    "organization_coordinates": [43.477876300000005, -80.52565465],
     "role": "ASP",
     "role_info": {
         "asp_info": {
@@ -25,10 +25,10 @@ MOCK_INFO1_SNAKE = {
 
 MOCK_INFO1_CAMEL = {
     "email": "test1@organization.com",
-    "organizationAddress": "123 Anywhere Street",
+    "organizationAddress": "255 King St N",
     "organizationName": "Test1 Org",
     "organizationDesc": "Testing123",
-    "organizationCoordinates": [12.345, 67.890],
+    "organizationCoordinates": [43.477876300000005, -80.52565465],
     "role": "ASP",
     "roleInfo": {
         "aspInfo": {
@@ -50,10 +50,10 @@ MOCK_INFO1_CAMEL = {
 
 MOCK_INFO2_SNAKE = {
     "email": "test2@organization.com",
-    "organization_address": "456 Anywhere Street",
+    "organization_address": "370 Highland Rd W",
     "organization_name": "Test2 Org",
     "organization_desc": "Testing123",
-    "organization_coordinates": [12.345, 67.890],
+    "organization_coordinates": [43.4384664, -80.5118701],
     "role": "Donor",
     "role_info": {
         "asp_info": None,
@@ -76,10 +76,10 @@ MOCK_INFO2_SNAKE = {
 
 MOCK_INFO2_CAMEL = {
     "email": "test2@organization.com",
-    "organizationAddress": "456 Anywhere Street",
+    "organizationAddress": "370 Highland Rd W",
     "organizationName": "Test2 Org",
     "organizationDesc": "Testing123",
-    "organizationCoordinates": [12.345, 67.890],
+    "organizationCoordinates": [43.4384664, -80.5118701],
     "role": "Donor",
     "roleInfo": {
         "aspInfo": None,
@@ -102,10 +102,10 @@ MOCK_INFO2_CAMEL = {
 
 MOCK_INFO3_SNAKE = {
     "email": "test3@organization.com",
-    "organization_address": "789 Anywhere Street",
+    "organization_address": "170 University Ave W",
     "organization_name": "Test3 Org",
     "organization_desc": "Testing 123",
-    "organization_coordinates": [12.345, 67.890],
+    "organization_coordinates": [43.472995850000004, -80.5373252901463],
     "role": "Admin",
     "role_info": None,
     "primary_contact": {
@@ -122,10 +122,10 @@ MOCK_INFO3_SNAKE = {
 
 MOCK_INFO3_CAMEL = {
     "email": "test3@organization.com",
-    "organizationAddress": "789 Anywhere Street",
+    "organizationAddress": "170 University Ave W",
     "organizationName": "Test3 Org",
     "organizationDesc": "Testing 123",
-    "organizationCoordinates": [12.345, 67.890],
+    "organizationCoordinates": [43.472995850000004, -80.5373252901463],
     "role": "Admin",
     "roleInfo": None,
     "primaryContact": {

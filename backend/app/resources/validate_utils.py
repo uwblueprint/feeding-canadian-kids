@@ -64,7 +64,6 @@ def validate_userinfo(userinfo, error_list):
         "organization_address",
         "organization_name",
         "organization_desc",
-        "organization_coordinates",
         "role",
         "role_info",
         "primary_contact",

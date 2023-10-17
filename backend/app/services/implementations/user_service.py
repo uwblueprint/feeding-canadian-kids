@@ -3,6 +3,7 @@ from ...models.onboarding_request import OnboardingRequest
 from ..interfaces.user_service import IUserService
 from ...models.user import User
 from ...resources.user_dto import UserDTO
+from ...utilities.location_to_coordinates import getGeocodeFromAddress
 
 
 class UserService(IUserService):
@@ -150,6 +151,14 @@ class UserService(IUserService):
                 raise e
 
         return user_dtos
+    
+    def update_user_coordinates(self, user_dto):
+        try:
+            organization_coordinates = getGeocodeFromAddress(user_dto.info.organization_address)
+            user_dto.info["organization_coordinates"] = organization_coordinates
+            return user_dto
+        except Exception as e:
+            raise e
 
     def create_user(self, create_user_dto):
         new_user = None
@@ -159,6 +168,7 @@ class UserService(IUserService):
             firebase_user = firebase_admin.auth.create_user(
                 email=create_user_dto.email, password=create_user_dto.password
             )
+            create_user_dto = self.update_user_coordinates(create_user_dto)
 
             try:
                 new_user = User(
@@ -206,6 +216,8 @@ class UserService(IUserService):
 
     def update_user_by_id(self, user_id, update_user_dto):
         try:
+            update_user_dto = self.update_user_coordinates(update_user_dto)
+            print(update_user_dto.info)
             old_user = User.objects(id=user_id).modify(
                 new=False,
                 auth_id=update_user_dto.auth_id,

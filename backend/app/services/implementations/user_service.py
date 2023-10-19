@@ -176,9 +176,9 @@ class UserService(IUserService):
                     auth_id=firebase_user.uid,
                     info=OnboardingRequest.objects(id=create_user_dto.request_id)
                     .first()
-                    .info
+                    .info,
                 )
-                
+
                 organization_coordinates = getGeocodeFromAddress(
                     new_user.info.organization_address
                 )

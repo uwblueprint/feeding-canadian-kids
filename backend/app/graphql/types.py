@@ -86,7 +86,6 @@ class UserInfoInput(graphene.InputObjectType):
     organization_address = graphene.String(required=True)
     organization_name = graphene.String(required=True)
     organization_desc = graphene.String(required=True)
-    organization_coordinates = graphene.List(graphene.Float)
     role = graphene.String(required=True)
     role_info = graphene.Field(RoleInfoInput)
     primary_contact = graphene.Field(ContactInput, required=True)

@@ -1,3 +1,4 @@
+from ...utilities.location_to_coordinates import getGeocodeFromAddress
 from ...services.implementations.auth_service import AuthService
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
 from ...models.onboarding_request import (
@@ -21,7 +22,7 @@ class OnboardingRequestService(IOnboardingRequestService):
         self.logger = logger
         self.email_service = email_service
 
-    def create_onboarding_request(self, userInfo):
+    def create_onboarding_request(self, userInfo: UserInfo):
         try:
             # Create initial UserInfo object
             user_info = UserInfo(
@@ -29,13 +30,16 @@ class OnboardingRequestService(IOnboardingRequestService):
                 organization_address=userInfo.organization_address,
                 organization_name=userInfo.organization_name,
                 organization_desc=userInfo.organization_desc,
-                organization_coordinates=userInfo.organization_coordinates,
+                organization_coordinates=getGeocodeFromAddress(
+                    userInfo.organization_address
+                ),
                 role=userInfo.role,
                 role_info=userInfo.role_info,
                 primary_contact=userInfo.primary_contact,
                 onsite_contacts=userInfo.onsite_contacts,
                 active=userInfo.active,
             )
+
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(
                 info=user_info,

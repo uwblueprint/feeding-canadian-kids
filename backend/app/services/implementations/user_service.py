@@ -178,12 +178,6 @@ class UserService(IUserService):
                     .first()
                     .info,
                 )
-
-                organization_coordinates = getGeocodeFromAddress(
-                    new_user.info.organization_address
-                )
-                new_user.info.organization_coordinates = organization_coordinates
-
                 new_user.save()
             except Exception as mongo_error:
                 # rollback user creation in Firebase

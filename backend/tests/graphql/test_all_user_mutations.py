@@ -181,7 +181,6 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
                     organizationAddress: "255 King St N",
                     organizationName: "Test1 Org",
                     organizationDesc: "Testing123",
-                    organizationCoordinates: [43.472995850000004, -80.5373252901463]
                     role: "ASP",
                     roleInfo: {{
                        aspInfo: {{

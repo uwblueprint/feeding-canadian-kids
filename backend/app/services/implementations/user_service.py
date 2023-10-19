@@ -170,15 +170,21 @@ class UserService(IUserService):
             firebase_user = firebase_admin.auth.create_user(
                 email=create_user_dto.email, password=create_user_dto.password
             )
-            create_user_dto = self.update_user_coordinates(create_user_dto)
 
             try:
-                new_user = User(
+                new_user: User = User(
                     auth_id=firebase_user.uid,
                     info=OnboardingRequest.objects(id=create_user_dto.request_id)
                     .first()
-                    .info,
-                ).save()
+                    .info
+                )
+                
+                organization_coordinates = getGeocodeFromAddress(
+                    new_user.info.organization_address
+                )
+                new_user.info.organization_coordinates = organization_coordinates
+
+                new_user.save()
             except Exception as mongo_error:
                 # rollback user creation in Firebase
                 try:

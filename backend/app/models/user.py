@@ -5,7 +5,7 @@ from .user_info import UserInfo
 
 class User(mg.Document):
     auth_id = mg.StringField(required=True)
-    info = mg.EmbeddedDocumentField(UserInfo, required=True)
+    info: UserInfo = mg.EmbeddedDocumentField(UserInfo, required=True)
 
     def to_serializable_dict(self):
         """

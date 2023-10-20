@@ -21,7 +21,7 @@ def test_update_user_by_id(user_setup, mocker):
                 id: "{str(user_1.id)}",
                 userInfo: {{
                     email: "test4@organization.com",
-                    organizationAddress: "789 Anywhere Street",
+                    organizationAddress: "170 University Ave W",
                     organizationName: "Test3 Org",
                     organizationDesc: "Testing 123",
                     role: "Admin",
@@ -52,6 +52,7 @@ def test_update_user_by_id(user_setup, mocker):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                          roleInfo {{
                             aspInfo {{
@@ -92,7 +93,7 @@ def test_update_user_by_id(user_setup, mocker):
                 id: "{str(user_1.id)}",
                 userInfo: {{
                     email: "test1@organization.com",
-                    organizationAddress: "123 Anywhere Street",
+                    organizationAddress: "255 King St N",
                     organizationName: "Test1 Org",
                     organizationDesc: "Testing123",
                     role: "ASP",
@@ -129,6 +130,7 @@ def test_update_user_by_id(user_setup, mocker):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                         roleInfo {{
                             aspInfo {{
@@ -176,7 +178,7 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
                 id: "{str(user_1.id)}",
                 userInfo: {{
                     email: "test1@organization.com",
-                    organizationAddress: "123 Anywhere Street",
+                    organizationAddress: "255 King St N",
                     organizationName: "Test1 Org",
                     organizationDesc: "Testing123",
                     role: "ASP",
@@ -213,6 +215,7 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                          roleInfo {{
                             aspInfo {{

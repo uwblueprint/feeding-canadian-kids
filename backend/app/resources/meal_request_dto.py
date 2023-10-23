@@ -50,7 +50,7 @@ class MealRequestDTO:
             error_list.append("The id supplied is not a string.")
 
         if type(self.requestor) != ObjectId:
-            error_list.append("The requestor ID is not supplied.")
+            error_list.append("The requestor ID is not an ObjectId.")
 
         if type(self.description) != str:
             error_list.append("The description supplied is not a string.")

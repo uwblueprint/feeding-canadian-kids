@@ -25,8 +25,6 @@ class MealRequestDTO:
         delivery_instructions=None,
         donation_info=None,
     ):
-        # print("onsite_staff", onsite_staff)
-
         self.id = id
         self.requestor = requestor
         self.description = description

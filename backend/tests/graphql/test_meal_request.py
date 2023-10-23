@@ -29,7 +29,7 @@ def test_create_meal_request(graphql_schema):
           status
           description
           id
-          donationDatetime
+          dropOffDatetime
           mealInfo {
             portions
             dietaryRestrictions
@@ -65,11 +65,11 @@ def test_create_meal_request(graphql_schema):
         == "Burritos"
     )
     assert (
-        result.data["createMealRequest"]["mealRequests"][0]["donationDatetime"]
+        result.data["createMealRequest"]["mealRequests"][0]["dropOffDatetime"]
         == "2023-06-01T16:30:00+00:00"
     )
     assert (
-        result.data["createMealRequest"]["mealRequests"][1]["donationDatetime"]
+        result.data["createMealRequest"]["mealRequests"][1]["dropOffDatetime"]
         == "2023-06-02T16:30:00+00:00"
     )
 

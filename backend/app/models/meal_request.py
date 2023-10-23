@@ -1,44 +1,45 @@
 import mongoengine as mg
 from datetime import datetime
+from enum import Enum
+
 from .user_info import Contact
-from bson.objectid import ObjectId
+from .user import User
 
 
-class MealType(mg.EmbeddedDocument):
+class MealStatus(Enum):
+    OPEN = "Open"
+    FULFILLED = "Fulfilled"
+    CANCELLED = "Cancelled"
+
+
+MEAL_STATUSES = [status.value for status in MealStatus]
+
+
+class MealInfo(mg.EmbeddedDocument):
     portions = mg.IntField(required=True)
-    dietary_restrictions = mg.StringField(required=True, default="No restrictions")
-    meal_suggestions = mg.StringField(required=True)
+    dietary_restrictions = mg.StringField(default=None)
+    meal_suggestions = mg.StringField(default=None)
 
 
-class MealRequest(mg.Document):
-    _id = mg.ObjectIdField(required=True, default=ObjectId)
-    description = mg.StringField(required=True)
-    requestor = mg.ObjectIdField()  # The ASP making the request
+class DonationInfo(mg.EmbeddedDocument):
+    donor = mg.ObjectIdField(required=True)
+    commitment_date = mg.DateTimeField(required=True)
+    meal_description = mg.StringField(default=None)
+    additional_info = mg.StringField(default=None)
 
-    # Donor Info
-    donor_id = mg.ObjectIdField(required=False)
-    # The date that the donor committed to fulfilling the request
-    commitment_date = mg.DateTimeField(required=False)
 
-    # Donation Details
-    """
-    Open: At least one MealRequest is open
-    Fulfilled: All MealRequests are fulfilled
-    Cancelled: All MealRequests are cancelled
-    """
-    status = mg.StringField(
-        choices=["Open", "Fulfilled", "Cancelled"], required=True, default="Open"
-    )
-    meal_info = mg.EmbeddedDocumentField(MealType, required=True)
-    # The date that the meal is being delivered
-    donation_datetime = mg.DateTimeField(required=True)
+class MealRequestModel(mg.Document):
+    requestor = mg.ObjectIdField(required=True)
+    description = mg.StringField(required=True)  # is this needed?
+    status = mg.EnumField(MealStatus, required=True, default=MealStatus.OPEN)
+    drop_off_datetime = mg.DateTimeField(required=True)
     drop_off_location = mg.StringField(required=True)
-    delivery_instructions = mg.StringField(required=True)
+    meal_info = mg.EmbeddedDocumentField(MealInfo, required=True)
     onsite_staff = mg.EmbeddedDocumentListField(Contact, required=True)
-
-    # Timestamps
     date_created = mg.DateTimeField(required=True, default=datetime.utcnow)
     date_updated = mg.DateTimeField(required=True, default=datetime.utcnow)
+    delivery_instructions = mg.StringField(default=None)
+    donation_info = mg.EmbeddedDocumentField(DonationInfo, default=None)
 
     def to_serializable_dict(self):
         """

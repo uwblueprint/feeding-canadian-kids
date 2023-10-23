@@ -127,14 +127,6 @@ class MealRequestQueries(graphene.ObjectType):
             sort_by_date_direction,
         )
 
-        for request in meal_request_dtos:
-            print(
-                "requestor: ",
-                request.requestor,
-                ", onsite_staff: ",
-                request.onsite_staff,
-            )
-
         return [
             MealRequest(
                 requestor=meal_request_dto.requestor,

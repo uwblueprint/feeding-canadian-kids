@@ -115,13 +115,13 @@ def validate_meal_info(meal_info, error_list):
         if key not in meal_info_fields:
             error_list.append(f'The meal_info info supplied has invalid field "{key}".')
         elif key == "portions":
-            if type(val) != int:
+            if type(val) is not int:
                 error_list.append("The portions supplied is not an int.")
             if val <= 0:
                 error_list.append("The portions supplied must be greater than zero.")
-        elif key == "dietary_restrictions" and type(val) != str:
+        elif key == "dietary_restrictions" and type(val) is not str:
             error_list.append("The dietary_restrictions supplied is not a string.")
-        elif key == "meal_suggestions" and type(val) != str:
+        elif key == "meal_suggestions" and type(val) is not str:
             error_list.append("The meal_suggestions supplied is not a string.")
 
 
@@ -145,13 +145,13 @@ def validate_donation_info(donation_info, error_list):
         elif key == "donor":
             validate_contact(val, "donation_info.donor", error_list)
         elif key == "commitment_date":
-            if type(val) != datetime:
+            if type(val) is not datetime:
                 error_list.append(
                     "The commitment_date supplied is not a datetime object."
                 )
             if val < datetime.now():
                 error_list.append("The commitment_date supplied is invalid.")
-        elif key == "meal_description" and type(val) != str:
+        elif key == "meal_description" and type(val) is not str:
             error_list.append("The meal_description supplied is not a string.")
-        elif key == "additional_info" and type(val) != str:
+        elif key == "additional_info" and type(val) is not str:
             error_list.append("The additional_info supplied is not a string.")

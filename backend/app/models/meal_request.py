@@ -3,7 +3,6 @@ from datetime import datetime
 from enum import Enum
 
 from .user_info import Contact
-from .user import User
 
 
 class MealStatus(Enum):

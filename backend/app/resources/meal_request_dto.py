@@ -46,16 +46,16 @@ class MealRequestDTO:
     def validate(self):
         error_list = []
 
-        if type(self.id) != str:
+        if type(self.id) is not str:
             error_list.append("The id supplied is not a string.")
 
-        if type(self.requestor) != ObjectId:
+        if type(self.requestor) is not ObjectId:
             error_list.append("The requestor ID is not an ObjectId.")
 
-        if type(self.description) != str:
+        if type(self.description) is not str:
             error_list.append("The description supplied is not a string.")
 
-        if type(self.status) != str:
+        if type(self.status) is not str:
             error_list.append("The status supplied is not a string.")
 
         if self.status not in MEAL_STATUSES:
@@ -65,12 +65,12 @@ class MealRequestDTO:
                 )
             )
 
-        if type(self.drop_off_datetime) != datetime.datetime:
+        if type(self.drop_off_datetime) is not datetime.datetime:
             error_list.append(
                 "The drop_off_datetime supplied is not a datetime object."
             )
 
-        if type(self.drop_off_location) != str:
+        if type(self.drop_off_location) is not str:
             error_list.append("The drop_off_location supplied is not a string.")
 
         validate_meal_info(self.meal_info, error_list)
@@ -78,13 +78,13 @@ class MealRequestDTO:
         for i, staff in enumerate(self.onsite_staff):
             validate_contact(staff, f"index {i} of onsite_staff", error_list)
 
-        if type(self.date_created) != datetime.datetime:
+        if type(self.date_created) is not datetime.datetime:
             error_list.append("The date_created supplied is not a datetime object.")
 
-        if type(self.date_updated) != datetime.datetime:
+        if type(self.date_updated) is not datetime.datetime:
             error_list.append("The date_updated supplied is not a datetime object.")
 
-        if self.delivery_instructions and type(self.delivery_instructions) != str:
+        if self.delivery_instructions and type(self.delivery_instructions) is not str:
             error_list.append("The delivery_instructions supplied is not a string.")
 
         if self.donation_info:

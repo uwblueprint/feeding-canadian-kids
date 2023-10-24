@@ -29,7 +29,7 @@ class DonationInfo(mg.EmbeddedDocument):
 
 class MealRequest(mg.Document):
     requestor = mg.ObjectIdField(required=True)
-    description = mg.StringField(required=True)  # is this needed?
+    description = mg.StringField(required=True)
     status = mg.EnumField(MealStatus, required=True, default=MealStatus.OPEN)
     drop_off_datetime = mg.DateTimeField(required=True)
     drop_off_location = mg.StringField(required=True)

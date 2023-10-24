@@ -46,10 +46,8 @@ class CreateMealRequestResponse(graphene.ObjectType):
 # Mutations
 class CreateMealRequests(Mutation):
     class Arguments:
+        description = graphene.String(required=True)
         requestor = graphene.ID(required=True)
-        description = graphene.String(
-            required=True
-        )  # is this ever used in the frontend?
         # request_dates is a list of dates
         request_dates = graphene.List(graphene.Date, required=True)
 

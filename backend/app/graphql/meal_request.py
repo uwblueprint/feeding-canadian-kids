@@ -10,7 +10,6 @@ from .types import (
     QueryList,
     SortDirection,
 )
-
 from ..models.meal_request import MealStatus, MEAL_STATUSES
 from ..graphql.services import services
 
@@ -100,7 +99,7 @@ class DonationInfo(graphene.ObjectType):
 class MealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
     requestor = graphene.ID()
-    description = graphene.String()  # is this needed?
+    description = graphene.String()
     status = graphene.String()
     drop_off_datetime = graphene.DateTime()
     drop_off_location = graphene.String()

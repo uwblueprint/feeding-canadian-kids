@@ -36,9 +36,11 @@ class UserInfo(mg.EmbeddedDocument):
     organization_address = mg.StringField(required=True)
     organization_name = mg.StringField(required=True)
     organization_desc = mg.StringField(required=True)
+    organization_coordinates = mg.GeoPointField()
     role = mg.StringField(choices=USERINFO_ROLES, required=True)
     role_info = mg.EmbeddedDocumentField(RoleInfo)
     primary_contact = mg.EmbeddedDocumentField(Contact, required=True)
     onsite_contacts = mg.EmbeddedDocumentListField(Contact, required=True)
+    active = mg.BooleanField(default=True)
 
     meta = {"allow_inheritance": True}

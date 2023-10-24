@@ -14,6 +14,7 @@ import "@testing-library/jest-dom";
 // https://github.com/facebook/create-react-app/issues/10126
 Object.defineProperty(window, "matchMedia", {
   writable: true,
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   value: (query: any) => ({
     matches: false,
     media: query,

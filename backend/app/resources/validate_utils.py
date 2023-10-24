@@ -48,6 +48,28 @@ def validate_role_info(role, role_info, role_info_str, error_list):
     return error_list
 
 
+def validate_coordinates(coordinates, error_list):
+    if not isinstance(coordinates, list):
+        error_list.append("The info.organization_coordinates supplied is not a list.")
+    elif len(coordinates) != 2:
+        error_list.append(
+            "The info.organization_coordinates supplied does not contain 2 elements."
+        )
+    elif not isinstance(coordinates[0], float) and not isinstance(
+        coordinates[1], float
+    ):
+        error_list.append(
+            "The info.organization_coordinates supplied"
+            " does not contain a list of floats."
+        )
+    elif not (-180 <= coordinates[0] <= 180) and not (-180 <= coordinates[1] <= 180):
+        error_list.append(
+            "The info.organization_coordinates supplied are not"
+            " in the interval [-180, 180]."
+        )
+    return error_list
+
+
 def validate_userinfo(userinfo, error_list):
     userinfo_fields = [
         "email",
@@ -58,6 +80,7 @@ def validate_userinfo(userinfo, error_list):
         "role_info",
         "primary_contact",
         "onsite_contacts",
+        "active",
     ]
     if not isinstance(userinfo, dict):
         error_list.append("The info supplied is not a dict.")
@@ -83,7 +106,11 @@ def validate_userinfo(userinfo, error_list):
             error_list = validate_role_info(
                 userinfo["role"], val, "info.role_info", error_list
             )
-        elif type(val) is not str:
+        elif key == "active" and type(val) is not bool:
+            error_list.append("The field info.active supplied is not a boolean.")
+        elif key == "organization_coordinates":
+            error_list = validate_coordinates(val, error_list)
+        elif type(val) is not str and key != "active":
             error_list.append(f"The field info.{key} supplied is not a string.")
         elif val == "":
             error_list.append(

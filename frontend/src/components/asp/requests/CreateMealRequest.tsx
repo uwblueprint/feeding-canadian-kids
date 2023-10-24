@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import type { Value } from "react-multi-date-picker";
 
 import SchedulingFormCalendar from "./SchedulingFormCalendar";
+import SchedulingFormMealInfo from "./SchedulingFormMealInfo";
 import SchedulingFormWeekly from "./SchedulingFormWeekly";
 import TitleSection from "./TitleSection";
 
+import AuthContext from "../../../contexts/AuthContext";
+import { Contact, UserInfo } from "../../../types/UserTypes";
 import ThreeStepForm from "../../common/ThreeStepForm";
 
 const CreateMealRequest = (): React.ReactElement => {
@@ -13,6 +17,38 @@ const CreateMealRequest = (): React.ReactElement => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [scheduledDropOffTime, setScheduledDropOffTime] = useState("");
+
+  const [mealRequestDates, setMealRequestDates] = useState<Value>([]);
+
+  // Part 2: Meal Donation Information
+  const [address, setAddress] = useState<string>("");
+  const [numMeals, setNumMeals] = useState<number>(0);
+  const [dietaryRestrictions, setDietaryRestrictions] = useState<string>("");
+  const [deliveryInstructions, setDeliveryInstructions] = useState<string>("");
+  const [onsiteStaff, setOnsiteStaff] = useState<Contact[]>([
+    {
+      name: "Tester",
+      phone: "123467",
+      email: "test@text.com",
+    },
+  ]);
+
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const [userInfo, setUserInfo] = useState<UserInfo>(
+    authenticatedUser?.info || null,
+  );
+
+  const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>(
+    userInfo
+      ? JSON.parse(JSON.stringify(userInfo.onsiteContacts))
+      : [
+          {
+            name: "Tester",
+            phone: "123467",
+            email: "test@test.com",
+          },
+        ],
+  );
 
   // Button state (array of booleans)
   const [weekdayButtonStates, setWeekdayButtonStates] = useState(
@@ -47,8 +83,8 @@ const CreateMealRequest = (): React.ReactElement => {
 
       <ThreeStepForm
         header1="Scheduling"
-        header2="Meal Donation Information"
-        header3="Review & Submit"
+        header2="Meal donation information"
+        header3="Review & submit"
         panel1={
           isWeeklyInput ? (
             <SchedulingFormWeekly
@@ -67,14 +103,31 @@ const CreateMealRequest = (): React.ReactElement => {
             />
           ) : (
             <SchedulingFormCalendar
-                scheduledDropOffTime={scheduledDropOffTime}
-                setScheduledDropOffTime={setScheduledDropOffTime}
-                setIsWeeklyInput={setIsWeeklyInput}
-                handleNext={() => {}} // Will be assigned by three step form
-             />
+              scheduledDropOffTime={scheduledDropOffTime}
+              setScheduledDropOffTime={setScheduledDropOffTime}
+              dates={mealRequestDates}
+              setDates={setMealRequestDates}
+              setIsWeeklyInput={setIsWeeklyInput}
+              handleNext={() => {}} // Will be assigned by three step form
+            />
           )
         }
-        panel2={<p>two!</p>}
+        panel2={
+          <SchedulingFormMealInfo
+            address={address}
+            setAddress={setAddress}
+            handleNext={() => {}} // Will be assigned by three step form
+            numMeals={numMeals}
+            setNumMeals={() => {}}
+            dietaryRestrictions={dietaryRestrictions}
+            setDietaryRestrictions={setDietaryRestrictions}
+            deliveryInstructions={deliveryInstructions}
+            setDeliveryInstructions={setDeliveryInstructions}
+            onsiteStaff={onsiteStaff}
+            setOnsiteStaff={setOnsiteStaff}
+            onsiteInfo={onsiteInfo}
+          />
+        }
         panel3={<p>three!</p>}
       />
     </div>

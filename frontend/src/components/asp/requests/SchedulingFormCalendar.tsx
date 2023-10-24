@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Center,
   Grid,
   GridItem,
   Input,
@@ -10,12 +11,14 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import DatePicker, { Calendar } from "react-multi-date-picker";
 import type { Value } from "react-multi-date-picker";
-import DatePicker from "react-multi-date-picker";
 
 type SchedulingFormCalendarProps = {
   scheduledDropOffTime: string;
   setScheduledDropOffTime: (scheduledDropOffTime: string) => void;
+  dates: Value;
+  setDates: (dates: Value) => void;
   setIsWeeklyInput: (isWeeklyInput: boolean) => void;
   handleNext: () => void;
 };
@@ -23,12 +26,12 @@ type SchedulingFormCalendarProps = {
 const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProps> = ({
   scheduledDropOffTime,
   setScheduledDropOffTime,
+  dates,
+  setDates,
   setIsWeeklyInput,
   handleNext,
 }) => {
   const [nextButtonEnabled, setNextButtonEnabled] = useState(false);
-
-  const [values, setValues] = useState<Value>([]);
 
   const validateData = () => {
     handleNext();
@@ -43,48 +46,60 @@ const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProp
       textAlign={{ base: "left", md: "left" }}
     >
       <GridItem colSpan={1}>
-        <Text as="b">Date and Time</Text>
-        <Text>Please select the date for the meal drop-off.</Text>
+        <Text as="b">Edit Date Manually</Text>
+        <Text>
+          You can select or deselect the dates on which you would like to
+          receive meal donations. Selected dates will be highlighted.
+        </Text>
       </GridItem>
 
       <GridItem colSpan={{ base: 1, md: 2 }}>
         <Text color="primary.blue" fontSize="xs">
-          If your requests are the same each week,&nbsp;
+          If your schedule is the same each week,&nbsp;
           <button
             style={{ textDecoration: "underline" }}
             onClick={() => setIsWeeklyInput(true)}
             type="button"
           >
-            click here to enter dates weekly
+            click here to request weekly donations
           </button>
         </Text>
 
         <br />
-        <Box>
-          <Text
-            color={
-              scheduledDropOffTime === "" && nextButtonEnabled ? "red" : "black"
-            }
-            as="b"
-          >
-            Scheduled drop-off time*
-          </Text>
-          <Input
-            required
-            height={{ base: "2rem", md: "3rem" }}
-            size="xs"
-            onChange={(e) => setScheduledDropOffTime(e.target.value)}
-            type="time"
-            placeholder="Select a time"
-            width={{ base: "100%", md: "100%" }}
-          />
-        </Box>
+        <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 4, md: 4 }}>
+          <GridItem colSpan={{ base: 1, sm: 2 }}>
+            <Center>
+              <Calendar
+                numberOfMonths={2}
+                value={dates}
+                onChange={setDates}
+                minDate={new Date()}
+              />
+            </Center>
+          </GridItem>
 
-        <Text color={"black"} as="b">
-          Select Dates
-        </Text>
-
-        <DatePicker multiple value={values} onChange={setValues} />
+          <GridItem colSpan={1}>
+            <Text
+              color={
+                scheduledDropOffTime === "" && nextButtonEnabled
+                  ? "red"
+                  : "black"
+              }
+              as="b"
+            >
+              Scheduled drop-off time*
+            </Text>
+            <Input
+              required
+              height={{ base: "2rem", md: "3rem" }}
+              size="xs"
+              onChange={(e) => setScheduledDropOffTime(e.target.value)}
+              type="time"
+              placeholder="Select a time"
+              width={{ base: "100%", md: "100%" }}
+            />
+          </GridItem>
+        </SimpleGrid>
       </GridItem>
 
       {/* Next button that is right aligned */}

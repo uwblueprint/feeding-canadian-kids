@@ -45,6 +45,12 @@ const ThreeStepForm = ({
     setCompletedTab((prevIndex) => Math.max(prevIndex, thisTab));
   };
 
+  const handleBack = () => {
+    const thisTab = tabIndex;
+    setTabIndex((prevIndex) => prevIndex + 1);
+    setCompletedTab((prevIndex) => Math.max(prevIndex, thisTab));
+  };
+
   return (
     <div>
       <Center>

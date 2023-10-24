@@ -167,7 +167,7 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
               color={startDate === "" && nextButtonEnabled ? "red" : "black"}
               as="b"
             >
-              Start Date
+              Start Date*
             </Text>
             <br />
             <Input

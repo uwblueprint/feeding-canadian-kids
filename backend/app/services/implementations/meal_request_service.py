@@ -25,7 +25,7 @@ class MealRequestService(IMealRequestService):
             # Create MealRequests
             meal_requests = []
             for request_date in request_dates:
-                new_meal_request = MealRequestModel(
+                new_meal_request = MealRequest(
                     description=description,
                     requestor=requestor,
                     meal_info=meal_info,

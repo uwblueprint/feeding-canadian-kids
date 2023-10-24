@@ -1,4 +1,5 @@
 import mongoengine as mg
+from bson.objectid import ObjectId
 
 
 USERINFO_ROLE_ADMIN = "Admin"
@@ -26,6 +27,7 @@ class RoleInfo(mg.EmbeddedDocument):
 
 
 class Contact(mg.EmbeddedDocument):
+    _id = mg.ObjectIdField(required=True, default=ObjectId)
     name = mg.StringField(required=True)
     email = mg.StringField(required=True)
     phone = mg.StringField(required=True)

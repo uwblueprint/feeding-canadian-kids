@@ -16,8 +16,8 @@ def test_create_meal_request(graphql_schema):
           dietaryRestrictions: "7 gluten free, 7 no beef",
           mealSuggestions: "Burritos"},
         onsiteStaff: [
-          {name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"},
-          {name: "Jane Smith", email: "jane.smith@example.com", phone: "+9876543210"}],
+          "507f1f77bcf86cd799439011",
+          "507f1f77bcf86cd799439011"],
         requestor: "507f1f77bcf86cd799439011",
         requestDates: [
             "2023-06-01",

@@ -48,7 +48,7 @@ class CreateMealRequests(Mutation):
         drop_off_time = graphene.Time(required=True)
         drop_off_location = graphene.String(required=True)
         delivery_instructions = graphene.String()
-        onsite_staff = graphene.List(ContactInput, required=True)
+        onsite_staff = graphene.List(graphene.ID, required=True)
 
     # return values
     meal_requests = graphene.List(CreateMealRequestResponse)

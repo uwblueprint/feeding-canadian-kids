@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from ...models.meal_request import MealRequestModel
+from ...models.meal_request import MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
 from ...graphql.types import SortDirection
 from ...resources.meal_request_dto import MealRequestDTO
@@ -57,7 +57,7 @@ class MealRequestService(IMealRequestService):
             if sort_by_date_direction == SortDirection.DESCENDING:
                 sort_prefix = "-"
 
-            requests = MealRequestModel.objects(
+            requests = MealRequest.objects(
                 requestor=requestor_id,
                 drop_off_datetime__gte=min_drop_off_date,
                 drop_off_datetime__lte=max_drop_off_date,

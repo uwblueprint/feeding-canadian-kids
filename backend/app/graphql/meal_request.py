@@ -2,7 +2,15 @@ import graphene
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from .types import ContactInput, Mutation, MutationList, MealRequest, SortDirection
+from .types import (
+    ContactInput,
+    Contact,
+    Mutation,
+    MutationList,
+    QueryList,
+    SortDirection,
+)
+
 from ..models.meal_request import MealStatus, MEAL_STATUSES
 from ..graphql.services import services
 
@@ -84,10 +92,34 @@ class MealRequestMutations(MutationList):
     create_meal_request = CreateMealRequests.Field()
 
 
+class DonationInfo(graphene.ObjectType):
+    donor = graphene.ID()
+    commitment_date = graphene.DateTime()
+    meal_description = graphene.String()
+    additional_info = graphene.String()
+
+
+class MealRequestResponse(graphene.ObjectType):
+    id = graphene.ID()
+    requestor = graphene.ID()
+    description = graphene.String()  # is this needed?
+    status = graphene.String()
+    drop_off_datetime = graphene.DateTime()
+    drop_off_location = graphene.String()
+    meal_info = graphene.Field(MealInfoResponse)
+    onsite_staff = graphene.List(
+        Contact,
+    )
+    date_created = graphene.DateTime()
+    date_updated = graphene.DateTime()
+    delivery_instructions = graphene.String()
+    donation_info = graphene.Field(DonationInfo)
+
+
 # Queries
-class MealRequestQueries(graphene.ObjectType):
+class MealRequestQueries(QueryList):
     getMealRequestByRequestorId = graphene.List(
-        MealRequest,
+        MealRequestResponse,
         requestor_id=graphene.ID(required=True),
         min_drop_off_date=graphene.Date(
             default_value=datetime.today().replace(day=1)
@@ -128,7 +160,8 @@ class MealRequestQueries(graphene.ObjectType):
         )
 
         return [
-            MealRequest(
+            MealRequestResponse(
+                id=meal_request_dto.id,
                 requestor=meal_request_dto.requestor,
                 description=meal_request_dto.description,
                 status=meal_request_dto.status,

@@ -1,8 +1,6 @@
 import graphene
-from graphene_mongo import MongoengineObjectType
 
 from .error_handling import LogErrors
-from ..models.meal_request import MealRequestModel
 
 
 class Query(graphene.ObjectType, metaclass=LogErrors(graphene.ObjectType)):
@@ -97,11 +95,6 @@ class UserInfoInput(graphene.InputObjectType):
 class User(graphene.ObjectType):
     id = graphene.String()
     info = graphene.Field(UserInfo)
-
-
-class MealRequest(MongoengineObjectType):
-    class Meta:
-        model = MealRequestModel
 
 
 class SortDirection(graphene.Enum):

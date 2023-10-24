@@ -27,7 +27,6 @@ google-crc32c==1.5.0
 google-resumable-media==1.2.0
 googleapis-common-protos==1.53.0
 graphene==3.1.1
-graphene-mongo==0.2.15
 graphql-core==3.2.3
 graphql-relay==3.2.0
 graphql-server==3.0.0b5

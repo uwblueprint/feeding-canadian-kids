@@ -27,7 +27,7 @@ class DonationInfo(mg.EmbeddedDocument):
     additional_info = mg.StringField(default=None)
 
 
-class MealRequestModel(mg.Document):
+class MealRequest(mg.Document):
     requestor = mg.ObjectIdField(required=True)
     description = mg.StringField(required=True)  # is this needed?
     status = mg.EnumField(MealStatus, required=True, default=MealStatus.OPEN)

@@ -1,6 +1,4 @@
 import graphene
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 from .types import (
     ContactInput,
@@ -118,18 +116,14 @@ class MealRequestQueries(QueryList):
     getMealRequestByRequestorId = graphene.List(
         MealRequestResponse,
         requestor_id=graphene.ID(required=True),
-        min_drop_off_date=graphene.Date(
-            default_value=datetime.today().replace(day=1)
-        ),  # first day of the month
-        max_drop_off_date=graphene.Date(
-            default_value=(datetime.today() + relativedelta(day=31))
-        ),  # last day of the month
+        min_drop_off_date=graphene.Date(default_value=None),
+        max_drop_off_date=graphene.Date(default_value=None),
         status=graphene.List(
             graphene.Enum.from_enum(MealStatus),
             default_value=MEAL_STATUSES,
         ),
         offset=graphene.Int(default_value=0),
-        limit=graphene.Int(default_value=10),
+        limit=graphene.Int(default_value=None),
         sort_by_date_direction=SortDirection(default_value=SortDirection.ASCENDING),
     )
 

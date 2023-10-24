@@ -59,10 +59,21 @@ class MealRequestService(IMealRequestService):
 
             requests = MealRequest.objects(
                 requestor=requestor_id,
-                drop_off_datetime__gte=min_drop_off_date,
-                drop_off_datetime__lte=max_drop_off_date,
                 status__in=status,
-            )[offset : offset + limit].order_by(f"{sort_prefix}date_created")
+            ).order_by(f"{sort_prefix}date_created")
+
+            if min_drop_off_date is not None:
+                requests = requests.filter(
+                    drop_off_datetime__gte=min_drop_off_date,
+                )
+            if max_drop_off_date is not None:
+                requests = requests.filter(
+                    drop_off_datetime__lte=max_drop_off_date,
+                )
+            if limit is not None:
+                requests = requests[offset : offset + limit]
+            else:
+                requests = requests[offset:]
 
             meal_request_dtos = []
             for request in requests:

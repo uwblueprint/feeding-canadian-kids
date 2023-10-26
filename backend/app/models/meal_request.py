@@ -34,7 +34,7 @@ class MealRequest(mg.Document):
     donation_datetime = mg.DateTimeField(required=True)
     drop_off_location = mg.StringField(required=True)
     delivery_instructions = mg.StringField(required=True)
-    onsite_staff = mg.ListField(mg.ObjectIdField(), required=True)
+    onsite_staff = mg.ListField(mg.ReferenceField(Contact), required=True)
 
     # Timestamps
     date_created = mg.DateTimeField(required=True, default=datetime.utcnow)

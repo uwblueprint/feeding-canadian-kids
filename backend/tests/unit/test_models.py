@@ -1,7 +1,6 @@
 from app.models.user import User
 from app.models.onboarding_request import OnboardingRequest
-from app.models.user_info import UserInfo
-
+from app.models.user_info import UserInfo, Contact
 
 """
 Sample python test.
@@ -45,7 +44,12 @@ def test_create_user():
 
 def test_create_onboarding_request():
     status = "Pending"
-    user_info = UserInfo(**test_user_info)
+    primary_contact = Contact(**test_user_info["primary_contact"])
+    onsite_contacts = [Contact(**contact) for contact in test_user_info["onsite_contacts"]]
+    test_user_info_copy = test_user_info.copy()
+    test_user_info_copy["primary_contact"] = primary_contact
+    test_user_info_copy["onsite_contacts"] = [contact for contact in onsite_contacts]
+    user_info = UserInfo(**test_user_info_copy)
     onboarding_request = OnboardingRequest(info=user_info, status=status)
     assert onboarding_request.status == status
     assert onboarding_request.info.email == test_user_info["email"]

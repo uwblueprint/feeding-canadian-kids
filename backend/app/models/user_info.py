@@ -26,7 +26,7 @@ class RoleInfo(mg.EmbeddedDocument):
     donor_info = mg.EmbeddedDocumentField(DonorInfo)
 
 
-class Contact(mg.EmbeddedDocument):
+class Contact(mg.Document):
     _id = mg.ObjectIdField(required=True, default=ObjectId)
     name = mg.StringField(required=True)
     email = mg.StringField(required=True)
@@ -41,8 +41,8 @@ class UserInfo(mg.EmbeddedDocument):
     organization_coordinates = mg.GeoPointField()
     role = mg.StringField(choices=USERINFO_ROLES, required=True)
     role_info = mg.EmbeddedDocumentField(RoleInfo)
-    primary_contact = mg.EmbeddedDocumentField(Contact, required=True)
-    onsite_contacts = mg.EmbeddedDocumentListField(Contact, required=True)
+    primary_contact = mg.ReferenceField(Contact, required=True)
+    onsite_contacts = mg.ListField(mg.ReferenceField(Contact), required=True)
     active = mg.BooleanField(default=True)
 
     meta = {"allow_inheritance": True}

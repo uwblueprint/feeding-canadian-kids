@@ -3,6 +3,7 @@ from ...models.onboarding_request import OnboardingRequest
 from ..interfaces.user_service import IUserService
 from ...models.user import User
 from ...resources.user_dto import UserDTO
+from ...resources.asp_distance_dto import ASPDistanceDTO
 from ...utilities.location_to_coordinates import getGeocodeFromAddress
 
 
@@ -422,6 +423,61 @@ class UserService(IUserService):
             "info": deleted_user_dict["info"],
         }
         return UserDTO(**kwargs)
+    
+    def get_asp_near_location(self, requestor_id, max_distance, limit, offset):
+        try:
+            requestor = self.get_user_by_id(requestor_id)
+            if not requestor:
+                raise Exception(f"user_id {requestor_id} not found")
+            
+            # Note: distance is in radians, which is why we multiply by 6371 to convert to KM
+            pipeline = [
+                {
+                    "$geoNear": {
+                        "near": requestor.info["organization_coordinates"],
+                        "distanceField": "distance",
+                        "maxDistance": max_distance / 6371,
+                        "spherical": True,
+                        "distanceMultiplier": 6371
+                    },
+                },
+                {
+                    "$match": {
+                        "info.role" : "ASP"
+                    }
+                }
+            ]
+
+            asp_distances = list(User.objects().aggregate(pipeline))
+
+            if limit > 0:
+                asp_distances = asp_distances[offset : offset + limit]
+            else:
+                asp_distances = asp_distances[offset:]
+
+            asp_distance_dtos = []
+            for asp_distance in asp_distances:
+                try:
+                    kwargs = {
+                        "id": str(asp_distance["_id"]),
+                        "info": asp_distance["info"],
+                        "distance": asp_distance["distance"]
+                    }
+                    asp_distance_dtos.append(ASPDistanceDTO(**kwargs))
+                except Exception as e:
+                    reason = getattr(e, "message", None)
+                    self.logger.error(
+                        "Failed to get ASPs. Reason = {reason}".format(
+                            reason=(reason if reason else str(e))
+                        )
+                    )
+                    raise e
+                
+            return asp_distance_dtos
+
+        except Exception as e:
+            self.logger.error(f"Failed to retrieve ASPs. Reason = {e}")
+            raise e
 
     @staticmethod
     def __user_to_serializable_dict_and_remove_auth_id(user):

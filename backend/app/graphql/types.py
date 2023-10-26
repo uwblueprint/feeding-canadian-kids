@@ -96,3 +96,8 @@ class UserInfoInput(graphene.InputObjectType):
 class User(graphene.ObjectType):
     id = graphene.String()
     info = graphene.Field(UserInfo)
+
+class ASPDistance(graphene.ObjectType):
+    id = graphene.String()
+    info = graphene.Field(UserInfo)
+    distance = graphene.Float()

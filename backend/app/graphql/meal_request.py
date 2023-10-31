@@ -113,7 +113,7 @@ class MealRequestResponse(graphene.ObjectType):
 
 # Queries
 class MealRequestQueries(QueryList):
-    getMealRequestByRequestorId = graphene.List(
+    getMealRequestsByRequestorId = graphene.List(
         MealRequestResponse,
         requestor_id=graphene.ID(required=True),
         min_drop_off_date=graphene.Date(default_value=None),
@@ -127,7 +127,7 @@ class MealRequestQueries(QueryList):
         sort_by_date_direction=SortDirection(default_value=SortDirection.ASCENDING),
     )
 
-    def resolve_getMealRequestByRequestorId(
+    def resolve_getMealRequestsByRequestorId(
         self,
         info,
         requestor_id,

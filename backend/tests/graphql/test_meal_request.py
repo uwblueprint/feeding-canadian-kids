@@ -125,7 +125,7 @@ def test_update_meal_request(graphql_schema):
           mealSuggestions: "Burritos"}},
         onsiteStaff: [
           {{name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"}},
-          {{name: "Jane Smith", email: "jane.smith@example.com", phone: "+9876543210"}}],
+          {{name: "Jane Smith", email: "jane@example.com", phone: "+9876543210"}}],
         requestor: "507f1f77bcf86cd799439011",
         mealRequestId: "{created_meal_request_id}"
       )

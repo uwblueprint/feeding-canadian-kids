@@ -68,8 +68,9 @@ class MealRequestService(IMealRequestService):
                 status__in=status,
             ).order_by(f"{sort_prefix}date_created")
 
-            # Filter results by optional parameters (minimum drop off date, maximum drop off date, limit)
-            # Since we want to filter these optionally (i.e. filter only if specified), we cannot include them in the query above
+            # Filter results by optional parameters.
+            # Since we want to filter these optionally (i.e. filter only if specified),
+            # we cannot include them in the query above.
             if min_drop_off_date is not None:
                 requests = requests.filter(
                     drop_off_datetime__gte=min_drop_off_date,

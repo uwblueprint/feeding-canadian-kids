@@ -26,7 +26,7 @@ class MealRequestService(IMealRequestService):
             # Create MealRequests
             requestor = User.objects(id=requestor_id).first()
             if not requestor:
-                raise Exception(f"requestor {requestor_id} not found")
+                raise Exception(f'requestor "{requestor_id}" not found')
 
             meal_requests = []
             for request_date in request_dates:

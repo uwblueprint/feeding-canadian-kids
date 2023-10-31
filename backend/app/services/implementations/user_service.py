@@ -442,14 +442,11 @@ class UserService(IUserService):
                     },
                 },
                 {"$match": {"info.role": "ASP"}},
+                {"$skip": offset},
+                {"$limit": limit},
             ]
 
             asp_distances = list(User.objects().aggregate(pipeline))
-
-            if limit > 0:
-                asp_distances = asp_distances[offset : offset + limit]
-            else:
-                asp_distances = asp_distances[offset:]
 
             asp_distance_dtos = []
             for asp_distance in asp_distances:

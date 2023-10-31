@@ -74,6 +74,68 @@ def test_create_meal_request(graphql_schema):
     )
 
 
+def test_update_meal_request(graphql_schema):
+    mutation = """
+    mutation testUpdateMealRequest {
+      updateMealRequest(
+        deliveryInstructions: "Leave at front door",
+        description: "Meal requests for charity",
+        dropOffLocation: "123 Main Street",
+        donationDatetime: "2023-10-31T16:45:00+00:00",
+        mealInfo: {portions: 40,
+          dietaryRestrictions: "7 gluten free, 7 no beef",
+          mealSuggestions: "Burritos"},
+        onsiteStaff: [
+          {name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"},
+          {name: "Jane Smith", email: "jane.smith@example.com", phone: "+9876543210"}],
+        requestor: "507f1f77bcf86cd799439011",
+      )
+      {
+        mealRequests {
+          status
+          description
+          id
+          donationDatetime
+          mealInfo {
+            portions
+            dietaryRestrictions
+            mealSuggestions
+          }
+        }
+      }
+    }
+  """
+
+    result = graphql_schema.execute(mutation)
+
+    assert result.errors is None
+    assert result.data["updateMealRequest"]["mealRequests"][0]["status"] == "Open"
+    assert (
+        result.data["updateMealRequest"]["mealRequests"][0]["description"]
+        == "Meal requests for office employees"
+    )
+    assert (
+        result.data["updateMealRequest"]["mealRequests"][0]["mealInfo"]["portions"]
+        == 40
+    )
+    assert (
+        result.data["updateMealRequest"]["mealRequests"][0]["mealInfo"][
+            "dietaryRestrictions"
+        ]
+        == "7 gluten free, 7 no beef"
+    )
+    assert (
+        result.data["updateMealRequest"]["mealRequests"][0]["mealInfo"][
+            "mealSuggestions"
+        ]
+        == "Burritos"
+    )
+    assert (
+        result.data["updateMealRequest"]["mealRequests"][1]["donationDatetime"]
+        == "2023-10-31T16:45:00+00:00"
+    )
+
+
 def test_get_meal_request_failure(graphql_schema):
     mutation = """
     mutation testCreateMealRequest {

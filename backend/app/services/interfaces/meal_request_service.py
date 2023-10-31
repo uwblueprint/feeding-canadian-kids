@@ -10,7 +10,7 @@ class IMealRequestService(ABC):
     def create_meal_request(
         self,
         description: str,
-        requestor,
+        requestor_id,
         request_dates,
         meal_info,
         drop_off_time,

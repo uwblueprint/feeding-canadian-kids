@@ -7,6 +7,7 @@ from .types import (
     MutationList,
     QueryList,
     SortDirection,
+    User,
 )
 from ..models.meal_request import MealStatus, MEAL_STATUSES
 from ..graphql.services import services
@@ -44,7 +45,7 @@ class CreateMealRequestResponse(graphene.ObjectType):
 class CreateMealRequests(Mutation):
     class Arguments:
         description = graphene.String(required=True)
-        requestor = graphene.ID(required=True)
+        requestor_id = graphene.ID(required=True)
         # request_dates is a list of dates
         request_dates = graphene.List(graphene.Date, required=True)
 
@@ -61,7 +62,7 @@ class CreateMealRequests(Mutation):
         self,
         info,
         description,
-        requestor,
+        requestor_id,
         request_dates,
         meal_info,
         drop_off_time,
@@ -71,7 +72,7 @@ class CreateMealRequests(Mutation):
     ):
         result = services["meal_request_service"].create_meal_request(
             description=description,
-            requestor=requestor,
+            requestor_id=requestor_id,
             request_dates=request_dates,
             meal_info=meal_info,
             drop_off_time=drop_off_time,
@@ -88,7 +89,7 @@ class MealRequestMutations(MutationList):
 
 
 class DonationInfo(graphene.ObjectType):
-    donor = graphene.ID()
+    donor = graphene.Field(User)
     commitment_date = graphene.DateTime()
     meal_description = graphene.String()
     additional_info = graphene.String()
@@ -96,15 +97,13 @@ class DonationInfo(graphene.ObjectType):
 
 class MealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
-    requestor = graphene.ID()
+    requestor = graphene.Field(User)
     description = graphene.String()
     status = graphene.String()
     drop_off_datetime = graphene.DateTime()
     drop_off_location = graphene.String()
     meal_info = graphene.Field(MealInfoResponse)
-    onsite_staff = graphene.List(
-        Contact,
-    )
+    onsite_staff = graphene.List(Contact)
     date_created = graphene.DateTime()
     date_updated = graphene.DateTime()
     delivery_instructions = graphene.String()

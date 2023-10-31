@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from ...models.meal_request import MealRequest
+from ...models.user import User
 from ..interfaces.meal_request_service import IMealRequestService
 from ...graphql.types import SortDirection
 from ...resources.meal_request_dto import MealRequestDTO
@@ -13,7 +14,7 @@ class MealRequestService(IMealRequestService):
     def create_meal_request(
         self,
         description,
-        requestor,
+        requestor_id,
         request_dates,
         meal_info,
         drop_off_time,
@@ -23,6 +24,10 @@ class MealRequestService(IMealRequestService):
     ):
         try:
             # Create MealRequests
+            requestor = User.objects(id=requestor_id).first()
+            if not requestor:
+                raise Exception(f"requestor {requestor_id} not found")
+
             meal_requests = []
             for request_date in request_dates:
                 new_meal_request = MealRequest(
@@ -35,12 +40,12 @@ class MealRequestService(IMealRequestService):
                     onsite_staff=onsite_staff,
                 )
                 new_meal_request.save()
-                meal_requests.append(new_meal_request)
+                meal_requests.append(new_meal_request.to_serializable_dict())
         except Exception as error:
             self.logger.error(str(error))
             raise error
 
-        return map(lambda x: x.to_serializable_dict(), meal_requests)
+        return meal_requests
 
     def get_meal_requests_by_requestor_id(
         self,
@@ -57,8 +62,9 @@ class MealRequestService(IMealRequestService):
             if sort_by_date_direction == SortDirection.DESCENDING:
                 sort_prefix = "-"
 
+            requestor = User.objects(id=requestor_id).first()
             requests = MealRequest.objects(
-                requestor=requestor_id,
+                requestor=requestor,
                 status__in=status,
             ).order_by(f"{sort_prefix}date_created")
 
@@ -80,6 +86,7 @@ class MealRequestService(IMealRequestService):
             meal_request_dtos = []
             for request in requests:
                 request_dict = request.to_serializable_dict()
+                request_dict["requestor"] = requestor.to_serializable_dict()
                 meal_request_dtos.append(MealRequestDTO(**request_dict))
 
             return meal_request_dtos

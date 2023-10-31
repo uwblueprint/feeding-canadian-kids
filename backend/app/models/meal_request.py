@@ -2,6 +2,7 @@ import mongoengine as mg
 from datetime import datetime
 from enum import Enum
 
+from .user import User
 from .user_info import Contact
 
 
@@ -23,14 +24,14 @@ class MealInfo(mg.EmbeddedDocument):
 
 # Information on the donation once a donor has committed to the request
 class DonationInfo(mg.EmbeddedDocument):
-    donor = mg.ObjectIdField(required=True)
+    donor = mg.ReferenceField(User, required=True)
     commitment_date = mg.DateTimeField(required=True)
     meal_description = mg.StringField(default=None)
     additional_info = mg.StringField(default=None)
 
 
 class MealRequest(mg.Document):
-    requestor = mg.ObjectIdField(required=True)
+    requestor = mg.ReferenceField(User, required=True)
     description = mg.StringField(required=True)
     status = mg.EnumField(MealStatus, required=True, default=MealStatus.OPEN)
     drop_off_datetime = mg.DateTimeField(required=True)

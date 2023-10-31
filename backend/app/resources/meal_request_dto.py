@@ -3,9 +3,9 @@ from bson.objectid import ObjectId
 
 from ..models.meal_request import MEAL_STATUSES
 from .validate_utils import (
-    validate_meal_info,
     validate_contact,
     validate_donation_info,
+    validate_meal_info,
 )
 
 

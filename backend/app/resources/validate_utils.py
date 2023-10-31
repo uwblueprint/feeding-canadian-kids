@@ -104,6 +104,17 @@ def validate_userinfo(userinfo, error_list):
     return error_list
 
 
+def validate_user(user, error_list):
+    if not isinstance(user, dict):
+        error_list.append("The user supplied is not a dict.")
+        return error_list
+
+    if "auth_id" not in user:
+        error_list.append('The user supplied does not have field "auth_id".')
+
+    validate_userinfo(user["info"], error_list)
+
+
 def validate_meal_info(meal_info, error_list):
     meal_info_fields = ["portions", "dietary_restrictions", "meal_suggestions"]
 
@@ -143,7 +154,7 @@ def validate_donation_info(donation_info, error_list):
                 f'The donation_info info supplied has invalid field "{key}".'
             )
         elif key == "donor":
-            validate_contact(val, "donation_info.donor", error_list)
+            validate_user(val, "donation_info.donor", error_list)
         elif key == "commitment_date":
             if type(val) is not datetime:
                 error_list.append(

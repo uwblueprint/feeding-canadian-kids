@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from ..models.user_info import (
     USERINFO_ROLES,
@@ -104,13 +104,13 @@ def validate_userinfo(userinfo, error_list):
     return error_list
 
 
-def validate_user(user, error_list):
+def validate_user(user, user_str, error_list):
     if not isinstance(user, dict):
-        error_list.append("The user supplied is not a dict.")
+        error_list.append(f"The {user_str} supplied is not a dict.")
         return error_list
 
     if "auth_id" not in user:
-        error_list.append('The user supplied does not have field "auth_id".')
+        error_list.append(f'The {user_str} supplied does not have field "auth_id".')
 
     validate_userinfo(user["info"], error_list)
 

@@ -6,6 +6,7 @@ from .validate_utils import (
     validate_contact,
     validate_donation_info,
     validate_meal_info,
+    validate_user,
 )
 
 
@@ -49,8 +50,7 @@ class MealRequestDTO:
         if type(self.id) is not str:
             error_list.append("The id supplied is not a string.")
 
-        if type(self.requestor) is not ObjectId:
-            error_list.append("The requestor ID is not an ObjectId.")
+        validate_user(self.requestor, "requestor", error_list)
 
         if type(self.description) is not str:
             error_list.append("The description supplied is not a string.")

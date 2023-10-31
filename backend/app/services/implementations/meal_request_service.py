@@ -88,6 +88,14 @@ class MealRequestService(IMealRequestService):
             for request in requests:
                 request_dict = request.to_serializable_dict()
                 request_dict["requestor"] = requestor.to_serializable_dict()
+                if "donation_info" in request_dict:
+                    donor_id = request_dict["donation_info"]["donor"]
+                    donor = User.objects(id=donor_id).first()
+                    if not donor:
+                        raise Exception(f'donor "{donor_id}" not found')
+                    request_dict["donation_info"][
+                        "donor"
+                    ] = donor.to_serializable_dict()
                 meal_request_dtos.append(MealRequestDTO(**request_dict))
 
             return meal_request_dtos

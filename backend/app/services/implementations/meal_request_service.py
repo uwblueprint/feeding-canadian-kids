@@ -1,4 +1,5 @@
-from ...models.meal_request import MealRequest
+from ...models.user_info import Contact
+from ...models.meal_request import MealRequest, MealType
 from ..interfaces.meal_request_service import IMealRequestService
 from datetime import datetime
 
@@ -39,7 +40,7 @@ class MealRequestService(IMealRequestService):
             raise error
 
         return map(lambda x: x.to_serializable_dict(), meal_requests)
-    
+
     def update_meal_request(
         self,
         description,
@@ -49,8 +50,8 @@ class MealRequestService(IMealRequestService):
         drop_off_location,
         delivery_instructions,
         onsite_staff,
-        meal_request_id):
-
+        meal_request_id,
+    ):
         original_meal_request = MealRequest.objects(_id=meal_request_id).first()
 
         if description is not None:
@@ -63,25 +64,18 @@ class MealRequestService(IMealRequestService):
             original_meal_request.donation_datetime = donation_datetime
 
         if meal_info is not None:
-            original_meal_request.meal_info = meal_info
-       
+            original_meal_request.meal_info = MealType(portions=meal_info.portions, dietary_restrictions=meal_info.dietary_restrictions, meal_suggestions=meal_info.meal_suggestions)
+
         if drop_off_location is not None:
             original_meal_request.drop_off_location = drop_off_location
-       
+
         if delivery_instructions is not None:
             original_meal_request.delivery_instructions = delivery_instructions
-       
+
         if onsite_staff is not None:
-            original_meal_request.onsite_staff = onsite_staff
-    
+            original_meal_request.onsite_staff = [Contact(name=staff.name, phone=staff.phone, email=staff.email) for staff in onsite_staff]
 
         original_meal_request.save()
 
         return original_meal_request.to_serializable_dict()
         # look at update user by id array notation
-
-
-
-       
-
-

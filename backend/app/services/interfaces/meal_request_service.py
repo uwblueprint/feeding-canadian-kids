@@ -17,7 +17,7 @@ class IMealRequestService(ABC):
         :raises Exception: if MealRequest was not created successfully
         """
         pass
-    
+
     @abstractmethod
     def update_meal_request(self, meal_request_id):
         pass

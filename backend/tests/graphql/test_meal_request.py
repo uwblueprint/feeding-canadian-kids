@@ -75,13 +75,13 @@ def test_create_meal_request(graphql_schema):
 
 
 def test_update_meal_request(graphql_schema):
-    mutation = """
-    mutation testUpdateMealRequest {
-      updateMealRequest(
+    create_meal_request_mutation = """
+    mutation testCreateMealRequest {
+      createMealRequest(
         deliveryInstructions: "Leave at front door",
-        description: "Meal requests for charity",
+        description: "Meal requests for office employees",
         dropOffLocation: "123 Main Street",
-        donationDatetime: "2023-10-31T16:45:00+00:00",
+        dropOffTime: "16:30:00Z",
         mealInfo: {portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
           mealSuggestions: "Burritos"},
@@ -89,6 +89,10 @@ def test_update_meal_request(graphql_schema):
           {name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"},
           {name: "Jane Smith", email: "jane.smith@example.com", phone: "+9876543210"}],
         requestor: "507f1f77bcf86cd799439011",
+        requestDates: [
+            "2023-06-01",
+            "2023-06-02",
+        ],
       )
       {
         mealRequests {
@@ -105,33 +109,66 @@ def test_update_meal_request(graphql_schema):
       }
     }
   """
+    create_meal_request_result = graphql_schema.execute(create_meal_request_mutation)
+    created_meal_request_id = create_meal_request_result.data["createMealRequest"]["mealRequests"][0]["id"]
+    mutation = f"""
+    mutation testUpdateMealRequest {{
+      updateMealRequest(
+        deliveryInstructions: "Leave at front door",
+        description: "Meal requests for charity",
+        dropOffLocation: "123 Main Street",
+        donationDatetime: "2023-10-31T16:45:00+00:00",
+        mealInfo: {{portions: 40,
+          dietaryRestrictions: "7 gluten free, 7 no beef",
+          mealSuggestions: "Burritos"}},
+        onsiteStaff: [
+          {{name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"}},
+          {{name: "Jane Smith", email: "jane.smith@example.com", phone: "+9876543210"}}],
+        requestor: "507f1f77bcf86cd799439011",
+        mealRequestId: "{created_meal_request_id}"
+      )
+      {{
+        mealRequest {{
+          status
+          description
+          id
+          donationDatetime
+          mealInfo {{
+            portions
+            dietaryRestrictions
+            mealSuggestions
+          }}
+        }}
+      }}
+    }}
+  """
+    print(mutation)
 
     result = graphql_schema.execute(mutation)
 
     assert result.errors is None
-    assert result.data["updateMealRequest"]["mealRequests"][0]["status"] == "Open"
     assert (
-        result.data["updateMealRequest"]["mealRequests"][0]["description"]
-        == "Meal requests for office employees"
+        result.data["updateMealRequest"]["mealRequest"]["description"]
+        == "Meal requests for charity"
     )
     assert (
-        result.data["updateMealRequest"]["mealRequests"][0]["mealInfo"]["portions"]
+        result.data["updateMealRequest"]["mealRequest"]["mealInfo"]["portions"]
         == 40
     )
     assert (
-        result.data["updateMealRequest"]["mealRequests"][0]["mealInfo"][
+        result.data["updateMealRequest"]["mealRequest"]["mealInfo"][
             "dietaryRestrictions"
         ]
         == "7 gluten free, 7 no beef"
     )
     assert (
-        result.data["updateMealRequest"]["mealRequests"][0]["mealInfo"][
+        result.data["updateMealRequest"]["mealRequest"]["mealInfo"][
             "mealSuggestions"
         ]
         == "Burritos"
     )
     assert (
-        result.data["updateMealRequest"]["mealRequests"][1]["donationDatetime"]
+        result.data["updateMealRequest"]["mealRequest"]["donationDatetime"]
         == "2023-10-31T16:45:00+00:00"
     )
 

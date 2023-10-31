@@ -423,14 +423,14 @@ class UserService(IUserService):
             "info": deleted_user_dict["info"],
         }
         return UserDTO(**kwargs)
-    
+
     def get_asp_near_location(self, requestor_id, max_distance, limit, offset):
         try:
             requestor = self.get_user_by_id(requestor_id)
             if not requestor:
                 raise Exception(f"user_id {requestor_id} not found")
-            
-            # Note: distance is in radians, which is why we multiply by 6371 to convert to KM
+
+            # Note: distance is in radians, so we multiply by 6371 to convert to KM
             pipeline = [
                 {
                     "$geoNear": {
@@ -438,14 +438,10 @@ class UserService(IUserService):
                         "distanceField": "distance",
                         "maxDistance": max_distance / 6371,
                         "spherical": True,
-                        "distanceMultiplier": 6371
+                        "distanceMultiplier": 6371,
                     },
                 },
-                {
-                    "$match": {
-                        "info.role" : "ASP"
-                    }
-                }
+                {"$match": {"info.role": "ASP"}},
             ]
 
             asp_distances = list(User.objects().aggregate(pipeline))
@@ -461,7 +457,7 @@ class UserService(IUserService):
                     kwargs = {
                         "id": str(asp_distance["_id"]),
                         "info": asp_distance["info"],
-                        "distance": asp_distance["distance"]
+                        "distance": asp_distance["distance"],
                     }
                     asp_distance_dtos.append(ASPDistanceDTO(**kwargs))
                 except Exception as e:
@@ -472,7 +468,7 @@ class UserService(IUserService):
                         )
                     )
                     raise e
-                
+
             return asp_distance_dtos
 
         except Exception as e:

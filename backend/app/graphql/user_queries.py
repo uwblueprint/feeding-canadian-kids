@@ -18,7 +18,7 @@ class UserQueries(QueryList):
         requestor_id=graphene.String(required=True),
         max_distance=graphene.Int(required=True),
         limit=graphene.Int(default_value=10),
-        offset=graphene.Int(default_value=0)
+        offset=graphene.Int(default_value=0),
     )
 
     def resolve_getAllUsers(self, info, first, offset, role):
@@ -53,16 +53,15 @@ class UserQueries(QueryList):
             id=user.id,
             info=user.info,
         )
-    
-    def resolve_getASPNearLocation(self, info, requestor_id, max_distance, limit, offset):
+
+    def resolve_getASPNearLocation(
+        self, info, requestor_id, max_distance, limit, offset
+    ):
         user_service = services["user_service"]
-        asps = user_service.get_asp_near_location(requestor_id, max_distance, limit, offset)
+        asps = user_service.get_asp_near_location(
+            requestor_id, max_distance, limit, offset
+        )
 
         return [
-            ASPDistance(
-                id=asp.id,
-                info=asp.info,
-                distance=asp.distance
-            )
-            for asp in asps
+            ASPDistance(id=asp.id, info=asp.info, distance=asp.distance) for asp in asps
         ]

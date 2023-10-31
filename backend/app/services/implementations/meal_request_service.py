@@ -64,7 +64,11 @@ class MealRequestService(IMealRequestService):
             original_meal_request.donation_datetime = donation_datetime
 
         if meal_info is not None:
-            original_meal_request.meal_info = MealType(portions=meal_info.portions, dietary_restrictions=meal_info.dietary_restrictions, meal_suggestions=meal_info.meal_suggestions)
+            original_meal_request.meal_info = MealType(
+                portions=meal_info.portions,
+                dietary_restrictions=meal_info.dietary_restrictions,
+                meal_suggestions=meal_info.meal_suggestions,
+            )
 
         if drop_off_location is not None:
             original_meal_request.drop_off_location = drop_off_location
@@ -73,7 +77,10 @@ class MealRequestService(IMealRequestService):
             original_meal_request.delivery_instructions = delivery_instructions
 
         if onsite_staff is not None:
-            original_meal_request.onsite_staff = [Contact(name=staff.name, phone=staff.phone, email=staff.email) for staff in onsite_staff]
+            original_meal_request.onsite_staff = [
+                Contact(name=staff.name, phone=staff.phone, email=staff.email)
+                for staff in onsite_staff
+            ]
 
         original_meal_request.save()
 

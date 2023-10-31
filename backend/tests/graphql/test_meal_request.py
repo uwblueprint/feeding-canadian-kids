@@ -110,7 +110,9 @@ def test_update_meal_request(graphql_schema):
     }
   """
     create_meal_request_result = graphql_schema.execute(create_meal_request_mutation)
-    created_meal_request_id = create_meal_request_result.data["createMealRequest"]["mealRequests"][0]["id"]
+    created_meal_request_id = create_meal_request_result.data["createMealRequest"][
+        "mealRequests"
+    ][0]["id"]
     mutation = f"""
     mutation testUpdateMealRequest {{
       updateMealRequest(
@@ -151,10 +153,7 @@ def test_update_meal_request(graphql_schema):
         result.data["updateMealRequest"]["mealRequest"]["description"]
         == "Meal requests for charity"
     )
-    assert (
-        result.data["updateMealRequest"]["mealRequest"]["mealInfo"]["portions"]
-        == 40
-    )
+    assert result.data["updateMealRequest"]["mealRequest"]["mealInfo"]["portions"] == 40
     assert (
         result.data["updateMealRequest"]["mealRequest"]["mealInfo"][
             "dietaryRestrictions"
@@ -162,9 +161,7 @@ def test_update_meal_request(graphql_schema):
         == "7 gluten free, 7 no beef"
     )
     assert (
-        result.data["updateMealRequest"]["mealRequest"]["mealInfo"][
-            "mealSuggestions"
-        ]
+        result.data["updateMealRequest"]["mealRequest"]["mealInfo"]["mealSuggestions"]
         == "Burritos"
     )
     assert (

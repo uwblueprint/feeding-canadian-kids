@@ -96,3 +96,8 @@ class UserInfoInput(graphene.InputObjectType):
 class User(graphene.ObjectType):
     id = graphene.String()
     info = graphene.Field(UserInfo)
+
+
+class SortDirection(graphene.Enum):
+    ASCENDING = "ASC"
+    DESCENDING = "DESC"

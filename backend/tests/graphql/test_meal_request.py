@@ -46,7 +46,6 @@ def test_create_meal_request(user_setup):
   """
 
     result = graphql_schema.execute(mutation)
-    # print(result)
 
     assert result.errors is None
     assert result.data["createMealRequest"]["mealRequests"][0]["status"] == "Open"

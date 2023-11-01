@@ -19,10 +19,20 @@ def test_create_meal_request(user_setup):
         mealInfo: {{
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
-          mealSuggestions: "Burritos"}},
+          mealSuggestions: "Burritos"
+        }},
         onsiteStaff: [
-          {{name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"}},
-          {{name: "Jane Smith", email: "jane.smith@example.com", phone: "+9876543210"}}],
+          {{
+            name: "John Doe",
+            email: "john.doe@example.com",
+            phone: "+1234567890"
+          }},
+          {{
+            name: "Jane Smith",
+            email: "jane.smith@example.com",
+            phone: "+9876543210"
+          }}
+        ],
         requestorId: "{str(requestor.id)}",
         requestDates: [
             "2023-06-01",
@@ -92,10 +102,20 @@ def test_get_meal_request_failure(user_setup):
         mealInfo: {{
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
-          mealSuggestions: "Burritos"}},
+          mealSuggestions: "Burritos"
+        }},
         onsiteStaff: [
-          {{name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"}},
-          {{name: "Jane Smith", email: "jane.smith@example.com", phone: "+9876543210"}}],
+          {{
+            name: "John Doe",
+            email: "john.doe@example.com",
+            phone: "+1234567890"
+          }},
+          {{
+            name: "Jane Smith",
+            email: "jane.smith@example.com",
+            phone: "+9876543210"
+          }}
+        ],
         requestorId: "{str(requestor.id)}",
         requestDates: [
             "2023-06-01",

@@ -4,6 +4,7 @@ from ..models.user_info import (
     USERINFO_ROLES,
     USERINFO_ROLE_ASP,
     USERINFO_ROLE_ADMIN,
+    USERINFO_ROLE_DONOR,
 )
 
 
@@ -155,6 +156,10 @@ def validate_donation_info(donation_info, error_list):
             )
         elif key == "donor":
             validate_user(val, "donation_info.donor", error_list)
+            if val["info"]["role"] != USERINFO_ROLE_DONOR:
+                error_list.append(
+                    "The donation_info.donor supplied is not a donor user."
+                )
         elif key == "commitment_date":
             if type(val) is not datetime:
                 error_list.append(

@@ -36,36 +36,16 @@ import { useNavigate } from "react-router-dom";
 import EditMealRequestForm from "./EditMealRequestForm";
 import mealRequestsJSON from "./MealRequestSampleData.json";
 
-import BackgroundImage from "../../assets/background.png";
-import * as Routes from "../../constants/Routes";
-import SampleContext from "../../contexts/SampleContext";
-import { Contact } from "../../types/UserTypes";
-import Logout from "../auth/Logout";
-import RefreshCredentials from "../auth/RefreshCredentials";
+import BackgroundImage from "../assets/background.png";
+import RefreshCredentials from "../components/auth/RefreshCredentials";
+import * as Routes from "../constants/Routes";
+import { Contact } from "../types/UserTypes";
 
 type ButtonProps = { text: string; path: string };
 
 const Button = ({ text, path }: ButtonProps) => {
   const navigate = useNavigate();
   return <ChakraButton onClick={() => navigate(path)}>{text}</ChakraButton>;
-};
-
-const TeamInfoDisplay = () => {
-  const { teamName, numTerms, members, isActive } = useContext(SampleContext);
-  return (
-    <div>
-      <h2>Team Info</h2>
-      <div>Name: {teamName}</div>
-      <div># terms: {numTerms}</div>
-      <div>
-        Members:{" "}
-        {members.map(
-          (name, i) => ` ${name}${i === members.length - 1 ? "" : ","}`,
-        )}
-      </div>
-      <div>Active: {isActive ? "Yes" : "No"}</div>
-    </div>
-  );
 };
 
 const OldDashboard = (): React.ReactElement => {

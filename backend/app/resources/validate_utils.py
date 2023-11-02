@@ -1,7 +1,10 @@
+from datetime import datetime
+
 from ..models.user_info import (
     USERINFO_ROLES,
     USERINFO_ROLE_ASP,
     USERINFO_ROLE_ADMIN,
+    USERINFO_ROLE_DONOR,
 )
 
 
@@ -48,6 +51,28 @@ def validate_role_info(role, role_info, role_info_str, error_list):
     return error_list
 
 
+def validate_coordinates(coordinates, error_list):
+    if not isinstance(coordinates, list):
+        error_list.append("The info.organization_coordinates supplied is not a list.")
+    elif len(coordinates) != 2:
+        error_list.append(
+            "The info.organization_coordinates supplied does not contain 2 elements."
+        )
+    elif not isinstance(coordinates[0], float) and not isinstance(
+        coordinates[1], float
+    ):
+        error_list.append(
+            "The info.organization_coordinates supplied"
+            " does not contain a list of floats."
+        )
+    elif not (-180 <= coordinates[0] <= 180) and not (-180 <= coordinates[1] <= 180):
+        error_list.append(
+            "The info.organization_coordinates supplied are not"
+            " in the interval [-180, 180]."
+        )
+    return error_list
+
+
 def validate_userinfo(userinfo, error_list):
     userinfo_fields = [
         "email",
@@ -58,6 +83,7 @@ def validate_userinfo(userinfo, error_list):
         "role_info",
         "primary_contact",
         "onsite_contacts",
+        "active",
     ]
     if not isinstance(userinfo, dict):
         error_list.append("The info supplied is not a dict.")
@@ -83,7 +109,11 @@ def validate_userinfo(userinfo, error_list):
             error_list = validate_role_info(
                 userinfo["role"], val, "info.role_info", error_list
             )
-        elif type(val) is not str:
+        elif key == "active" and type(val) is not bool:
+            error_list.append("The field info.active supplied is not a boolean.")
+        elif key == "organization_coordinates":
+            error_list = validate_coordinates(val, error_list)
+        elif type(val) is not str and key != "active":
             error_list.append(f"The field info.{key} supplied is not a string.")
         elif val == "":
             error_list.append(
@@ -97,3 +127,71 @@ def validate_userinfo(userinfo, error_list):
             )
 
     return error_list
+
+
+def validate_user(user, user_str, error_list):
+    if not isinstance(user, dict):
+        error_list.append(f"The {user_str} supplied is not a dict.")
+        return error_list
+
+    if "auth_id" not in user:
+        error_list.append(f'The {user_str} supplied does not have field "auth_id".')
+
+    validate_userinfo(user["info"], error_list)
+
+
+def validate_meal_info(meal_info, error_list):
+    meal_info_fields = ["portions", "dietary_restrictions", "meal_suggestions"]
+
+    if not isinstance(meal_info, dict):
+        error_list.append("The meal_info info supplied is not a dict.")
+        return error_list
+
+    for key, val in meal_info.items():
+        if key not in meal_info_fields:
+            error_list.append(f'The meal_info info supplied has invalid field "{key}".')
+        elif key == "portions":
+            if type(val) is not int:
+                error_list.append("The portions supplied is not an int.")
+            if val <= 0:
+                error_list.append("The portions supplied must be greater than zero.")
+        elif key == "dietary_restrictions" and type(val) is not str:
+            error_list.append("The dietary_restrictions supplied is not a string.")
+        elif key == "meal_suggestions" and type(val) is not str:
+            error_list.append("The meal_suggestions supplied is not a string.")
+
+
+def validate_donation_info(donation_info, error_list):
+    donation_info_fields = [
+        "donor",
+        "commitment_date",
+        "meal_description",
+        "additional_info",
+    ]
+
+    if not isinstance(donation_info, dict):
+        error_list.append("The donation_info info supplied is not a dict.")
+        return error_list
+
+    for key, val in donation_info.items():
+        if key not in donation_info_fields:
+            error_list.append(
+                f'The donation_info info supplied has invalid field "{key}".'
+            )
+        elif key == "donor":
+            validate_user(val, "donation_info.donor", error_list)
+            if val["info"]["role"] != USERINFO_ROLE_DONOR:
+                error_list.append(
+                    "The donation_info.donor supplied is not a donor user."
+                )
+        elif key == "commitment_date":
+            if type(val) is not datetime:
+                error_list.append(
+                    "The commitment_date supplied is not a datetime object."
+                )
+            if val < datetime.now():
+                error_list.append("The commitment_date supplied is invalid.")
+        elif key == "meal_description" and type(val) is not str:
+            error_list.append("The meal_description supplied is not a string.")
+        elif key == "additional_info" and type(val) is not str:
+            error_list.append("The additional_info supplied is not a string.")

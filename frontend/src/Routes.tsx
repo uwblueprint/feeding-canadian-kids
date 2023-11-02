@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Routes as RouteContainer } from "react-router-dom";
 
+import CreateMealRequest from "./components/asp/requests/CreateMealRequest";
 import AuthWall from "./components/auth/AuthWall";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import Join from "./components/auth/Join";
@@ -8,20 +9,18 @@ import JoinSuccess from "./components/auth/JoinSuccess";
 import Login from "./components/auth/Login";
 import ResetPassword from "./components/auth/ResetPassword";
 import SetPassword from "./components/auth/SetPassword";
-import Signup from "./components/auth/Signup";
-import CreatePage from "./components/pages/CreatePage";
-import Dashboard from "./components/pages/Dashboard";
-import Default from "./components/pages/Default";
-import DisplayPage from "./components/pages/DisplayPage";
-import EditTeamInfoPage from "./components/pages/EditTeamPage";
-import HooksDemo from "./components/pages/HooksDemo";
-import NotFound from "./components/pages/NotFound";
-import Settings from "./components/pages/Settings";
-import SimpleEntityCreatePage from "./components/pages/SimpleEntityCreatePage";
-import SimpleEntityDisplayPage from "./components/pages/SimpleEntityDisplayPage";
-import SimpleEntityUpdatePage from "./components/pages/SimpleEntityUpdatePage";
-import UpdatePage from "./components/pages/UpdatePage";
 import * as Paths from "./constants/Routes";
+import CreatePage from "./pages/CreatePage";
+import Dashboard from "./pages/Dashboard";
+import Default from "./pages/Default";
+import DisplayPage from "./pages/DisplayPage";
+import HooksDemo from "./pages/HooksDemo";
+import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
+import SimpleEntityCreatePage from "./pages/SimpleEntityCreatePage";
+import SimpleEntityDisplayPage from "./pages/SimpleEntityDisplayPage";
+import SimpleEntityUpdatePage from "./pages/SimpleEntityUpdatePage";
+import UpdatePage from "./pages/UpdatePage";
 
 const Routes = (): React.ReactElement => (
   <RouteContainer>
@@ -29,12 +28,17 @@ const Routes = (): React.ReactElement => (
     <Route path={Paths.LOGIN_PAGE} element={<Login />} />
     <Route path={Paths.JOIN_PAGE} element={<Join />} />
     <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
-    <Route path={Paths.SIGNUP_PAGE} element={<Signup />} />
     <Route path={Paths.JOIN_SUCCESS_PAGE} element={<JoinSuccess />} />
     <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
     <Route path={Paths.RESET_PASSWORD_PAGE} element={<ResetPassword />} />
     <Route path={Paths.SET_PASSWORD_PAGE} element={<SetPassword />} />
+    <Route
+      path={Paths.CREATE_MEAL_REQUEST_PAGE}
+      element={<CreateMealRequest />}
+    />
+
     <Route path="" element={<AuthWall />}>
+      <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
       <Route path={Paths.DASHBOARD_PAGE} element={<Dashboard />} />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
       <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />
@@ -51,7 +55,6 @@ const Routes = (): React.ReactElement => (
         path={Paths.DISPLAY_SIMPLE_ENTITY_PAGE}
         element={<SimpleEntityDisplayPage />}
       />
-      <Route path={Paths.EDIT_TEAM_PAGE} element={<EditTeamInfoPage />} />
       <Route path={Paths.HOOKS_PAGE} element={<HooksDemo />} />
       <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
     </Route>

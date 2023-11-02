@@ -1,8 +1,9 @@
 MOCK_INFO1_SNAKE = {
     "email": "test1@organization.com",
-    "organization_address": "123 Anywhere Street",
+    "organization_address": "255 King St N",
     "organization_name": "Test1 Org",
     "organization_desc": "Testing123",
+    "organization_coordinates": [43.477876300000005, -80.52565465],
     "role": "ASP",
     "role_info": {
         "asp_info": {
@@ -19,13 +20,15 @@ MOCK_INFO1_SNAKE = {
         {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"},
         {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
     ],
+    "active": True,
 }
 
 MOCK_INFO1_CAMEL = {
     "email": "test1@organization.com",
-    "organizationAddress": "123 Anywhere Street",
+    "organizationAddress": "255 King St N",
     "organizationName": "Test1 Org",
     "organizationDesc": "Testing123",
+    "organizationCoordinates": [43.477876300000005, -80.52565465],
     "role": "ASP",
     "roleInfo": {
         "aspInfo": {
@@ -42,13 +45,15 @@ MOCK_INFO1_CAMEL = {
         {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"},
         {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
     ],
+    "active": True,
 }
 
 MOCK_INFO2_SNAKE = {
     "email": "test2@organization.com",
-    "organization_address": "456 Anywhere Street",
+    "organization_address": "370 Highland Rd W",
     "organization_name": "Test2 Org",
     "organization_desc": "Testing123",
+    "organization_coordinates": [43.4384664, -80.5118701],
     "role": "Donor",
     "role_info": {
         "asp_info": None,
@@ -66,13 +71,15 @@ MOCK_INFO2_SNAKE = {
         {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
         {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
     ],
+    "active": True,
 }
 
 MOCK_INFO2_CAMEL = {
     "email": "test2@organization.com",
-    "organizationAddress": "456 Anywhere Street",
+    "organizationAddress": "370 Highland Rd W",
     "organizationName": "Test2 Org",
     "organizationDesc": "Testing123",
+    "organizationCoordinates": [43.4384664, -80.5118701],
     "role": "Donor",
     "roleInfo": {
         "aspInfo": None,
@@ -90,13 +97,15 @@ MOCK_INFO2_CAMEL = {
         {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
         {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
     ],
+    "active": True,
 }
 
 MOCK_INFO3_SNAKE = {
     "email": "test3@organization.com",
-    "organization_address": "789 Anywhere Street",
+    "organization_address": "170 University Ave W",
     "organization_name": "Test3 Org",
     "organization_desc": "Testing 123",
+    "organization_coordinates": [43.472995850000004, -80.5373252901463],
     "role": "Admin",
     "role_info": None,
     "primary_contact": {
@@ -108,13 +117,15 @@ MOCK_INFO3_SNAKE = {
         {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
         {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
     ],
+    "active": False,
 }
 
 MOCK_INFO3_CAMEL = {
     "email": "test3@organization.com",
-    "organizationAddress": "789 Anywhere Street",
+    "organizationAddress": "170 University Ave W",
     "organizationName": "Test3 Org",
     "organizationDesc": "Testing 123",
+    "organizationCoordinates": [43.472995850000004, -80.5373252901463],
     "role": "Admin",
     "roleInfo": None,
     "primaryContact": {
@@ -126,6 +137,7 @@ MOCK_INFO3_CAMEL = {
         {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
         {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
     ],
+    "active": False,
 }
 
 MOCK_USER1_SNAKE = {

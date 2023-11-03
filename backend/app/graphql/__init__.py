@@ -1,5 +1,6 @@
 import graphene
 import os
+import json
 
 from flask import current_app
 from .example import ExampleQueries, ExampleMutations
@@ -20,7 +21,7 @@ from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQue
 
 class RootQuery(
     # All queries listed here will be merged.
-    ExampleQueries,
+    # ExampleQueries,
     UserQueries,
     OnboardingRequestQueries,
     MealRequestQueries,
@@ -30,7 +31,7 @@ class RootQuery(
 
 class RootMutation(
     # All mutations listed here will be merged.
-    ExampleMutations,
+    # ExampleMutations,
     AuthMutations,
     OnboardingRequestMutations,
     MealRequestMutations,
@@ -45,8 +46,16 @@ schema = graphene.Schema(
 )
 
 
+
+
+
 def init_app(app):
     with app.app_context():
+        # introspection_dict = schema.introspect()
+        # with open("./schema.json", "w") as fp:
+        #     print("Printing schema")
+        #     json.dump(introspection_dict, fp)
+
         # Add your services here: services["service_name"] = ...
         services["user_service"] = UserService(logger=current_app.logger)
         services["email_service"] = EmailService(

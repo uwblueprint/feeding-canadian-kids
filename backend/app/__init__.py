@@ -1,6 +1,7 @@
 import os
 import re
 import firebase_admin
+import json
 
 from flask import Flask
 from flask.cli import ScriptInfo
@@ -48,6 +49,16 @@ def create_app(config_name):
             graphiql=True,
         ),
     )
+    @app.route("/graphql-schema")
+    def get_graphql_schema():
+        data = graphql_schema.introspect()
+        response = app.response_class(
+            response=json.dumps(data),
+            status=200,
+            mimetype='application/json'
+        )
+        return  response
+    app.add_url_rule("/graphql-schema", view_func=get_graphql_schema)
 
     app.config["CORS_ORIGINS"] = [
         "http://localhost:3000",
@@ -88,3 +99,4 @@ def create_app(config_name):
     graphql.init_app(app)
 
     return app
+

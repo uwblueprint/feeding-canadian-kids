@@ -10,17 +10,11 @@ import Login from "./components/auth/Login";
 import ResetPassword from "./components/auth/ResetPassword";
 import SetPassword from "./components/auth/SetPassword";
 import * as Paths from "./constants/Routes";
-import CreatePage from "./pages/CreatePage";
 import Dashboard from "./pages/Dashboard";
 import Default from "./pages/Default";
-import DisplayPage from "./pages/DisplayPage";
 import HooksDemo from "./pages/HooksDemo";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
-import SimpleEntityCreatePage from "./pages/SimpleEntityCreatePage";
-import SimpleEntityDisplayPage from "./pages/SimpleEntityDisplayPage";
-import SimpleEntityUpdatePage from "./pages/SimpleEntityUpdatePage";
-import UpdatePage from "./pages/UpdatePage";
 
 const Routes = (): React.ReactElement => (
   <RouteContainer>
@@ -40,21 +34,6 @@ const Routes = (): React.ReactElement => (
     <Route path="" element={<AuthWall />}>
       <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
       <Route path={Paths.DASHBOARD_PAGE} element={<Dashboard />} />
-      <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
-      <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />
-      <Route path={Paths.DISPLAY_ENTITY_PAGE} element={<DisplayPage />} />
-      <Route
-        path={Paths.CREATE_SIMPLE_ENTITY_PAGE}
-        element={<SimpleEntityCreatePage />}
-      />
-      <Route
-        path={Paths.UPDATE_SIMPLE_ENTITY_PAGE}
-        element={<SimpleEntityUpdatePage />}
-      />
-      <Route
-        path={Paths.DISPLAY_SIMPLE_ENTITY_PAGE}
-        element={<SimpleEntityDisplayPage />}
-      />
       <Route path={Paths.HOOKS_PAGE} element={<HooksDemo />} />
       <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
     </Route>

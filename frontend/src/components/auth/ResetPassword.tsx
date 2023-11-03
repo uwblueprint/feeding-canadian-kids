@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import BackgroundImage from "../../assets/background.png";
 import { LOGIN_PAGE } from "../../constants/Routes";
+import { graphql } from "../../gql";
 
 const ResetPassword = (): React.ReactElement => {
   const [notMatching, setNotMatching] = useState(false);
@@ -26,8 +27,7 @@ const ResetPassword = (): React.ReactElement => {
   const toast = useToast();
   const { objectID: objectId } = useParams();
 
-  const GET_USER = gql`
-  query GetUserByID{
+  const GET_USER = graphql(/* GraphQL */ `query GetUserByID{
     getUserById(id: "${objectId}"
       ) {
       id
@@ -58,8 +58,7 @@ const ResetPassword = (): React.ReactElement => {
         }
       }
     }
-  }
-`;
+  }`);
 
   const RESET_PASSWORD = gql`
     mutation ResetPassword($email: String!, $password: String!) {
@@ -69,7 +68,7 @@ const ResetPassword = (): React.ReactElement => {
     }
   `;
 
-  const { data: userData, error: getUserError } = useQuery(GET_USER);
+  const { data, error: getUserError } = useQuery(GET_USER);
 
   const [resetPassword, { loading: resetPasswordLoading }] = useMutation(
     RESET_PASSWORD,

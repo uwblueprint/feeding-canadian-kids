@@ -9,6 +9,9 @@
     "@chakra-ui/stepper": "^2.2.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-resolvers": "^4.0.1",
     "@react-oauth/google": "^0.5.0",
     "@rjsf/bootstrap-4": "^2.5.1",
     "@rjsf/core": "^2.5.1",
@@ -38,7 +41,8 @@
     "test:ci": " react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --cache",
-    "fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix --cache"
+    "fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix --cache",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "eslintConfig": {
     "extends": [
@@ -88,7 +92,10 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.2.1",
-    "react-test-renderer": "^18.2.0"
+    "react-test-renderer": "^18.2.0",
+    "@graphql-codegen/introspection": "4.0.0",
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/client-preset": "4.1.0"
   },
   "resolutions": {
     "autoprefixer": "10.4.5",

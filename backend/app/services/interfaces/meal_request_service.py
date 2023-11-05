@@ -29,6 +29,20 @@ class IMealRequestService(ABC):
         pass
 
     @abstractmethod
+    def update_meal_request(
+        self,
+        description,
+        requestor,
+        meal_info,
+        drop_off_datetime,
+        drop_off_location,
+        delivery_instructions,
+        onsite_staff,
+        meal_request_id,
+    ):
+        pass
+
+    @abstractmethod
     def get_meal_requests_by_requestor_id(
         self,
         requestor_id,

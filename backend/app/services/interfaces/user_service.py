@@ -117,6 +117,32 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
+    def activate_user_by_id(self, user_id):
+        """
+        Activate a user
+
+        :param user_id: user's id
+        :type user_id: str
+        :return: the activated user
+        :rtype: UserDTO
+        :raises Exception: if user update fails
+        """
+        pass
+
+    @abstractmethod
+    def deactivate_user_by_id(self, user_id):
+        """
+        Deactivate a user
+
+        :param user_id: user's id
+        :type user_id: str
+        :return: the deactivated user
+        :rtype: UserDTO
+        :raises Exception: if user update fails
+        """
+        pass
+
+    @abstractmethod
     def delete_user_by_id(self, user_id):
         """
         Delete a user by user_id

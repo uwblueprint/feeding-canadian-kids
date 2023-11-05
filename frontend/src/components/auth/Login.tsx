@@ -50,6 +50,7 @@ const LOGIN = gql`
             phone
             email
           }
+          active
         }
       }
     }

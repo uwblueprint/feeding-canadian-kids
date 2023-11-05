@@ -54,7 +54,7 @@ class MealRequestService(IMealRequestService):
         description,
         requestor,
         meal_info,
-        donation_datetime,
+        drop_off_datetime,
         drop_off_location,
         delivery_instructions,
         onsite_staff,
@@ -72,8 +72,8 @@ class MealRequestService(IMealRequestService):
         if requestor is not None:
             original_meal_request.requestor = requestor
 
-        if donation_datetime is not None:
-            original_meal_request.donation_datetime = donation_datetime
+        if drop_off_datetime is not None:
+            original_meal_request.drop_off_datetime = drop_off_datetime
 
         if meal_info is not None:
             original_meal_request.meal_info = MealInfo(

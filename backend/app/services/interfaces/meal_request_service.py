@@ -34,7 +34,7 @@ class IMealRequestService(ABC):
         description,
         requestor,
         meal_info,
-        donation_datetime,
+        drop_off_datetime,
         drop_off_location,
         delivery_instructions,
         onsite_staff,

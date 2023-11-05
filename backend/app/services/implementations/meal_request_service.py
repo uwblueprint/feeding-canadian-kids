@@ -60,7 +60,9 @@ class MealRequestService(IMealRequestService):
         onsite_staff,
         meal_request_id,
     ):
-        original_meal_request: MealRequest = MealRequest.objects(id=meal_request_id).first()
+        original_meal_request: MealRequest = MealRequest.objects(
+            id=meal_request_id
+        ).first()
         if not original_meal_request:
             raise Exception(f"meal request with id {meal_request_id} not found")
 
@@ -93,13 +95,17 @@ class MealRequestService(IMealRequestService):
             ]
 
         requestor = original_meal_request.requestor
-        # Does validation, 
-        meal_request_dto = self.convert_meal_request_to_dto(original_meal_request, requestor)
+        # Does validation,
+        meal_request_dto = self.convert_meal_request_to_dto(
+            original_meal_request, requestor
+        )
 
         original_meal_request.save()
         return meal_request_dto
 
-    def convert_meal_request_to_dto(self, request: MealRequest, requestor: User) -> MealRequestDTO:
+    def convert_meal_request_to_dto(
+        self, request: MealRequest, requestor: User
+    ) -> MealRequestDTO:
         request_dict = request.to_serializable_dict()
         request_dict["requestor"] = requestor.to_serializable_dict()
 
@@ -108,9 +114,7 @@ class MealRequestService(IMealRequestService):
             donor = User.objects(id=donor_id).first()
             if not donor:
                 raise Exception(f'donor "{donor_id}" not found')
-            request_dict["donation_info"][
-                "donor"
-            ] = donor.to_serializable_dict()
+            request_dict["donation_info"]["donor"] = donor.to_serializable_dict()
         return MealRequestDTO(**request_dict)
 
     def get_meal_requests_by_requestor_id(
@@ -152,7 +156,9 @@ class MealRequestService(IMealRequestService):
 
             meal_request_dtos = []
             for request in requests:
-                meal_request_dtos.append(self.convert_meal_request_to_dto(request, requestor))
+                meal_request_dtos.append(
+                    self.convert_meal_request_to_dto(request, requestor)
+                )
 
             return meal_request_dtos
 

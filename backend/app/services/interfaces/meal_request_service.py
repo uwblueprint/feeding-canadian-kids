@@ -42,7 +42,6 @@ class IMealRequestService(ABC):
     ):
         pass
 
-
     @abstractmethod
     def get_meal_requests_by_requestor_id(
         self,

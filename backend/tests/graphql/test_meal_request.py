@@ -143,20 +143,18 @@ def test_update_meal_request(user_setup):
         "mealRequests"
     ][0]["id"]
 
-    updatedDateTime =  "2023-10-31T16:45:00+00:00"
-    updatedDescription = "Updated description" 
+    updatedDateTime = "2023-10-31T16:45:00+00:00"
+    updatedDescription = "Updated description"
     updatedDeliveryInstructions = "Updated delivery instructions"
     updatedDropOffLocation = "Updated drop off location"
     updatedMealInfo = {
-        "portions":11,
+        "portions": 11,
         "dietaryRestrictions": "No nuts",
-        "mealSuggestions": "Pizza"
+        "mealSuggestions": "Pizza",
     }
-    updatedOnsiteStaff = [{
-          "name": "test",
-          "email": "test@test.com",
-          "phone": "604-441-1171"
-        }]
+    updatedOnsiteStaff = [
+        {"name": "test", "email": "test@test.com", "phone": "604-441-1171"}
+    ]
 
     mutation = f"""
     mutation testUpdateMealRequest{{

@@ -3,9 +3,7 @@ from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
 from datetime import datetime
 
-from ...models.meal_request import MealRequest
 from ...models.user import User
-from ..interfaces.meal_request_service import IMealRequestService
 from ...graphql.types import SortDirection
 from ...resources.meal_request_dto import MealRequestDTO
 

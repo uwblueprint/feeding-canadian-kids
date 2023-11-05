@@ -41,8 +41,6 @@ class CreateMealRequestResponse(graphene.ObjectType):
     meal_info = graphene.Field(MealInfoResponse, required=True)
 
 
-
-
 class DonationInfo(graphene.ObjectType):
     donor = graphene.Field(User)
     commitment_date = graphene.DateTime()
@@ -63,6 +61,7 @@ class MealRequestResponse(graphene.ObjectType):
     date_updated = graphene.DateTime()
     delivery_instructions = graphene.String()
     donation_info = graphene.Field(DonationInfo)
+
 
 # Mutations
 class CreateMealRequests(Mutation):
@@ -150,6 +149,7 @@ class UpdateMealRequest(Mutation):
 class MealRequestMutations(MutationList):
     create_meal_request = CreateMealRequests.Field()
     update_meal_request = UpdateMealRequest.Field()
+
 
 class MealRequestQueries(QueryList):
     getMealRequestsByRequestorId = graphene.List(

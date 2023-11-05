@@ -90,7 +90,6 @@ class UpdateMealRequest(Mutation):
         description = graphene.String(required=False)
         requestor = graphene.ID(required=False)
         donation_datetime = graphene.DateTime(required=False)
-
         meal_info = MealTypeInput()
         drop_off_location = graphene.String()
         delivery_instructions = graphene.String()

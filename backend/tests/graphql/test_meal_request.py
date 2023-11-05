@@ -89,42 +89,56 @@ def test_create_meal_request(user_setup):
     )
 
 
-def test_update_meal_request(graphql_schema):
-    create_meal_request_mutation = """
-    mutation testCreateMealRequest {
+def test_update_meal_request(user_setup):
+    requestor, _, _ = user_setup
+    create_meal_request_mutation = f"""
+    mutation testCreateMealRequest {{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
         description: "Meal requests for office employees",
         dropOffLocation: "123 Main Street",
         dropOffTime: "16:30:00Z",
-        mealInfo: {portions: 40,
+        mealInfo: {{
+          portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
-          mealSuggestions: "Burritos"},
+          mealSuggestions: "Burritos"
+        }},
         onsiteStaff: [
-          {name: "John Doe", email: "john.doe@example.com", phone: "+1234567890"},
-          {name: "Jane Smith", email: "jane.smith@example.com", phone: "+9876543210"}],
-        requestor: "507f1f77bcf86cd799439011",
+          {{
+            name: "John Doe",
+            email: "john.doe@example.com",
+            phone: "+1234567890"
+          }},
+          {{
+            name: "Jane Smith",
+            email: "jane.smith@example.com",
+            phone: "+9876543210"
+          }}
+        ],
+        requestorId: "{str(requestor.id)}",
         requestDates: [
             "2023-06-01",
             "2023-06-02",
         ],
       )
-      {
-        mealRequests {
+      {{
+        mealRequests {{
           status
           description
           id
-          donationDatetime
-          mealInfo {
+          dropOffDatetime
+          mealInfo {{
             portions
             dietaryRestrictions
             mealSuggestions
-          }
-        }
-      }
-    }
+          }}
+        }}
+      }}
+    }}
   """
+
     create_meal_request_result = graphql_schema.execute(create_meal_request_mutation)
+    print(create_meal_request_result)
     created_meal_request_id = create_meal_request_result.data["createMealRequest"][
         "mealRequests"
     ][0]["id"]

@@ -17,7 +17,7 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import BackgroundImage from "../../assets/background.png";
 import { DASHBOARD_PAGE, JOIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { AuthenticatedUser } from "../../types/UserTypes";
+import { AuthenticatedUser, LoginData } from "../../types/UserTypes";
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!, $idToken: String!) {
@@ -50,6 +50,7 @@ const LOGIN = gql`
             phone
             email
           }
+          active
         }
       }
     }
@@ -62,7 +63,7 @@ const Login = (): React.ReactElement => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
-  const [login] = useMutation<{ login: AuthenticatedUser }>(LOGIN);
+  const [login] = useMutation<{ login: LoginData }>(LOGIN);
 
   const onLogInClick = async () => {
     let user: AuthenticatedUser | null = null;
@@ -82,8 +83,7 @@ const Login = (): React.ReactElement => {
   return (
     <Flex
       flexDirection="column"
-      width="100wh"
-      height="100vh"
+      padding="100px 0px"
       justifyContent={{ base: "center", md: "flex-start" }}
       alignItems="center"
       style={{

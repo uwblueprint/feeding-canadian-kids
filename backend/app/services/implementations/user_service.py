@@ -3,6 +3,7 @@ from ...models.onboarding_request import OnboardingRequest
 from ..interfaces.user_service import IUserService
 from ...models.user import User
 from ...resources.user_dto import UserDTO
+from ...utilities.location_to_coordinates import getGeocodeFromAddress
 
 
 class UserService(IUserService):
@@ -151,6 +152,16 @@ class UserService(IUserService):
 
         return user_dtos
 
+    def update_user_coordinates(self, user_dto):
+        try:
+            organization_coordinates = getGeocodeFromAddress(
+                user_dto.info.organization_address
+            )
+            user_dto.info["organization_coordinates"] = organization_coordinates
+            return user_dto
+        except Exception as e:
+            raise e
+
     def create_user(self, create_user_dto):
         new_user = None
         firebase_user = None
@@ -161,12 +172,13 @@ class UserService(IUserService):
             )
 
             try:
-                new_user = User(
+                new_user: User = User(
                     auth_id=firebase_user.uid,
                     info=OnboardingRequest.objects(id=create_user_dto.request_id)
                     .first()
                     .info,
-                ).save()
+                )
+                new_user.save()
             except Exception as mongo_error:
                 # rollback user creation in Firebase
                 try:
@@ -206,6 +218,7 @@ class UserService(IUserService):
 
     def update_user_by_id(self, user_id, update_user_dto):
         try:
+            update_user_dto = self.update_user_coordinates(update_user_dto)
             old_user = User.objects(id=user_id).modify(
                 new=False,
                 auth_id=update_user_dto.auth_id,
@@ -263,6 +276,48 @@ class UserService(IUserService):
             "info": updated_user_dict["info"],
         }
         return UserDTO(**kwargs)
+
+    def activate_user_by_id(self, user_id):
+        try:
+            user = User.objects(id=user_id).first()
+            if not user:
+                raise Exception(f"user_id {user_id} not found")
+
+            user.info.active = True  # activate user
+
+            user.save()  # save changes
+
+            updated_user_dict = (
+                UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+            )
+            kwargs = {"id": updated_user_dict["id"], "info": updated_user_dict["info"]}
+
+            return UserDTO(**kwargs)
+
+        except Exception as e:
+            self.logger.error(f"Failed to activate user. Reason = {e}")
+            raise e
+
+    def deactivate_user_by_id(self, user_id):
+        try:
+            user = User.objects(id=user_id).first()
+            if not user:
+                raise Exception(f"user_id {user_id} not found")
+
+            user.info.active = False  # deactivate user
+
+            user.save()  # save changes
+
+            updated_user_dict = (
+                UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+            )
+            kwargs = {"id": updated_user_dict["id"], "info": updated_user_dict["info"]}
+
+            return UserDTO(**kwargs)
+
+        except Exception as e:
+            self.logger.error(f"Failed to deactivate user. Reason = {e}")
+            raise e
 
     def delete_user_by_id(self, user_id):
         try:

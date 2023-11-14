@@ -13,7 +13,7 @@ def test_create_onboarding_request():
                         createOnboardingRequest (
                             userInfo: {
                                 email: "test3@organization.com",
-                                organizationAddress: "789 Anywhere Street",
+                                organizationAddress: "170 University Ave W",
                                 organizationName: "Test3 Org",
                                 organizationDesc: "Testing 123",
                                 role: "Admin",
@@ -34,6 +34,7 @@ def test_create_onboarding_request():
                                         email: "com@domain.email"
                                     },
                                 ],
+                                active: false
                             }
                         ) {
                             onboardingRequest {
@@ -43,6 +44,7 @@ def test_create_onboarding_request():
                                     organizationAddress
                                     organizationName
                                     organizationDesc
+                                    organizationCoordinates
                                     role
                                     roleInfo {
                                         aspInfo {
@@ -63,6 +65,7 @@ def test_create_onboarding_request():
                                         phone
                                         email
                                     }
+                                    active
                                 }
                                 dateSubmitted
                                 status
@@ -86,7 +89,7 @@ def test_create_onboarding_request_with_existing_email_errors():
             createOnboardingRequest (
                 userInfo: {{
                     email: "test1@organization.com",
-                    organizationAddress: "123 Anywhere Street",
+                    organizationAddress: "255 King St N",
                     organizationName: "Test1 Org",
                     organizationDesc: "Testing 123",
                     role: "ASP",
@@ -112,7 +115,8 @@ def test_create_onboarding_request_with_existing_email_errors():
                             phone: "111-222-3333",
                             email: "example@domain.com"
                         }}
-                    ]
+                    ],
+                    active: true
                 }}
             ) {{
                 onboardingRequest {{
@@ -122,6 +126,7 @@ def test_create_onboarding_request_with_existing_email_errors():
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                         roleInfo {{
                             aspInfo {{
@@ -142,6 +147,7 @@ def test_create_onboarding_request_with_existing_email_errors():
                             phone
                             email
                         }}
+                        active
                     }}
                     dateSubmitted
                     status
@@ -165,6 +171,7 @@ def test_get_all_requests(onboarding_request_setup):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                         roleInfo {
                             aspInfo {
@@ -185,6 +192,7 @@ def test_get_all_requests(onboarding_request_setup):
                             phone
                             email
                         }
+                        active
                     }
                     dateSubmitted
                     status
@@ -215,6 +223,7 @@ def test_filter_requests_by_role(onboarding_request_setup):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                         roleInfo {
                             aspInfo {
@@ -235,6 +244,7 @@ def test_filter_requests_by_role(onboarding_request_setup):
                             phone
                             email
                         }
+                        active
                     }
                     dateSubmitted
                     status
@@ -260,6 +270,7 @@ def test_filter_requests_by_status(onboarding_request_setup):
                         organizationAddress
                         organizationName
                         organizationDesc
+                        organizationCoordinates
                         role
                         roleInfo {
                             aspInfo {
@@ -280,6 +291,7 @@ def test_filter_requests_by_status(onboarding_request_setup):
                             phone
                             email
                         }
+                        active
                     }
                     dateSubmitted
                     status
@@ -305,6 +317,7 @@ def test_get_requests_by_id(onboarding_request_setup):
                     organizationAddress
                     organizationName
                     organizationDesc
+                    organizationCoordinates
                     role
                     roleInfo {{
                         aspInfo {{
@@ -325,6 +338,7 @@ def test_get_requests_by_id(onboarding_request_setup):
                         phone
                         email
                     }}
+                    active
                 }}
                 dateSubmitted
                 status

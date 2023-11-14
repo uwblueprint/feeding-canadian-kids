@@ -31,7 +31,11 @@ import {
   Role,
   UserInfo,
 } from "../../types/UserTypes";
-import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
+import {
+  isNonNegativeInt,
+  isValidEmail,
+  trimWhiteSpace,
+} from "../../utils/ValidationUtils";
 import useIsWebView from "../../utils/useIsWebView";
 import OnsiteStaffSection from "../common/OnsiteStaffSection";
 
@@ -213,7 +217,7 @@ const Join = (): React.ReactElement => {
   const getWebOrganizationSection = (): React.ReactElement => {
     return (
       <>
-        <Text variant="desktop-heading">Organization Info</Text>
+        <Text variant="desktop-heading">Organization Information</Text>
         <Flex flexDir="row" gap="24px">
           <Flex
             flexDir="column"
@@ -237,12 +241,13 @@ const Join = (): React.ReactElement => {
             <Flex flexDir="column" w="-webkit-fit-content">
               <FormControl
                 isRequired
-                isInvalid={attemptedSubmit && numKids === ""}
+                isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
               >
                 <FormLabel variant="desktop-button-bold">
-                  Number of Kids
+                  Number of kids
                 </FormLabel>
                 <Input
+                  type="number"
                   value={numKids}
                   placeholder={PLACEHOLDER_WEB_EXAMPLE_NUM_KIDS}
                   onChange={(e) => setNumKids(e.target.value)}
@@ -269,22 +274,20 @@ const Join = (): React.ReactElement => {
             </FormControl>
           </Flex>
         </Flex>
-        <Flex flexDir="row">
-          <Flex flexDir="column" w="480px">
-            <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && organizationDesc === ""}
-            >
-              <FormLabel variant="desktop-button-bold">
-                Description of organization
-              </FormLabel>
-              <Textarea
-                value={organizationDesc}
-                placeholder={PLACEHOLDER_WEB_EXAMPLE_DESCRIPTION}
-                onChange={(e) => setOrganizationDesc(e.target.value)}
-              />
-            </FormControl>
-          </Flex>
+        <Flex flexDir="column" w="480px">
+          <FormControl
+            isRequired
+            isInvalid={attemptedSubmit && organizationDesc === ""}
+          >
+            <FormLabel variant="desktop-button-bold">
+              Description of organization
+            </FormLabel>
+            <Textarea
+              value={organizationDesc}
+              placeholder={PLACEHOLDER_WEB_EXAMPLE_DESCRIPTION}
+              onChange={(e) => setOrganizationDesc(e.target.value)}
+            />
+          </FormControl>
         </Flex>
       </>
     );
@@ -295,7 +298,7 @@ const Join = (): React.ReactElement => {
       <Flex flexDir="column" gap="8px">
         <FormControl isRequired>
           <FormLabel variant="mobile-form-label-bold">
-            Organization Info
+            Organization Information
           </FormLabel>
 
           <Flex flexDir="column" gap="8px">
@@ -324,17 +327,21 @@ const Join = (): React.ReactElement => {
             {role === "ASP" && (
               <FormControl
                 isRequired
-                isInvalid={attemptedSubmit && numKids === ""}
+                isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
               >
                 <Input
                   variant="mobile-outline"
+                  type="number"
                   value={numKids}
                   onChange={(e) => setNumKids(e.target.value)}
                   placeholder={PLACEHOLDER_MOBILE_EXAMPLE_NUM_KIDS}
                 />
               </FormControl>
             )}
-            <FormControl>
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && organizationDesc === ""}
+            >
               <Textarea
                 variant="mobile-outline"
                 value={organizationDesc}
@@ -528,8 +535,7 @@ const Join = (): React.ReactElement => {
       if (!isValidEmail(emailsToValidate[i])) return false;
     }
 
-    const numKidsToValidate = parseInt(numKids, 10);
-    if (Number.isNaN(numKidsToValidate) || numKidsToValidate < 0) return false;
+    if (role === "ASP" && !isNonNegativeInt(numKids)) return false;
 
     return true;
   };
@@ -541,13 +547,13 @@ const Join = (): React.ReactElement => {
       email: trimWhiteSpace(email),
       organizationAddress: trimWhiteSpace(organizationAddress),
       organizationName: trimWhiteSpace(organizationName),
-      organizationDesc: trimWhiteSpace(organizationDesc),
+      organizationDesc,
       role,
       roleInfo: {
         aspInfo:
           role === "ASP"
             ? {
-                numKids: parseInt(numKids, 10),
+                numKids: parseInt(trimWhiteSpace(numKids), 10),
               }
             : null,
         donorInfo: null,

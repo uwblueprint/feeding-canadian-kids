@@ -1617,6 +1617,11 @@
   resolved "https://registry.npmjs.org/@chakra-ui/react-context/-/react-context-2.0.5.tgz"
   integrity sha512-WYS0VBl5Q3/kNShQ26BP+Q0OGMeTQWco3hSiJWvO2wYLY7N1BLq6dKs8vyKHZfpwKh2YL2bQeAObi+vSkXp6tQ==
 
+"@chakra-ui/react-context@2.0.8":
+  version "2.0.8"
+  resolved "https://registry.npmjs.org/@chakra-ui/react-context/-/react-context-2.0.8.tgz"
+  integrity sha512-tRTKdn6lCTXM6WPjSokAAKCw2ioih7Eg8cNgaYRSwKBck8nkz9YqxgIIEj3dJD7MGtpl24S/SNI98iRWkRwR/A==
+
 "@chakra-ui/react-env@2.0.11":
   version "2.0.11"
   resolved "https://registry.npmjs.org/@chakra-ui/react-env/-/react-env-2.0.11.tgz"
@@ -1856,6 +1861,15 @@
   dependencies:
     "@chakra-ui/icon" "3.0.12"
     "@chakra-ui/react-context" "2.0.5"
+
+"@chakra-ui/stepper@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.npmjs.org/@chakra-ui/stepper/-/stepper-2.2.0.tgz"
+  integrity sha512-8ZLxV39oghSVtOUGK8dX8Z6sWVSQiKVmsK4c3OQDa8y2TvxP0VtFD0Z5U1xJlOjQMryZRWhGj9JBc3iQLukuGg==
+  dependencies:
+    "@chakra-ui/icon" "3.0.16"
+    "@chakra-ui/react-context" "2.0.8"
+    "@chakra-ui/shared-utils" "2.0.5"
 
 "@chakra-ui/styled-system@2.3.5":
   version "2.3.5"

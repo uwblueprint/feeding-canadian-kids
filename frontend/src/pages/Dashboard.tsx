@@ -32,6 +32,8 @@ import { CompactTable } from "@table-library/react-table-library/compact";
 import { useTheme } from "@table-library/react-table-library/theme";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
 import React, { useContext, useState } from "react";
+import { BsFilter } from "react-icons/bs";
+import { FiFilter } from "react-icons/fi";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import EditMealRequestForm from "./EditMealRequestForm";
@@ -42,29 +44,34 @@ import RefreshCredentials from "../components/auth/RefreshCredentials";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import * as Routes from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
-import { MealRequest, MealRequestsData, MealRequestsVariables, MealStatus } from "../types/MealRequestTypes";
+import {
+  MealRequest,
+  MealRequestsData,
+  MealRequestsVariables,
+  MealStatus,
+} from "../types/MealRequestTypes";
 import { Contact } from "../types/UserTypes";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
-    $requestorId: ID!,
-    $minDropOffDate: Date,
-    $maxDropOffDate: Date,
-    $status: [MealStatus],
-    $offset: Int,
-    $limit: Int,
+    $requestorId: ID!
+    $minDropOffDate: Date
+    $maxDropOffDate: Date
+    $status: [MealStatus]
+    $offset: Int
+    $limit: Int
     $sortByDateDirection: SortDirection
-  ){
+  ) {
     getMealRequestsByRequestorId(
-        requestorId: $requestorId,
-        minDropOffDate: $minDropOffDate,
-        maxDropOffDate: $maxDropOffDate,
-        status: $status,
-        offset: $offset,
-        limit: $limit,
-        sortByDateDirection: $sortByDateDirection
-      ) {
-      id,
+      requestorId: $requestorId
+      minDropOffDate: $minDropOffDate
+      maxDropOffDate: $maxDropOffDate
+      status: $status
+      offset: $offset
+      limit: $limit
+      sortByDateDirection: $sortByDateDirection
+    ) {
+      id
       requestor {
         info {
           primaryContact {
@@ -73,30 +80,30 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
             phone
           }
         }
-      },
-      description,
-      status,
-      dropOffDatetime,
-      dropOffLocation,
+      }
+      description
+      status
+      dropOffDatetime
+      dropOffLocation
       mealInfo {
         portions
         dietaryRestrictions
         mealSuggestions
-      },
+      }
       onsiteStaff {
         name
         email
         phone
-      },
-      dateCreated,
-      dateUpdated,
-      deliveryInstructions,
+      }
+      dateCreated
+      dateUpdated
+      deliveryInstructions
       donationInfo {
         donor {
           info {
             organizationName
           }
-        },
+        }
         commitmentDate
         mealDescription
         additionalInfo
@@ -213,15 +220,25 @@ const ListView = () => {
     console.log("delete clicked for item", item.id);
   };
 
-  const { data: mealRequests, error: getMealRequestsError, loading: getMealRequestsLoading } = useQuery<MealRequestsData, MealRequestsVariables>(GET_MEAL_REQUESTS_BY_ID, {
-    variables: {
-      requestorId: authenticatedUser!.id
-    }
-  });
+  const {
+    data: mealRequests,
+    error: getMealRequestsError,
+    loading: getMealRequestsLoading,
+  } = useQuery<MealRequestsData, MealRequestsVariables>(
+    GET_MEAL_REQUESTS_BY_ID,
+    {
+      variables: {
+        requestorId: authenticatedUser!.id,
+      },
+    },
+  );
 
   const data = {
     nodes: mealRequests?.getMealRequestsByRequestorId.map(
-      (mealRequest: MealRequest, index: number): TABLE_LIBRARY_TYPES.TableNode => ({
+      (
+        mealRequest: MealRequest,
+        index: number,
+      ): TABLE_LIBRARY_TYPES.TableNode => ({
         id: index,
         date_requested: new Date(mealRequest.dateCreated),
         time_requested: new Date(mealRequest.dateCreated),
@@ -359,15 +376,48 @@ const ListView = () => {
 
   if (getMealRequestsLoading) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" w="100%" h="200px">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        w="100%"
+        h="200px"
+      >
         <LoadingSpinner />
       </Box>
-      
-    )
+    );
   }
 
   return (
     <Box mt="24px">
+      <Flex gap="10px" marginBottom="20px" justifyContent="flex-end">
+        <ChakraButton
+          _hover={{ backgroundColor: "gray.100" }}
+          padding="6px 10px"
+          borderRadius="3px"
+          fontSize="14px"
+          border="solid 1px #E2E8F0"
+          boxShadow="lg"
+          backgroundColor="white"
+          color="black"
+        >
+          <BsFilter />
+          Sort
+        </ChakraButton>
+        <ChakraButton
+          _hover={{ backgroundColor: "gray.100" }}
+          padding="6px 10px"
+          borderRadius="3px"
+          fontSize="14px"
+          border="solid 1px #E2E8F0"
+          boxShadow="lg"
+          backgroundColor="white"
+          color="black"
+        >
+          <FiFilter />
+          Filter
+        </ChakraButton>
+      </Flex>
       <Box
         display="flex"
         alignItems="center"

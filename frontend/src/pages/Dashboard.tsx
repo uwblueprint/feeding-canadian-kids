@@ -156,99 +156,100 @@ const Dashboard = (): React.ReactElement => {
             </Text>
           </Tab>
         </TabList>
-
-        <TabPanel>
-          {isWebView && (
-            <Stack direction="row">
-              <div style={{ width: "100%" }}>
-                <FullCalendar
-                  headerToolbar={{
-                    left: "prev",
-                    center: "title",
-                    right: "next",
-                  }}
-                  themeSystem="Simplex"
-                  plugins={[dayGridPlugin]}
-                  initialView="dayGridMonth"
-                  events={[
-                    {
-                      title: "event 1",
-                      date: "2023-07-01",
-                      extendedProps: { mealRequest: SAMPLE_MEAL_REQUEST_1 },
-                    },
-                    {
-                      title: "event 2",
-                      date: "2023-07-08",
-                      extendedProps: { mealRequest: SAMPLE_MEAL_REQUEST_2 },
-                    },
-                  ]}
-                  // eventContent={renderEventContent}
-                  eventClick={(info) => {
-                    setSelectedMealRequest(
-                      info.event.extendedProps.mealRequest,
-                    );
-                    // info.el.style.borderColor = "red";
-                  }}
-                  eventMouseLeave={() => {
-                    setSelectedMealRequest(undefined);
-                  }}
-                />
-              </div>
-              {selectedMealRequest && (
-                <div style={{ width: "30%", margin: "20px" }}>
-                  <Text>
-                    <strong>Upcoming Delivery</strong>
-                  </Text>
-                  <Card padding={3}>
-                    <CardBody>
-                      <Table variant="unstyled" size="lg">
-                        <Tr>
-                          <Td>
-                            <AtSignIcon />
-                          </Td>
-                          <Text>
-                            <strong>
-                              Location: <br />
-                            </strong>
-                            {selectedMealRequest.date.toLocaleString()}
-                          </Text>
-                        </Tr>
-                        <Tr>
-                          <Td>
-                            <InfoIcon />
-                          </Td>
-                          <Text>
-                            <strong>Onsite Staff:</strong>
-                          </Text>
-                          {selectedMealRequest.onsiteStaff.map(
-                            (staffMember) => (
-                              <>
-                                <Text>{staffMember.name}</Text>
-                                <Text>{staffMember.email}</Text>
-                                <Text>{staffMember.phone}</Text>
-                              </>
-                            ),
-                          )}
-                        </Tr>
-
-                        <Tr>
-                          <Td>
-                            <EmailIcon />
-                          </Td>
-                          <Text>
-                            <strong>Delivery notes: </strong>
-                            <br />
-                            {selectedMealRequest.deliveryInstructions}
-                          </Text>
-                        </Tr>
-                      </Table>
-                    </CardBody>
-                  </Card>
+        <TabPanels>
+          <TabPanel>
+            {isWebView && (
+              <Stack direction="row">
+                <div style={{ width: "100%" }}>
+                  <FullCalendar
+                    headerToolbar={{
+                      left: "prev",
+                      center: "title",
+                      right: "next",
+                    }}
+                    themeSystem="Simplex"
+                    plugins={[dayGridPlugin]}
+                    initialView="dayGridMonth"
+                    events={[
+                      {
+                        title: "event 1",
+                        date: "2023-07-01",
+                        extendedProps: { mealRequest: SAMPLE_MEAL_REQUEST_1 },
+                      },
+                      {
+                        title: "event 2",
+                        date: "2023-07-08",
+                        extendedProps: { mealRequest: SAMPLE_MEAL_REQUEST_2 },
+                      },
+                    ]}
+                    // eventContent={renderEventContent}
+                    eventClick={(info) => {
+                      setSelectedMealRequest(
+                        info.event.extendedProps.mealRequest,
+                      );
+                      // info.el.style.borderColor = "red";
+                    }}
+                    eventMouseLeave={() => {
+                      setSelectedMealRequest(undefined);
+                    }}
+                  />
                 </div>
-              )}
-            </Stack>
-          )}
-        </TabPanel>
+                {selectedMealRequest && (
+                  <div style={{ width: "30%", margin: "20px" }}>
+                    <Text>
+                      <strong>Upcoming Delivery</strong>
+                    </Text>
+                    <Card padding={3}>
+                      <CardBody>
+                        <Table variant="unstyled" size="lg">
+                          <Tr>
+                            <Td>
+                              <AtSignIcon />
+                            </Td>
+                            <Text>
+                              <strong>
+                                Location: <br />
+                              </strong>
+                              {selectedMealRequest.date.toLocaleString()}
+                            </Text>
+                          </Tr>
+                          <Tr>
+                            <Td>
+                              <InfoIcon />
+                            </Td>
+                            <Text>
+                              <strong>Onsite Staff:</strong>
+                            </Text>
+                            {selectedMealRequest.onsiteStaff.map(
+                              (staffMember) => (
+                                <>
+                                  <Text>{staffMember.name}</Text>
+                                  <Text>{staffMember.email}</Text>
+                                  <Text>{staffMember.phone}</Text>
+                                </>
+                              ),
+                            )}
+                          </Tr>
+
+                          <Tr>
+                            <Td>
+                              <EmailIcon />
+                            </Td>
+                            <Text>
+                              <strong>Delivery notes: </strong>
+                              <br />
+                              {selectedMealRequest.deliveryInstructions}
+                            </Text>
+                          </Tr>
+                        </Table>
+                      </CardBody>
+                    </Card>
+                  </div>
+                )}
+              </Stack>
+            )}
+          </TabPanel>
+        </TabPanels>
       </Tabs>
     </Box>
   );

@@ -31,15 +31,10 @@ import {
   DASHBOARD_PAGE,
   HOME_PAGE,
   JOIN_SUCCESS_PAGE,
-} from "../../constants/Routes";
-import AuthContext from "../../contexts/AuthContext";
-import {
-  Contact,
-  OnboardingRequest,
-  Role,
-  UserInfo,
-} from "../../types/UserTypes";
-import { isValidEmail, trimWhiteSpace } from "../../utils/ValidationUtils";
+} from "../constants/Routes";
+import AuthContext from "../contexts/AuthContext";
+import { Contact, OnboardingRequest, Role, UserInfo } from "../types/UserTypes";
+import { isValidEmail, trimWhiteSpace } from "../utils/ValidationUtils";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";

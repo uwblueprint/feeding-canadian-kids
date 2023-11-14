@@ -1,3 +1,4 @@
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   CalendarIcon,
   ChevronDownIcon,
@@ -31,7 +32,7 @@ import { CompactTable } from "@table-library/react-table-library/compact";
 import { useTheme } from "@table-library/react-table-library/theme";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 import EditMealRequestForm from "./EditMealRequestForm";
 import mealRequestsJSON from "./MealRequestSampleData.json";
@@ -39,7 +40,69 @@ import mealRequestsJSON from "./MealRequestSampleData.json";
 import BackgroundImage from "../assets/background.png";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
 import * as Routes from "../constants/Routes";
+import AuthContext from "../contexts/AuthContext";
+import { MealRequest, MealRequestsData, MealRequestsVariables, MealStatus } from "../types/MealRequestTypes";
 import { Contact } from "../types/UserTypes";
+
+const GET_MEAL_REQUESTS_BY_ID = gql`
+  query GetMealRequestsByRequestorId(
+    $requestorId: ID!,
+    $minDropOffDate: Date,
+    $maxDropOffDate: Date,
+    $status: [MealStatus],
+    $offset: Int,
+    $limit: Int,
+    $sortByDateDirection: SortDirection
+  ){
+    getMealRequestsByRequestorId(
+        requestorId: $requestorId,
+        minDropOffDate: $minDropOffDate,
+        maxDropOffDate: $maxDropOffDate,
+        status: $status,
+        offset: $offset,
+        limit: $limit,
+        sortByDateDirection: $sortByDateDirection
+      ) {
+      id,
+      requestor {
+        info {
+          primaryContact {
+            name
+            email
+            phone
+          }
+        }
+      },
+      description,
+      status,
+      dropOffDatetime,
+      dropOffLocation,
+      mealInfo {
+        portions
+        dietaryRestrictions
+        mealSuggestions
+      },
+      onsiteStaff {
+        name
+        email
+        phone
+      },
+      dateCreated,
+      dateUpdated,
+      deliveryInstructions,
+      donationInfo {
+        donor {
+          info {
+            organizationName
+          }
+        },
+        commitmentDate
+        mealDescription
+        additionalInfo
+      }
+    }
+  }
+`;
 
 type ButtonProps = { text: string; path: string };
 
@@ -119,6 +182,12 @@ const ListView = () => {
 
   const theme = useTheme([chakraTheme, customTheme]);
 
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  // if (!authenticatedUser) {
+  //   return <Navigate replace to={Routes.LOGIN_PAGE} />;
+  // }
+
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
     [],
   );
@@ -143,23 +212,25 @@ const ListView = () => {
     console.log("delete clicked for item", item.id);
   };
 
-  const mealRequests = mealRequestsJSON;
+  const { data: mealRequests, error: getMealRequestsError, loading: getMealRequestsLoading } = useQuery<MealRequestsData, MealRequestsVariables>(GET_MEAL_REQUESTS_BY_ID, {
+    variables: {
+      requestorId: authenticatedUser!.id
+    }
+  });
 
   const data = {
-    nodes: mealRequests.map(
-      (mealRequest, index): TABLE_LIBRARY_TYPES.TableNode => ({
+    nodes: mealRequests?.getMealRequestsByRequestorId.map(
+      (mealRequest: MealRequest, index: number): TABLE_LIBRARY_TYPES.TableNode => ({
         id: index,
-        date_requested: new Date(mealRequest.drop_off_time.$date),
-        time_requested: new Date(mealRequest.drop_off_time.$date),
-        // donor_name: donor_name ? donor_name : null,
-        donor_name: index % 2 ? null : "Placeholder Name",
-        num_meals: mealRequest.meal_info.portions,
-        primary_contact: mealRequest.primary_contact,
-        onsite_staff: mealRequest.onsite_staff,
+        date_requested: new Date(mealRequest.dateCreated),
+        time_requested: new Date(mealRequest.dateCreated),
+        donor_name: mealRequest.donationInfo?.donor.info?.organizationName,
+        num_meals: mealRequest.mealInfo?.portions,
+        primary_contact: mealRequest.requestor.info?.primaryContact,
+        onsite_staff: mealRequest.onsiteStaff,
         meal_description: mealRequest.description,
-        delivery_instructions: mealRequest.delivery_instructions,
-        // pending: mealRequest.pending,
-        pending: index % 2,
+        delivery_instructions: mealRequest.deliveryInstructions,
+        pending: mealRequest.status === MealStatus.OPEN,
         _hasContent: false,
         nodes: null,
       }),
@@ -299,14 +370,14 @@ const ListView = () => {
       >
         <Text variant="desktop-body-bold">Meal Requests</Text>
       </Box>
-      <CompactTable
+      {data.nodes && <CompactTable
         columns={COLUMNS}
         rowOptions={ROW_OPTIONS}
         data={data}
         theme={theme}
         layout={{ custom: true }}
-      />
-      {mealRequests.length === 0 && (
+      />}
+      {mealRequests?.getMealRequestsByRequestorId.length === 0 && (
         <Center h="100px">
           <Text>No meal requests to display</Text>
         </Center>

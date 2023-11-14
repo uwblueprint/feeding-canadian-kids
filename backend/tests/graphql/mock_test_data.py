@@ -154,3 +154,26 @@ MOCK_USER3_SNAKE = {
     "auth_id": "3",
     "info": MOCK_INFO3_SNAKE,
 }
+
+MOCK_MEALREQUEST1_SNAKE = {
+    "description": "Test description",
+    "status": "Open",
+    "drop_off_datetime": "2021-03-31T00:00:00",
+    "drop_off_location": "Test location",
+    "meal_info": {
+        "portions": 10,
+        "dietary_restrictions": "Vegan",
+        "meal_suggestions": "Mac and Cheese",
+    },
+    "onsite_staff": [
+        {
+            "name": "Test name",
+            "email": "test@gmail.com",
+            "phone": "1234567890",
+        }
+    ],
+    "date_created": "2023-03-31T00:00:00",
+    "date_updated": "2023-03-31T00:00:00",
+    "delivery_instructions": "Test instructions",
+    "donation_info": None,
+}

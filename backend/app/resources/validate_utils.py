@@ -36,7 +36,6 @@ def validate_role_info(role, role_info, role_info_str, error_list):
     if role == USERINFO_ROLE_ASP:
         for field in asp_info_fields:
             role_info = role_info["asp_info"]
-            print(f"validating role_info {role_info} for field {field}")
             if field not in role_info:
                 error_list.append(
                     f'The {role_info_str} supplied does not have field "{field}".'

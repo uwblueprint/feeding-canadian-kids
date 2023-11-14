@@ -39,6 +39,7 @@ import mealRequestsJSON from "./MealRequestSampleData.json";
 
 import BackgroundImage from "../assets/background.png";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import * as Routes from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 import { MealRequest, MealRequestsData, MealRequestsVariables, MealStatus } from "../types/MealRequestTypes";
@@ -356,6 +357,15 @@ const ListView = () => {
     ),
   };
 
+  if (getMealRequestsLoading) {
+    return (
+      <Box display="flex" alignItems="center" justifyContent="center" w="100%" h="200px">
+        <LoadingSpinner />
+      </Box>
+      
+    )
+  }
+
   return (
     <Box mt="24px">
       <Box
@@ -370,13 +380,13 @@ const ListView = () => {
       >
         <Text variant="desktop-body-bold">Meal Requests</Text>
       </Box>
-      {data.nodes && <CompactTable
+      <CompactTable
         columns={COLUMNS}
         rowOptions={ROW_OPTIONS}
         data={data}
         theme={theme}
         layout={{ custom: true }}
-      />}
+      />
       {mealRequests?.getMealRequestsByRequestorId.length === 0 && (
         <Center h="100px">
           <Text>No meal requests to display</Text>

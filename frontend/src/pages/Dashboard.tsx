@@ -15,6 +15,12 @@ import {
   Flex,
   HStack,
   Heading,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItemOption,
+  MenuList,
+  MenuOptionGroup,
   Tab,
   TabList,
   TabPanel,
@@ -191,10 +197,6 @@ const ListView = () => {
   const theme = useTheme([chakraTheme, customTheme]);
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
-
-  // if (!authenticatedUser) {
-  //   return <Navigate replace to={Routes.LOGIN_PAGE} />;
-  // }
 
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
     [],
@@ -374,6 +376,10 @@ const ListView = () => {
     ),
   };
 
+  if (!authenticatedUser) {
+    return <Navigate replace to={Routes.LOGIN_PAGE} />;
+  }
+
   if (getMealRequestsLoading) {
     return (
       <Box
@@ -391,32 +397,60 @@ const ListView = () => {
   return (
     <Box mt="24px">
       <Flex gap="10px" marginBottom="20px" justifyContent="flex-end">
-        <ChakraButton
-          _hover={{ backgroundColor: "gray.100" }}
-          padding="6px 10px"
-          borderRadius="3px"
-          fontSize="14px"
-          border="solid 1px #E2E8F0"
-          boxShadow="lg"
-          backgroundColor="white"
-          color="black"
-        >
-          <BsFilter />
-          Sort
-        </ChakraButton>
-        <ChakraButton
-          _hover={{ backgroundColor: "gray.100" }}
-          padding="6px 10px"
-          borderRadius="3px"
-          fontSize="14px"
-          border="solid 1px #E2E8F0"
-          boxShadow="lg"
-          backgroundColor="white"
-          color="black"
-        >
-          <FiFilter />
-          Filter
-        </ChakraButton>
+        <Menu>
+          <MenuButton
+            as={ChakraButton}
+            _hover={{ backgroundColor: "gray.200" }}
+            padding="6px 10px"
+            borderRadius="3px"
+            fontSize="14px"
+            border="solid 1px #E2E8F0"
+            boxShadow="lg"
+            backgroundColor="white"
+            color="black"
+            minWidth="75px"
+          >
+            <Flex gap="2px">
+              <BsFilter />
+              <Text>Sort</Text>
+            </Flex>
+          </MenuButton>
+          <MenuList zIndex="2">
+            <MenuOptionGroup defaultValue="ASC" type="radio">
+              <MenuItemOption value="ASC">Date Ascending</MenuItemOption>
+              <MenuItemOption value="DESC">Date Descending</MenuItemOption>
+            </MenuOptionGroup>
+          </MenuList>
+        </Menu>
+        <Menu>
+          <MenuButton
+            as={ChakraButton}
+            _hover={{ backgroundColor: "gray.200" }}
+            padding="6px 10px"
+            borderRadius="3px"
+            fontSize="14px"
+            border="solid 1px #E2E8F0"
+            boxShadow="lg"
+            backgroundColor="white"
+            color="black"
+            minWidth="75px"
+          >
+            <Flex gap="2px">
+              <FiFilter />
+              <Text>Filter</Text>
+            </Flex>
+          </MenuButton>
+          <MenuList zIndex="2">
+            <MenuOptionGroup type="checkbox">
+              <MenuItemOption value={MealStatus.OPEN}>
+                Pending Meals
+              </MenuItemOption>
+              <MenuItemOption value={MealStatus.FULFILLED}>
+                Fulfilled Meals
+              </MenuItemOption>
+            </MenuOptionGroup>
+          </MenuList>
+        </Menu>
       </Flex>
       <Box
         display="flex"

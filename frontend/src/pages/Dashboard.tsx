@@ -1,3 +1,4 @@
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   AtSignIcon,
   CalendarIcon,
@@ -28,13 +29,82 @@ import {
 import dayGridPlugin from "@fullcalendar/daygrid";
 // eslint-disable-next-line import/order
 import FullCalendar from "@fullcalendar/react";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 import MealRequestForm from "./MealRequestForm";
 
 import Logout from "../components/auth/Logout";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import { LOGIN_PAGE } from "../constants/Routes";
+import AuthContext from "../contexts/AuthContext";
+import {
+  MealRequest,
+  MealRequestsData,
+  MealRequestsVariables,
+  MealStatus,
+} from "../types/MealRequestTypes";
+
+const GET_MEAL_REQUESTS_BY_ID = gql`
+  query GetMealRequestsByRequestorId(
+    $requestorId: ID!
+    $minDropOffDate: Date
+    $maxDropOffDate: Date
+    $status: [MealStatus]
+    $offset: Int
+    $limit: Int
+    $sortByDateDirection: SortDirection
+  ) {
+    getMealRequestsByRequestorId(
+      requestorId: $requestorId
+      minDropOffDate: $minDropOffDate
+      maxDropOffDate: $maxDropOffDate
+      status: $status
+      offset: $offset
+      limit: $limit
+      sortByDateDirection: $sortByDateDirection
+    ) {
+      id
+      requestor {
+        info {
+          primaryContact {
+            name
+            email
+            phone
+          }
+        }
+      }
+      description
+      status
+      dropOffDatetime
+      dropOffLocation
+      mealInfo {
+        portions
+        dietaryRestrictions
+        mealSuggestions
+      }
+      onsiteStaff {
+        name
+        email
+        phone
+      }
+      dateCreated
+      dateUpdated
+      deliveryInstructions
+      donationInfo {
+        donor {
+          info {
+            organizationName
+          }
+        }
+        commitmentDate
+        mealDescription
+        additionalInfo
+      }
+    }
+  }
+`;
 
 type ButtonProps = { text: string; path: string };
 
@@ -44,7 +114,7 @@ type Staff = {
   phone: string;
 };
 
-type MealRequest = {
+type MealRequest1 = {
   date: Date;
   onsiteStaff: Staff[];
   dropOffTime: Date;
@@ -64,7 +134,7 @@ const SAMPLE_ONSITE_STAFF_2: Staff = {
   phone: "123-456-7890",
 };
 
-const SAMPLE_MEAL_REQUEST_1: MealRequest = {
+const SAMPLE_MEAL_REQUEST_1: MealRequest1 = {
   date: new Date(2023, 7, 18, 12, 30, 0),
   onsiteStaff: [SAMPLE_ONSITE_STAFF_1, SAMPLE_ONSITE_STAFF_2],
   dropOffTime: new Date(2023, 7, 18, 12, 30, 0),
@@ -72,7 +142,7 @@ const SAMPLE_MEAL_REQUEST_1: MealRequest = {
   deliveryInstructions: "Leave at the main entrance.",
 };
 
-const SAMPLE_MEAL_REQUEST_2: MealRequest = {
+const SAMPLE_MEAL_REQUEST_2: MealRequest1 = {
   date: new Date(2023, 7, 22, 12, 30, 0),
   onsiteStaff: [SAMPLE_ONSITE_STAFF_1, SAMPLE_ONSITE_STAFF_2],
   dropOffTime: new Date(2023, 7, 22, 12, 30, 0),
@@ -91,6 +161,56 @@ const Dashboard = (): React.ReactElement => {
   const [selectedMealRequest, setSelectedMealRequest] = useState<
     MealRequest | undefined
   >(undefined);
+
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  const {
+    data: mealRequests,
+    error: getMealRequestsError,
+    loading: getMealRequestsLoading,
+  } = useQuery<MealRequestsData, MealRequestsVariables>(
+    GET_MEAL_REQUESTS_BY_ID,
+    {
+      variables: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        requestorId: authenticatedUser!.registeredUser.id,
+      },
+    },
+  );
+
+  console.log(authenticatedUser);
+
+  if (!authenticatedUser) {
+    console.log("return");
+    return <Navigate replace to={LOGIN_PAGE} />;
+  }
+
+  const realEvents =
+    mealRequests?.getMealRequestsByRequestorId.map(
+      (mealRequest: MealRequest) => ({
+        title: mealRequest.description,
+        date: mealRequest.dropOffDatetime.toLocaleString().split('T')[0],
+        extendedProps: { mealRequest },
+        backgroundColor: "#3BA948",
+        borderColor: "#3BA948",
+        borderRadius: "10%"
+      }),
+    ) ?? [];
+
+  console.log(realEvents);
+
+  if (getMealRequestsLoading) {
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      w="100%"
+      h="200px"
+    >
+      <LoadingSpinner />
+    </Box>;
+  }
 
   return (
     <Box
@@ -161,7 +281,7 @@ const Dashboard = (): React.ReactElement => {
             {isWebView && (
               <Stack direction="row">
                 <div style={{ width: "100%" }}>
-                  <FullCalendar
+                <FullCalendar
                     headerToolbar={{
                       left: "prev",
                       center: "title",
@@ -170,18 +290,7 @@ const Dashboard = (): React.ReactElement => {
                     themeSystem="Simplex"
                     plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
-                    events={[
-                      {
-                        title: "event 1",
-                        date: "2023-07-01",
-                        extendedProps: { mealRequest: SAMPLE_MEAL_REQUEST_1 },
-                      },
-                      {
-                        title: "event 2",
-                        date: "2023-07-08",
-                        extendedProps: { mealRequest: SAMPLE_MEAL_REQUEST_2 },
-                      },
-                    ]}
+                    events={realEvents}
                     // eventContent={renderEventContent}
                     eventClick={(info) => {
                       setSelectedMealRequest(
@@ -210,7 +319,7 @@ const Dashboard = (): React.ReactElement => {
                               <strong>
                                 Location: <br />
                               </strong>
-                              {selectedMealRequest.date.toLocaleString()}
+                              {selectedMealRequest.dropOffLocation}
                             </Text>
                           </Tr>
                           <Tr>

@@ -116,7 +116,7 @@ const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProp
           onSubmit={(e) => e.preventDefault()}
           height={{ base: "2rem", md: "3rem" }}
           width={{ base: "10%", md: "10%" }}
-          bg="primary.blue"
+          bg="primary.green"
           onClick={validateData}
         >
           Next

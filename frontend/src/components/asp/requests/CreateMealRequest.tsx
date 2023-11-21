@@ -3,6 +3,7 @@ import type { Value } from "react-multi-date-picker";
 
 import SchedulingFormCalendar from "./SchedulingFormCalendar";
 import SchedulingFormMealInfo from "./SchedulingFormMealInfo";
+import SchedulingFormReviewAndSubmit from "./SchedulingFormReviewAndSubmit";
 import SchedulingFormWeekly from "./SchedulingFormWeekly";
 import TitleSection from "./TitleSection";
 
@@ -21,15 +22,16 @@ const CreateMealRequest = (): React.ReactElement => {
   const [mealRequestDates, setMealRequestDates] = useState<Value>([]);
 
   // Part 2: Meal Donation Information
-  const [address, setAddress] = useState<string>("");
   const [numMeals, setNumMeals] = useState<number>(0);
   const [dietaryRestrictions, setDietaryRestrictions] = useState<string>("");
   const [deliveryInstructions, setDeliveryInstructions] = useState<string>("");
+
+  // This is the selected onsite staff
   const [onsiteStaff, setOnsiteStaff] = useState<Contact[]>([
     {
-      name: "Tester",
-      phone: "123467",
-      email: "test@text.com",
+      name: "",
+      email: "",
+      phone: "",
     },
   ]);
 
@@ -38,16 +40,14 @@ const CreateMealRequest = (): React.ReactElement => {
     authenticatedUser?.info || null,
   );
 
-  const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>(
-    userInfo
-      ? JSON.parse(JSON.stringify(userInfo.onsiteContacts))
-      : [
-          {
-            name: "Tester",
-            phone: "123467",
-            email: "test@test.com",
-          },
-        ],
+  // This is the list of available onsite staff
+  const [availableStaff, setAvailableStaff] = useState<Array<Contact>>(
+    userInfo ? JSON.parse(JSON.stringify(userInfo.onsiteContacts)) : [],
+  );
+
+  // User's address
+  const [address, setAddress] = useState<string>(
+    userInfo ? userInfo.organizationAddress : "",
   );
 
   // Button state (array of booleans)
@@ -115,20 +115,31 @@ const CreateMealRequest = (): React.ReactElement => {
         panel2={
           <SchedulingFormMealInfo
             address={address}
-            setAddress={setAddress}
-            handleNext={() => {}} // Will be assigned by three step form
             numMeals={numMeals}
-            setNumMeals={() => {}}
+            setNumMeals={setNumMeals}
             dietaryRestrictions={dietaryRestrictions}
             setDietaryRestrictions={setDietaryRestrictions}
             deliveryInstructions={deliveryInstructions}
             setDeliveryInstructions={setDeliveryInstructions}
             onsiteStaff={onsiteStaff}
             setOnsiteStaff={setOnsiteStaff}
-            onsiteInfo={onsiteInfo}
+            availableStaff={availableStaff}
+            handleBack={() => {}} // Will be assigned by three step form
+            handleNext={() => {}} // Will be assigned by three step form
           />
         }
-        panel3={<p>three!</p>}
+        panel3={
+          <SchedulingFormReviewAndSubmit
+            scheduledDropOffTime={scheduledDropOffTime}
+            mealRequestDates={mealRequestDates}
+            numMeals={numMeals}
+            dietaryRestrictions={dietaryRestrictions}
+            deliveryInstructions={deliveryInstructions}
+            onsiteStaff={onsiteStaff}
+            address={address}
+            handleBack={() => {}} // Will be assigned by three step form
+          />
+        }
       />
     </div>
   );

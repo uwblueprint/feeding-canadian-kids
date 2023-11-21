@@ -21,10 +21,10 @@ import {
 import React, { useState } from "react";
 
 import { Contact } from "../../../types/UserTypes";
+import OnsiteStaffSection from "../../common/OnsiteStaffSection";
 
 type SchedulingFormMealInfoProps = {
   address: string;
-  setAddress: (address: string) => void;
   numMeals: number;
   setNumMeals: (numMeals: number) => void;
   dietaryRestrictions: string;
@@ -32,14 +32,14 @@ type SchedulingFormMealInfoProps = {
   deliveryInstructions: string;
   setDeliveryInstructions: (deliveryInstructions: string) => void;
   onsiteStaff: Contact[];
-  setOnsiteStaff: (onsiteStaff: Contact[]) => void;
-  onsiteInfo: Contact[];
+  setOnsiteStaff: React.Dispatch<React.SetStateAction<Contact[]>>;
+  availableStaff: Contact[];
+  handleBack: () => void;
   handleNext: () => void;
 };
 
 const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProps> = ({
   address,
-  setAddress,
   numMeals,
   setNumMeals,
   dietaryRestrictions,
@@ -48,19 +48,30 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
   setDeliveryInstructions,
   onsiteStaff,
   setOnsiteStaff,
-  onsiteInfo,
+  availableStaff,
+  handleBack,
   handleNext,
 }) => {
-  const [nextButtonEnabled, setNextButtonEnabled] = useState(false);
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
   const validateData = () => {
-    if (true) {
-      // TODO validation
-      // Handle validation error, display error message or prevent form submission
-      setNextButtonEnabled(true);
+    setAttemptedSubmit(true);
+
+    if (
+      numMeals <= 0 ||
+      onsiteStaff.length === 0 ||
+      onsiteStaff.some(
+        (contact) =>
+          !contact ||
+          contact.name === "" ||
+          contact.email === "" ||
+          contact.phone === "",
+      )
+    ) {
+      setAttemptedSubmit(true);
       return;
     }
-    setNextButtonEnabled(false);
+    setAttemptedSubmit(false);
 
     handleNext();
   };
@@ -80,20 +91,9 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
 
       <GridItem colSpan={{ base: 1, md: 2 }}>
         <Flex flexDir="column">
-          <FormControl isRequired>
+          <FormControl>
             <FormLabel variant="form-label-bold">Address</FormLabel>
-            <Input
-              required
-              size="xs"
-              height={{ base: "2rem", md: "3rem" }}
-              variant="outline"
-              colorScheme="primary.blue"
-              onChange={(e) => setAddress(e.target.value)}
-              type="date"
-              rounded="md"
-              width={{ base: "100%", md: "100%" }}
-              placeholder="Select a date"
-            />
+            <Text>{address}</Text>
           </FormControl>
         </Flex>
       </GridItem>
@@ -108,15 +108,21 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
       <GridItem colSpan={{ base: 1, md: 2 }}>
         <Flex flexDir="column" gap="24px">
           <Flex flexDir="column">
-            <FormControl isRequired>
+            <FormControl
+              isInvalid={attemptedSubmit && numMeals <= 0}
+              isRequired
+            >
               <FormLabel variant="form-label-bold">Number of meals</FormLabel>
               <Input
                 required
                 size="xs"
+                value={numMeals > 0 ? numMeals : undefined}
                 height={{ base: "2rem", md: "3rem" }}
                 variant="outline"
                 colorScheme="primary.blue"
-                onChange={(e) => setNumMeals(parseInt(e.target.value, 10))}
+                onChange={(e) => {
+                  setNumMeals(parseInt(e.target.value, 10));
+                }}
                 type="number"
                 rounded="md"
                 width={{ base: "100%", md: "100%" }}
@@ -126,13 +132,14 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
           </Flex>
 
           <Flex flexDir="column">
-            <FormControl isRequired>
+            <FormControl>
               <FormLabel variant="form-label-bold">
                 Dietary Restrictions
               </FormLabel>
               <Input
                 required
                 size="xs"
+                value={dietaryRestrictions}
                 height={{ base: "2rem", md: "3rem" }}
                 variant="outline"
                 colorScheme="primary.blue"
@@ -152,6 +159,7 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
               </FormLabel>
               <Textarea
                 size="xs"
+                value={deliveryInstructions}
                 height={{ base: "2rem", md: "3rem" }}
                 variant="outline"
                 colorScheme="primary.blue"
@@ -177,42 +185,13 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
       <GridItem colSpan={{ base: 1, md: 2 }}>
         <Flex flexDir="column" gap="24px">
           <Flex flexDir="column">
-            <Text color="primary.blue" fontSize="xs">
-              Must add at least one staff member. Update and create new staff
-              contacts in User Settings.
-            </Text>
-            <FormControl isRequired>
-              <FormLabel variant="form-label-bold">Onsite staff</FormLabel>
-              {/* Table to show the onsite staff name, phone, and email. Dropdown is used to choose a staff member from
-                onsiteInfo, which is a list of contacts */}
-              {/* At the bottom is a button to add a new staff member */}
-
-              <TableContainer border="1px solid #EDF2F7" borderRadius="8px">
-                <Table variant="simple">
-                  {/* Give the header a gray background */}
-                  <thead style={{ backgroundColor: "#E2E8F0" }}>
-                    <Tr
-                      borderRadius="8px 8px 0 0"
-                      h="40px"
-                      background="primary.lightblue"
-                    >
-                      <Th>Name</Th>
-                      <Th>Phone</Th>
-                      <Th>Email</Th>
-                    </Tr>
-                  </thead>
-                  <tbody>
-                    {onsiteStaff.map((staff, index) => (
-                      <tr key={index}>
-                        <Td>{staff.name}</Td>
-                        <Td>{staff.phone}</Td>
-                        <Td>{staff.email}</Td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </TableContainer>
-            </FormControl>
+            <OnsiteStaffSection
+              onsiteInfo={onsiteStaff}
+              setOnsiteInfo={setOnsiteStaff}
+              attemptedSubmit={false /* todo change */}
+              availableStaff={availableStaff}
+              dropdown
+            />
           </Flex>
         </Flex>
       </GridItem>
@@ -226,12 +205,24 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
         <Spacer />
         <Button
           colorScheme="primary.green"
+          variant="outline"
+          size="xs"
+          onSubmit={(e) => e.preventDefault()}
+          height={{ base: "2rem", md: "3rem" }}
+          width={{ base: "10%", md: "10%" }}
+          onClick={handleBack}
+          marginRight="1rem"
+        >
+          Back
+        </Button>
+        <Button
+          colorScheme="primary.green"
           variant="solid"
           size="xs"
           onSubmit={(e) => e.preventDefault()}
           height={{ base: "2rem", md: "3rem" }}
           width={{ base: "10%", md: "10%" }}
-          bg="primary.blue"
+          bg="primary.green"
           onClick={validateData}
         >
           Next

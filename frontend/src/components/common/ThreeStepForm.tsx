@@ -37,18 +37,15 @@ const ThreeStepForm = ({
   const fontSize = useBreakpointValue({ base: "12px", sm: "16px", md: "20px" });
 
   const [tabIndex, setTabIndex] = useState(0);
-  const [completedTab, setCompletedTab] = useState(-1); // The highest tab index that has been completed
 
   const handleNext = () => {
     const thisTab = tabIndex;
     setTabIndex((prevIndex) => prevIndex + 1);
-    setCompletedTab((prevIndex) => Math.max(prevIndex, thisTab));
   };
 
   const handleBack = () => {
     const thisTab = tabIndex;
-    setTabIndex((prevIndex) => prevIndex + 1);
-    setCompletedTab((prevIndex) => Math.max(prevIndex, thisTab));
+    setTabIndex((prevIndex) => prevIndex - 1);
   };
 
   return (
@@ -82,7 +79,7 @@ const ThreeStepForm = ({
               </HStack>
             </Tab>
 
-            <Tab isDisabled={completedTab < 0}>
+            <Tab isDisabled={tabIndex < 1}>
               <HStack direction="row" spacing={4}>
                 <Avatar
                   bgColor={tabIndex === 1 ? "primary.blue" : "gray"}
@@ -101,7 +98,7 @@ const ThreeStepForm = ({
               </HStack>
             </Tab>
 
-            <Tab isDisabled={completedTab < 1}>
+            <Tab isDisabled={tabIndex < 2}>
               <HStack direction="row" spacing={4}>
                 <Avatar
                   bgColor={tabIndex === 2 ? "primary.blue" : "gray"}
@@ -125,10 +122,14 @@ const ThreeStepForm = ({
               <panel1.type {...panel1.props} handleNext={handleNext} />
             </TabPanel>
             <TabPanel>
-              <panel2.type {...panel2.props} handleNext={handleNext} />
+              <panel2.type
+                {...panel2.props}
+                handleBack={handleBack}
+                handleNext={handleNext}
+              />
             </TabPanel>
             <TabPanel>
-              <panel3.type {...panel3.props} handleNext={handleNext} />
+              <panel3.type {...panel3.props} handleBack={handleBack} />
             </TabPanel>
           </TabPanels>
         </Tabs>

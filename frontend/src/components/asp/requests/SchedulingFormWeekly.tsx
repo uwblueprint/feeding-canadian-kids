@@ -42,7 +42,7 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
 }) => {
   const dayNames = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
 
-  const [nextButtonEnabled, setNextButtonEnabled] = useState(false);
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
   const numberOfChosenDays = weekdayButtonStates.filter((state) => state)
     .length;
@@ -63,10 +63,10 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
       scheduledDropOffTime === ""
     ) {
       // Handle validation error, display error message or prevent form submission
-      setNextButtonEnabled(true);
+      setAttemptedSubmit(true);
       return;
     }
-    setNextButtonEnabled(false);
+    setAttemptedSubmit(false);
 
     handleNext();
   };
@@ -99,9 +99,7 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
         <br />
 
         <Text
-          color={
-            donationFrequency === "" && nextButtonEnabled ? "red" : "black"
-          }
+          color={donationFrequency === "" && attemptedSubmit ? "red" : "black"}
           as="b"
         >
           Donation Frequency*
@@ -120,9 +118,7 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
 
         <br />
         <Text
-          color={
-            numberOfChosenDays === 0 && nextButtonEnabled ? "red" : "black"
-          }
+          color={numberOfChosenDays === 0 && attemptedSubmit ? "red" : "black"}
           as="b"
         >
           Days of Donation*
@@ -164,7 +160,7 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
         <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 4, md: 4 }}>
           <Box>
             <Text
-              color={startDate === "" && nextButtonEnabled ? "red" : "black"}
+              color={startDate === "" && attemptedSubmit ? "red" : "black"}
               as="b"
             >
               Start Date*
@@ -186,7 +182,7 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
 
           <Box>
             <Text
-              color={endDate === "" && nextButtonEnabled ? "red" : "black"}
+              color={endDate === "" && attemptedSubmit ? "red" : "black"}
               as="b"
             >
               End Date*
@@ -209,9 +205,7 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
           <Box>
             <Text
               color={
-                scheduledDropOffTime === "" && nextButtonEnabled
-                  ? "red"
-                  : "black"
+                scheduledDropOffTime === "" && attemptedSubmit ? "red" : "black"
               }
               as="b"
             >
@@ -246,7 +240,7 @@ const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> =
           onSubmit={(e) => e.preventDefault()}
           height={{ base: "2rem", md: "3rem" }}
           width={{ base: "10%", md: "10%" }}
-          bg="primary.blue"
+          bg="primary.green"
           onClick={validateData}
         >
           Next

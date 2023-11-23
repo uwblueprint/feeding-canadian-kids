@@ -3,7 +3,9 @@ from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
 from datetime import datetime
 
+from ...models.meal_request import DonationInfo, MealStatus
 from ...models.user import User
+from ...models.user_info import USERINFO_ROLE_DONOR
 from ...graphql.types import SortDirection
 from ...resources.meal_request_dto import MealRequestDTO
 
@@ -101,6 +103,52 @@ class MealRequestService(IMealRequestService):
         original_meal_request.save()
         return meal_request_dto
 
+    def commit_to_meal_request(
+        self,
+        donor_id: str,
+        meal_request_ids: [str],
+        food_description: str,
+        additional_info: str,
+    ) -> [MealRequestDTO]:
+        try:
+            donor = User.objects(id=donor_id).first()
+            if not donor:
+                raise Exception(f'user "{donor_id}" not found')
+            if donor.info.role != USERINFO_ROLE_DONOR:
+                raise Exception(f'user "{donor_id}" is not a donor')
+
+            if len(meal_request_ids) == 0:
+                raise Exception("no meal requests to commit to")
+
+            meal_request_dtos = []
+            for meal_request_id in meal_request_ids:
+                meal_request = MealRequest.objects(id=meal_request_id).first()
+                if not meal_request:
+                    raise Exception(f'meal request "{meal_request_id}" not found')
+
+                meal_request.donation_info = DonationInfo(
+                    donor=donor,
+                    commitment_date=datetime.utcnow(),
+                    food_description=food_description,
+                    additional_info=additional_info,
+                )
+
+                meal_request.status = MealStatus.FULFILLED.value
+
+                meal_request_dtos.append(
+                    self.convert_meal_request_to_dto(
+                        meal_request, meal_request.requestor
+                    )
+                )
+
+                meal_request.save()
+
+            return meal_request_dtos
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error
+
     def convert_meal_request_to_dto(
         self, request: MealRequest, requestor: User
     ) -> MealRequestDTO:
@@ -151,6 +199,35 @@ class MealRequestService(IMealRequestService):
                 requests = requests[offset : offset + limit]
             else:
                 requests = requests[offset:]
+
+            # pipeline = []
+            # match_queries = [{ "status": { "$in": status } }]
+
+            # drop_off_datetime_match = {}
+            # if min_drop_off_date is not None:
+            #     drop_off_datetime_match["$gte"] = min_drop_off_date
+            # if max_drop_off_date is not None:
+            #     drop_off_datetime_match["$lte"] = max_drop_off_date
+
+            # if drop_off_datetime_match != {}:
+            #     match_queries.append({"drop_off_datetime": drop_off_datetime_match})
+
+            # pipeline.append({"$match": {"$and": match_queries}})
+
+            # if sort_by_date_direction == SortDirection.ASCENDING:
+            #     pipeline.append({"$sort": {"drop_off_datetime": 1}})
+            # else:
+            #     pipeline.append({"$sort": {"drop_off_datetime": -1}})
+
+            # if limit is not None:
+            #     pipeline.append({"$limit": limit})
+
+            # pipeline.append({"$skip": offset})
+
+            # requestor = User.objects(id=requestor_id).first()
+            # requests = list(MealRequest.objects(
+            #     requestor=requestor,
+            # ).aggregate(pipeline))
 
             meal_request_dtos = []
             for request in requests:

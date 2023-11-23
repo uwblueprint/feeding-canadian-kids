@@ -164,7 +164,7 @@ def validate_donation_info(donation_info, error_list):
     donation_info_fields = [
         "donor",
         "commitment_date",
-        "meal_description",
+        "food_description",
         "additional_info",
     ]
 
@@ -188,9 +188,7 @@ def validate_donation_info(donation_info, error_list):
                 error_list.append(
                     "The commitment_date supplied is not a datetime object."
                 )
-            if val < datetime.now():
-                error_list.append("The commitment_date supplied is invalid.")
-        elif key == "meal_description" and type(val) is not str:
-            error_list.append("The meal_description supplied is not a string.")
+        elif key == "food_description" and type(val) is not str:
+            error_list.append("The food_description supplied is not a string.")
         elif key == "additional_info" and type(val) is not str:
             error_list.append("The additional_info supplied is not a string.")

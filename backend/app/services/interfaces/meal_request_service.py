@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from ...resources.meal_request_dto import MealRequestDTO
+
 
 class IMealRequestService(ABC):
     """
@@ -40,6 +42,16 @@ class IMealRequestService(ABC):
         onsite_staff,
         meal_request_id,
     ):
+        pass
+
+    @abstractmethod
+    def commit_to_meal_request(
+        self,
+        donor_id: str,
+        meal_request_ids: [str],
+        food_description: str,
+        additional_info: str,
+    ) -> [MealRequestDTO]:
         pass
 
     @abstractmethod

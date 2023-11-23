@@ -44,7 +44,7 @@ class CreateMealRequestResponse(graphene.ObjectType):
 class DonationInfo(graphene.ObjectType):
     donor = graphene.Field(User)
     commitment_date = graphene.DateTime()
-    meal_description = graphene.String()
+    food_description = graphene.String()
     additional_info = graphene.String()
 
 
@@ -146,9 +146,37 @@ class UpdateMealRequest(Mutation):
         return UpdateMealRequest(meal_request=result)
 
 
+class CommitToMealRequest(Mutation):
+    class Arguments:
+        donor_id = graphene.ID(required=True)
+        meal_request_ids = graphene.List(graphene.ID, required=True)
+        food_description = graphene.String(required=True)
+        additional_info = graphene.String(default_value=None)
+
+    meal_requests = graphene.List(MealRequestResponse)
+
+    def mutate(
+        self,
+        info,
+        donor_id,
+        meal_request_ids,
+        food_description,
+        additional_info=None,
+    ):
+        result = services["meal_request_service"].commit_to_meal_request(
+            donor_id=donor_id,
+            meal_request_ids=meal_request_ids,
+            food_description=food_description,
+            additional_info=additional_info,
+        )
+
+        return CommitToMealRequest(meal_requests=result)
+
+
 class MealRequestMutations(MutationList):
     create_meal_request = CreateMealRequests.Field()
     update_meal_request = UpdateMealRequest.Field()
+    commit_to_meal_request = CommitToMealRequest.Field()
 
 
 class MealRequestQueries(QueryList):

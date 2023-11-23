@@ -26,7 +26,7 @@ class MealInfo(mg.EmbeddedDocument):
 class DonationInfo(mg.EmbeddedDocument):
     donor = mg.ReferenceField(User, required=True)
     commitment_date = mg.DateTimeField(required=True)
-    meal_description = mg.StringField(default=None)
+    food_description = mg.StringField(required=True)
     additional_info = mg.StringField(default=None)
 
 

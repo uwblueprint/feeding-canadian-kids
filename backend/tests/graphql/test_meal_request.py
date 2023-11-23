@@ -14,13 +14,11 @@ def test_create_meal_request(meal_request_setup):
     mutation testCreateMealRequest {{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        description: "Meal requests for office employees",
         dropOffLocation: "123 Main Street",
         dropOffTime: "16:30:00Z",
         mealInfo: {{
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
-          mealSuggestions: "Burritos"
         }},
         onsiteStaff: [
           {{
@@ -61,10 +59,6 @@ def test_create_meal_request(meal_request_setup):
     assert result.errors is None
     assert result.data["createMealRequest"]["mealRequests"][0]["status"] == "Open"
     assert (
-        result.data["createMealRequest"]["mealRequests"][0]["description"]
-        == "Meal requests for office employees"
-    )
-    assert (
         result.data["createMealRequest"]["mealRequests"][0]["mealInfo"]["portions"]
         == 40
     )
@@ -73,12 +67,6 @@ def test_create_meal_request(meal_request_setup):
             "dietaryRestrictions"
         ]
         == "7 gluten free, 7 no beef"
-    )
-    assert (
-        result.data["createMealRequest"]["mealRequests"][0]["mealInfo"][
-            "mealSuggestions"
-        ]
-        == "Burritos"
     )
     assert (
         result.data["createMealRequest"]["mealRequests"][0]["dropOffDatetime"]
@@ -98,13 +86,11 @@ def test_update_meal_request(meal_request_setup):
     _, _, meal_request = meal_request_setup
 
     updatedDateTime = "2023-10-31T16:45:00+00:00"
-    updatedDescription = "Updated description"
     updatedDeliveryInstructions = "Updated delivery instructions"
     updatedDropOffLocation = "Updated drop off location"
     updatedMealInfo = {
         "portions": 11,
         "dietaryRestrictions": "No nuts",
-        "mealSuggestions": "Pizza",
     }
     updatedOnsiteStaff = [
         {"name": "test", "email": "test@test.com", "phone": "604-441-1171"}
@@ -115,13 +101,11 @@ def test_update_meal_request(meal_request_setup):
       updateMealRequest(
         mealRequestId:"{meal_request.id}",
         deliveryInstructions:"{updatedDeliveryInstructions}",
-        description: "{updatedDescription}",
         dropOffDatetime: "{updatedDateTime}",
         dropOffLocation:"{updatedDropOffLocation}",
         mealInfo: {{
           portions: {updatedMealInfo["portions"]},
           dietaryRestrictions: "{updatedMealInfo["dietaryRestrictions"]}",
-          mealSuggestions: "{updatedMealInfo["mealSuggestions"]}"
         }},
         onsiteStaff:[{{
           name: "{updatedOnsiteStaff[0]["name"]}",
@@ -132,14 +116,12 @@ def test_update_meal_request(meal_request_setup):
       {{
         mealRequest{{
           id
-          description
           status
           dropOffDatetime
           dropOffLocation
           mealInfo{{
             portions
             dietaryRestrictions
-            mealSuggestions
           }}
           onsiteStaff{{
             name
@@ -164,7 +146,6 @@ def test_update_meal_request(meal_request_setup):
 
     updatedMealRequest = result.data["updateMealRequest"]["mealRequest"]
 
-    assert updatedMealRequest["description"] == updatedDescription
     assert updatedMealRequest["dropOffLocation"] == updatedDropOffLocation
     assert updatedMealRequest["deliveryInstructions"] == updatedDeliveryInstructions
     assert updatedMealRequest["mealInfo"] == updatedMealInfo
@@ -179,13 +160,11 @@ def test_get_meal_request_failure(meal_request_setup):
     mutation testCreateMealRequest {{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        description: "Meal requests for office employees",
         dropOffLocation: "123 Main Street",
         dropOffTime: "12:00:00Z",
         mealInfo: {{
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
-          mealSuggestions: "Burritos"
         }},
         onsiteStaff: [
           {{
@@ -208,12 +187,10 @@ def test_get_meal_request_failure(meal_request_setup):
       {{
         mealRequests {{
           status
-          description
           id
           mealInfo {{
             portions
             dietaryRestrictions
-            mealSuggestions
           }}
           requests {{
             id
@@ -238,14 +215,12 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
             requestor {{
               id
             }},
-            description,
             status,
             dropOffDatetime,
             dropOffLocation,
             mealInfo {{
               portions
               dietaryRestrictions
-              mealSuggestions
             }},
             onsiteStaff {{
               name

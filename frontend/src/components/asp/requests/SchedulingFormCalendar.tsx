@@ -2,6 +2,8 @@ import {
   Box,
   Button,
   Center,
+  FormControl,
+  FormLabel,
   Grid,
   GridItem,
   Input,
@@ -9,6 +11,7 @@ import {
   SimpleGrid,
   Spacer,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import DatePicker, { Calendar } from "react-multi-date-picker";
@@ -17,13 +20,15 @@ import type { Value } from "react-multi-date-picker";
 type SchedulingFormCalendarProps = {
   scheduledDropOffTime: string;
   setScheduledDropOffTime: (scheduledDropOffTime: string) => void;
-  dates: Value;
-  setDates: (dates: Value) => void;
+  dates: Date[];
+  setDates: (dates: Date[]) => void;
   setIsWeeklyInput: (isWeeklyInput: boolean) => void;
   handleNext: () => void;
 };
 
-const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProps> = ({
+const SchedulingFormCalendar: React.FunctionComponent<
+  SchedulingFormCalendarProps
+> = ({
   scheduledDropOffTime,
   setScheduledDropOffTime,
   dates,
@@ -31,10 +36,48 @@ const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProp
   setIsWeeklyInput,
   handleNext,
 }) => {
-  const [nextButtonEnabled, setNextButtonEnabled] = useState(false);
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+
+  const toast = useToast();
 
   const validateData = () => {
+    if (scheduledDropOffTime === "" || dates.length === 0) {
+      setAttemptedSubmit(true);
+      if (dates.length === 0) {
+        toast({
+          title: "No dates selected",
+          description: "Please select at least one date",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      return;
+    }
+
+    setAttemptedSubmit(false);
     handleNext();
+  };
+
+  const valueToDateArray = (value: Value): Date[] => {
+    // If value is a string or a number, throw an error
+    if (typeof value === "string" || typeof value === "number") {
+      throw new Error("Invalid value type");
+    }
+
+    // If value is a date, return an array with that date
+    if (value instanceof Date) {
+      return [value];
+    }
+
+    // If value is an array, return that array
+    if (Array.isArray(value)) {
+      return value.map((date) => new Date(date as string));
+    }
+
+    throw new Error(
+      "Invalid value type attempted to be converted to list of dates",
+    );
   };
 
   return (
@@ -69,35 +112,40 @@ const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProp
         <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 4, md: 4 }}>
           <GridItem colSpan={{ base: 1, sm: 2 }}>
             <Center>
-              <Calendar
-                numberOfMonths={2}
-                value={dates}
-                onChange={setDates}
-                minDate={new Date()}
-              />
+              <FormControl
+                isInvalid={attemptedSubmit && dates.length === 0}
+                isRequired
+              >
+                <Calendar
+                  numberOfMonths={2}
+                  value={dates}
+                  onChange={(v: Value) => {
+                    setDates(valueToDateArray(v));
+                  }}
+                  minDate={new Date()}
+                />
+              </FormControl>
             </Center>
           </GridItem>
 
           <GridItem colSpan={1}>
-            <Text
-              color={
-                scheduledDropOffTime === "" && nextButtonEnabled
-                  ? "red"
-                  : "black"
-              }
-              as="b"
+            <FormControl
+              isInvalid={attemptedSubmit && scheduledDropOffTime === ""}
+              isRequired
             >
-              Scheduled drop-off time*
-            </Text>
-            <Input
-              required
-              height={{ base: "2rem", md: "3rem" }}
-              size="xs"
-              onChange={(e) => setScheduledDropOffTime(e.target.value)}
-              type="time"
-              placeholder="Select a time"
-              width={{ base: "100%", md: "100%" }}
-            />
+              <FormLabel variant="form-label-bold">
+                Scheduled drop-off time
+              </FormLabel>
+              <Input
+                required
+                height={{ base: "2rem", md: "3rem" }}
+                size="xs"
+                onChange={(e) => setScheduledDropOffTime(e.target.value)}
+                type="time"
+                placeholder="Select a time"
+                width={{ base: "100%", md: "100%" }}
+              />
+            </FormControl>
           </GridItem>
         </SimpleGrid>
       </GridItem>

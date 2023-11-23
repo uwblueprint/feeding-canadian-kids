@@ -1,4 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
+import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import {
   Box,
   Button,
@@ -34,23 +35,27 @@ const CREATE_MEAL_REQUEST = gql`
     $address: String!
     $numMeals: Int!
     $dietaryRestrictions: String
-    $description: String!
     $deliveryInstructions: String
     $onsiteStaff: [ContactInput!]!
-    $dropOffTime: Time!
-    $mealRequestDates: [String!]!
+    $scheduledDropOffTime: Time!
+    $mealRequestDates: [Date!]!
+    $userId: ID!
   ) {
     createMealRequest(
-      address: $address
-      numMeals: $numMeals
-      dietaryRestrictions: $dietaryRestrictions
-      description: $description
+      dropOffLocation: $address
       deliveryInstructions: $deliveryInstructions
       onsiteStaff: $onsiteStaff
-      dropOffTime: $dropOffTime
-      mealRequestDates: $mealRequestDates
+      mealInfo: {
+        portions: $numMeals
+        dietaryRestrictions: $dietaryRestrictions
+      }
+      dropOffTime: $scheduledDropOffTime
+      requestDates: $mealRequestDates
+      requestorId: $userId
     ) {
-      id
+      mealRequests {
+        id
+      }
     }
   }
 `;
@@ -58,7 +63,7 @@ const CREATE_MEAL_REQUEST = gql`
 type SchedulingFormReviewAndSubmitProps = {
   // From part 1
   scheduledDropOffTime: string;
-  mealRequestDates: Value;
+  mealRequestDates: Date[];
 
   // From part 2
   address: string;
@@ -67,11 +72,16 @@ type SchedulingFormReviewAndSubmitProps = {
   deliveryInstructions: string;
   onsiteStaff: Contact[];
 
+  // User ID
+  userId: string;
+
   // Switch tabs
   handleBack: () => void;
 };
 
-const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormReviewAndSubmitProps> = ({
+const SchedulingFormReviewAndSubmit: React.FunctionComponent<
+  SchedulingFormReviewAndSubmitProps
+> = ({
   scheduledDropOffTime,
   mealRequestDates,
   address,
@@ -79,6 +89,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
   dietaryRestrictions,
   deliveryInstructions,
   onsiteStaff,
+  userId,
   handleBack,
 }) => {
   const [createMealRequest] = useMutation<{
@@ -87,42 +98,21 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
 
   const toast = useToast();
 
-  const valueToDateArray = (value: Value): Date[] => {
-    // If value is a string or a number, throw an error
-    if (typeof value === "string" || typeof value === "number") {
-      throw new Error("Invalid value type");
-    }
-
-    // If value is a date, return an array with that date
-    if (value instanceof Date) {
-      return [value];
-    }
-
-    // If value is an array, return that array
-    if (Array.isArray(value)) {
-      // It must be an array of dates
-      return value as Date[];
-    }
-
-    throw new Error(
-      "Invalid value type attempted to be converted to list of dates",
-    );
-  };
-
   const handleSubmit = async () => {
-    const description = "Meal Request";
-
     try {
+      // print type of mealRequestDates
       const response = await createMealRequest({
         variables: {
           address,
           numMeals,
           dietaryRestrictions,
-          description,
           deliveryInstructions,
           onsiteStaff,
           scheduledDropOffTime,
-          mealRequestDates: valueToDateArray(mealRequestDates),
+          userId,
+          mealRequestDates: mealRequestDates.map(
+            (date) => date.toISOString().split("T", 1)[0],
+          ),
         },
       });
     } catch (e: unknown) {
@@ -132,6 +122,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
         isClosable: true,
       });
       // eslint-disable-next-line no-console
+      console.log(e);
       console.log(JSON.stringify(e, null, 2));
     }
   };

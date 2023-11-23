@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import type { Value } from "react-multi-date-picker";
+import { Navigate } from "react-router-dom";
 
 import SchedulingFormCalendar from "./SchedulingFormCalendar";
 import SchedulingFormMealInfo from "./SchedulingFormMealInfo";
@@ -7,6 +8,7 @@ import SchedulingFormReviewAndSubmit from "./SchedulingFormReviewAndSubmit";
 import SchedulingFormWeekly from "./SchedulingFormWeekly";
 import TitleSection from "./TitleSection";
 
+import { LOGIN_PAGE } from "../../../constants/Routes";
 import AuthContext from "../../../contexts/AuthContext";
 import { Contact, UserInfo } from "../../../types/UserTypes";
 import ThreeStepForm from "../../common/ThreeStepForm";
@@ -19,7 +21,7 @@ const CreateMealRequest = (): React.ReactElement => {
   const [endDate, setEndDate] = useState("");
   const [scheduledDropOffTime, setScheduledDropOffTime] = useState("");
 
-  const [mealRequestDates, setMealRequestDates] = useState<Value>([]);
+  const [mealRequestDates, setMealRequestDates] = useState<Date[]>([]);
 
   // Part 2: Meal Donation Information
   const [numMeals, setNumMeals] = useState<number>(0);
@@ -36,6 +38,9 @@ const CreateMealRequest = (): React.ReactElement => {
   ]);
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  const [userId, setUserId] = useState<string>(authenticatedUser?.id || "");
+
   const [userInfo, setUserInfo] = useState<UserInfo>(
     authenticatedUser?.info || null,
   );
@@ -76,6 +81,10 @@ const CreateMealRequest = (): React.ReactElement => {
       window.removeEventListener("beforeunload", alertUser);
     };
   }, []);
+
+  if (!authenticatedUser) {
+    return <Navigate replace to={LOGIN_PAGE} />;
+  }
 
   return (
     <div>
@@ -137,6 +146,7 @@ const CreateMealRequest = (): React.ReactElement => {
             deliveryInstructions={deliveryInstructions}
             onsiteStaff={onsiteStaff}
             address={address}
+            userId={userId}
             handleBack={() => {}} // Will be assigned by three step form
           />
         }

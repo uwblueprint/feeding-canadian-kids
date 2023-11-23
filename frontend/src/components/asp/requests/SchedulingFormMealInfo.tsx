@@ -38,7 +38,9 @@ type SchedulingFormMealInfoProps = {
   handleNext: () => void;
 };
 
-const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProps> = ({
+const SchedulingFormMealInfo: React.FunctionComponent<
+  SchedulingFormMealInfoProps
+> = ({
   address,
   numMeals,
   setNumMeals,
@@ -55,8 +57,6 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
   const validateData = () => {
-    setAttemptedSubmit(true);
-
     if (
       numMeals <= 0 ||
       onsiteStaff.length === 0 ||
@@ -71,8 +71,8 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
       setAttemptedSubmit(true);
       return;
     }
-    setAttemptedSubmit(false);
 
+    setAttemptedSubmit(false);
     handleNext();
   };
 
@@ -116,14 +116,14 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
               <Input
                 required
                 size="xs"
-                value={numMeals > 0 ? numMeals : undefined}
                 height={{ base: "2rem", md: "3rem" }}
                 variant="outline"
                 colorScheme="primary.blue"
                 onChange={(e) => {
-                  setNumMeals(parseInt(e.target.value, 10));
+                  setNumMeals(parseInt(e.target.value, 10) || 0);
                 }}
-                type="number"
+                type="text"
+                pattern="[0-9]*"
                 rounded="md"
                 width={{ base: "100%", md: "100%" }}
                 placeholder="40"

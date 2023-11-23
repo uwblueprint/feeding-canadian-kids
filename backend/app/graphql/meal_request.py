@@ -23,21 +23,16 @@ class MealRequestTypeInput(graphene.InputObjectType):
 class MealTypeInput(graphene.InputObjectType):
     portions = graphene.Int(required=True)
     dietary_restrictions = graphene.String(default_value=None)
-    meal_suggestions = graphene.String(default_value=None)
-
 
 # Response Types
 class MealInfoResponse(graphene.ObjectType):
     portions = graphene.Int(required=True)
     dietary_restrictions = graphene.String()
-    meal_suggestions = graphene.String()
-
 
 class CreateMealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
     drop_off_datetime = graphene.DateTime(required=True)
     status = graphene.String(required=True)
-    description = graphene.String(required=True)
     meal_info = graphene.Field(MealInfoResponse, required=True)
 
 
@@ -51,7 +46,6 @@ class DonationInfo(graphene.ObjectType):
 class MealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
     requestor = graphene.Field(User)
-    description = graphene.String()
     status = graphene.String()
     drop_off_datetime = graphene.DateTime()
     drop_off_location = graphene.String()
@@ -66,7 +60,6 @@ class MealRequestResponse(graphene.ObjectType):
 # Mutations
 class CreateMealRequests(Mutation):
     class Arguments:
-        description = graphene.String(required=True)
         requestor_id = graphene.ID(required=True)
         # request_dates is a list of dates
         request_dates = graphene.List(graphene.Date, required=True)
@@ -83,7 +76,6 @@ class CreateMealRequests(Mutation):
     def mutate(
         self,
         info,
-        description,
         requestor_id,
         request_dates,
         meal_info,
@@ -93,7 +85,6 @@ class CreateMealRequests(Mutation):
         onsite_staff,
     ):
         result = services["meal_request_service"].create_meal_request(
-            description=description,
             requestor_id=requestor_id,
             request_dates=request_dates,
             meal_info=meal_info,
@@ -109,7 +100,6 @@ class CreateMealRequests(Mutation):
 class UpdateMealRequest(Mutation):
     class Arguments:
         meal_request_id = graphene.ID(required=True)
-        description = graphene.String(required=False)
         requestor = graphene.ID(required=False)
         drop_off_datetime = graphene.DateTime(required=False)
         meal_info = MealTypeInput()
@@ -124,7 +114,6 @@ class UpdateMealRequest(Mutation):
         self,
         info,
         meal_request_id,
-        description=None,
         requestor=None,
         drop_off_datetime=None,
         meal_info=None,
@@ -133,7 +122,6 @@ class UpdateMealRequest(Mutation):
         onsite_staff=None,
     ):
         result = services["meal_request_service"].update_meal_request(
-            description=description,
             requestor=requestor,
             meal_info=meal_info,
             drop_off_datetime=drop_off_datetime,
@@ -193,7 +181,6 @@ class MealRequestQueries(QueryList):
             MealRequestResponse(
                 id=meal_request_dto.id,
                 requestor=meal_request_dto.requestor,
-                description=meal_request_dto.description,
                 status=meal_request_dto.status,
                 drop_off_datetime=meal_request_dto.drop_off_datetime,
                 drop_off_location=meal_request_dto.drop_off_location,

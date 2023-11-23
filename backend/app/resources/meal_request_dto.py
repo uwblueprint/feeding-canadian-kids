@@ -27,7 +27,6 @@ class MealRequestDTO:
     ):
         self.id = id
         self.requestor = requestor
-        self.description = description
         self.status = status
         self.drop_off_datetime = drop_off_datetime
         self.drop_off_location = drop_off_location
@@ -50,9 +49,6 @@ class MealRequestDTO:
             error_list.append("The id supplied is not a string.")
 
         validate_user(self.requestor, "requestor", error_list)
-
-        if type(self.description) is not str:
-            error_list.append("The description supplied is not a string.")
 
         if type(self.status) is not str:
             error_list.append("The status supplied is not a string.")

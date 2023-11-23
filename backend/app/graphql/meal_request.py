@@ -24,10 +24,12 @@ class MealTypeInput(graphene.InputObjectType):
     portions = graphene.Int(required=True)
     dietary_restrictions = graphene.String(default_value=None)
 
+
 # Response Types
 class MealInfoResponse(graphene.ObjectType):
     portions = graphene.Int(required=True)
     dietary_restrictions = graphene.String()
+
 
 class CreateMealRequestResponse(graphene.ObjectType):
     id = graphene.ID()

@@ -38,9 +38,7 @@ type SchedulingFormMealInfoProps = {
   handleNext: () => void;
 };
 
-const SchedulingFormMealInfo: React.FunctionComponent<
-  SchedulingFormMealInfoProps
-> = ({
+const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProps> = ({
   address,
   numMeals,
   setNumMeals,

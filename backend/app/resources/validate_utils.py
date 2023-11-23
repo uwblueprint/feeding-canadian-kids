@@ -157,6 +157,7 @@ def validate_meal_info(meal_info, error_list):
         elif key == "dietary_restrictions" and type(val) is not str:
             error_list.append("The dietary_restrictions supplied is not a string.")
 
+
 def validate_donation_info(donation_info, error_list):
     donation_info_fields = [
         "donor",

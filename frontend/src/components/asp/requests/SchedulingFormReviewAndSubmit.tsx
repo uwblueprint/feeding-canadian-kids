@@ -1,5 +1,4 @@
 import { gql, useMutation } from "@apollo/client";
-import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import {
   Box,
   Button,
@@ -25,7 +24,9 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { Value } from "react-multi-date-picker";
+import { useNavigate } from "react-router-dom";
 
+import { DASHBOARD_PAGE } from "../../../constants/Routes";
 import { Contact } from "../../../types/UserTypes";
 import OnsiteStaffSection from "../../common/OnsiteStaffSection";
 
@@ -79,9 +80,7 @@ type SchedulingFormReviewAndSubmitProps = {
   handleBack: () => void;
 };
 
-const SchedulingFormReviewAndSubmit: React.FunctionComponent<
-  SchedulingFormReviewAndSubmitProps
-> = ({
+const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormReviewAndSubmitProps> = ({
   scheduledDropOffTime,
   mealRequestDates,
   address,
@@ -98,9 +97,10 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
 
   const toast = useToast();
 
+  const navigate = useNavigate();
+
   const handleSubmit = async () => {
     try {
-      // print type of mealRequestDates
       const response = await createMealRequest({
         variables: {
           address,
@@ -108,6 +108,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           dietaryRestrictions,
           deliveryInstructions,
           onsiteStaff,
+          // Format the scheduled drop off time with the current time zone
           scheduledDropOffTime,
           userId,
           mealRequestDates: mealRequestDates.map(
@@ -115,15 +116,22 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           ),
         },
       });
+
+      // On success, navigate to dashboard
+      if (response.data) {
+        toast({
+          title: "Meal request submitted!",
+          status: "success",
+          isClosable: true,
+        });
+        navigate(DASHBOARD_PAGE);
+      }
     } catch (e: unknown) {
       toast({
         title: "Failed to create meal request. Please try again.",
         status: "error",
         isClosable: true,
       });
-      // eslint-disable-next-line no-console
-      console.log(e);
-      console.log(JSON.stringify(e, null, 2));
     }
   };
 

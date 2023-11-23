@@ -20,6 +20,7 @@ class MealInfo(mg.EmbeddedDocument):
     portions = mg.IntField(required=True)
     dietary_restrictions = mg.StringField(default=None)
 
+
 # Information on the donation once a donor has committed to the request
 class DonationInfo(mg.EmbeddedDocument):
     donor = mg.ReferenceField(User, required=True)

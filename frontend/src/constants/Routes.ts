@@ -16,6 +16,8 @@ export const CREATE_MEAL_REQUEST_PAGE = "/request/scheduling";
 
 export const DASHBOARD_PAGE = "/dashboard";
 
+export const MEAL_DONOR_DASHBOARD_PAGE = "/meal_donor/dashboard";
+
 export const SETTINGS_PAGE = "/settings";
 
 export const DISPLAY_ENTITY_PAGE = "/dashboard/entity";

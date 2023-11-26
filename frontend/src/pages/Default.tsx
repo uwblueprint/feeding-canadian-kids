@@ -19,6 +19,9 @@ const Default = (): React.ReactElement => {
       <Link as={RouterLink} to={Routes.DASHBOARD_PAGE}>
         <Button>Go to dashboard</Button>
       </Link>
+      <Link as={RouterLink} to={Routes.MEAL_DONOR_DASHBOARD_PAGE}>
+        <Button>Go to meal donor dashboard</Button>
+      </Link>
     </div>
   );
 };

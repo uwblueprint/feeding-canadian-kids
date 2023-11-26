@@ -15,7 +15,7 @@ import ThreeStepForm from "../../common/ThreeStepForm";
 
 const CreateMealRequest = (): React.ReactElement => {
   // Part 1: Scheduling
-  const [isWeeklyInput, setIsWeeklyInput] = useState(true); // Are we in weekly input mode (false means we are in calendar mode)
+  const [isWeeklyInput, setIsWeeklyInput] = useState(false); // Are we in weekly input mode (false means we are in calendar mode)
   const [donationFrequency, setDonationFrequency] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");

@@ -97,6 +97,7 @@ const SchedulingFormCalendar: React.FunctionComponent<
       </GridItem>
 
       <GridItem colSpan={{ base: 1, md: 2 }}>
+        {/*
         <Text color="primary.blue" fontSize="xs">
           If your schedule is the same each week,&nbsp;
           <button
@@ -107,6 +108,7 @@ const SchedulingFormCalendar: React.FunctionComponent<
             click here to request weekly donations
           </button>
         </Text>
+  */}
 
         <br />
         <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 4, md: 4 }}>

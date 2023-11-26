@@ -156,14 +156,12 @@ MOCK_USER3_SNAKE = {
 }
 
 MOCK_MEALREQUEST1_SNAKE = {
-    "description": "Test description",
     "status": "Open",
     "drop_off_datetime": "2021-03-31T00:00:00",
     "drop_off_location": "Test location",
     "meal_info": {
         "portions": 10,
         "dietary_restrictions": "Vegan",
-        "meal_suggestions": "Mac and Cheese",
     },
     "onsite_staff": [
         {

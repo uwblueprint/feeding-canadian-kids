@@ -633,8 +633,7 @@ const Join = (): React.ReactElement => {
         borderRadius="8px"
         boxShadow={{
           base: "",
-          lg:
-            "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
+          lg: "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
         }}
         style={{
           backgroundColor: "white",

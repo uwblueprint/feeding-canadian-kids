@@ -101,6 +101,7 @@ const Settings = (): React.ReactElement => {
       email: "",
     },
   );
+
   const [organizationName, setOrganizationName] = useState(
     userInfo?.organizationName || "",
   );

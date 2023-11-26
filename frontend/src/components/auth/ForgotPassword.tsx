@@ -29,9 +29,8 @@ const ForgotPassword = () => {
     }
   `;
 
-  const [forgotPassword, { loading: forgotPasswordLoading }] = useMutation(
-    FORGOT_PASSWORD,
-  );
+  const [forgotPassword, { loading: forgotPasswordLoading }] =
+    useMutation(FORGOT_PASSWORD);
 
   const handleResetPassword = async () => {
     try {

@@ -47,6 +47,10 @@ const Default = (): React.ReactElement => {
         />
         <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
         <EditMealRequestForm />
+        <Button
+          text="Create Meal Request"
+          path={Routes.CREATE_MEAL_REQUEST_PAGE}
+        />
       </Wrap>
       <div style={{ height: "2rem" }} />
     </div>

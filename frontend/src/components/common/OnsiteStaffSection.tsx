@@ -5,6 +5,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
   Table,
   TableContainer,
   Tbody,
@@ -28,16 +29,192 @@ const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
 const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 
+type OnsiteTextInputRowProps = {
+  onsiteInfo: Array<Contact>;
+  setOnsiteInfo: React.Dispatch<React.SetStateAction<Contact[]>>;
+  index: number;
+  attemptedSubmit: boolean;
+};
+
+const OnsiteTextInputRow = ({
+  onsiteInfo,
+  setOnsiteInfo,
+  index,
+  attemptedSubmit,
+}: OnsiteTextInputRowProps): React.ReactElement => {
+  return (
+    <Tr h="58px">
+      <Td padding="0 12px 0 24px" gap="24px">
+        <FormControl
+          isRequired={index === 0}
+          isInvalid={attemptedSubmit && onsiteInfo[index].name === ""}
+        >
+          <Input
+            h="37px"
+            value={onsiteInfo[index].name}
+            placeholder={PLACEHOLDER_WEB_EXAMPLE_FULL_NAME}
+            onChange={(e) => {
+              onsiteInfo[index].name = e.target.value;
+              setOnsiteInfo([...onsiteInfo]);
+            }}
+          />
+        </FormControl>
+      </Td>
+      <Td padding="0 12px">
+        <FormControl
+          isRequired={index === 0}
+          isInvalid={attemptedSubmit && onsiteInfo[index].phone === ""}
+        >
+          <Input
+            h="37px"
+            type="tel"
+            value={onsiteInfo[index].phone}
+            placeholder={PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER}
+            onChange={(e) => {
+              onsiteInfo[index].phone = e.target.value;
+              setOnsiteInfo([...onsiteInfo]);
+            }}
+          />
+        </FormControl>
+      </Td>
+      <Td padding="0 0 0 12px">
+        <FormControl
+          isRequired={index === 0}
+          isInvalid={attemptedSubmit && !isValidEmail(onsiteInfo[index].email)}
+        >
+          <Input
+            h="37px"
+            type="email"
+            value={onsiteInfo[index].email}
+            placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
+            onChange={(e) => {
+              onsiteInfo[index].email = e.target.value;
+              setOnsiteInfo([...onsiteInfo]);
+            }}
+          />
+        </FormControl>
+      </Td>
+      {onsiteInfo.length >= 2 ? (
+        <Td padding="0 4px">
+          <DeleteIcon
+            h="19.5px"
+            w="100%"
+            color="gray.gray300"
+            cursor="pointer"
+            _hover={{ color: "primary.blue" }}
+            onClick={() => {
+              onsiteInfo.splice(index, 1);
+              setOnsiteInfo([...onsiteInfo]);
+            }}
+          />
+        </Td>
+      ) : (
+        <Td padding="0 4px" />
+      )}
+    </Tr>
+  );
+};
+
+type OnsiteStaffDropdownProps = {
+  onsiteInfo: Array<Contact>;
+  setOnsiteInfo: React.Dispatch<React.SetStateAction<Contact[]>>;
+  availableStaff: Array<Contact>;
+  index: number;
+  attemptedSubmit: boolean;
+};
+
+const OnsiteDropdownInputRow = ({
+  onsiteInfo,
+  setOnsiteInfo,
+  availableStaff,
+  index,
+  attemptedSubmit,
+}: OnsiteStaffDropdownProps): React.ReactElement => {
+  // Choose the name from a dropdown of available staff, and then fill in the rest of the info based on that
+
+  return (
+    <Tr h="58px">
+      <Td padding="0 12px 0 24px" gap="24px">
+        <FormControl
+          isRequired={index === 0}
+          isInvalid={
+            attemptedSubmit &&
+            (!onsiteInfo[index] || onsiteInfo[index].name === "")
+          }
+        >
+          <Select
+            h="37px"
+            fontSize="xs"
+            value={
+              onsiteInfo[index]
+                ? availableStaff.findIndex(
+                    (staff) =>
+                      staff.name === onsiteInfo[index].name &&
+                      staff.phone === onsiteInfo[index].phone &&
+                      staff.email === onsiteInfo[index].email,
+                  )
+                : ""
+            }
+            placeholder="Select a staff member"
+            onChange={(e) => {
+              // Find available staff with this name, and fill in the rest of the info
+              const staff = availableStaff[parseInt(e.target.value, 10)];
+              onsiteInfo[index] = staff;
+              setOnsiteInfo([...onsiteInfo]);
+            }}
+          >
+            {availableStaff.map((staff, index2) => {
+              return (
+                <option key={index2} value={index2}>
+                  {staff.name}
+                </option>
+              );
+            })}
+          </Select>
+        </FormControl>
+      </Td>
+      {/* display text for phone number and email */}
+      <Td padding="0 12px">
+        <Text>{onsiteInfo[index] ? onsiteInfo[index].phone : ""}</Text>
+      </Td>
+      <Td padding="0 0 0 12px">
+        <Text>{onsiteInfo[index] ? onsiteInfo[index].email : ""}</Text>
+      </Td>
+      {onsiteInfo.length >= 2 ? (
+        <Td padding="0 4px">
+          <DeleteIcon
+            h="19.5px"
+            w="100%"
+            color="gray.gray300"
+            cursor="pointer"
+            _hover={{ color: "primary.blue" }}
+            onClick={() => {
+              onsiteInfo.splice(index, 1);
+              setOnsiteInfo([...onsiteInfo]);
+            }}
+          />
+        </Td>
+      ) : (
+        <Td padding="0 4px" />
+      )}
+    </Tr>
+  );
+};
+
 type OnsiteStaffSectionProps = {
   onsiteInfo: Array<Contact>;
   setOnsiteInfo: React.Dispatch<React.SetStateAction<Contact[]>>;
   attemptedSubmit: boolean;
+  availableStaff?: Array<Contact>;
+  dropdown?: boolean;
 };
 
 const OnsiteStaffSection = ({
   onsiteInfo,
   setOnsiteInfo,
   attemptedSubmit,
+  availableStaff = [],
+  dropdown = false,
 }: OnsiteStaffSectionProps): React.ReactElement => {
   const isWebView = useIsWebView();
 
@@ -47,7 +224,7 @@ const OnsiteStaffSection = ({
         <Flex flexDir="column" gap="8px">
           <FormControl isRequired>
             <FormLabel variant="form-label-bold">
-              Additional onsite staff
+              {dropdown ? "Select onsite staff" : "Additional onsite staff"}
             </FormLabel>
           </FormControl>
           <Text color="text.subtitle" variant="desktop-xs" mt="-12px">
@@ -87,84 +264,41 @@ const OnsiteStaffSection = ({
             </Thead>
 
             <Tbody>
-              {onsiteInfo.map((info, index) => (
-                <Tr h="58px" key={index}>
-                  <Td padding="0 12px 0 24px" gap="24px">
-                    <FormControl
-                      isRequired={index === 0}
-                      isInvalid={
-                        attemptedSubmit && onsiteInfo[index].name === ""
-                      }
-                    >
-                      <Input
-                        h="37px"
-                        value={onsiteInfo[index].name}
-                        placeholder={PLACEHOLDER_WEB_EXAMPLE_FULL_NAME}
-                        onChange={(e) => {
-                          onsiteInfo[index].name = e.target.value;
-                          setOnsiteInfo([...onsiteInfo]);
-                        }}
-                      />
-                    </FormControl>
-                  </Td>
-                  <Td padding="0 12px">
-                    <FormControl
-                      isRequired={index === 0}
-                      isInvalid={
-                        attemptedSubmit && onsiteInfo[index].phone === ""
-                      }
-                    >
-                      <Input
-                        h="37px"
-                        type="tel"
-                        value={onsiteInfo[index].phone}
-                        placeholder={PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER}
-                        onChange={(e) => {
-                          onsiteInfo[index].phone = e.target.value;
-                          setOnsiteInfo([...onsiteInfo]);
-                        }}
-                      />
-                    </FormControl>
-                  </Td>
-                  <Td padding="0 0 0 12px">
-                    <FormControl
-                      isRequired={index === 0}
-                      isInvalid={
-                        attemptedSubmit &&
-                        !isValidEmail(onsiteInfo[index].email)
-                      }
-                    >
-                      <Input
-                        h="37px"
-                        type="email"
-                        value={onsiteInfo[index].email}
-                        placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
-                        onChange={(e) => {
-                          onsiteInfo[index].email = e.target.value;
-                          setOnsiteInfo([...onsiteInfo]);
-                        }}
-                      />
-                    </FormControl>
-                  </Td>
-                  {onsiteInfo.length >= 2 ? (
-                    <Td padding="0 4px">
-                      <DeleteIcon
-                        h="19.5px"
-                        w="100%"
-                        color="gray.gray300"
-                        cursor="pointer"
-                        _hover={{ color: "primary.blue" }}
-                        onClick={() => {
-                          onsiteInfo.splice(index, 1);
-                          setOnsiteInfo([...onsiteInfo]);
-                        }}
-                      />
-                    </Td>
-                  ) : (
-                    <Td padding="0 4px" />
-                  )}
-                </Tr>
-              ))}
+              {onsiteInfo.map((info, index) =>
+                dropdown ? (
+                  <OnsiteDropdownInputRow
+                    key={index}
+                    onsiteInfo={onsiteInfo}
+                    setOnsiteInfo={setOnsiteInfo}
+                    availableStaff={
+                      /* Remove previously selected staff from dropdown */
+                      availableStaff.filter(
+                        (staff) =>
+                          !onsiteInfo
+                            .slice(0, index)
+                            .concat(onsiteInfo.slice(index + 1))
+                            .some(
+                              (prevStaff) =>
+                                prevStaff &&
+                                prevStaff.name === staff.name &&
+                                prevStaff.phone === staff.phone &&
+                                prevStaff.email === staff.email,
+                            ),
+                      )
+                    }
+                    index={index}
+                    attemptedSubmit={attemptedSubmit}
+                  />
+                ) : (
+                  <OnsiteTextInputRow
+                    key={index}
+                    onsiteInfo={onsiteInfo}
+                    setOnsiteInfo={setOnsiteInfo}
+                    index={index}
+                    attemptedSubmit={attemptedSubmit}
+                  />
+                ),
+              )}
             </Tbody>
           </Table>
         </TableContainer>

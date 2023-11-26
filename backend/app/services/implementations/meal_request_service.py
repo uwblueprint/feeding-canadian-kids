@@ -47,7 +47,6 @@ class MealRequestService(IMealRequestService):
 
     def update_meal_request(
         self,
-        description,
         requestor,
         meal_info,
         drop_off_datetime,

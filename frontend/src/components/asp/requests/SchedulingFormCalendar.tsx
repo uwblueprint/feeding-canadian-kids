@@ -97,7 +97,7 @@ const SchedulingFormCalendar: React.FunctionComponent<
       </GridItem>
 
       <GridItem colSpan={{ base: 1, md: 2 }}>
-        {/*
+        {/* Weekly input is commented out for now since we don't plan on implementing it right now but may do so in the future
         <Text color="primary.blue" fontSize="xs">
           If your schedule is the same each week,&nbsp;
           <button

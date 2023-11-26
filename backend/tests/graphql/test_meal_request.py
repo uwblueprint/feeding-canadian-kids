@@ -41,13 +41,11 @@ def test_create_meal_request(meal_request_setup):
       {{
         mealRequests {{
           status
-          description
           id
           dropOffDatetime
           mealInfo {{
             portions
             dietaryRestrictions
-            mealSuggestions
           }}
         }}
       }}

@@ -14,7 +14,6 @@ class MealRequestDTO:
         self,
         id,
         requestor,
-        description,
         status,
         drop_off_datetime,
         drop_off_location,

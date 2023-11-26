@@ -23,8 +23,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5000:5000
-    # dns:
-    #   - 8.8.8.8
+    dns:
+      - 8.8.8.8
     volumes:
       - ./backend:/app
     env_file:

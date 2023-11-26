@@ -26,7 +26,9 @@ type SchedulingFormCalendarProps = {
   handleNext: () => void;
 };
 
-const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProps> = ({
+const SchedulingFormCalendar: React.FunctionComponent<
+  SchedulingFormCalendarProps
+> = ({
   scheduledDropOffTime,
   setScheduledDropOffTime,
   dates,

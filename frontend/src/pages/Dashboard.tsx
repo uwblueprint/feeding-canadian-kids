@@ -45,6 +45,7 @@ import {
   MealRequestsVariables,
   MealStatus,
 } from "../types/MealRequestTypes";
+import { b2 } from "@fullcalendar/core/internal-common";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
@@ -174,7 +175,7 @@ const Dashboard = (): React.ReactElement => {
       variables: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        requestorId: authenticatedUser!.registeredUser.id,
+        requestorId: authenticatedUser!.id,
       },
     },
   );
@@ -304,11 +305,11 @@ const Dashboard = (): React.ReactElement => {
                   />
                 </div>
                 {selectedMealRequest && (
-                  <div style={{ width: "30%", margin: "20px" }}>
-                    <Text>
-                      <strong>Upcoming Delivery</strong>
+                  <div style={{ width: "30%", margin: "20px", marginTop: "0px", marginRight: '0px' }}>
+                    <Text fontSize='md' padding={5} paddingTop={1}>
+                      Upcoming Delivery
                     </Text>
-                    <Card padding={3}>
+                    <Card padding={3} variant='outline'>
                       <CardBody>
                         <Table variant="unstyled" size="lg">
                           <Tr>

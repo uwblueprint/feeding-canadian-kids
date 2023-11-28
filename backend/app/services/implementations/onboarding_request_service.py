@@ -9,6 +9,8 @@ from ...models.onboarding_request import (
 )
 from ...models.user_info import UserInfo
 from ...resources.onboarding_request_dto import OnboardingRequestDTO
+from app.resources.onboarding_request_dto import OnboardingRequestDTO
+from typing import List
 
 
 class OnboardingRequestService(IOnboardingRequestService):
@@ -57,7 +59,7 @@ class OnboardingRequestService(IOnboardingRequestService):
             )
             raise e
 
-    def get_all_onboarding_requests(self, number=5, offset=0, role="", status=""):
+    def get_all_onboarding_requests(self, number: int=5, offset: int=0, role: str="", status: str="") -> List[OnboardingRequestDTO]:
         onboarding_request_dtos = []
 
         try:
@@ -83,7 +85,7 @@ class OnboardingRequestService(IOnboardingRequestService):
             raise e
         return onboarding_request_dtos
 
-    def get_onboarding_request_by_id(self, id):
+    def get_onboarding_request_by_id(self, id: str) -> OnboardingRequestDTO:
         try:
             request = OnboardingRequest.objects(id=id).first()
 

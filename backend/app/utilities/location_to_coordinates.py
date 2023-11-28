@@ -1,9 +1,10 @@
 import requests
+from typing import List
 
 GEOCODE_API_URL = "https://geocode.maps.co/search"
 
 
-def getGeocodeFromAddress(organization_address):
+def getGeocodeFromAddress(organization_address: str) -> List[float]:
     response = requests.get(
         '{base_url}?q="{address}"'.format(
             base_url=GEOCODE_API_URL, address=organization_address

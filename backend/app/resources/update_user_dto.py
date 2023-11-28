@@ -1,4 +1,5 @@
 from .validate_utils import validate_userinfo
+from typing import Any, List, Union
 
 
 class UpdateUserDTO:
@@ -11,7 +12,7 @@ class UpdateUserDTO:
             error_message = "\n".join(error_list)
             raise Exception(error_message)
 
-    def validate(self):
+    def validate(self) -> List[Union[str, Any]]:
         error_list = validate_userinfo(self.info, [])
 
         if type(self.auth_id) is not str:

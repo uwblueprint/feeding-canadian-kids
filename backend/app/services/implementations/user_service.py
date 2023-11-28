@@ -5,6 +5,10 @@ from ...models.user import User
 from ...resources.user_dto import UserDTO
 from ...resources.asp_distance_dto import ASPDistanceDTO
 from ...utilities.location_to_coordinates import getGeocodeFromAddress
+from app.models.user import User
+from app.resources.update_user_dto import UpdateUserDTO
+from app.resources.user_dto import UserDTO
+from typing import List
 
 
 class UserService(IUserService):
@@ -21,7 +25,7 @@ class UserService(IUserService):
         """
         self.logger = logger
 
-    def get_user_by_id(self, user_id):
+    def get_user_by_id(self, user_id: str) -> UserDTO:
         try:
             user = User.objects(id=user_id).first()
 
@@ -46,7 +50,7 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_user_by_auth_id(self, auth_id):
+    def get_user_by_auth_id(self, auth_id: str) -> User:
         """
         Get a User document by auth_id
 
@@ -88,7 +92,7 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_user_role_by_auth_id(self, auth_id):
+    def get_user_role_by_auth_id(self, auth_id: str) -> str:
         try:
             user = self.get_user_by_auth_id(auth_id)
             return user.info.role
@@ -114,7 +118,7 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_auth_id_by_user_id(self, user_id):
+    def get_auth_id_by_user_id(self, user_id: str) -> str:
         try:
             user = User.objects(id=user_id).first()
 
@@ -131,7 +135,7 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self):
+    def get_users(self) -> List[UserDTO]:
         user_dtos = []
         for user in User.objects:
             user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
@@ -153,7 +157,7 @@ class UserService(IUserService):
 
         return user_dtos
 
-    def update_user_coordinates(self, user_dto):
+    def update_user_coordinates(self, user_dto: UpdateUserDTO) -> UpdateUserDTO:
         try:
             organization_coordinates = getGeocodeFromAddress(
                 user_dto.info.organization_address
@@ -217,7 +221,7 @@ class UserService(IUserService):
         }
         return UserDTO(**kwargs)
 
-    def update_user_by_id(self, user_id, update_user_dto):
+    def update_user_by_id(self, user_id: str, update_user_dto: UpdateUserDTO) -> UserDTO:
         try:
             update_user_dto = self.update_user_coordinates(update_user_dto)
             old_user = User.objects(id=user_id).modify(
@@ -278,7 +282,7 @@ class UserService(IUserService):
         }
         return UserDTO(**kwargs)
 
-    def activate_user_by_id(self, user_id):
+    def activate_user_by_id(self, user_id: str) -> UserDTO:
         try:
             user = User.objects(id=user_id).first()
             if not user:
@@ -299,7 +303,7 @@ class UserService(IUserService):
             self.logger.error(f"Failed to activate user. Reason = {e}")
             raise e
 
-    def deactivate_user_by_id(self, user_id):
+    def deactivate_user_by_id(self, user_id: str) -> UserDTO:
         try:
             user = User.objects(id=user_id).first()
             if not user:

@@ -7,23 +7,24 @@ from .validate_utils import (
     validate_meal_info,
     validate_user,
 )
+from typing import Any, Dict, List, Optional, Union
 
 
 class MealRequestDTO:
     def __init__(
         self,
-        id,
-        requestor,
-        status,
-        drop_off_datetime,
-        drop_off_location,
-        meal_info,
-        onsite_staff,
-        date_created,
-        date_updated,
-        delivery_instructions=None,
-        donation_info=None,
-    ):
+        id: str,
+        requestor: Dict[str, Union[str, Dict[str, Union[str, List[float], Dict[str, Dict[str, int]], Dict[str, str], List[Dict[str, str]], bool]]]],
+        status: str,
+        drop_off_datetime:     datetime.datetime,
+        drop_off_location: str,
+        meal_info: Dict[str, Union[int, str]],
+        onsite_staff: List[Dict[str, str]],
+        date_created:     datetime.datetime,
+        date_updated:     datetime.datetime,
+        delivery_instructions: Optional[str]=None,
+        donation_info: None=None,
+    ) -> None:
         self.id = id
         self.requestor = requestor
         self.status = status
@@ -41,7 +42,7 @@ class MealRequestDTO:
             error_message = "\n".join(error_list)
             raise Exception(error_message)
 
-    def validate(self):
+    def validate(self) -> List[Any]:
         error_list = []
 
         if type(self.id) is not str:

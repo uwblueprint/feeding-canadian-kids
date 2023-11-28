@@ -4,6 +4,8 @@ from enum import Enum
 
 from .user import User
 from .user_info import Contact
+from bson.objectid import ObjectId
+from typing import Dict, List, Union
 
 
 class MealStatus(Enum):
@@ -41,7 +43,7 @@ class MealRequest(mg.Document):
     delivery_instructions = mg.StringField(default=None)
     donation_info = mg.EmbeddedDocumentField(DonationInfo, default=None)
 
-    def to_serializable_dict(self):
+    def to_serializable_dict(self) -> Dict[str, Union[ObjectId, str,     datetime.datetime, Dict[str, Union[int, str]], List[Dict[str, str]]]]:
         """
         Returns a dict representation of the document that is JSON serializable
 

@@ -2,6 +2,7 @@ import mongoengine as mg
 import datetime
 
 from .user_info import UserInfo
+from typing import Dict, List, Union
 
 ONBOARDING_REQUEST_STATUS_PENDING = "Pending"
 ONBOARDING_REQUEST_STATUS_APPROVED = "Approved"
@@ -18,7 +19,7 @@ class OnboardingRequest(mg.Document):
     date_submitted = mg.DateTimeField(default=datetime.datetime.now)
     status = mg.StringField(choices=ONBOARDING_REQUEST_STATUSES, required=True)
 
-    def to_serializable_dict(self):
+    def to_serializable_dict(self) -> Dict[str, Union[Dict[str, Union[str, List[float], Dict[str, Dict[str, int]], Dict[str, str], List[Dict[str, str]], bool]],     datetime.datetime, str, Dict[str, Union[str, List[float], Dict[str, Dict[str, Union[str, List[str]]]], Dict[str, str], List[Dict[str, str]], bool]], Dict[str, Union[str, List[float], Dict[str, str], List[Dict[str, str]], bool]]]]:
         """
         Returns a dict representation of the document that is JSON serializable
 

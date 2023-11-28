@@ -6,9 +6,10 @@ from ..models.user_info import (
     USERINFO_ROLE_ADMIN,
     USERINFO_ROLE_DONOR,
 )
+from typing import Any, Dict, List, Optional, Union
 
 
-def validate_contact(contact, contact_str, error_list):
+def validate_contact(contact: Dict[str, str], contact_str: str, error_list: List[Any]) -> List[Any]:
     if not isinstance(contact, dict):
         error_list.append(f"The {contact_str} supplied is not a dict.")
         return error_list
@@ -27,7 +28,7 @@ def validate_contact(contact, contact_str, error_list):
     return error_list
 
 
-def validate_role_info(role, role_info, role_info_str, error_list):
+def validate_role_info(role: str, role_info: Optional[Union[Dict[str, Dict[str, Union[str, List[str]]]], Dict[str, Dict[str, int]]]], role_info_str: str, error_list: List[Any]) -> List[Any]:
     if not isinstance(role_info, dict) and role != USERINFO_ROLE_ADMIN:
         error_list.append(f"The {role_info_str} supplied is not a dict.")
         return error_list
@@ -50,7 +51,7 @@ def validate_role_info(role, role_info, role_info_str, error_list):
     return error_list
 
 
-def validate_coordinates(coordinates, error_list):
+def validate_coordinates(coordinates: List[float], error_list: List[Any]) -> List[Any]:
     if not isinstance(coordinates, list):
         error_list.append("The info.organization_coordinates supplied is not a list.")
     elif len(coordinates) != 2:
@@ -72,7 +73,7 @@ def validate_coordinates(coordinates, error_list):
     return error_list
 
 
-def validate_userinfo(userinfo, error_list):
+def validate_userinfo(userinfo: Dict[str, Any], error_list: List[Any]) -> List[Any]:
     userinfo_fields = [
         "email",
         "organization_address",
@@ -128,7 +129,7 @@ def validate_userinfo(userinfo, error_list):
     return error_list
 
 
-def validate_user(user, user_str, error_list):
+def validate_user(user: Dict[str, Union[str, Dict[str, Union[str, List[float], Dict[str, Dict[str, int]], Dict[str, str], List[Dict[str, str]], bool]]]], user_str: str, error_list: List[Any]) -> None:
     if not isinstance(user, dict):
         error_list.append(f"The {user_str} supplied is not a dict.")
         return error_list
@@ -139,7 +140,7 @@ def validate_user(user, user_str, error_list):
     validate_userinfo(user["info"], error_list)
 
 
-def validate_meal_info(meal_info, error_list):
+def validate_meal_info(meal_info: Dict[str, Union[int, str]], error_list: List[Any]) -> None:
     meal_info_fields = ["portions", "dietary_restrictions"]
 
     if not isinstance(meal_info, dict):

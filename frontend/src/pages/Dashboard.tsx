@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   CalendarIcon,
   ChevronDownIcon,
@@ -37,7 +37,7 @@ import {
 import { CompactTable } from "@table-library/react-table-library/compact";
 import { useTheme } from "@table-library/react-table-library/theme";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BsFilter } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -163,7 +163,9 @@ const OldDashboard = (): React.ReactElement => {
   );
 };
 
-const ListView = () => {
+type ListViewProps = { authId: string };
+
+const ListView = ({ authId }: ListViewProps) => {
   const chakraTheme = getTheme(DEFAULT_OPTIONS);
   const customTheme = {
     Table: `
@@ -196,8 +198,6 @@ const ListView = () => {
 
   const theme = useTheme([chakraTheme, customTheme]);
 
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
-
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
     [],
   );
@@ -212,6 +212,60 @@ const ListView = () => {
     }
   };
 
+  const [data, setData] = useState<{
+    nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
+  }>();
+  const [filter, setFilter] = useState<Array<MealStatus>>([]);
+  const [sort, setSort] = useState<"ASCENDING" | "DESCENDING">("ASCENDING");
+
+  const [
+    getMealRequests,
+    {
+      loading: getMealRequestsLoading,
+      error: getMealRequestsError,
+      data: getMealRequestsData,
+    },
+  ] = useLazyQuery<MealRequestsData, MealRequestsVariables>(
+    GET_MEAL_REQUESTS_BY_ID,
+    {
+      onCompleted: (results) => {
+        setData({
+          nodes: results.getMealRequestsByRequestorId?.map(
+            (
+              mealRequest: MealRequest,
+              index: number,
+            ): TABLE_LIBRARY_TYPES.TableNode => ({
+              id: index,
+              date_requested: new Date(mealRequest.dateCreated),
+              time_requested: new Date(mealRequest.dateCreated),
+              donor_name:
+                mealRequest.donationInfo?.donor.info?.organizationName,
+              num_meals: mealRequest.mealInfo?.portions,
+              primary_contact: mealRequest.requestor.info?.primaryContact,
+              onsite_staff: mealRequest.onsiteStaff,
+              meal_description: mealRequest.description,
+              delivery_instructions: mealRequest.deliveryInstructions,
+              pending: mealRequest.status === "Open",
+              _hasContent: false,
+              nodes: null,
+            }),
+          ),
+        });
+      },
+    },
+  );
+
+  useEffect(() => {
+    getMealRequests({
+      variables: {
+        requestorId: authId,
+        sortByDateDirection: sort,
+        ...(filter.length > 0 && { status: filter }),
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, sort]);
+
   const handleEdit = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
     console.log("edit clicked for item", item.id);
@@ -220,41 +274,6 @@ const ListView = () => {
   const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
     console.log("delete clicked for item", item.id);
-  };
-
-  const {
-    data: mealRequests,
-    error: getMealRequestsError,
-    loading: getMealRequestsLoading,
-  } = useQuery<MealRequestsData, MealRequestsVariables>(
-    GET_MEAL_REQUESTS_BY_ID,
-    {
-      variables: {
-        requestorId: authenticatedUser!.id,
-      },
-    },
-  );
-
-  const data = {
-    nodes: mealRequests?.getMealRequestsByRequestorId.map(
-      (
-        mealRequest: MealRequest,
-        index: number,
-      ): TABLE_LIBRARY_TYPES.TableNode => ({
-        id: index,
-        date_requested: new Date(mealRequest.dateCreated),
-        time_requested: new Date(mealRequest.dateCreated),
-        donor_name: mealRequest.donationInfo?.donor.info?.organizationName,
-        num_meals: mealRequest.mealInfo?.portions,
-        primary_contact: mealRequest.requestor.info?.primaryContact,
-        onsite_staff: mealRequest.onsiteStaff,
-        meal_description: mealRequest.description,
-        delivery_instructions: mealRequest.deliveryInstructions,
-        pending: mealRequest.status === MealStatus.OPEN,
-        _hasContent: false,
-        nodes: null,
-      }),
-    ),
   };
 
   const COLUMNS = [
@@ -376,11 +395,7 @@ const ListView = () => {
     ),
   };
 
-  if (!authenticatedUser) {
-    return <Navigate replace to={Routes.LOGIN_PAGE} />;
-  }
-
-  if (getMealRequestsLoading) {
+  if (getMealRequestsLoading || !data) {
     return (
       <Box
         display="flex"
@@ -416,9 +431,15 @@ const ListView = () => {
             </Flex>
           </MenuButton>
           <MenuList zIndex="2">
-            <MenuOptionGroup defaultValue="ASC" type="radio">
-              <MenuItemOption value="ASC">Date Ascending</MenuItemOption>
-              <MenuItemOption value="DESC">Date Descending</MenuItemOption>
+            <MenuOptionGroup
+              type="radio"
+              value={sort}
+              onChange={(value) => setSort(value as "ASCENDING" | "DESCENDING")}
+            >
+              <MenuItemOption value="ASCENDING">Date Ascending</MenuItemOption>
+              <MenuItemOption value="DESCENDING">
+                Date Descending
+              </MenuItemOption>
             </MenuOptionGroup>
           </MenuList>
         </Menu>
@@ -441,7 +462,11 @@ const ListView = () => {
             </Flex>
           </MenuButton>
           <MenuList zIndex="2">
-            <MenuOptionGroup type="checkbox">
+            <MenuOptionGroup
+              type="checkbox"
+              value={filter}
+              onChange={(value) => setFilter(value as Array<MealStatus>)}
+            >
               <MenuItemOption value={MealStatus.OPEN}>
                 Pending Meals
               </MenuItemOption>
@@ -471,7 +496,7 @@ const ListView = () => {
         theme={theme}
         layout={{ custom: true }}
       />
-      {mealRequests?.getMealRequestsByRequestorId.length === 0 && (
+      {getMealRequestsData?.getMealRequestsByRequestorId.length === 0 && (
         <Center h="100px">
           <Text>No meal requests to display</Text>
         </Center>
@@ -481,6 +506,12 @@ const ListView = () => {
 };
 
 const Dashboard = (): React.ReactElement => {
+  const { authenticatedUser } = useContext(AuthContext);
+
+  if (!authenticatedUser) {
+    return <Navigate replace to={Routes.LOGIN_PAGE} />;
+  }
+
   return (
     <Flex flexDir="column" alignItems="center" w="80vw" mx="auto" mb="100px">
       <Text variant="desktop-display-xl" my="20px">
@@ -512,7 +543,7 @@ const Dashboard = (): React.ReactElement => {
             <p>Insert Calendar Here</p>
           </TabPanel>
           <TabPanel p="0">
-            <ListView />
+            <ListView authId={authenticatedUser.id} />
           </TabPanel>
           <TabPanel>
             <OldDashboard />

@@ -2,6 +2,8 @@ import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   CalendarIcon,
   ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   ChevronUpIcon,
   DeleteIcon,
   EditIcon,
@@ -501,6 +503,23 @@ const ListView = ({ authId }: ListViewProps) => {
           <Text>No meal requests to display</Text>
         </Center>
       )}
+      <Box
+        display="flex"
+        alignItems="center"
+        w="100%"
+        h="32px"
+        p="12px 16px"
+        bgColor="gray.50"
+        border="1px solid #E2E8F0"
+        borderRadius="0px 0px 8px 8px"
+        gap="16px"
+        color="#4A5568"
+        justifyContent="right"
+      >
+        <Text fontSize="14px">1-5 of 5</Text>
+        <ChevronLeftIcon w="24px" h="24px"/>
+        <ChevronRightIcon w="24px" h="24px"/>
+      </Box>
     </Box>
   );
 };

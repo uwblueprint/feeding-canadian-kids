@@ -5,7 +5,7 @@ from datetime import datetime
 
 from ...models.meal_request import DonationInfo, MealStatus
 from ...models.user import User
-from ...models.user_info import USERINFO_ROLE_DONOR
+from ...models.user_info import UserInfoRole
 from ...graphql.types import SortDirection
 from ...resources.meal_request_dto import MealRequestDTO
 
@@ -114,7 +114,7 @@ class MealRequestService(IMealRequestService):
             donor = User.objects(id=donor_id).first()
             if not donor:
                 raise Exception(f'user "{donor_id}" not found')
-            if donor.info.role != USERINFO_ROLE_DONOR:
+            if donor.info.role != UserInfoRole.DONOR.value:
                 raise Exception(f'user "{donor_id}" is not a donor')
 
             if len(meal_request_ids) == 0:
@@ -125,6 +125,10 @@ class MealRequestService(IMealRequestService):
                 meal_request = MealRequest.objects(id=meal_request_id).first()
                 if not meal_request:
                     raise Exception(f'meal request "{meal_request_id}" not found')
+                if meal_request.status != MealStatus.OPEN.value:
+                    raise Exception(
+                        f'meal request "{meal_request_id}" is not open for commitment'
+                    )
 
                 meal_request.donation_info = DonationInfo(
                     donor=donor,
@@ -161,6 +165,7 @@ class MealRequestService(IMealRequestService):
             if not donor:
                 raise Exception(f'donor "{donor_id}" not found')
             request_dict["donation_info"]["donor"] = donor.to_serializable_dict()
+        
         return MealRequestDTO(**request_dict)
 
     def get_meal_requests_by_requestor_id(

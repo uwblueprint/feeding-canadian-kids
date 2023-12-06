@@ -114,6 +114,7 @@ class MealRequestService(IMealRequestService):
             donor = User.objects(id=donor_id).first()
             if not donor:
                 raise Exception(f'user "{donor_id}" not found')
+            # The user committing to the meal request must have the "Donor" role
             if donor.info.role != UserInfoRole.DONOR.value:
                 raise Exception(f'user "{donor_id}" is not a donor')
 
@@ -125,6 +126,7 @@ class MealRequestService(IMealRequestService):
                 meal_request = MealRequest.objects(id=meal_request_id).first()
                 if not meal_request:
                     raise Exception(f'meal request "{meal_request_id}" not found')
+                # The meal request must be in the "Open" status
                 if meal_request.status != MealStatus.OPEN.value:
                     raise Exception(
                         f'meal request "{meal_request_id}" is not open for commitment'
@@ -137,6 +139,7 @@ class MealRequestService(IMealRequestService):
                     additional_info=additional_info,
                 )
 
+                # Change the meal request's status to "Fulfilled"
                 meal_request.status = MealStatus.FULFILLED.value
 
                 meal_request_dtos.append(

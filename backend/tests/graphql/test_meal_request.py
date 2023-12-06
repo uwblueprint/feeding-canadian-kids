@@ -146,17 +146,17 @@ def test_commit_to_meal_request(meal_request_setup):
     result = graphql_schema.execute(mutation)
 
     assert result.errors is None
-    
+
     # Verify that the meal request's status was updated
-    assert result.data["commitToMealRequest"]["mealRequests"][0]["status"] == MealStatus.FULFILLED.value
-    
-    # Verify that the meal request's donationInfo was populated correctly
     assert (
-        result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"]["donor"][
-            "id"
-        ]
-        == str(donor.id)
+        result.data["commitToMealRequest"]["mealRequests"][0]["status"]
+        == MealStatus.FULFILLED.value
     )
+
+    # Verify that the meal request's donationInfo was populated correctly
+    assert result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"][
+        "donor"
+    ]["id"] == str(donor.id)
     assert (
         result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"][
             "foodDescription"
@@ -178,11 +178,11 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
 
     # All user info roles except for "Donor"
     INVALID_USERINFO_ROLES = [UserInfoRole.ADMIN.value, UserInfoRole.ASP.value]
-    
+
     for role in INVALID_USERINFO_ROLES:
-      donor.info.role = role
-    
-      mutation = f"""
+        donor.info.role = role
+
+        mutation = f"""
       mutation testCommitToMealRequest {{
         commitToMealRequest(
           donorId: "{str(donor.id)}",
@@ -197,9 +197,9 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
         }}
       }}
     """
-    
-      result = graphql_schema.execute(mutation)
-      assert result.errors is not None
+
+        result = graphql_schema.execute(mutation)
+        assert result.errors is not None
 
 
 # A donor can only commit to a meal request if the meal request's
@@ -209,11 +209,11 @@ def test_commit_to_meal_request_fails_if_not_open(meal_request_setup):
 
     # All meal statuses except for "Open"
     INVALID_MEAL_STATUSES = [MealStatus.CANCELLED.value, MealStatus.FULFILLED.value]
-    
+
     for meal_status in INVALID_MEAL_STATUSES:
-      meal_request.status = meal_status
-      
-      mutation = f"""
+        meal_request.status = meal_status
+
+        mutation = f"""
       mutation testCommitToMealRequest {{
         commitToMealRequest(
           donorId: "{str(donor.id)}",
@@ -228,10 +228,10 @@ def test_commit_to_meal_request_fails_if_not_open(meal_request_setup):
         }}
       }}
     """
-    
-      result = graphql_schema.execute(mutation)
-      assert result.errors is not None
-    
+
+        result = graphql_schema.execute(mutation)
+        assert result.errors is not None
+
 
 def test_update_meal_request(meal_request_setup):
     _, _, meal_request = meal_request_setup

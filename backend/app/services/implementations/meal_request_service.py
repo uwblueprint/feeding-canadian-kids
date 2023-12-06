@@ -168,7 +168,7 @@ class MealRequestService(IMealRequestService):
             if not donor:
                 raise Exception(f'donor "{donor_id}" not found')
             request_dict["donation_info"]["donor"] = donor.to_serializable_dict()
-        
+
         return MealRequestDTO(**request_dict)
 
     def get_meal_requests_by_requestor_id(

@@ -6,7 +6,8 @@ class UserInfoRole(Enum):
     ADMIN = "Admin"
     DONOR = "Donor"
     ASP = "ASP"
-    
+
+
 USERINFO_ROLES = [role.value for role in UserInfoRole]
 
 DONOR_TYPE_RESTAURANT = "Restaurant"

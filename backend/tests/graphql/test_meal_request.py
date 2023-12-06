@@ -1,5 +1,5 @@
 from app.graphql import schema as graphql_schema
-from app.models.meal_request import MealRequest
+from app.models.meal_request import MealRequest, MealStatus
 
 """
 Tests for MealRequestchema and query/mutation logic
@@ -92,6 +92,77 @@ def test_create_meal_request(meal_request_setup):
     # Delete the created meal requests
     for meal_request in result.data["createMealRequest"]["mealRequests"]:
         MealRequest.objects(id=meal_request["id"]).delete()
+
+
+def test_commit_to_meal_request(meal_request_setup):
+    _, donor, meal_request = meal_request_setup
+
+    mutation = f"""
+    mutation testCommitToMealRequest {{
+      commitToMealRequest(
+        donorId: "{str(donor.id)}",
+        mealRequestIds: ["{str(meal_request.id)}"],
+        foodDescription: "Pizza",
+        additionalInfo: "No nuts"
+      )
+      {{
+        mealRequests {{
+          id
+          requestor {{
+            id
+          }}
+          description
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo {{
+            portions
+            dietaryRestrictions
+            mealSuggestions
+          }}
+          onsiteStaff {{
+            name
+            email
+            phone
+          }}
+          dateCreated
+          dateUpdated
+          deliveryInstructions
+          donationInfo {{
+            donor {{
+              id
+            }}
+            commitmentDate
+            foodDescription
+            additionalInfo
+          }}
+        }}
+      }}
+    }}
+  """
+
+    result = graphql_schema.execute(mutation)
+
+    assert result.errors is None
+    assert result.data["commitToMealRequest"]["mealRequests"][0]["status"] == MealStatus.FULFILLED.value
+    assert (
+        result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"]["donor"][
+            "id"
+        ]
+        == str(donor.id)
+    )
+    assert (
+        result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"][
+            "foodDescription"
+        ]
+        == "Pizza"
+    )
+    assert (
+        result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"][
+            "additionalInfo"
+        ]
+        == "No nuts"
+    )
 
 
 def test_update_meal_request(meal_request_setup):
@@ -260,7 +331,7 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
                 id
               }},
               commitmentDate
-              mealDescription
+              foodDescription
               additionalInfo
             }}
           }}

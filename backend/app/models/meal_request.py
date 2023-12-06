@@ -31,7 +31,6 @@ class DonationInfo(mg.EmbeddedDocument):
 
 class MealRequest(mg.Document):
     requestor = mg.ReferenceField(User, required=True)
-    description = mg.StringField(required=True)
     status = mg.StringField(
         choices=MEAL_STATUSES, required=True, default=MealStatus.OPEN.value
     )

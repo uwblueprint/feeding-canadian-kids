@@ -99,14 +99,12 @@ def test_commit_to_meal_request(meal_request_setup):
           requestor {{
             id
           }}
-          description
           status
           dropOffDatetime
           dropOffLocation
           mealInfo {{
             portions
             dietaryRestrictions
-            mealSuggestions
           }}
           onsiteStaff {{
             name

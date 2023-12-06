@@ -201,35 +201,6 @@ class MealRequestService(IMealRequestService):
             else:
                 requests = requests[offset:]
 
-            # pipeline = []
-            # match_queries = [{ "status": { "$in": status } }]
-
-            # drop_off_datetime_match = {}
-            # if min_drop_off_date is not None:
-            #     drop_off_datetime_match["$gte"] = min_drop_off_date
-            # if max_drop_off_date is not None:
-            #     drop_off_datetime_match["$lte"] = max_drop_off_date
-
-            # if drop_off_datetime_match != {}:
-            #     match_queries.append({"drop_off_datetime": drop_off_datetime_match})
-
-            # pipeline.append({"$match": {"$and": match_queries}})
-
-            # if sort_by_date_direction == SortDirection.ASCENDING:
-            #     pipeline.append({"$sort": {"drop_off_datetime": 1}})
-            # else:
-            #     pipeline.append({"$sort": {"drop_off_datetime": -1}})
-
-            # if limit is not None:
-            #     pipeline.append({"$limit": limit})
-
-            # pipeline.append({"$skip": offset})
-
-            # requestor = User.objects(id=requestor_id).first()
-            # requests = list(MealRequest.objects(
-            #     requestor=requestor,
-            # ).aggregate(pipeline))
-
             meal_request_dtos = []
             for request in requests:
                 meal_request_dtos.append(

@@ -11,7 +11,6 @@ class IMealRequestService(ABC):
     @abstractmethod
     def create_meal_request(
         self,
-        description: str,
         requestor_id,
         request_dates,
         meal_info,
@@ -33,7 +32,6 @@ class IMealRequestService(ABC):
     @abstractmethod
     def update_meal_request(
         self,
-        description,
         requestor,
         meal_info,
         drop_off_datetime,

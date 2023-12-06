@@ -89,7 +89,9 @@ const UPDATEUSERBYID = gql`
 
 const Settings = (): React.ReactElement => {
   // Assumption: user has the roleInfo: ASPInfo
+
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
   const [userInfo, setUserInfo] = useState<UserInfo>(
     authenticatedUser?.info || null,
   );
@@ -101,6 +103,7 @@ const Settings = (): React.ReactElement => {
       email: "",
     },
   );
+
   const [organizationName, setOrganizationName] = useState(
     userInfo?.organizationName || "",
   );

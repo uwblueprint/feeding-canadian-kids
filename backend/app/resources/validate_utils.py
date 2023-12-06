@@ -138,7 +138,7 @@ def validate_user(user, user_str, error_list):
 
 
 def validate_meal_info(meal_info, error_list):
-    meal_info_fields = ["portions", "dietary_restrictions", "meal_suggestions"]
+    meal_info_fields = ["portions", "dietary_restrictions"]
 
     if not isinstance(meal_info, dict):
         error_list.append("The meal_info info supplied is not a dict.")
@@ -154,8 +154,6 @@ def validate_meal_info(meal_info, error_list):
                 error_list.append("The portions supplied must be greater than zero.")
         elif key == "dietary_restrictions" and type(val) is not str:
             error_list.append("The dietary_restrictions supplied is not a string.")
-        elif key == "meal_suggestions" and type(val) is not str:
-            error_list.append("The meal_suggestions supplied is not a string.")
 
 
 def validate_donation_info(donation_info, error_list):

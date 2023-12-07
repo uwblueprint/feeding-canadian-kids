@@ -219,6 +219,7 @@ const ListView = ({ authId }: ListViewProps) => {
   }>();
   const [filter, setFilter] = useState<Array<MealStatus>>([]);
   const [sort, setSort] = useState<"ASCENDING" | "DESCENDING">("ASCENDING");
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [
     getMealRequests,
@@ -263,10 +264,12 @@ const ListView = ({ authId }: ListViewProps) => {
         requestorId: authId,
         sortByDateDirection: sort,
         ...(filter.length > 0 && { status: filter }),
+        limit: 5,
+        offset: (currentPage - 1) * 5,
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, sort]);
+  }, [filter, sort, currentPage]);
 
   const handleEdit = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
@@ -397,6 +400,22 @@ const ListView = ({ authId }: ListViewProps) => {
     ),
   };
 
+  if (getMealRequestsError) {
+    // eslint-disable-next-line no-console
+    console.log(getMealRequestsError);
+    return (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        w="100%"
+        h="200px"
+      >
+        <Text>Error while getting meal requests!</Text>
+      </Box>
+    );
+  }
+
   if (getMealRequestsLoading || !data) {
     return (
       <Box
@@ -516,9 +535,29 @@ const ListView = ({ authId }: ListViewProps) => {
         color="#4A5568"
         justifyContent="right"
       >
-        <Text fontSize="14px">1-5 of 5</Text>
-        <ChevronLeftIcon w="24px" h="24px"/>
-        <ChevronRightIcon w="24px" h="24px"/>
+        <Text fontSize="14px">Page: {currentPage}</Text>
+        {currentPage === 1 ? (
+          <ChevronLeftIcon w="24px" h="24px" color="#A0AEC0" />
+        ) : (
+          <ChevronLeftIcon
+            w="24px"
+            h="24px"
+            cursor="pointer"
+            onClick={() => setCurrentPage(currentPage - 1)}
+          />
+        )}
+        {data?.nodes &&
+        data.nodes.length !== 0 &&
+        data.nodes.length % 5 === 0 ? (
+          <ChevronRightIcon
+            w="24px"
+            h="24px"
+            cursor="pointer"
+            onClick={() => setCurrentPage(currentPage + 1)}
+          />
+        ) : (
+          <ChevronRightIcon w="24px" h="24px" color="#A0AEC0" />
+        )}
       </Box>
     </Box>
   );

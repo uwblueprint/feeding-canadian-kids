@@ -90,7 +90,7 @@ def test_commit_to_meal_request(meal_request_setup):
       commitToMealRequest(
         donorId: "{str(donor.id)}",
         mealRequestIds: ["{str(meal_request.id)}"],
-        foodDescription: "Pizza",
+        mealDescription: "Pizza",
         additionalInfo: "No nuts"
       )
       {{
@@ -119,7 +119,7 @@ def test_commit_to_meal_request(meal_request_setup):
               id
             }}
             commitmentDate
-            foodDescription
+            mealDescription
             additionalInfo
           }}
         }}
@@ -134,7 +134,7 @@ def test_commit_to_meal_request(meal_request_setup):
     # Verify that the meal request's status was updated
     assert (
         result.data["commitToMealRequest"]["mealRequests"][0]["status"]
-        == MealStatus.FULFILLED.value
+        == MealStatus.UPCOMING.value
     )
 
     # Verify that the meal request's donationInfo was populated correctly
@@ -143,7 +143,7 @@ def test_commit_to_meal_request(meal_request_setup):
     ]["id"] == str(donor.id)
     assert (
         result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"][
-            "foodDescription"
+            "mealDescription"
         ]
         == "Pizza"
     )
@@ -171,7 +171,7 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
         commitToMealRequest(
           donorId: "{str(donor.id)}",
           mealRequestIds: ["{str(meal_request.id)}"],
-          foodDescription: "Pizza",
+          mealDescription: "Pizza",
           additionalInfo: "No nuts"
         )
         {{
@@ -192,7 +192,11 @@ def test_commit_to_meal_request_fails_if_not_open(meal_request_setup):
     _, donor, meal_request = meal_request_setup
 
     # All meal statuses except for "Open"
-    INVALID_MEAL_STATUSES = [MealStatus.CANCELLED.value, MealStatus.FULFILLED.value]
+    INVALID_MEAL_STATUSES = [
+        MealStatus.UPCOMING.value,
+        MealStatus.FULFILLED.value,
+        MealStatus.CANCELLED.value,
+    ]
 
     for meal_status in INVALID_MEAL_STATUSES:
         meal_request.status = meal_status
@@ -202,7 +206,7 @@ def test_commit_to_meal_request_fails_if_not_open(meal_request_setup):
         commitToMealRequest(
           donorId: "{str(donor.id)}",
           mealRequestIds: ["{str(meal_request.id)}"],
-          foodDescription: "Pizza",
+          mealDescription: "Pizza",
           additionalInfo: "No nuts"
         )
         {{
@@ -370,7 +374,7 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
                 id
               }},
               commitmentDate
-              foodDescription
+              mealDescription
               additionalInfo
             }}
           }}

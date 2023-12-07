@@ -72,7 +72,7 @@ class IMealRequestService(ABC):
         :type min_drop_off_date: datetime
         :param max_drop_off_date: the maximum drop off date
         :type max_drop_off_date: datetime
-        :param status: the status of the MealRequest (Open, Fulfilled, Cancelled)
+        :param status: the status of the MealRequest
         :type status: string
         :param offset: the offset to start from
         :type offset: int

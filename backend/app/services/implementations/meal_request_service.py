@@ -132,8 +132,8 @@ class MealRequestService(IMealRequestService):
                     additional_info=additional_info,
                 )
 
-                # Change the meal request's status to "Fulfilled"
-                meal_request.status = MealStatus.FULFILLED.value
+                # Change the meal request's status to "Upcoming"
+                meal_request.status = MealStatus.UPCOMING.value
 
                 meal_request_dtos.append(
                     self.convert_meal_request_to_dto(

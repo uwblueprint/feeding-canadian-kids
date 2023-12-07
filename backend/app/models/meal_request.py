@@ -8,6 +8,7 @@ from .user_info import Contact
 
 class MealStatus(Enum):
     OPEN = "Open"
+    UPCOMING = "Upcoming"
     FULFILLED = "Fulfilled"
     CANCELLED = "Cancelled"
 

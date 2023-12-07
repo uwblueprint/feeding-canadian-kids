@@ -22,7 +22,6 @@ export enum MealStatus {
 export type MealRequest = {
   id: string;
   requestor: Requestor;
-  description: string;
   status: string;
   dropOffDatetime: Date;
   dropOffLocation: string;

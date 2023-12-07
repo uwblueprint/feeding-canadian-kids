@@ -59,6 +59,7 @@ import {
   MealStatus,
 } from "../types/MealRequestTypes";
 import { Contact } from "../types/UserTypes";
+import { logGraphQLError } from "../utils/GraphQLUtils";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
@@ -89,14 +90,12 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
           }
         }
       }
-      description
       status
       dropOffDatetime
       dropOffLocation
       mealInfo {
         portions
         dietaryRestrictions
-        mealSuggestions
       }
       onsiteStaff {
         name
@@ -120,11 +119,11 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
   }
 `;
 
-type ButtonProps = { text: string; path: string };
+type ButtonProps = { children: React.ReactNode; path: string };
 
-const Button = ({ text, path }: ButtonProps) => {
+const NavigationButton = ({ children, path }: ButtonProps) => {
   const navigate = useNavigate();
-  return <ChakraButton onClick={() => navigate(path)}>{text}</ChakraButton>;
+  return <ChakraButton onClick={() => navigate(path)}>{children}</ChakraButton>;
 };
 
 const OldDashboard = (): React.ReactElement => {
@@ -142,27 +141,27 @@ const OldDashboard = (): React.ReactElement => {
     >
       <Wrap>
         <RefreshCredentials />
-        <Button text="Create Entity" path={Routes.CREATE_ENTITY_PAGE} />
-        <Button text="Update Entity" path={Routes.UPDATE_ENTITY_PAGE} />
-        <Button text="Display Entities" path={Routes.DISPLAY_ENTITY_PAGE} />
-        <Button
-          text="Create Simple Entity"
-          path={Routes.CREATE_SIMPLE_ENTITY_PAGE}
-        />
-        <Button
-          text="Update Simple Entity"
-          path={Routes.UPDATE_SIMPLE_ENTITY_PAGE}
-        />
-        <Button
-          text="Display Simple Entities"
-          path={Routes.DISPLAY_SIMPLE_ENTITY_PAGE}
-        />
-        <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
+        <NavigationButton path={Routes.CREATE_ENTITY_PAGE}>
+          Create Entity
+        </NavigationButton>
+
+        <NavigationButton path={Routes.UPDATE_ENTITY_PAGE}>
+          Update Entity
+        </NavigationButton>
+        <NavigationButton path={Routes.DISPLAY_ENTITY_PAGE}>
+          Display Entities
+        </NavigationButton>
+        <NavigationButton path={Routes.CREATE_SIMPLE_ENTITY_PAGE}>
+          Create Simple Entity
+        </NavigationButton>
+        <NavigationButton path={Routes.UPDATE_SIMPLE_ENTITY_PAGE}>
+          Update Simple Entity
+        </NavigationButton>
+        <NavigationButton path={Routes.DISPLAY_SIMPLE_ENTITY_PAGE}>
+          Display Simple Entities
+        </NavigationButton>
+        <NavigationButton path={Routes.HOOKS_PAGE}>Hooks Demo</NavigationButton>
         <EditMealRequestForm />
-        <Button
-          text="Create Meal Request"
-          path={Routes.CREATE_MEAL_REQUEST_PAGE}
-        />
       </Wrap>
       <div style={{ height: "2rem" }} />
     </div>
@@ -405,8 +404,8 @@ const ListView = ({ authId }: ListViewProps) => {
   };
 
   if (getMealRequestsError) {
-    // eslint-disable-next-line no-console
-    console.log(getMealRequestsError);
+    logGraphQLError(getMealRequestsError);
+
     return (
       <Box
         display="flex"
@@ -597,7 +596,9 @@ const Dashboard = (): React.ReactElement => {
               <Text variant="desktop-button-bold">Old Dashboard</Text>
             </Tab>
           </TabList>
-          <ChakraButton>+ Create Request</ChakraButton>
+          <NavigationButton path={Routes.CREATE_MEAL_REQUEST_PAGE}>
+            + Create Request
+          </NavigationButton>
         </Flex>
 
         <TabPanels>

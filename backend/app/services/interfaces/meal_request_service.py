@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Union
 
 from ...resources.meal_request_dto import MealRequestDTO
 
@@ -48,7 +49,7 @@ class IMealRequestService(ABC):
         donor_id: str,
         meal_request_ids: [str],
         meal_description: str,
-        additional_info: str,
+        additional_info: Union[str, None],
     ) -> [MealRequestDTO]:
         pass
 

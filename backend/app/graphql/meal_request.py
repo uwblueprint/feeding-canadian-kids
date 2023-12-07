@@ -41,7 +41,7 @@ class CreateMealRequestResponse(graphene.ObjectType):
 class DonationInfo(graphene.ObjectType):
     donor = graphene.Field(User)
     commitment_date = graphene.DateTime()
-    food_description = graphene.String()
+    meal_description = graphene.String()
     additional_info = graphene.String()
 
 
@@ -140,7 +140,7 @@ class CommitToMealRequest(Mutation):
     class Arguments:
         donor_id = graphene.ID(required=True)
         meal_request_ids = graphene.List(graphene.ID, required=True)
-        food_description = graphene.String(required=True)
+        meal_description = graphene.String(required=True)
         additional_info = graphene.String(default_value=None)
 
     meal_requests = graphene.List(MealRequestResponse)
@@ -150,13 +150,13 @@ class CommitToMealRequest(Mutation):
         info,
         donor_id,
         meal_request_ids,
-        food_description,
+        meal_description,
         additional_info=None,
     ):
         result = services["meal_request_service"].commit_to_meal_request(
             donor_id=donor_id,
             meal_request_ids=meal_request_ids,
-            food_description=food_description,
+            meal_description=meal_description,
             additional_info=additional_info,
         )
 

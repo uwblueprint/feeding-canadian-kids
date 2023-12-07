@@ -100,7 +100,7 @@ class MealRequestService(IMealRequestService):
         self,
         donor_id: str,
         meal_request_ids: [str],
-        food_description: str,
+        meal_description: str,
         additional_info: str,
     ) -> [MealRequestDTO]:
         try:
@@ -128,7 +128,7 @@ class MealRequestService(IMealRequestService):
                 meal_request.donation_info = DonationInfo(
                     donor=donor,
                     commitment_date=datetime.utcnow(),
-                    food_description=food_description,
+                    meal_description=meal_description,
                     additional_info=additional_info,
                 )
 

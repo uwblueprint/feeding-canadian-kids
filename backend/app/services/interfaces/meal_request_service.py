@@ -47,7 +47,7 @@ class IMealRequestService(ABC):
         self,
         donor_id: str,
         meal_request_ids: [str],
-        food_description: str,
+        meal_description: str,
         additional_info: str,
     ) -> [MealRequestDTO]:
         pass

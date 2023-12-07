@@ -163,3 +163,20 @@ class IUserService(ABC):
         :raises Exception: if user deletion fails
         """
         pass
+
+    @abstractmethod
+    def get_asp_near_location(self, requestor_id, max_distance, limit, offset):
+        """
+        Gets all ASPs within certain distance of user
+
+        :param requestor_id: user requesting
+        :type requestor_id: str
+        :param max_distance: max_distance away from requesting user
+        :type max_distance: float
+        :param limit: the limit of results to return
+        :type limit: int
+        :param offset: the offset to start from
+        :type offset: int
+        :raises Exception: if asp retrieval fails
+        """
+        pass

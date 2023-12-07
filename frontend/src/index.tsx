@@ -1,5 +1,6 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { ChakraProvider } from "@chakra-ui/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { createUploadLink } from "apollo-upload-client";
@@ -65,8 +66,11 @@ const authLink = setContext(async (_, { headers }) => {
   };
 });
 
+// Removes the __typename field from all variables before sending them to the server.
+const removeTypenameLink = removeTypenameFromVariables();
+
 const apolloClient = new ApolloClient({
-  link: authLink.concat(link),
+  link: removeTypenameLink.concat(authLink).concat(link),
   cache: new InMemoryCache(),
 });
 

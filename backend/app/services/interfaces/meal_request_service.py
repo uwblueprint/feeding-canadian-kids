@@ -9,7 +9,6 @@ class IMealRequestService(ABC):
     @abstractmethod
     def create_meal_request(
         self,
-        description: str,
         requestor_id,
         request_dates,
         meal_info,
@@ -26,6 +25,19 @@ class IMealRequestService(ABC):
         :rtype: dict
         :raises Exception: if MealRequest was not created successfully
         """
+        pass
+
+    @abstractmethod
+    def update_meal_request(
+        self,
+        requestor,
+        meal_info,
+        drop_off_datetime,
+        drop_off_location,
+        delivery_instructions,
+        onsite_staff,
+        meal_request_id,
+    ):
         pass
 
     @abstractmethod

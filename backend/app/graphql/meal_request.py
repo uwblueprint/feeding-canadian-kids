@@ -23,28 +23,45 @@ class MealRequestTypeInput(graphene.InputObjectType):
 class MealTypeInput(graphene.InputObjectType):
     portions = graphene.Int(required=True)
     dietary_restrictions = graphene.String(default_value=None)
-    meal_suggestions = graphene.String(default_value=None)
 
 
 # Response Types
 class MealInfoResponse(graphene.ObjectType):
     portions = graphene.Int(required=True)
     dietary_restrictions = graphene.String()
-    meal_suggestions = graphene.String()
 
 
 class CreateMealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
     drop_off_datetime = graphene.DateTime(required=True)
     status = graphene.String(required=True)
-    description = graphene.String(required=True)
     meal_info = graphene.Field(MealInfoResponse, required=True)
+
+
+class DonationInfo(graphene.ObjectType):
+    donor = graphene.Field(User)
+    commitment_date = graphene.DateTime()
+    meal_description = graphene.String()
+    additional_info = graphene.String()
+
+
+class MealRequestResponse(graphene.ObjectType):
+    id = graphene.ID()
+    requestor = graphene.Field(User)
+    status = graphene.String()
+    drop_off_datetime = graphene.DateTime()
+    drop_off_location = graphene.String()
+    meal_info = graphene.Field(MealInfoResponse)
+    onsite_staff = graphene.List(Contact)
+    date_created = graphene.DateTime()
+    date_updated = graphene.DateTime()
+    delivery_instructions = graphene.String()
+    donation_info = graphene.Field(DonationInfo)
 
 
 # Mutations
 class CreateMealRequests(Mutation):
     class Arguments:
-        description = graphene.String(required=True)
         requestor_id = graphene.ID(required=True)
         # request_dates is a list of dates
         request_dates = graphene.List(graphene.Date, required=True)
@@ -61,7 +78,6 @@ class CreateMealRequests(Mutation):
     def mutate(
         self,
         info,
-        description,
         requestor_id,
         request_dates,
         meal_info,
@@ -71,7 +87,6 @@ class CreateMealRequests(Mutation):
         onsite_staff,
     ):
         result = services["meal_request_service"].create_meal_request(
-            description=description,
             requestor_id=requestor_id,
             request_dates=request_dates,
             meal_info=meal_info,
@@ -84,33 +99,48 @@ class CreateMealRequests(Mutation):
         return CreateMealRequests(meal_requests=result)
 
 
+class UpdateMealRequest(Mutation):
+    class Arguments:
+        meal_request_id = graphene.ID(required=True)
+        requestor = graphene.ID(required=False)
+        drop_off_datetime = graphene.DateTime(required=False)
+        meal_info = MealTypeInput()
+        drop_off_location = graphene.String()
+        delivery_instructions = graphene.String()
+        onsite_staff = graphene.List(ContactInput)
+
+    # return values
+    meal_request = graphene.Field(MealRequestResponse)
+
+    def mutate(
+        self,
+        info,
+        meal_request_id,
+        requestor=None,
+        drop_off_datetime=None,
+        meal_info=None,
+        drop_off_location=None,
+        delivery_instructions=None,
+        onsite_staff=None,
+    ):
+        result = services["meal_request_service"].update_meal_request(
+            requestor=requestor,
+            meal_info=meal_info,
+            drop_off_datetime=drop_off_datetime,
+            drop_off_location=drop_off_location,
+            delivery_instructions=delivery_instructions,
+            onsite_staff=onsite_staff,
+            meal_request_id=meal_request_id,
+        )
+
+        return UpdateMealRequest(meal_request=result)
+
+
 class MealRequestMutations(MutationList):
     create_meal_request = CreateMealRequests.Field()
+    update_meal_request = UpdateMealRequest.Field()
 
 
-class DonationInfo(graphene.ObjectType):
-    donor = graphene.Field(User)
-    commitment_date = graphene.DateTime()
-    meal_description = graphene.String()
-    additional_info = graphene.String()
-
-
-class MealRequestResponse(graphene.ObjectType):
-    id = graphene.ID()
-    requestor = graphene.Field(User)
-    description = graphene.String()
-    status = graphene.String()
-    drop_off_datetime = graphene.DateTime()
-    drop_off_location = graphene.String()
-    meal_info = graphene.Field(MealInfoResponse)
-    onsite_staff = graphene.List(Contact)
-    date_created = graphene.DateTime()
-    date_updated = graphene.DateTime()
-    delivery_instructions = graphene.String()
-    donation_info = graphene.Field(DonationInfo)
-
-
-# Queries
 class MealRequestQueries(QueryList):
     getMealRequestsByRequestorId = graphene.List(
         MealRequestResponse,
@@ -153,7 +183,6 @@ class MealRequestQueries(QueryList):
             MealRequestResponse(
                 id=meal_request_dto.id,
                 requestor=meal_request_dto.requestor,
-                description=meal_request_dto.description,
                 status=meal_request_dto.status,
                 drop_off_datetime=meal_request_dto.drop_off_datetime,
                 drop_off_location=meal_request_dto.drop_off_location,

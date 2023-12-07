@@ -98,6 +98,12 @@ class User(graphene.ObjectType):
     info = graphene.Field(UserInfo)
 
 
+class ASPDistance(graphene.ObjectType):
+    id = graphene.String()
+    info = graphene.Field(UserInfo)
+    distance = graphene.Float()
+
+
 class SortDirection(graphene.Enum):
     ASCENDING = "ASC"
     DESCENDING = "DESC"

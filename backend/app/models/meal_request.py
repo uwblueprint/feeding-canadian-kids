@@ -19,7 +19,6 @@ MEAL_STATUSES = [status.value for status in MealStatus]
 class MealInfo(mg.EmbeddedDocument):
     portions = mg.IntField(required=True)
     dietary_restrictions = mg.StringField(default=None)
-    meal_suggestions = mg.StringField(default=None)
 
 
 # Information on the donation once a donor has committed to the request
@@ -32,7 +31,6 @@ class DonationInfo(mg.EmbeddedDocument):
 
 class MealRequest(mg.Document):
     requestor = mg.ReferenceField(User, required=True)
-    description = mg.StringField(required=True)
     status = mg.EnumField(MealStatus, required=True, default=MealStatus.OPEN)
     drop_off_datetime = mg.DateTimeField(required=True)
     drop_off_location = mg.StringField(required=True)

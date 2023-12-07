@@ -45,7 +45,6 @@ import { FiFilter } from "react-icons/fi";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import EditMealRequestForm from "./EditMealRequestForm";
-import mealRequestsJSON from "./MealRequestSampleData.json";
 
 import BackgroundImage from "../assets/background.png";
 import RefreshCredentials from "../components/auth/RefreshCredentials";

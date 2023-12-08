@@ -127,7 +127,7 @@ class MealRequestService(IMealRequestService):
             requests = MealRequest.objects(
                 requestor=requestor,
                 status__in=status,
-            ).order_by(f"{sort_prefix}date_created")
+            ).order_by(f"{sort_prefix}drop_off_datetime")
 
             # Filter results by optional parameters.
             # Since we want to filter these optionally (i.e. filter only if specified),

@@ -175,8 +175,8 @@ const ListView = ({ authId }: ListViewProps) => {
               index: number,
             ): TABLE_LIBRARY_TYPES.TableNode => ({
               id: index,
-              date_requested: new Date(mealRequest.dateCreated),
-              time_requested: new Date(mealRequest.dateCreated),
+              date_requested: new Date(mealRequest.dropOffDatetime),
+              time_requested: new Date(mealRequest.dropOffDatetime),
               donor_name:
                 mealRequest.donationInfo?.donor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
@@ -234,7 +234,7 @@ const ListView = ({ authId }: ListViewProps) => {
       label: "Time Requested",
       renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => (
         <Text variant="desktop-xs">
-          {item.time_requested.toLocaleTimeString("en-US")}
+          {item.time_requested.toLocaleTimeString("en-US", {hour: "2-digit", minute:"2-digit"})}
         </Text>
       ),
     },

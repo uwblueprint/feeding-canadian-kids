@@ -1,7 +1,4 @@
-import {
-  CalendarIcon,
-  HamburgerIcon,
-} from "@chakra-ui/icons";
+import { CalendarIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Button as ChakraButton,
   Flex,
@@ -13,7 +10,7 @@ import {
   Text,
   Wrap,
 } from "@chakra-ui/react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import EditMealRequestForm from "./EditMealRequestForm";
@@ -21,7 +18,6 @@ import EditMealRequestForm from "./EditMealRequestForm";
 import BackgroundImage from "../assets/background.png";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
 import ListView from "../components/mealrequest/ListView";
-// import LoadingSpinner from "../components/common/LoadingSpinner";
 import * as Routes from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 

@@ -1,5 +1,6 @@
 from app.graphql import schema as graphql_schema
-from app.models.meal_request import MealRequest
+from app.models.meal_request import MealRequest, MealStatus
+from app.models.user_info import UserInfoRole
 
 """
 Tests for MealRequestchema and query/mutation logic
@@ -78,6 +79,146 @@ def test_create_meal_request(meal_request_setup):
     # Delete the created meal requests
     for meal_request in result.data["createMealRequest"]["mealRequests"]:
         MealRequest.objects(id=meal_request["id"]).delete()
+
+
+# Happy path: A donor commits to fulfilling one meal request
+def test_commit_to_meal_request(meal_request_setup):
+    _, donor, meal_request = meal_request_setup
+
+    mutation = f"""
+    mutation testCommitToMealRequest {{
+      commitToMealRequest(
+        requester: "{str(donor.id)}",
+        mealRequestIds: ["{str(meal_request.id)}"],
+        mealDescription: "Pizza",
+        additionalInfo: "No nuts"
+      )
+      {{
+        mealRequests {{
+          id
+          requestor {{
+            id
+          }}
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo {{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteStaff {{
+            name
+            email
+            phone
+          }}
+          dateCreated
+          dateUpdated
+          deliveryInstructions
+          donationInfo {{
+            donor {{
+              id
+            }}
+            commitmentDate
+            mealDescription
+            additionalInfo
+          }}
+        }}
+      }}
+    }}
+  """
+
+    result = graphql_schema.execute(mutation)
+
+    assert result.errors is None
+
+    # Verify that the meal request's status was updated
+    assert (
+        result.data["commitToMealRequest"]["mealRequests"][0]["status"]
+        == MealStatus.UPCOMING.value
+    )
+
+    # Verify that the meal request's donationInfo was populated correctly
+    assert result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"][
+        "donor"
+    ]["id"] == str(donor.id)
+    assert (
+        result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"][
+            "mealDescription"
+        ]
+        == "Pizza"
+    )
+    assert (
+        result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"][
+            "additionalInfo"
+        ]
+        == "No nuts"
+    )
+
+
+# Only user's with role "Donor" should be able to commit
+# to meal requests, otherwise an error is thrown
+def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
+    _, donor, meal_request = meal_request_setup
+
+    # All user info roles except for "Donor"
+    INVALID_USERINFO_ROLES = [UserInfoRole.ADMIN.value, UserInfoRole.ASP.value]
+
+    for role in INVALID_USERINFO_ROLES:
+        donor.info.role = role
+
+        mutation = f"""
+      mutation testCommitToMealRequest {{
+        commitToMealRequest(
+          requester: "{str(donor.id)}",
+          mealRequestIds: ["{str(meal_request.id)}"],
+          mealDescription: "Pizza",
+          additionalInfo: "No nuts"
+        )
+        {{
+          mealRequests {{
+            id
+          }}
+        }}
+      }}
+    """
+
+        result = graphql_schema.execute(mutation)
+        assert result.errors is not None
+
+
+# A donor can only commit to a meal request if the meal request's
+# status is "Open", otherwise an error is thrown
+def test_commit_to_meal_request_fails_if_not_open(meal_request_setup):
+    _, donor, meal_request = meal_request_setup
+
+    # All meal statuses except for "Open"
+    INVALID_MEAL_STATUSES = [
+        MealStatus.UPCOMING.value,
+        MealStatus.FULFILLED.value,
+        MealStatus.CANCELLED.value,
+    ]
+
+    for meal_status in INVALID_MEAL_STATUSES:
+        meal_request.status = meal_status
+
+        mutation = f"""
+      mutation testCommitToMealRequest {{
+        commitToMealRequest(
+          requester: "{str(donor.id)}",
+          mealRequestIds: ["{str(meal_request.id)}"],
+          mealDescription: "Pizza",
+          additionalInfo: "No nuts"
+        )
+        {{
+          mealRequests {{
+            id
+          }}
+        }}
+      }}
+    """
+
+        result = graphql_schema.execute(mutation)
+        assert result.errors is not None
 
 
 def test_update_meal_request(meal_request_setup):

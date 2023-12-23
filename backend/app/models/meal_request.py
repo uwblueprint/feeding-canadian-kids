@@ -8,6 +8,7 @@ from .user_info import Contact
 
 class MealStatus(Enum):
     OPEN = "Open"
+    UPCOMING = "Upcoming"
     FULFILLED = "Fulfilled"
     CANCELLED = "Cancelled"
 
@@ -25,13 +26,15 @@ class MealInfo(mg.EmbeddedDocument):
 class DonationInfo(mg.EmbeddedDocument):
     donor = mg.ReferenceField(User, required=True)
     commitment_date = mg.DateTimeField(required=True)
-    meal_description = mg.StringField(default=None)
+    meal_description = mg.StringField(required=True)
     additional_info = mg.StringField(default=None)
 
 
 class MealRequest(mg.Document):
     requestor = mg.ReferenceField(User, required=True)
-    status = mg.EnumField(MealStatus, required=True, default=MealStatus.OPEN)
+    status = mg.StringField(
+        choices=MEAL_STATUSES, required=True, default=MealStatus.OPEN.value
+    )
     drop_off_datetime = mg.DateTimeField(required=True)
     drop_off_location = mg.StringField(required=True)
     meal_info = mg.EmbeddedDocumentField(MealInfo, required=True)

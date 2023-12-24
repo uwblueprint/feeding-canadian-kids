@@ -136,9 +136,37 @@ class UpdateMealRequest(Mutation):
         return UpdateMealRequest(meal_request=result)
 
 
+class CommitToMealRequest(Mutation):
+    class Arguments:
+        requester = graphene.ID(required=True)
+        meal_request_ids = graphene.List(graphene.ID, required=True)
+        meal_description = graphene.String(required=True)
+        additional_info = graphene.String(default_value=None)
+
+    meal_requests = graphene.List(MealRequestResponse)
+
+    def mutate(
+        self,
+        info,
+        requester,
+        meal_request_ids,
+        meal_description,
+        additional_info=None,
+    ):
+        result = services["meal_request_service"].commit_to_meal_request(
+            donor_id=requester,
+            meal_request_ids=meal_request_ids,
+            meal_description=meal_description,
+            additional_info=additional_info,
+        )
+
+        return CommitToMealRequest(meal_requests=result)
+
+
 class MealRequestMutations(MutationList):
     create_meal_request = CreateMealRequests.Field()
     update_meal_request = UpdateMealRequest.Field()
+    commit_to_meal_request = CommitToMealRequest.Field()
 
 
 class MealRequestQueries(QueryList):

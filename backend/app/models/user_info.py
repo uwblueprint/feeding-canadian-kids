@@ -1,10 +1,14 @@
+from enum import Enum
 import mongoengine as mg
 
 
-USERINFO_ROLE_ADMIN = "Admin"
-USERINFO_ROLE_DONOR = "Donor"
-USERINFO_ROLE_ASP = "ASP"
-USERINFO_ROLES = [USERINFO_ROLE_ADMIN, USERINFO_ROLE_DONOR, USERINFO_ROLE_ASP]
+class UserInfoRole(Enum):
+    ADMIN = "Admin"
+    DONOR = "Donor"
+    ASP = "ASP"
+
+
+USERINFO_ROLES = [role.value for role in UserInfoRole]
 
 DONOR_TYPE_RESTAURANT = "Restaurant"
 DONOR_TYPE_INDIVIDUAL = "Individual"

@@ -13,8 +13,8 @@ class MealStatus(Enum):
     CANCELLED = "Cancelled"
 
 
-MEAL_STATUSES = [status.value for status in MealStatus]
-
+MEAL_STATUSES_ENUMS = [status for status in MealStatus]
+MEAL_STATUSES_STRINGS = [status.value for status in MealStatus]
 
 # Information on the requested meals, provided by the ASP
 class MealInfo(mg.EmbeddedDocument):
@@ -32,9 +32,11 @@ class DonationInfo(mg.EmbeddedDocument):
 
 class MealRequest(mg.Document):
     requestor = mg.ReferenceField(User, required=True)
-    status = mg.StringField(
-        choices=MEAL_STATUSES, required=True, default=MealStatus.OPEN.value
+    # status = mg.EnumField(MealStatus, default=MealStatus.OPEN)
+    status= mg.StringField(
+        choices=MEAL_STATUSES_STRINGS, required=True, default=MealStatus.OPEN.value
     )
+
     drop_off_datetime = mg.DateTimeField(required=True)
     drop_off_location = mg.StringField(required=True)
     meal_info = mg.EmbeddedDocumentField(MealInfo, required=True)
@@ -50,6 +52,7 @@ class MealRequest(mg.Document):
 
         ObjectId must be converted to a string.
         """
+        print("Trying to encode!")
         meal_request_dict = self.to_mongo().to_dict()
         id = meal_request_dict.pop("_id", None)
         meal_request_dict["id"] = str(id)

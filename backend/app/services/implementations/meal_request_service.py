@@ -1,3 +1,4 @@
+from typing import List
 from ...models.user_info import Contact
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
@@ -169,11 +170,14 @@ class MealRequestService(IMealRequestService):
         requestor_id,
         min_drop_off_date,
         max_drop_off_date,
-        status,
+        status : List[MealStatus],
         offset,
         limit,
         sort_by_date_direction,
     ):
+        print(status)
+        status_value_list = list(map(lambda l: l.value, status))
+        print("Trying to get statuses", status_value_list)
         try:
             sort_prefix = "+"
             if sort_by_date_direction == SortDirection.DESCENDING:
@@ -182,7 +186,7 @@ class MealRequestService(IMealRequestService):
             requestor = User.objects(id=requestor_id).first()
             requests = MealRequest.objects(
                 requestor=requestor,
-                status__in=status,
+                status__in=status_value_list,
             ).order_by(f"{sort_prefix}drop_off_datetime")
 
             # Filter results by optional parameters.
@@ -203,6 +207,7 @@ class MealRequestService(IMealRequestService):
 
             meal_request_dtos = []
             for request in requests:
+                print("here!")
                 meal_request_dtos.append(
                     self.convert_meal_request_to_dto(request, requestor)
                 )

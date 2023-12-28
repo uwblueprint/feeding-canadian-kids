@@ -101,9 +101,9 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
   }
 `;
 
-type ListViewProps = { authId: string };
+type ListViewProps = { authId: string; rowsPerPage?: number };
 
-const ListView = ({ authId }: ListViewProps) => {
+const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
   const chakraTheme = getTheme(DEFAULT_OPTIONS);
   const customTheme = {
     Table: `
@@ -184,7 +184,7 @@ const ListView = ({ authId }: ListViewProps) => {
               onsite_staff: mealRequest.onsiteStaff,
               meal_description: mealRequest.donationInfo?.mealDescription,
               delivery_instructions: mealRequest.deliveryInstructions,
-              pending: mealRequest.status === "Open",
+              pending: mealRequest.status === MealStatus.OPEN,
               _hasContent: false,
               nodes: null,
             }),
@@ -195,15 +195,17 @@ const ListView = ({ authId }: ListViewProps) => {
   );
 
   useEffect(() => {
+    console.log("filter is", filter);
     getMealRequests({
       variables: {
         requestorId: authId,
         sortByDateDirection: sort,
         ...(filter.length > 0 && { status: filter }),
-        limit: 5,
-        offset: (currentPage - 1) * 5,
+        limit: rowsPerPage,
+        offset: (currentPage - 1) * rowsPerPage,
       },
     });
+    console.log(getMealRequestsData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, sort, currentPage]);
 
@@ -234,7 +236,10 @@ const ListView = ({ authId }: ListViewProps) => {
       label: "Time Requested",
       renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => (
         <Text variant="desktop-xs">
-          {item.time_requested.toLocaleTimeString("en-US", {hour: "2-digit", minute:"2-digit"})}
+          {item.time_requested.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </Text>
       ),
     },
@@ -415,7 +420,9 @@ const ListView = ({ authId }: ListViewProps) => {
           >
             <Flex gap="2px">
               <FiFilter />
-              <Text>Filter</Text>
+              <Text>
+                Filter {filter.length !== 0 ? `(${filter.join(" - ")})` : ""}
+              </Text>
             </Flex>
           </MenuButton>
           <MenuList zIndex="2">
@@ -427,9 +434,15 @@ const ListView = ({ authId }: ListViewProps) => {
               <MenuItemOption value={MealStatus.OPEN}>
                 Pending Meals
               </MenuItemOption>
+              <MenuItemOption value={MealStatus.UPCOMING}>
+                Upcoming Meals
+              </MenuItemOption>
               <MenuItemOption value={MealStatus.FULFILLED}>
                 Fulfilled Meals
               </MenuItemOption>
+              {/* <MenuItemOption value={MealStatus.CANCELLED}>
+                Cancelled Meals
+              </MenuItemOption> */}
             </MenuOptionGroup>
           </MenuList>
         </Menu>

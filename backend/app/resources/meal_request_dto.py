@@ -1,6 +1,6 @@
 import datetime
 
-from ..models.meal_request import MEAL_STATUSES
+from ..models.meal_request import MEAL_STATUSES_STRINGS
 from .validate_utils import (
     validate_contact,
     validate_donation_info,
@@ -49,15 +49,17 @@ class MealRequestDTO:
 
         validate_user(self.requestor, "requestor", error_list)
 
-        if type(self.status) is not str:
-            error_list.append("The status supplied is not a string.")
+        # if type(self.status) is not str:
+        #     error_list.append("The status supplied is not a string.")
 
-        if self.status not in MEAL_STATUSES:
-            error_list.append(
-                "The status {self_status} is not one of {valid_statuses}".format(
-                    self_status=self.status, valid_statuses=", ".join(MEAL_STATUSES)
-                )
-            )
+        if self.status not in MEAL_STATUSES_STRINGS:
+            print("self.status is", self.status)
+            pass
+            # error_list.append(
+            #     "The status {self_status} is not one of {valid_statuses}".format(
+            #         self_status=self.status, valid_statuses=", ".join(MEAL_STATUSES)
+            #     )
+            # )
 
         if type(self.drop_off_datetime) is not datetime.datetime:
             error_list.append(

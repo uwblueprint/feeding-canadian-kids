@@ -9,7 +9,7 @@ from .types import (
     SortDirection,
     User,
 )
-from ..models.meal_request import MealStatus, MEAL_STATUSES
+from ..models.meal_request import MEAL_STATUSES_ENUMS, MealStatus, MEAL_STATUSES_STRINGS
 from ..graphql.services import services
 
 # Input Types
@@ -34,7 +34,7 @@ class MealInfoResponse(graphene.ObjectType):
 class CreateMealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
     drop_off_datetime = graphene.DateTime(required=True)
-    status = graphene.String(required=True)
+    status = graphene.Field(graphene.Enum.from_enum(MealStatus), required=True)
     meal_info = graphene.Field(MealInfoResponse, required=True)
 
 
@@ -48,7 +48,7 @@ class DonationInfo(graphene.ObjectType):
 class MealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
     requestor = graphene.Field(User)
-    status = graphene.String()
+    status = graphene.Field(graphene.Enum.from_enum(MealStatus), required=True)
     drop_off_datetime = graphene.DateTime()
     drop_off_location = graphene.String()
     meal_info = graphene.Field(MealInfoResponse)
@@ -175,9 +175,11 @@ class MealRequestQueries(QueryList):
         requestor_id=graphene.ID(required=True),
         min_drop_off_date=graphene.Date(default_value=None),
         max_drop_off_date=graphene.Date(default_value=None),
+        # status=graphene.List(graphene.Enum.from_enum(MealStatus)),
         status=graphene.List(
             graphene.Enum.from_enum(MealStatus),
-            default_value=MEAL_STATUSES,
+            # MealStatus,
+            default_value=MEAL_STATUSES_ENUMS,
         ),
         offset=graphene.Int(default_value=0),
         limit=graphene.Int(default_value=None),

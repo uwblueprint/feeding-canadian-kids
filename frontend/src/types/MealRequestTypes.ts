@@ -15,6 +15,7 @@ type DonationInfo = {
 
 export enum MealStatus {
   OPEN = "OPEN",
+  UPCOMING = "UPCOMING",
   FULFILLED = "FULFILLED",
   CANCELLED = "CANCELLED",
 }

@@ -186,6 +186,21 @@ class MealRequestQueries(QueryList):
         sort_by_date_direction=SortDirection(default_value=SortDirection.ASCENDING),
     )
 
+    getMealRequestById = graphene.Field(
+        MealRequestResponse, 
+        requester_id=graphene.ID(required=True), 
+        id=graphene.ID(required=True),
+        )
+
+    def resolve_getMealRequestById(
+            self ,
+            info, 
+            requester_id : str,
+            id : str,
+    ):
+        meal_request = services["meal_request_service"].get_meal_request_by_id(id)
+        return meal_request
+
     def resolve_getMealRequestsByRequestorId(
         self,
         info,

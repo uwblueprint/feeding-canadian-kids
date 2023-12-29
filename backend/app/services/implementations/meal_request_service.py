@@ -103,7 +103,7 @@ class MealRequestService(IMealRequestService):
         meal_request_ids: [str],
         meal_description: str,
         additional_info: str,
-    ) -> [MealRequestDTO]:
+    ) -> list[MealRequestDTO]:
         try:
             donor = User.objects(id=donor_id).first()
             if not donor:
@@ -217,3 +217,9 @@ class MealRequestService(IMealRequestService):
         except Exception as error:
             self.logger.error(str(error))
             raise error
+
+    def get_meal_request_by_id(self, id: str) -> MealRequestDTO:
+        meal_request = MealRequest.objects(id=id).first()
+        meal_request_dto = self.convert_meal_request_to_dto(meal_request, meal_request.requestor)
+
+        return meal_request_dto

@@ -29,7 +29,15 @@ const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
 const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 
-const EditMealRequestForm = () => {
+const EditMealRequestForm = ({
+  open,
+  onClose,
+  mealRequestId,
+}: {
+  open: boolean;
+  onClose: () => void;
+  mealRequestId: string;
+}) => {
   const [primaryContact, setPrimaryContact] = useState<Contact>({
     name: "",
     phone: "",
@@ -45,7 +53,7 @@ const EditMealRequestForm = () => {
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const isWebView = useIsWebView();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
 
   const initialFocusRef = React.useRef(null);
 
@@ -206,17 +214,14 @@ const EditMealRequestForm = () => {
 
   return (
     <>
-      <Button onClick={onOpen}>Edit Meal Request</Button>
-      <Modal
-        initialFocusRef={initialFocusRef}
-        isOpen={isOpen}
-        onClose={onClose}
-      >
+      {/* <Button onClick={onOpen}>Edit Meal Request</Button> */}
+      <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={onClose}>
         <ModalOverlay />
         <ModalContent
           maxWidth={{ base: "100%", md: "900px" }}
           padding={{ base: "10px", md: "40px" }}
         >
+          {mealRequestId}
           <Text
             pb={{ base: 1, md: 5 }}
             pl={{ base: 6, md: 6 }}

@@ -156,7 +156,11 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
   const [filter, setFilter] = useState<Array<MealStatus>>([]);
   const [sort, setSort] = useState<"ASCENDING" | "DESCENDING">("ASCENDING");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentlyEditingMealRequestId, setCurrentlyEditingMealRequestId] =
+    useState("");
 
+  // type TableNodeMealRequest = TABLE_LIBRARY_TYPES.TableNode & {};
   const [
     getMealRequests,
     {
@@ -175,6 +179,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
               index: number,
             ): TABLE_LIBRARY_TYPES.TableNode => ({
               id: index,
+              meal_request_id: mealRequest.id,
               date_requested: new Date(mealRequest.dropOffDatetime),
               time_requested: new Date(mealRequest.dropOffDatetime),
               donor_name:
@@ -195,7 +200,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
   );
 
   useEffect(() => {
-    console.log("filter is", filter);
+    // console.log("filter is", filter);
     getMealRequests({
       variables: {
         requestorId: authId,
@@ -211,7 +216,10 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
 
   const handleEdit = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
-    console.log("edit clicked for item", item.id);
+    // console.log("edit clicked for item", item);
+    // console.log(item);
+    setIsEditModalOpen(true);
+    setCurrentlyEditingMealRequestId(item.meal_request_id);
   };
 
   const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
@@ -372,143 +380,156 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
   }
 
   return (
-    <Box mt="24px">
-      <Flex gap="10px" marginBottom="20px" justifyContent="flex-end">
-        <Menu>
-          <MenuButton
-            as={ChakraButton}
-            _hover={{ backgroundColor: "gray.200" }}
-            padding="6px 10px"
-            borderRadius="3px"
-            fontSize="14px"
-            border="solid 1px #E2E8F0"
-            boxShadow="lg"
-            backgroundColor="white"
-            color="black"
-            minWidth="75px"
-          >
-            <Flex gap="2px">
-              <BsFilter />
-              <Text>Sort</Text>
-            </Flex>
-          </MenuButton>
-          <MenuList zIndex="2">
-            <MenuOptionGroup
-              type="radio"
-              value={sort}
-              onChange={(value) => setSort(value as "ASCENDING" | "DESCENDING")}
+    <>
+      <EditMealRequestForm
+        open={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+        }}
+        mealRequestId={currentlyEditingMealRequestId}
+      />
+      <Box mt="24px">
+        <Flex gap="10px" marginBottom="20px" justifyContent="flex-end">
+          <Menu>
+            <MenuButton
+              as={ChakraButton}
+              _hover={{ backgroundColor: "gray.200" }}
+              padding="6px 10px"
+              borderRadius="3px"
+              fontSize="14px"
+              border="solid 1px #E2E8F0"
+              boxShadow="lg"
+              backgroundColor="white"
+              color="black"
+              minWidth="75px"
             >
-              <MenuItemOption value="ASCENDING">Date Ascending</MenuItemOption>
-              <MenuItemOption value="DESCENDING">
-                Date Descending
-              </MenuItemOption>
-            </MenuOptionGroup>
-          </MenuList>
-        </Menu>
-        <Menu>
-          <MenuButton
-            as={ChakraButton}
-            _hover={{ backgroundColor: "gray.200" }}
-            padding="6px 10px"
-            borderRadius="3px"
-            fontSize="14px"
-            border="solid 1px #E2E8F0"
-            boxShadow="lg"
-            backgroundColor="white"
-            color="black"
-            minWidth="75px"
-          >
-            <Flex gap="2px">
-              <FiFilter />
-              <Text>
-                Filter {filter.length !== 0 ? `(${filter.join(" - ")})` : ""}
-              </Text>
-            </Flex>
-          </MenuButton>
-          <MenuList zIndex="2">
-            <MenuOptionGroup
-              type="checkbox"
-              value={filter}
-              onChange={(value) => setFilter(value as Array<MealStatus>)}
+              <Flex gap="2px">
+                <BsFilter />
+                <Text>Sort</Text>
+              </Flex>
+            </MenuButton>
+            <MenuList zIndex="2">
+              <MenuOptionGroup
+                type="radio"
+                value={sort}
+                onChange={(value) =>
+                  setSort(value as "ASCENDING" | "DESCENDING")
+                }
+              >
+                <MenuItemOption value="ASCENDING">
+                  Date Ascending
+                </MenuItemOption>
+                <MenuItemOption value="DESCENDING">
+                  Date Descending
+                </MenuItemOption>
+              </MenuOptionGroup>
+            </MenuList>
+          </Menu>
+          <Menu>
+            <MenuButton
+              as={ChakraButton}
+              _hover={{ backgroundColor: "gray.200" }}
+              padding="6px 10px"
+              borderRadius="3px"
+              fontSize="14px"
+              border="solid 1px #E2E8F0"
+              boxShadow="lg"
+              backgroundColor="white"
+              color="black"
+              minWidth="75px"
             >
-              <MenuItemOption value={MealStatus.OPEN}>
-                Pending Meals
-              </MenuItemOption>
-              <MenuItemOption value={MealStatus.UPCOMING}>
-                Upcoming Meals
-              </MenuItemOption>
-              <MenuItemOption value={MealStatus.FULFILLED}>
-                Fulfilled Meals
-              </MenuItemOption>
-              {/* <MenuItemOption value={MealStatus.CANCELLED}>
+              <Flex gap="2px">
+                <FiFilter />
+                <Text>
+                  Filter {filter.length !== 0 ? `(${filter.join(" - ")})` : ""}
+                </Text>
+              </Flex>
+            </MenuButton>
+            <MenuList zIndex="2">
+              <MenuOptionGroup
+                type="checkbox"
+                value={filter}
+                onChange={(value) => setFilter(value as Array<MealStatus>)}
+              >
+                <MenuItemOption value={MealStatus.OPEN}>
+                  Pending Meals
+                </MenuItemOption>
+                <MenuItemOption value={MealStatus.UPCOMING}>
+                  Upcoming Meals
+                </MenuItemOption>
+                <MenuItemOption value={MealStatus.FULFILLED}>
+                  Fulfilled Meals
+                </MenuItemOption>
+                {/* <MenuItemOption value={MealStatus.CANCELLED}>
                 Cancelled Meals
               </MenuItemOption> */}
-            </MenuOptionGroup>
-          </MenuList>
-        </Menu>
-      </Flex>
-      <Box
-        display="flex"
-        alignItems="center"
-        w="100%"
-        h="64px"
-        p="12px 16px"
-        bgColor="gray.50"
-        borderLeft="2px solid"
-        borderColor="gray.gray83"
-      >
-        <Text variant="desktop-body-bold">Meal Requests</Text>
-      </Box>
-      <CompactTable
-        columns={COLUMNS}
-        rowOptions={ROW_OPTIONS}
-        data={data}
-        theme={theme}
-        layout={{ custom: true }}
-      />
-      {getMealRequestsData?.getMealRequestsByRequestorId.length === 0 && (
-        <Center h="100px">
-          <Text>No meal requests to display</Text>
-        </Center>
-      )}
-      <Box
-        display="flex"
-        alignItems="center"
-        w="100%"
-        h="32px"
-        p="12px 16px"
-        bgColor="gray.50"
-        border="1px solid #E2E8F0"
-        borderRadius="0px 0px 8px 8px"
-        gap="16px"
-        color="#4A5568"
-        justifyContent="right"
-      >
-        <Text fontSize="14px">Page: {currentPage}</Text>
-        {currentPage === 1 ? (
-          <ChevronLeftIcon w="24px" h="24px" color="#A0AEC0" />
-        ) : (
-          <ChevronLeftIcon
-            w="24px"
-            h="24px"
-            cursor="pointer"
-            onClick={() => setCurrentPage(currentPage - 1)}
-          />
+              </MenuOptionGroup>
+            </MenuList>
+          </Menu>
+        </Flex>
+        <Box
+          display="flex"
+          alignItems="center"
+          w="100%"
+          h="64px"
+          p="12px 16px"
+          bgColor="gray.50"
+          borderLeft="2px solid"
+          borderColor="gray.gray83"
+        >
+          <Text variant="desktop-body-bold">Meal Requests</Text>
+        </Box>
+        <CompactTable
+          columns={COLUMNS}
+          rowOptions={ROW_OPTIONS}
+          data={data}
+          theme={theme}
+          layout={{ custom: true }}
+        />
+        {getMealRequestsData?.getMealRequestsByRequestorId.length === 0 && (
+          <Center h="100px">
+            <Text>No meal requests to display</Text>
+          </Center>
         )}
-        {data?.nodes &&
-        data.nodes.length !== 0 &&
-        data.nodes.length % 5 === 0 ? (
-          <ChevronRightIcon
-            w="24px"
-            h="24px"
-            cursor="pointer"
-            onClick={() => setCurrentPage(currentPage + 1)}
-          />
-        ) : (
-          <ChevronRightIcon w="24px" h="24px" color="#A0AEC0" />
-        )}
+        <Box
+          display="flex"
+          alignItems="center"
+          w="100%"
+          h="32px"
+          p="12px 16px"
+          bgColor="gray.50"
+          border="1px solid #E2E8F0"
+          borderRadius="0px 0px 8px 8px"
+          gap="16px"
+          color="#4A5568"
+          justifyContent="right"
+        >
+          <Text fontSize="14px">Page: {currentPage}</Text>
+          {currentPage === 1 ? (
+            <ChevronLeftIcon w="24px" h="24px" color="#A0AEC0" />
+          ) : (
+            <ChevronLeftIcon
+              w="24px"
+              h="24px"
+              cursor="pointer"
+              onClick={() => setCurrentPage(currentPage - 1)}
+            />
+          )}
+          {data?.nodes &&
+          data.nodes.length !== 0 &&
+          data.nodes.length % 5 === 0 ? (
+            <ChevronRightIcon
+              w="24px"
+              h="24px"
+              cursor="pointer"
+              onClick={() => setCurrentPage(currentPage + 1)}
+            />
+          ) : (
+            <ChevronRightIcon w="24px" h="24px" color="#A0AEC0" />
+          )}
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

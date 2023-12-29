@@ -13,8 +13,6 @@ import {
 import React, { useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import EditMealRequestForm from "./EditMealRequestForm";
-
 import BackgroundImage from "../assets/background.png";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
 import ListView from "../components/mealrequest/ListView";
@@ -63,7 +61,6 @@ const OldDashboard = (): React.ReactElement => {
           Display Simple Entities
         </NavigationButton>
         <NavigationButton path={Routes.HOOKS_PAGE}>Hooks Demo</NavigationButton>
-        <EditMealRequestForm />
       </Wrap>
       <div style={{ height: "2rem" }} />
     </div>

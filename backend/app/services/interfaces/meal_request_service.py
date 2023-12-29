@@ -47,11 +47,19 @@ class IMealRequestService(ABC):
     def commit_to_meal_request(
         self,
         donor_id: str,
-        meal_request_ids: [str],
+        meal_request_ids: list[str],
         meal_description: str,
         additional_info: Union[str, None],
-    ) -> [MealRequestDTO]:
+    ) -> list[MealRequestDTO]:
         pass
+
+    @abstractmethod
+    def get_meal_request_by_id(
+        self, 
+        id: str,
+    ) -> MealRequestDTO:
+        pass
+
 
     @abstractmethod
     def get_meal_requests_by_requestor_id(

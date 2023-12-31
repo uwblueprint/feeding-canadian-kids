@@ -40,7 +40,7 @@ import {
   MealStatus,
 } from "../../types/MealRequestTypes";
 import { Contact } from "../../types/UserTypes";
-import { logGraphQLError } from "../../utils/GraphQLUtils";
+import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import LoadingSpinner from "../common/LoadingSpinner";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
@@ -158,7 +158,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentlyEditingMealRequestId, setCurrentlyEditingMealRequestId] =
-    useState("");
+    useState<string | undefined>(undefined);
 
   // type TableNodeMealRequest = TABLE_LIBRARY_TYPES.TableNode & {};
   const [
@@ -350,7 +350,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
   };
 
   if (getMealRequestsError) {
-    logGraphQLError(getMealRequestsError);
+    logPossibleGraphQLError(getMealRequestsError);
 
     return (
       <Box
@@ -381,13 +381,18 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
 
   return (
     <>
-      <EditMealRequestForm
-        open={isEditModalOpen}
-        onClose={() => {
-          setIsEditModalOpen(false);
-        }}
-        mealRequestId={currentlyEditingMealRequestId}
-      />
+      {currentlyEditingMealRequestId ? (
+        <EditMealRequestForm
+          open={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setCurrentlyEditingMealRequestId(undefined);
+          }}
+          mealRequestId={currentlyEditingMealRequestId}
+        />
+      ) : (
+        ""
+      )}
       <Box mt="24px">
         <Flex gap="10px" marginBottom="20px" justifyContent="flex-end">
           <Menu>

@@ -1,3 +1,4 @@
+import { ApolloError, gql, useApolloClient, useQuery } from "@apollo/client";
 import {
   Button,
   Divider,
@@ -14,10 +15,13 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import OnsiteStaffSection from "../components/common/OnsiteStaffSection";
+import AuthContext from "../contexts/AuthContext";
+import { MealRequestsData } from "../types/MealRequestTypes";
 import { Contact } from "../types/UserTypes";
+import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 import { isValidEmail } from "../utils/ValidationUtils";
 import useIsWebView from "../utils/useIsWebView";
 
@@ -29,6 +33,29 @@ const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
 const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 
+const GET_MEAL_REQUEST_BY_ID = gql`
+  query get_meal_request_by_id($id: ID!, $requestorId: ID!) {
+    getMealRequestById(id: $id, requestorId: $requestorId) {
+      id
+      status
+      dropOffDatetime
+      dropOffLocation
+      mealInfo {
+        portions
+        dietaryRestrictions
+      }
+      onsiteStaff {
+        name
+        email
+        phone
+      }
+      dateCreated
+      dateUpdated
+      deliveryInstructions
+    }
+  }
+`;
+
 const EditMealRequestForm = ({
   open,
   onClose,
@@ -38,6 +65,13 @@ const EditMealRequestForm = ({
   onClose: () => void;
   mealRequestId: string;
 }) => {
+  // Get existing meal request information
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const requestorId = authenticatedUser?.id;
+  // const { data: queryData, error: queryDataError } = useQuery<MealRequestsData>(
+  // logPossibleGraphQLError(queryDataError);
+  // const existingMealRequest = queryData?.getMealRequestById;
+
   const [primaryContact, setPrimaryContact] = useState<Contact>({
     name: "",
     phone: "",
@@ -53,9 +87,31 @@ const EditMealRequestForm = ({
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const isWebView = useIsWebView();
-  // const { isOpen, onOpen, onClose } = useDisclosure();
-
   const initialFocusRef = React.useRef(null);
+
+  const [numberOfMeals, setNumberOfMeals] = useState(0);
+  const apolloClient = useApolloClient();
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        const result = await apolloClient.query<MealRequestsData>({
+          query: GET_MEAL_REQUEST_BY_ID,
+          variables: {
+            id: mealRequestId,
+            requestorId,
+          },
+        });
+        const mealRequest = result.data.getMealRequestById;
+        setNumberOfMeals(mealRequest.mealInfo.portions);
+      } catch (error) {
+        logPossibleGraphQLError(error as ApolloError);
+      }
+    }
+    getData();
+  }, [requestorId, mealRequestId, apolloClient]);
+
+  console.log("number of meals, ", numberOfMeals);
 
   const getMobileContactSection = (): React.ReactElement => {
     return (
@@ -254,7 +310,13 @@ const EditMealRequestForm = ({
               >
                 Number of meals
               </FormLabel>
-              <Input ref={initialFocusRef} w="200px" placeholder="Ex. 100" />
+              <Input
+                ref={initialFocusRef}
+                w="200px"
+                placeholder="Ex. 100"
+                value={numberOfMeals}
+                onChange={(e) => setNumberOfMeals(0)}
+              />
             </FormControl>
 
             <FormControl mt={3} mb={6} isRequired>

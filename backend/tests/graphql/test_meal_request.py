@@ -88,7 +88,7 @@ def test_commit_to_meal_request(meal_request_setup):
     mutation = f"""
     mutation testCommitToMealRequest {{
       commitToMealRequest(
-        requester: "{str(donor.id)}",
+        requestor: "{str(donor.id)}",
         mealRequestIds: ["{str(meal_request.id)}"],
         mealDescription: "Pizza",
         additionalInfo: "No nuts"
@@ -169,7 +169,7 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
         mutation = f"""
       mutation testCommitToMealRequest {{
         commitToMealRequest(
-          requester: "{str(donor.id)}",
+          requestor: "{str(donor.id)}",
           mealRequestIds: ["{str(meal_request.id)}"],
           mealDescription: "Pizza",
           additionalInfo: "No nuts"
@@ -204,7 +204,7 @@ def test_commit_to_meal_request_fails_if_not_open(meal_request_setup):
         mutation = f"""
       mutation testCommitToMealRequest {{
         commitToMealRequest(
-          requester: "{str(donor.id)}",
+          requestor: "{str(donor.id)}",
           mealRequestIds: ["{str(meal_request.id)}"],
           mealDescription: "Pizza",
           additionalInfo: "No nuts"

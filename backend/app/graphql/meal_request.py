@@ -138,7 +138,7 @@ class UpdateMealRequest(Mutation):
 
 class CommitToMealRequest(Mutation):
     class Arguments:
-        requester = graphene.ID(required=True)
+        requestor = graphene.ID(required=True)
         meal_request_ids = graphene.List(graphene.ID, required=True)
         meal_description = graphene.String(required=True)
         additional_info = graphene.String(default_value=None)
@@ -148,13 +148,13 @@ class CommitToMealRequest(Mutation):
     def mutate(
         self,
         info,
-        requester,
+        requestor,
         meal_request_ids,
         meal_description,
         additional_info=None,
     ):
         result = services["meal_request_service"].commit_to_meal_request(
-            donor_id=requester,
+            donor_id=requestor,
             meal_request_ids=meal_request_ids,
             meal_description=meal_description,
             additional_info=additional_info,
@@ -188,14 +188,14 @@ class MealRequestQueries(QueryList):
 
     getMealRequestById = graphene.Field(
         MealRequestResponse, 
-        requester_id=graphene.ID(required=True), 
+        requestor_id=graphene.ID(required=True), 
         id=graphene.ID(required=True),
         )
 
     def resolve_getMealRequestById(
             self ,
             info, 
-            requester_id : str,
+            requestor_id : str,
             id : str,
     ):
         meal_request = services["meal_request_service"].get_meal_request_by_id(id)

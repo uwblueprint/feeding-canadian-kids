@@ -50,7 +50,7 @@ class MealRequestService(IMealRequestService):
 
     def update_meal_request(
         self,
-        requestor,
+        requestor_id,
         meal_info,
         drop_off_datetime,
         drop_off_location,
@@ -59,13 +59,12 @@ class MealRequestService(IMealRequestService):
         meal_request_id,
     ):
         original_meal_request: MealRequest = MealRequest.objects(
-            id=meal_request_id
+            id=meal_request_id,
+            requestor=requestor_id
         ).first()
-        if not original_meal_request:
-            raise Exception(f"meal request with id {meal_request_id} not found")
 
-        if requestor is not None:
-            original_meal_request.requestor = requestor
+        if not original_meal_request:
+            raise Exception(f"meal request with id {meal_request_id} by {requestor_id} not found")
 
         if drop_off_datetime is not None:
             original_meal_request.drop_off_datetime = drop_off_datetime

@@ -1,4 +1,10 @@
-import { ApolloError, gql, useApolloClient, useQuery } from "@apollo/client";
+import {
+  ApolloError,
+  gql,
+  useApolloClient,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import {
   Button,
   Divider,
@@ -12,11 +18,15 @@ import {
   ModalContent,
   ModalFooter,
   ModalOverlay,
+  NumberInput,
   Text,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
+import { GraphQLError } from "graphql";
 import React, { useContext, useEffect, useState } from "react";
 
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import OnsiteStaffSection from "../components/common/OnsiteStaffSection";
 import AuthContext from "../contexts/AuthContext";
 import { MealRequestsData } from "../types/MealRequestTypes";
@@ -56,6 +66,51 @@ const GET_MEAL_REQUEST_BY_ID = gql`
   }
 `;
 
+const UPDATE_MEAL_REQUEST = gql`
+  mutation testUpdateMealRequest(
+    $requestorId: ID!
+    $mealRequestId: ID!
+    $updatedDeliveryInstructions: String!
+    $updatedMealInfoPortions: Int!
+    $updatedMealInfoDietaryRestrictions: String!
+  ) {
+    updateMealRequest(
+      requestorId: $requestorId
+      mealRequestId: $mealRequestId
+      deliveryInstructions: $updatedDeliveryInstructions
+      mealInfo: {
+        portions: $updatedMealInfoPortions
+        dietaryRestrictions: $updatedMealInfoDietaryRestrictions
+      }
+    ) {
+      mealRequest {
+        id
+        status
+        dropOffDatetime
+        dropOffLocation
+        mealInfo {
+          portions
+          dietaryRestrictions
+        }
+        onsiteStaff {
+          name
+          email
+          phone
+        }
+        donationInfo {
+          donor {
+            id
+            info {
+              email
+            }
+          }
+        }
+        deliveryInstructions
+      }
+    }
+  }
+`;
+
 const EditMealRequestForm = ({
   open,
   onClose,
@@ -89,7 +144,11 @@ const EditMealRequestForm = ({
   const isWebView = useIsWebView();
   const initialFocusRef = React.useRef(null);
 
-  const [numberOfMeals, setNumberOfMeals] = useState(0);
+  const [numberOfMeals, setNumberOfMeals] = useState<number>(0);
+  const [dietaryRestrictions, setDietaryRestrictions] = useState<string>("");
+  const [deliveryInstructions, setDeliveryInstructions] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
   const apolloClient = useApolloClient();
 
   useEffect(() => {
@@ -104,6 +163,9 @@ const EditMealRequestForm = ({
         });
         const mealRequest = result.data.getMealRequestById;
         setNumberOfMeals(mealRequest.mealInfo.portions);
+        setDietaryRestrictions(mealRequest.mealInfo.dietaryRestrictions);
+        setDeliveryInstructions(mealRequest.deliveryInstructions);
+        setLoading(false);
       } catch (error) {
         logPossibleGraphQLError(error as ApolloError);
       }
@@ -111,7 +173,45 @@ const EditMealRequestForm = ({
     getData();
   }, [requestorId, mealRequestId, apolloClient]);
 
-  console.log("number of meals, ", numberOfMeals);
+  const [updateMealRequest] = useMutation(UPDATE_MEAL_REQUEST);
+  const toast = useToast();
+
+  async function submitEditMealRequest() {
+    try {
+      setLoading(true);
+      const response = await updateMealRequest({
+        variables: {
+          requestorId,
+          mealRequestId,
+          updatedDeliveryInstructions: deliveryInstructions,
+          updatedMealInfoPortions: numberOfMeals,
+          updatedMealInfoDietaryRestrictions: dietaryRestrictions,
+        },
+      });
+      const data = response.data;
+      console.log(data);
+      if (data) {
+        toast({
+          title: "Saved successfully",
+          status: "success",
+          isClosable: true,
+        });
+      } else {
+        throw new GraphQLError("Failed to save settings");
+      }
+      setLoading(false);
+    } catch (e: unknown) {
+      // eslint-disable-next-line no-console
+      logPossibleGraphQLError(e as ApolloError);
+      toast({
+        title: "Failed to save settings",
+        status: "error",
+        isClosable: true,
+      });
+      setLoading(false);
+    }
+    onClose();
+  }
 
   const getMobileContactSection = (): React.ReactElement => {
     return (
@@ -277,102 +377,115 @@ const EditMealRequestForm = ({
           maxWidth={{ base: "100%", md: "900px" }}
           padding={{ base: "10px", md: "40px" }}
         >
-          {mealRequestId}
-          <Text
-            pb={{ base: 1, md: 5 }}
-            pl={{ base: 6, md: 6 }}
-            pt={{ base: 5, md: 8 }}
-            variant={{ base: "mobile-display-xl", md: "desktop-display-xl" }}
-          >
-            Edit Meal Request
-          </Text>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <Text
-              variant={{
-                base: "mobile-heading",
-                md: "desktop-heading",
-              }}
-            >
-              Meal Information
-            </Text>
-
-            <FormControl mt={3} mb={6} isRequired>
-              <FormLabel
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            <>
+              <Text
+                pb={{ base: 1, md: 5 }}
+                pl={{ base: 6, md: 6 }}
+                pt={{ base: 5, md: 8 }}
                 variant={{
-                  base: "mobile-form-label-bold",
-                  md: "form-label-bold",
+                  base: "mobile-display-xl",
+                  md: "desktop-display-xl",
                 }}
-
-                // TODO: Hook this up to a state variable
-                // TODO: Setup correct validation for this
-                // isInvalid={attemptedSubmit && }
               >
-                Number of meals
-              </FormLabel>
-              <Input
-                ref={initialFocusRef}
-                w="200px"
-                placeholder="Ex. 100"
-                value={numberOfMeals}
-                onChange={(e) => setNumberOfMeals(0)}
-              />
-            </FormControl>
+                Edit Meal Request
+              </Text>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                <Text
+                  variant={{
+                    base: "mobile-heading",
+                    md: "desktop-heading",
+                  }}
+                >
+                  Meal Information
+                </Text>
 
-            <FormControl mt={3} mb={6} isRequired>
-              <FormLabel
-                variant={{
-                  base: "mobile-form-label-bold",
-                  md: "form-label-bold",
-                }}
+                <FormControl mt={3} mb={6} isRequired>
+                  <FormLabel
+                    variant={{
+                      base: "mobile-form-label-bold",
+                      md: "form-label-bold",
+                    }}
 
-                // TODO: Hook this up to a state variable
-                // TODO: Setup correct validation for this
-                // isInvalid={attemptedSubmit && }
-              >
-                Dietary restrictions
-              </FormLabel>
-              <Input placeholder="Ex. Nut allergy, gluten free" />
-            </FormControl>
+                    // TODO: Hook this up to a state variable
+                    // TODO: Setup correct validation for this
+                    // isInvalid={attemptedSubmit && }
+                  >
+                    Number of meals
+                  </FormLabel>
+                  <Input
+                    placeholder="Ex. 100"
+                    value={numberOfMeals}
+                    onChange={(e) => setNumberOfMeals(Number(e.target.value))}
+                    ref={initialFocusRef}
+                    type="number"
+                    w="200px"
+                  />
+                </FormControl>
 
-            <FormControl mt={3} mb={6} isRequired>
-              <FormLabel
-                variant={{
-                  base: "mobile-form-label-bold",
-                  md: "form-label-bold",
-                }}
-                // TODO: Hook this up to a state variable
-                // TODO: Setup correct validation for this
-                // isInvalid={attemptedSubmit && }
-              >
-                Delivery Notes
-              </FormLabel>
-              <Input placeholder="Ex. Nut allergy, gluten free" />
-              <br />
-            </FormControl>
-            {isWebView && <Divider />}
-            {isWebView ? getWebContactSection() : getMobileContactSection()}
+                <FormControl mt={3} mb={6} isRequired>
+                  <FormLabel
+                    variant={{
+                      base: "mobile-form-label-bold",
+                      md: "form-label-bold",
+                    }}
+                  >
+                    Dietary restrictions
+                  </FormLabel>
+                  <Input
+                    placeholder="Ex. Nut allergy, gluten free"
+                    value={dietaryRestrictions}
+                    onChange={(e) => setDietaryRestrictions(e.target.value)}
+                  />
+                </FormControl>
 
-            <OnsiteStaffSection
+                <FormControl mt={3} mb={6} isRequired>
+                  <FormLabel
+                    variant={{
+                      base: "mobile-form-label-bold",
+                      md: "form-label-bold",
+                    }}
+                    // TODO: Setup correct validation for this
+                    // isInvalid={attemptedSubmit && }
+                  >
+                    Delivery Notes
+                  </FormLabel>
+                  <Input
+                    placeholder="Please knock on the door."
+                    value={deliveryInstructions}
+                    onChange={(e) => setDeliveryInstructions(e.target.value)}
+                  />
+                  <br />
+                </FormControl>
+                {isWebView && <Divider />}
+                {/* {isWebView ? getWebContactSection() : getMobileContactSection()} */}
+
+                {/* <OnsiteStaffSection
               onsiteInfo={onsiteInfo}
               setOnsiteInfo={setOnsiteInfo}
               attemptedSubmit={attemptedSubmit}
-            />
-          </ModalBody>
+            /> */}
+              </ModalBody>
 
-          <ModalFooter>
-            <Button onClick={onClose} mr={3} variant="outline">
-              Cancel
-            </Button>
-            <Button
-              colorScheme="blue"
-              onClick={() => {
-                setAttemptedSubmit(true);
-              }}
-            >
-              Save
-            </Button>
-          </ModalFooter>
+              <ModalFooter>
+                <Button onClick={onClose} mr={3} variant="outline">
+                  Cancel
+                </Button>
+                <Button
+                  colorScheme="blue"
+                  onClick={() => {
+                    setAttemptedSubmit(true);
+                    submitEditMealRequest();
+                  }}
+                >
+                  Save
+                </Button>
+              </ModalFooter>
+            </>
+          )}
         </ModalContent>
       </Modal>
     </>

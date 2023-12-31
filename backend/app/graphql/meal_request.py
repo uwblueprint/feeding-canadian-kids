@@ -102,7 +102,7 @@ class CreateMealRequests(Mutation):
 class UpdateMealRequest(Mutation):
     class Arguments:
         meal_request_id = graphene.ID(required=True)
-        requestor = graphene.ID(required=False)
+        requestor_id = graphene.ID(required=False)
         drop_off_datetime = graphene.DateTime(required=False)
         meal_info = MealTypeInput()
         drop_off_location = graphene.String()
@@ -116,7 +116,7 @@ class UpdateMealRequest(Mutation):
         self,
         info,
         meal_request_id,
-        requestor=None,
+        requestor_id: str,
         drop_off_datetime=None,
         meal_info=None,
         drop_off_location=None,
@@ -124,7 +124,7 @@ class UpdateMealRequest(Mutation):
         onsite_staff=None,
     ):
         result = services["meal_request_service"].update_meal_request(
-            requestor=requestor,
+            requestor_id=requestor_id,
             meal_info=meal_info,
             drop_off_datetime=drop_off_datetime,
             drop_off_location=drop_off_location,

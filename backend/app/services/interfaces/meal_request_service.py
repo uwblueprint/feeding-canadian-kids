@@ -33,7 +33,7 @@ class IMealRequestService(ABC):
     @abstractmethod
     def update_meal_request(
         self,
-        requestor,
+        requestor_id: str,
         meal_info,
         drop_off_datetime,
         drop_off_location,

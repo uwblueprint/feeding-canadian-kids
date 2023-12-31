@@ -41,6 +41,7 @@ module.exports = {
       },
     ],
     "sort-imports": ["error", { ignoreDeclarationSort: true }],
+    "prefer-destructuring": ["off"],
     "import/order": [
       "error",
       {

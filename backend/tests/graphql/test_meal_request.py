@@ -21,7 +21,7 @@ def test_create_meal_request(meal_request_setup):
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: [
+        onsiteStaf: [
           {{
             name: "John Doe",
             email: "john.doe@example.com",

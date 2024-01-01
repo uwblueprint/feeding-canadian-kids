@@ -39,7 +39,7 @@ class OnboardingRequestService(IOnboardingRequestService):
                 onsite_contacts=userInfo.onsite_contacts,
                 active=userInfo.active,
             )
-
+            print("Got here")
             # Create OnboardingRequest object
             new_onboarding_request = OnboardingRequest(
                 info=user_info,

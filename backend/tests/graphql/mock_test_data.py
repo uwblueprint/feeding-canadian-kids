@@ -1,9 +1,12 @@
+# NOTE: The coodinates have been mocked out in testing
 MOCK_INFO1_SNAKE = {
     "email": "test1@organization.com",
     "organization_address": "255 King St N",
     "organization_name": "Test1 Org",
     "organization_desc": "Testing123",
-    "organization_coordinates": [-80.52565465, 43.477876300000005],
+    "organization_coordinates": [-11.1, 11.1],
+    # Real Coordinates:
+    # "organization_coordinates": [-80.52565465, 43.477876300000005],
     "role": "ASP",
     "role_info": {
         "asp_info": {
@@ -28,7 +31,9 @@ MOCK_INFO1_CAMEL = {
     "organizationAddress": "255 King St N",
     "organizationName": "Test1 Org",
     "organizationDesc": "Testing123",
-    "organizationCoordinates": [-80.52565465, 43.477876300000005],
+    "organizationCoordinates": [-11.1, 11.1],
+    # Real Coordinates:
+    # "organizationCoordinates": [-80.52565465, 43.477876300000005],
     "role": "ASP",
     "roleInfo": {
         "aspInfo": {
@@ -53,7 +58,9 @@ MOCK_INFO2_SNAKE = {
     "organization_address": "370 Highland Rd W",
     "organization_name": "Test2 Org",
     "organization_desc": "Testing123",
-    "organization_coordinates": [-80.5118701, 43.4384664],
+    "organization_coordinates": [-11.1, 11.1],
+    # Real Coordinates:
+    # "organization_coordinates": [-80.5118701, 43.4384664],
     "role": "Donor",
     "role_info": {
         "asp_info": None,
@@ -79,7 +86,9 @@ MOCK_INFO2_CAMEL = {
     "organizationAddress": "370 Highland Rd W",
     "organizationName": "Test2 Org",
     "organizationDesc": "Testing123",
-    "organizationCoordinates": [-80.5118701, 43.4384664],
+    "organizationCoordinates": [-11.1, 11.1],
+    # Real Coordinates:
+    # "organizationCoordinates": [-80.5118701, 43.4384664],
     "role": "Donor",
     "roleInfo": {
         "aspInfo": None,
@@ -105,7 +114,9 @@ MOCK_INFO3_SNAKE = {
     "organization_address": "170 University Ave W",
     "organization_name": "Test3 Org",
     "organization_desc": "Testing 123",
-    "organization_coordinates": [-80.5373252901463, 43.472995850000004],
+    "organization_coordinates": [-11.1, 11.1],
+    # Real Coordinates:
+    # "organization_coordinates": [-80.5373252901463, 43.472995850000004],
     "role": "Admin",
     "role_info": None,
     "primary_contact": {
@@ -125,7 +136,9 @@ MOCK_INFO3_CAMEL = {
     "organizationAddress": "170 University Ave W",
     "organizationName": "Test3 Org",
     "organizationDesc": "Testing 123",
-    "organizationCoordinates": [-80.5373252901463, 43.472995850000004],
+    # Real Coordinates:
+    # "organizationCoordinates": [-80.5373252901463, 43.472995850000004],
+    "organizationCoordinates": [-11.1, 11.1],
     "role": "Admin",
     "roleInfo": None,
     "primaryContact": {

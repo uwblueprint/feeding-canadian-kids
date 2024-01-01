@@ -21,7 +21,7 @@ def test_create_meal_request(meal_request_setup):
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaf: [
+        onsiteStaff: [
           {{
             name: "John Doe",
             email: "john.doe@example.com",
@@ -56,7 +56,7 @@ def test_create_meal_request(meal_request_setup):
     result = graphql_schema.execute(mutation)
 
     assert result.errors is None
-    assert result.data["createMealRequest"]["mealRequests"][0]["status"] == "Open"
+    assert result.data["createMealRequest"]["mealRequests"][0]["status"] == "OPEN"
     assert (
         result.data["createMealRequest"]["mealRequests"][0]["mealInfo"]["portions"]
         == 40
@@ -134,7 +134,7 @@ def test_commit_to_meal_request(meal_request_setup):
     # Verify that the meal request's status was updated
     assert (
         result.data["commitToMealRequest"]["mealRequests"][0]["status"]
-        == MealStatus.UPCOMING.value
+        == "UPCOMING"
     )
 
     # Verify that the meal request's donationInfo was populated correctly
@@ -222,7 +222,7 @@ def test_commit_to_meal_request_fails_if_not_open(meal_request_setup):
 
 
 def test_update_meal_request(meal_request_setup):
-    _, _, meal_request = meal_request_setup
+    requestor, _, meal_request = meal_request_setup
 
     updatedDateTime = "2023-10-31T16:45:00+00:00"
     updatedDeliveryInstructions = "Updated delivery instructions"
@@ -238,6 +238,7 @@ def test_update_meal_request(meal_request_setup):
     mutation = f"""
     mutation testUpdateMealRequest{{
       updateMealRequest(
+        requestorId:"{str(requestor.id)}",
         mealRequestId:"{meal_request.id}",
         deliveryInstructions:"{updatedDeliveryInstructions}",
         dropOffDatetime: "{updatedDateTime}",

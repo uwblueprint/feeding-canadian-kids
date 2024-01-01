@@ -80,6 +80,7 @@ def test_update_user_by_id(user_setup, mocker):
         }}"""
     )
 
+    print("Before accsing update!!")
     user_result4 = update_to_user_4_info.data["updateUserByID"]["user"]
     assert user_result4["id"] == str(user_1.id)
     MOCK_INFO4_CAMEL = deepcopy(MOCK_INFO3_CAMEL)

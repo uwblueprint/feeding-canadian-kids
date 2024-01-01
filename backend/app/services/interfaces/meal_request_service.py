@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Union, List
 
 from ...resources.meal_request_dto import MealRequestDTO
 
@@ -47,10 +47,10 @@ class IMealRequestService(ABC):
     def commit_to_meal_request(
         self,
         donor_id: str,
-        meal_request_ids: list[str],
+        meal_request_ids: List[str],
         meal_description: str,
         additional_info: Union[str, None],
-    ) -> list[MealRequestDTO]:
+    ) -> List[MealRequestDTO]:
         pass
 
     @abstractmethod

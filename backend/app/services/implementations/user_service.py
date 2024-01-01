@@ -219,28 +219,38 @@ class UserService(IUserService):
 
     def update_user_by_id(self, user_id, update_user_dto):
         try:
+            print("1")
+            print("information is", user_id, update_user_dto)
             update_user_dto = self.update_user_coordinates(update_user_dto)
+            print("after updating coordiatnes", update_user_dto)
             old_user = User.objects(id=user_id).modify(
                 new=False,
                 auth_id=update_user_dto.auth_id,
                 info=update_user_dto.info,
             )
+            print("2")
 
             if not old_user:
                 raise Exception("user_id {user_id} not found".format(user_id=user_id))
 
+            print("3")
             try:
+                print("user info is", old_user.auth_id, update_user_dto.info.email)
                 firebase_admin.auth.update_user(
                     old_user.auth_id, email=update_user_dto.info.email
                 )
+                print("5")
             except Exception as firebase_error:
+                print("6")
                 try:
+                    print("7")
                     # rollback MongoDB user update
                     User.objects(id=user_id).modify(
                         auth_id=old_user.auth_id,
                         info=old_user.info,
                     )
                 except Exception as mongo_error:
+                    print("8")
                     reason = getattr(mongo_error, "message", None)
                     error_message = [
                         "Failed to rollback MongoDB user update after Firebase",
@@ -253,22 +263,27 @@ class UserService(IUserService):
                     ]
                     self.logger.error(" ".join(error_message))
 
+                print("9")
                 raise firebase_error
         except Exception as e:
+            print("10")
             reason = getattr(e, "message", None)
             self.logger.error(
                 "Failed to update user. Reason = {reason}".format(
                     reason=(reason if reason else str(e))
                 )
             )
+            print("11")
             raise e
 
+        print("12")
         updated_user = User.objects(id=user_id).first()
         if not updated_user:
             error_message = f"updated user_id {user_id} not found"
             self.logger.error(error_message)
             raise Exception(error_message)
 
+        print("13")
         updated_user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(
             updated_user
         )
@@ -276,6 +291,7 @@ class UserService(IUserService):
             "id": updated_user_dict["id"],
             "info": updated_user_dict["info"],
         }
+        print("15")
         return UserDTO(**kwargs)
 
     def activate_user_by_id(self, user_id):

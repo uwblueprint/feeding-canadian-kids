@@ -102,7 +102,7 @@ class MealRequestService(IMealRequestService):
         meal_request_ids: [str],
         meal_description: str,
         additional_info: str,
-    ) -> list[MealRequestDTO]:
+    ) -> List[MealRequestDTO]:
         try:
             donor = User.objects(id=donor_id).first()
             if not donor:

@@ -199,8 +199,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
     },
   );
 
-  useEffect(() => {
-    // console.log("filter is", filter);
+  function reloadMealRequests() {
     getMealRequests({
       variables: {
         requestorId: authId,
@@ -210,7 +209,10 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
         offset: (currentPage - 1) * rowsPerPage,
       },
     });
-    console.log(getMealRequestsData);
+  }
+
+  useEffect(() => {
+    reloadMealRequests();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, sort, currentPage]);
 
@@ -387,6 +389,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
           onClose={() => {
             setIsEditModalOpen(false);
             setCurrentlyEditingMealRequestId(undefined);
+            reloadMealRequests();
           }}
           mealRequestId={currentlyEditingMealRequestId}
         />

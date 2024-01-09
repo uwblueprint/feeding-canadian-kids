@@ -206,7 +206,6 @@ class MealRequestService(IMealRequestService):
 
             meal_request_dtos = []
             for request in requests:
-                print("here!")
                 meal_request_dtos.append(
                     self.convert_meal_request_to_dto(request, requestor)
                 )

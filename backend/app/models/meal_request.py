@@ -52,7 +52,6 @@ class MealRequest(mg.Document):
 
         ObjectId must be converted to a string.
         """
-        print("Trying to encode!")
         meal_request_dict = self.to_mongo().to_dict()
         id = meal_request_dict.pop("_id", None)
         meal_request_dict["id"] = str(id)

@@ -34,6 +34,8 @@ class Contact(graphene.ObjectType):
     phone = graphene.String()
 
 
+
+
 class ASPInfo(graphene.ObjectType):
     num_kids = graphene.Int()
 
@@ -97,6 +99,12 @@ class User(graphene.ObjectType):
     id = graphene.String()
     info = graphene.Field(UserInfo)
 
+class OnsiteContact(graphene.ObjectType):
+    id = graphene.ID()
+    organization_id = graphene.String()
+    name = graphene.String()
+    email = graphene.String()
+    phone = graphene.String()
 
 class ASPDistance(graphene.ObjectType):
     id = graphene.String()

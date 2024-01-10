@@ -174,9 +174,7 @@ class MealRequestService(IMealRequestService):
         limit,
         sort_by_date_direction,
     ):
-        print(status)
         status_value_list = list(map(lambda l: l.value, status))
-        print("Trying to get statuses", status_value_list)
         try:
             sort_prefix = "+"
             if sort_by_date_direction == SortDirection.DESCENDING:

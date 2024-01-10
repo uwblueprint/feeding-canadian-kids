@@ -17,5 +17,4 @@ class User(mg.Document):
         id = user_dict.pop("_id", None)
         user_dict["id"] = str(id)
         return user_dict
-
     meta = {"collection": "users"}

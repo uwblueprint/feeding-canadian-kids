@@ -77,4 +77,4 @@ class CreateOnsiteContact(Mutation):
 
 
 class OnsiteContactMutations(MutationList):
-    createOnsiteStaff = CreateOnsiteContact.Field()
+    createOnsiteContact = CreateOnsiteContact.Field()

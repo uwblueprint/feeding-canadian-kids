@@ -34,7 +34,6 @@ class OnsiteContactService(IOnsiteContactService):
 
     def create_onsite_contact(self, organization_id: str, name: str, email: str, phone: str) -> OnsiteContactDTO:
         try:
-
             # Check that the organization does exist
             organization = User.objects(id=organization_id).first()
             if not organization:

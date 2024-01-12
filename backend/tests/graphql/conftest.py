@@ -60,3 +60,13 @@ def meal_request_setup(user_setup):
     requestor.delete()
     donor.delete()
     meal_request.delete()
+
+@pytest.fixture(scope="session", autouse=True)
+def onsite_contact_setup(user_setup):
+    asp, donor, _ = user_setup
+    # meal_request = MealRequest(requestor=requestor, **MOCK_MEALREQUEST1_SNAKE).save()
+    # yield requestor, donor, meal_request
+    yield asp, donor
+    # requestor.delete()
+    # donor.delete()
+    # meal_request.delete()

@@ -8,16 +8,16 @@ Tests for ONsite contact and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
 """
 def test_create_onsite_contact(onsite_contact_setup):
-    asp, donor = onsite_contact_setup
+    asp, donor, onsite_contact = onsite_contact_setup
 
     mutation = f"""
     mutation c{{
       createOnsiteContact(
         email: "bob@test.com",
         name: "Bob Cat",
-        organizationId: "{asp.id}",
+        organizationId: "{donor.id}",
         phone: "604-433-1111", 
-        requestorId: "{asp.id}"
+        requestorId: "{donor.id}"
       ){{
         onsiteContact{{
           id
@@ -31,9 +31,113 @@ def test_create_onsite_contact(onsite_contact_setup):
     result = graphql_schema.execute(mutation)
     assert result.errors is None
     return_result_contact = result.data["createOnsiteContact"]["onsiteContact"]
-    db_result = OnsiteContact.objects(organization_id=asp.id).first()
+    db_result = OnsiteContact.objects(organization_id=donor.id).first()
 
     for contact in [return_result_contact, db_result]:
       assert contact["name"] == "Bob Cat"
       assert contact["email"] == "bob@test.com"
       assert contact["phone"] == "604-433-1111"
+
+def test_update_onsite_contact(onsite_contact_setup):
+    asp, donor, onsite_contact = onsite_contact_setup
+
+    # Test for the update mutation
+    mutation = f"""
+    mutation u{{
+      updateOnsiteContact(
+        id: "{onsite_contact.id}",
+        name: "Updated Bob Cat",
+        email: "updated_bob@test.com",
+        phone: "604-433-2222"
+      ){{
+        onsiteContact{{
+          id
+          name
+          email 
+          phone
+        }}
+      }}
+    }}
+    """
+    result = graphql_schema.execute(mutation)
+    assert result.errors is None
+    updated_result_contact = result.data["updateOnsiteContact"]["onsiteContact"]
+    updated_db_result = OnsiteContact.objects(id=onsite_contact['id']).first()
+
+    for contact in [updated_result_contact, updated_db_result]:
+      assert contact["name"] == "Updated Bob Cat"
+      assert contact["email"] == "updated_bob@test.com"
+      assert contact["phone"] == "604-433-2222"
+
+
+def test_delete_onsite_contact(onsite_contact_setup):
+    asp, donor, onsite_contact = onsite_contact_setup
+
+    # Test for the delete mutation
+    mutation = f"""
+    mutation d{{
+      deleteOnsiteContact(
+        id: "{onsite_contact.id}",
+        requestorId: "{asp.id}"
+      ){{
+        success
+      }}
+    }}
+    """
+    result = graphql_schema.execute(mutation)
+    assert result.errors is None
+    deleted_db_result = OnsiteContact.objects(id=onsite_contact['id']).first()
+
+    assert deleted_db_result is None
+
+
+def test_get_onsite_contact_for_user_by_id(onsite_contact_setup):
+    asp, donor, onsite_contact = onsite_contact_setup
+
+    # Test for the get_onsite_contact_for_user_by_id query
+    query = f"""
+    query q{{
+      getOnsiteContactForUserById(
+        userId: "{donor.id}"
+      ){{
+        id
+        name
+        email 
+        phone
+      }}
+    }}
+    """
+    result = graphql_schema.execute(query)
+    assert result.errors is None
+    queried_db_result = result.data["getOnsiteContactForUserById"]
+
+    assert queried_db_result["id"] == onsite_contact.id
+    assert queried_db_result["name"] == onsite_contact.name
+    assert queried_db_result["email"] == onsite_contact.email
+    assert queried_db_result["phone"] == onsite_contact.phone
+
+def test_get_onsite_contact_by_id(onsite_contact_setup):
+    asp, donor, onsite_contact = onsite_contact_setup
+
+    # Test for the get_onsite_contact_by_id query
+    query = f"""
+    query q{{
+      getOnsiteContactById(
+        id: "{onsite_contact.id}"
+      ){{
+        id
+        name
+        email 
+        phone
+      }}
+    }}
+    """
+    result = graphql_schema.execute(query)
+    assert result.errors is None
+    queried_db_result = result.data["getOnsiteContactById"]
+
+    assert queried_db_result["id"] == onsite_contact.id
+    assert queried_db_result["name"] == onsite_contact.name
+    assert queried_db_result["email"] == onsite_contact.email
+    assert queried_db_result["phone"] == onsite_contact.phone
+

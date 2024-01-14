@@ -1,6 +1,7 @@
 import mongoengine as mg
 
 from app.models.user import User
+from app.resources.onsite_contact_dto import OnsiteContactDTO
 
 class OnsiteContact(mg.Document):
     organization_id = mg.ObjectIdField(required=True)
@@ -22,5 +23,7 @@ class OnsiteContact(mg.Document):
         dict["organization_id"] = str(dict["organization_id"])
 
         return dict
+    def to_dto(self) -> OnsiteContactDTO:
+        return OnsiteContactDTO(**self.to_serializable_dict()) # type: ignore #
 
     meta = {"collection": "onsite_contacts"}

@@ -34,47 +34,50 @@ class CreateOnsiteContact(Mutation):
                 phone,
             )
             return CreateOnsiteContact(onsite_contact_dto)
+class UpdateOnsiteContact(Mutation):
+    class Arguments:
+        id = graphene.String(required=True)
+        name = graphene.String()
+        phone = graphene.String()
+        email = graphene.String()
 
+    onsite_contact = graphene.Field(OnsiteContact)
 
-# class ActivateUserByID(Mutation):
-#     class Arguments:
-#         requestor_id = graphene.String(required=True)
-#         id = graphene.String(required=True)
+    def mutate(self, info, id, name=None, phone=None, email=None):
+        onsite_contact_service = services["onsite_contact_service"]
+        updated_onsite_contact = onsite_contact_service.update_onsite_contact_by_id(id, name, email, phone)
+        return UpdateOnsiteContact(updated_onsite_contact)
 
-#     user = graphene.Field(User)
+class DeleteOnsiteContact(Mutation):
+    class Arguments:
+        requestor_id = graphene.String(required=True)
+        id = graphene.String(required=True)
 
-#     def mutate(self, info, requestor_id, id):
-#         user_service = services["user_service"]
-#         requestor_auth_id = user_service.get_auth_id_by_user_id(requestor_id)
-#         requestor_role = user_service.get_user_role_by_auth_id(requestor_auth_id)
+    success = graphene.Boolean()
 
-#         if requestor_role == "Admin":
-#             activate_user_dto = user_service.activate_user_by_id(id)
+    def mutate(self, info, requestor_id, id):
+        onsite_contact_service = services["onsite_contact_service"]
+        user_service = services["user_service"]
 
-#             return ActivateUserByID(
-#                 user=User(id=activate_user_dto.id, info=activate_user_dto.info)
-#             )
+        requestor_auth_id = user_service.get_auth_id_by_user_id(requestor_id)
+        requestor_role = user_service.get_user_role_by_auth_id(requestor_auth_id)
+        onsite_contact = onsite_contact_service.get_onsite_contact_by_id(id)
+        organization_id = onsite_contact.organization_id
 
+        if requestor_role != "Admin" and requestor_id != organization_id:
+            raise Exception("Unauthorized")
 
-# class DeactivateUserByID(Mutation):
-#     class Arguments:
-#         requestor_id = graphene.String(required=True)
-#         id = graphene.String(required=True)
+        try:
+            onsite_contact_service.delete_onsite_contact_by_id(id)
+            success = True
+        except Exception as e:
+            success = False
+        return DeleteOnsiteContact(success)
 
-#     user = graphene.Field(User)
-
-#     def mutate(self, info, requestor_id, id):
-#         user_service = services["user_service"]
-#         requestor_auth_id = user_service.get_auth_id_by_user_id(requestor_id)
-#         requestor_role = user_service.get_user_role_by_auth_id(requestor_auth_id)
-
-#         if requestor_role == "Admin" or requestor_id == id:
-#             deactivate_user_dto = user_service.deactivate_user_by_id(id)
-
-#             return DeactivateUserByID(
-#                 user=User(id=deactivate_user_dto.id, info=deactivate_user_dto.info)
-#             )
 
 
 class OnsiteContactMutations(MutationList):
     createOnsiteContact = CreateOnsiteContact.Field()
+    updateOnsiteContact = UpdateOnsiteContact.Field()
+    deleteOnsiteContact = DeleteOnsiteContact.Field()
+

@@ -2,6 +2,7 @@ import pytest
 from app.models.user import User
 from app.models.onboarding_request import OnboardingRequest
 from app.models.meal_request import MealRequest
+from app.models.onsite_contact import OnsiteContact
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_SNAKE,
     MOCK_INFO2_SNAKE,
@@ -64,9 +65,16 @@ def meal_request_setup(user_setup):
 @pytest.fixture(scope="session", autouse=True)
 def onsite_contact_setup(user_setup):
     asp, donor, _ = user_setup
+    onsite_contact = OnsiteContact(
+        name="Sample Contact",
+        email="sample@test.com",
+        phone="123-456-7890",
+        organization_id=asp.id
+    ).save()
+
+    yield asp, donor, onsite_contact
     # meal_request = MealRequest(requestor=requestor, **MOCK_MEALREQUEST1_SNAKE).save()
     # yield requestor, donor, meal_request
-    yield asp, donor
     # requestor.delete()
     # donor.delete()
     # meal_request.delete()

@@ -44,9 +44,6 @@ class OnsiteContactService(IOnsiteContactService):
     ):
         OnsiteContact.objects(id=id).delete()
 
-    
-
-
     def update_onsite_contact_by_id(
         self,
         id: str,

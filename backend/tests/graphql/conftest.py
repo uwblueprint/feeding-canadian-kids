@@ -62,7 +62,9 @@ def meal_request_setup(user_setup):
     donor.delete()
     meal_request.delete()
 
-@pytest.fixture(scope="session", autouse=True)
+
+
+@pytest.fixture(scope="function", autouse=True)
 def onsite_contact_setup(user_setup):
     asp, donor, _ = user_setup
     onsite_contact = OnsiteContact(
@@ -71,10 +73,13 @@ def onsite_contact_setup(user_setup):
         phone="123-456-7890",
         organization_id=asp.id
     ).save()
+    OnsiteContact(
+        name="Sample Contact 2",
+        email="sample2@test.com",
+        phone="123-333-7890",
+        organization_id=donor.id
+    ).save()
 
     yield asp, donor, onsite_contact
-    # meal_request = MealRequest(requestor=requestor, **MOCK_MEALREQUEST1_SNAKE).save()
-    # yield requestor, donor, meal_request
-    # requestor.delete()
-    # donor.delete()
-    # meal_request.delete()
+    onsite_contact.delete()
+

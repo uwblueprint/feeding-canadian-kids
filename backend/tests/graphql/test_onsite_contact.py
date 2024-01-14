@@ -31,7 +31,7 @@ def test_create_onsite_contact(onsite_contact_setup):
     result = graphql_schema.execute(mutation)
     assert result.errors is None
     return_result_contact = result.data["createOnsiteContact"]["onsiteContact"]
-    db_result = OnsiteContact.objects(organization_id=donor.id).first()
+    db_result = OnsiteContact.objects(organization_id=donor.id, id=return_result_contact["id"]).first()
 
     for contact in [return_result_contact, db_result]:
       assert contact["name"] == "Bob Cat"
@@ -91,14 +91,14 @@ def test_delete_onsite_contact(onsite_contact_setup):
     assert deleted_db_result is None
 
 
-def test_get_onsite_contact_for_user_by_id(onsite_contact_setup):
+def test_get_onsite_contacts_for_user_by_id(onsite_contact_setup):
     asp, donor, onsite_contact = onsite_contact_setup
 
     # Test for the get_onsite_contact_for_user_by_id query
     query = f"""
     query q{{
       getOnsiteContactForUserById(
-        userId: "{donor.id}"
+        userId: "{asp.id}"
       ){{
         id
         name
@@ -109,12 +109,13 @@ def test_get_onsite_contact_for_user_by_id(onsite_contact_setup):
     """
     result = graphql_schema.execute(query)
     assert result.errors is None
-    queried_db_result = result.data["getOnsiteContactForUserById"]
+    result = result.data["getOnsiteContactForUserById"][0]
+    print("result is ", result)
 
-    assert queried_db_result["id"] == onsite_contact.id
-    assert queried_db_result["name"] == onsite_contact.name
-    assert queried_db_result["email"] == onsite_contact.email
-    assert queried_db_result["phone"] == onsite_contact.phone
+    assert result["id"] == str(onsite_contact.id)
+    assert result["name"] == onsite_contact.name
+    assert result["email"] == onsite_contact.email
+    assert result["phone"] == onsite_contact.phone
 
 def test_get_onsite_contact_by_id(onsite_contact_setup):
     asp, donor, onsite_contact = onsite_contact_setup
@@ -134,10 +135,10 @@ def test_get_onsite_contact_by_id(onsite_contact_setup):
     """
     result = graphql_schema.execute(query)
     assert result.errors is None
-    queried_db_result = result.data["getOnsiteContactById"]
+    result = result.data["getOnsiteContactById"]
 
-    assert queried_db_result["id"] == onsite_contact.id
-    assert queried_db_result["name"] == onsite_contact.name
-    assert queried_db_result["email"] == onsite_contact.email
-    assert queried_db_result["phone"] == onsite_contact.phone
+    assert result["id"] == str(onsite_contact.id)
+    assert result["name"] == onsite_contact.name
+    assert result["email"] == onsite_contact.email
+    assert result["phone"] == onsite_contact.phone
 

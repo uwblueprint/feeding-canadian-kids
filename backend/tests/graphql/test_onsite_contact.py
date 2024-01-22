@@ -2,6 +2,7 @@ from app.graphql import schema as graphql_schema
 from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
 from app.models.onsite_contact import OnsiteContact
+from app.models.user import User
 
 """
 Tests for ONsite contact and query/mutation logic
@@ -93,6 +94,10 @@ def test_delete_onsite_contact(onsite_contact_setup):
 
 def test_get_onsite_contacts_for_user_by_id(onsite_contact_setup):
     asp, donor, onsite_contact = onsite_contact_setup
+
+    asp = User.objects(id=asp.id).get()
+    asp.info.onsite_contacts = []
+    asp.save()
 
     # Test for the get_onsite_contact_for_user_by_id query
     query = f"""

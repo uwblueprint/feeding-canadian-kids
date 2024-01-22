@@ -45,11 +45,6 @@ const LOGIN = gql`
             phone
             email
           }
-          onsiteContacts {
-            name
-            phone
-            email
-          }
           active
         }
       }

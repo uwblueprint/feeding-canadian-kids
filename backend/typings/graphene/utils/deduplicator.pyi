@@ -1,0 +1,3 @@
+from _typeshed import Incomplete
+
+def deflate(node, index: Incomplete | None = None, path: Incomplete | None = None): ...

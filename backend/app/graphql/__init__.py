@@ -55,7 +55,6 @@ schema = graphene.Schema(
 def init_app(app):
     with app.app_context():
         # Add your services here: services["service_name"] = ...
-        services["user_service"] = UserService(logger=current_app.logger)
         services["email_service"] = EmailService(
             logger=current_app.logger,
             credentials={
@@ -67,6 +66,8 @@ def init_app(app):
             sender_email=os.getenv("MAILER_USER"),
             display_name="Feeding Canadian Kids",
         )
+        services["onsite_contact_service"] = OnsiteContactService(logger=current_app.logger)
+        services["user_service"] = UserService(logger=current_app.logger, onsite_contact_service=services["onsite_contact_service"])
         services["auth_service"] = AuthService(
             logger=current_app.logger,
             user_service=services["user_service"],
@@ -76,5 +77,3 @@ def init_app(app):
             logger=current_app.logger, email_service=services["email_service"]
         )
         services["meal_request_service"] = MealRequestService(logger=current_app.logger)
-        services["user_service"] = UserService(logger=current_app.logger)
-        services["onsite_contact_service"] = OnsiteContactService(logger=current_app.logger)

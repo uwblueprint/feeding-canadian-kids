@@ -49,7 +49,7 @@ export type UserInfo = {
   role: Role;
   roleInfo: RoleInfo;
   primaryContact: Contact;
-  onsiteContacts: Array<Contact>;
+  initialOnsiteContacts: Array<Contact>;
   active?: boolean;
 } | null;
 

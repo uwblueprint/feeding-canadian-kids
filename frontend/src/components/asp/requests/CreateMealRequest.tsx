@@ -47,7 +47,8 @@ const CreateMealRequest = (): React.ReactElement => {
 
   // This is the list of available onsite staff
   const [availableStaff, setAvailableStaff] = useState<Array<Contact>>(
-    userInfo ? JSON.parse(JSON.stringify(userInfo.onsiteContacts)) : [],
+    [],
+    // userInfo ? JSON.parse(JSON.stringify(userInfo.onsiteContacts)) : [],
   );
 
   // User's address

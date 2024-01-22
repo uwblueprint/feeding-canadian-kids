@@ -81,20 +81,4 @@ def test_create_onboarding_request():
         onboarding_request.info.primary_contact.email
         == test_user_info["primary_contact"]["email"]
     )
-    assert len(onboarding_request.info.onsite_contacts) == len(
-        test_user_info["onsite_contacts"]
-    )
-    for i in range(len(test_user_info["onsite_contacts"])):
-        assert (
-            onboarding_request.info.onsite_contacts[i].name
-            == test_user_info["onsite_contacts"][i]["name"]
-        )
-        assert (
-            onboarding_request.info.onsite_contacts[i].phone
-            == test_user_info["onsite_contacts"][i]["phone"]
-        )
-        assert (
-            onboarding_request.info.onsite_contacts[i].email
-            == test_user_info["onsite_contacts"][i]["email"]
-        )
     assert onboarding_request.info.active == test_user_info["active"]

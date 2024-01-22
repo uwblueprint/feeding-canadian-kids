@@ -36,7 +36,7 @@ class OnboardingRequestService(IOnboardingRequestService):
                 role=userInfo.role,
                 role_info=userInfo.role_info,
                 primary_contact=userInfo.primary_contact,
-                onsite_contacts=userInfo.onsite_contacts,
+                initial_onsite_contacts=userInfo.initial_onsite_contacts,
                 active=userInfo.active,
             )
             print("Got here")
@@ -112,7 +112,6 @@ class OnboardingRequestService(IOnboardingRequestService):
             referenced_onboarding_request.status = (
                 ONBOARDING_REQUEST_STATUS_APPROVED  # approve the onboarding request
             )
-
             referenced_onboarding_request.save()  # save the changes
 
             recipient_email = referenced_onboarding_request.info.email

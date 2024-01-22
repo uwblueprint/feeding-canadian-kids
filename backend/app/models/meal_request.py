@@ -2,6 +2,8 @@ import mongoengine as mg
 from datetime import datetime
 from enum import Enum
 
+from app.models.onsite_contact import OnsiteContact
+
 from .user import User
 from .user_info import Contact
 
@@ -40,7 +42,7 @@ class MealRequest(mg.Document):
     drop_off_datetime = mg.DateTimeField(required=True)
     drop_off_location = mg.StringField(required=True)
     meal_info = mg.EmbeddedDocumentField(MealInfo, required=True)
-    onsite_staff = mg.EmbeddedDocumentListField(Contact, required=True)
+    onsite_staff = mg.ListField(mg.ReferenceField(OnsiteContact, required=True))
     date_created = mg.DateTimeField(required=True, default=datetime.utcnow)
     date_updated = mg.DateTimeField(required=True, default=datetime.utcnow)
     delivery_instructions = mg.StringField(default=None)

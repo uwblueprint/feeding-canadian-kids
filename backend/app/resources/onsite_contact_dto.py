@@ -1,12 +1,3 @@
-import datetime
-
-from .user_dto import UserDTO
-
-from .validate_utils import (
-    validate_user,
-)
-
-
 class OnsiteContactDTO:
     def __init__(
         self,

@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import {
   Button,
   Center,
@@ -15,6 +15,7 @@ import {
   Textarea,
   useToast,
 } from "@chakra-ui/react";
+import { GraphQLError } from "graphql";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -31,6 +32,7 @@ import {
   Role,
   UserInfo,
 } from "../../types/UserTypes";
+import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import {
   isNonNegativeInt,
   isValidEmail,
@@ -77,11 +79,6 @@ const SIGNUP = gql`
             }
           }
           primaryContact {
-            name
-            phone
-            email
-          }
-          onsiteContacts {
             name
             phone
             email
@@ -503,6 +500,7 @@ const Join = (): React.ReactElement => {
       });
       // eslint-disable-next-line no-console
       console.log(e);
+      logPossibleGraphQLError(e as ApolloError);
     }
   };
 
@@ -563,7 +561,7 @@ const Join = (): React.ReactElement => {
         email: trimWhiteSpace(primaryContact.email),
         phone: trimWhiteSpace(primaryContact.phone),
       },
-      onsiteContacts: onsiteInfo.map((obj) => ({
+      initialOnsiteContacts: onsiteInfo.map((obj) => ({
         name: trimWhiteSpace(obj.name),
         phone: trimWhiteSpace(obj.phone),
         email: trimWhiteSpace(obj.email),

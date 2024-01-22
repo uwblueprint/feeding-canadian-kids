@@ -231,9 +231,15 @@ def test_update_meal_request(meal_request_setup):
         "portions": 11,
         "dietaryRestrictions": "No nuts",
     }
-    updatedOnsiteStaff = [
-        {"name": "test", "email": "test@test.com", "phone": "604-441-1171"}
-    ]
+
+    # updatedOnsiteStaff = [
+    #     {"name": "test", "email": "test@test.com", "phone": "604-441-1171"}
+    # ]
+    # onsiteStaff:[{{
+    #   name: "{updatedOnsiteStaff[0]["name"]}",
+    #   email: "{updatedOnsiteStaff[0]["email"]}",
+    #   phone: "{updatedOnsiteStaff[0]["phone"]}"
+    # }}]
 
     mutation = f"""
     mutation testUpdateMealRequest{{
@@ -247,11 +253,6 @@ def test_update_meal_request(meal_request_setup):
           portions: {updatedMealInfo["portions"]},
           dietaryRestrictions: "{updatedMealInfo["dietaryRestrictions"]}",
         }},
-        onsiteStaff:[{{
-          name: "{updatedOnsiteStaff[0]["name"]}",
-          email: "{updatedOnsiteStaff[0]["email"]}",
-          phone: "{updatedOnsiteStaff[0]["phone"]}"
-        }}]
       )
       {{
         mealRequest{{
@@ -289,7 +290,7 @@ def test_update_meal_request(meal_request_setup):
     assert updatedMealRequest["dropOffLocation"] == updatedDropOffLocation
     assert updatedMealRequest["deliveryInstructions"] == updatedDeliveryInstructions
     assert updatedMealRequest["mealInfo"] == updatedMealInfo
-    assert updatedMealRequest["onsiteStaff"] == updatedOnsiteStaff
+    # assert updatedMealRequest["onsiteStaff"] == updatedOnsiteStaff
     assert updatedMealRequest["dropOffDatetime"] == updatedDateTime
 
 

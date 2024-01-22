@@ -19,12 +19,12 @@ MOCK_INFO1_SNAKE = {
         "phone": "123456",
         "email": "jessie123@gmail.com",
     },
-    "onsite_contacts": [
-        {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"},
-        {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
-    ],
+    "onsite_contacts": [],
     "active": True,
 }
+
+MOCK_ONSITE_CONTACT_1 = {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"}
+MOCK_ONSITE_CONTACT_2 = {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"}
 
 MOCK_INFO1_CAMEL = {
     "email": "test1@organization.com",
@@ -46,10 +46,7 @@ MOCK_INFO1_CAMEL = {
         "phone": "123456",
         "email": "jessie123@gmail.com",
     },
-    "onsiteContacts": [
-        {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"},
-        {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
-    ],
+    "onsiteContacts": [],
     "active": True,
 }
 
@@ -74,10 +71,11 @@ MOCK_INFO2_SNAKE = {
         "phone": "98765",
         "email": "goose@gmail.com",
     },
-    "onsite_contacts": [
-        {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
-        {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
-    ],
+    "onsite_contacts": [],
+    # "onsite_contacts": [
+    #     {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
+    #     {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
+    # ],
     "active": True,
 }
 
@@ -102,10 +100,11 @@ MOCK_INFO2_CAMEL = {
         "phone": "98765",
         "email": "goose@gmail.com",
     },
-    "onsiteContacts": [
-        {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
-        {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
-    ],
+    "onsiteContacts": [],
+    # "onsiteContacts": [
+    #     {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
+    #     {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
+    # ],
     "active": True,
 }
 
@@ -124,10 +123,11 @@ MOCK_INFO3_SNAKE = {
         "phone": "13579",
         "email": "anon@gmail.com",
     },
-    "onsite_contacts": [
-        {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
-        {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
-    ],
+    "onsite_contacts": [],
+    # "onsite_contacts": [
+    #     {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
+    #     {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
+    # ],
     "active": False,
 }
 
@@ -146,10 +146,11 @@ MOCK_INFO3_CAMEL = {
         "phone": "13579",
         "email": "anon@gmail.com",
     },
-    "onsiteContacts": [
-        {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
-        {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
-    ],
+    "onsiteContacts": [],
+    # "onsiteContacts": [
+    #     {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
+    #     {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
+    # ],
     "active": False,
 }
 

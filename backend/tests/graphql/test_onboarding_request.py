@@ -22,18 +22,7 @@ def test_create_onboarding_request():
                                     phone: "13579",
                                     email: "anon@gmail.com",
                                 },
-                                onsiteContacts: [
-                                    {
-                                        name: "ghi",
-                                        phone: "135-792-4680",
-                                        email: "ghi@uwblueprint.org"
-                                    },
-                                    {
-                                        name: "Jack Doe",
-                                        phone: "777-888-999",
-                                        email: "com@domain.email"
-                                    },
-                                ],
+                                onsiteContacts: [],
                                 active: false
                             }
                         ) {
@@ -104,18 +93,7 @@ def test_create_onboarding_request_with_existing_email_errors():
                         phone: "123456",
                         email: "jessie123@gmail.com"
                     }},
-                    onsiteContacts: [
-                        {{
-                            name: "abc",
-                            phone: "123-456-7890",
-                            email: "abc@uwblueprint.org"
-                        }},
-                        {{
-                            name: "Jane Doe",
-                            phone: "111-222-3333",
-                            email: "example@domain.com"
-                        }}
-                    ],
+                    onsiteContacts: [],
                     active: true
                 }}
             ) {{

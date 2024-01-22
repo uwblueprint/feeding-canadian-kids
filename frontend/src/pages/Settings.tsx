@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   Button,
   Center,
@@ -87,6 +87,17 @@ const UPDATEUSERBYID = gql`
   }
 `;
 
+const GET_ONSITE_CONTACTS = gql`
+  query getOnsiteContacts($id: String!) {
+    getOnsiteContactForUserById(userId: $id) {
+      id
+      name
+      email
+      phone
+    }
+  }
+`;
+
 const Settings = (): React.ReactElement => {
   // Assumption: user has the roleInfo: ASPInfo
 
@@ -119,15 +130,15 @@ const Settings = (): React.ReactElement => {
   // json parse/stringify creates a deep copy of the array of contacts
   // this prevents setOnsiteInfo from mutating the original state of userInfo.onsiteContacts
   const [onsiteInfo, setOnsiteInfo] = useState<Array<Contact>>(
-    userInfo
-      ? JSON.parse(JSON.stringify(userInfo.onsiteContacts))
-      : [
-          {
-            name: "",
-            phone: "",
-            email: "",
-          },
-        ],
+    // userInfo
+    //   ? JSON.parse(JSON.stringify(userInfo.onsiteContacts)):
+    [
+      {
+        name: "",
+        phone: "",
+        email: "",
+      },
+    ],
   );
 
   const [attemptedSubmit, setAttemptedSave] = useState(false);
@@ -136,6 +147,17 @@ const Settings = (): React.ReactElement => {
   const toast = useToast();
 
   const [updateUserByID] = useMutation(UPDATEUSERBYID);
+
+  // OnsiteContact query
+  const { loading, error } = useQuery(GET_ONSITE_CONTACTS, {
+    variables: { id: authenticatedUser?.id },
+    onCompleted: (data) => {
+      if (data.getOnsiteContactForUserById) {
+        console.log("DATA IS: ", data);
+        setOnsiteInfo(data.getOnsiteContactForUserById);
+      }
+    },
+  });
 
   if (!authenticatedUser) {
     return <Navigate replace to={LOGIN_PAGE} />;
@@ -165,7 +187,7 @@ const Settings = (): React.ReactElement => {
 
     const defaultContactValues: Array<Contact> = [
       userInfo.primaryContact,
-      ...userInfo.onsiteContacts,
+      // ...userInfo.onsiteContacts,
     ];
     const currentContactValues: Array<Contact> = [
       primaryContact,
@@ -609,7 +631,7 @@ const Settings = (): React.ReactElement => {
         email: trimWhiteSpace(primaryContact.email),
         phone: trimWhiteSpace(primaryContact.phone),
       },
-      onsiteContacts: onsiteInfo.map((obj) => ({
+      initialOnsiteContacts: onsiteInfo.map((obj) => ({
         name: trimWhiteSpace(obj.name),
         phone: trimWhiteSpace(obj.phone),
         email: trimWhiteSpace(obj.email),

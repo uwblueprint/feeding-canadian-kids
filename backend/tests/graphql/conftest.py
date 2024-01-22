@@ -6,6 +6,8 @@ from app.models.onsite_contact import OnsiteContact
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_SNAKE,
     MOCK_INFO2_SNAKE,
+    MOCK_ONSITE_CONTACT_1,
+    MOCK_ONSITE_CONTACT_2,
     MOCK_USER1_SNAKE,
     MOCK_USER2_SNAKE,
     MOCK_USER3_SNAKE,
@@ -40,15 +42,28 @@ def onboarding_request_setup():
 
 @pytest.fixture(scope="session", autouse=True)
 def user_setup():
-    user_1 = User(**MOCK_USER1_SNAKE).save()
-    user_2 = User(**MOCK_USER2_SNAKE).save()
-    user_3 = User(**MOCK_USER3_SNAKE).save()
 
-    yield user_1, user_2, user_3
+    users = []
+    for MOCK_USER in [MOCK_USER1_SNAKE, MOCK_USER2_SNAKE, MOCK_USER3_SNAKE]:
+        user = User(**MOCK_USER)
+        user.save()
 
-    user_1.delete()
-    user_2.delete()
-    user_3.delete()
+        # onsite_contact_1 = OnsiteContact(**MOCK_ONSITE_CONTACT_1)
+        # onsite_contact_1.organization_id = user.id
+        # onsite_contact_1.save()
+
+        # onsite_contact_2 = OnsiteContact(**MOCK_ONSITE_CONTACT_2)
+        # onsite_contact_2.organization_id = user.id
+        # onsite_contact_2.save()
+
+        # user.info.onsite_contacts.extend([onsite_contact_1.id, onsite_contact_2.id])
+        # user.save()
+        users.append(user)
+
+    yield users
+
+    for user in users:
+        user.delete()
 
 
 @pytest.fixture(scope="session", autouse=True)

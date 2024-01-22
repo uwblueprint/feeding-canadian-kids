@@ -1,6 +1,5 @@
 import mongoengine as mg
 
-from app.models.user import User
 from app.resources.onsite_contact_dto import OnsiteContactDTO
 
 class OnsiteContact(mg.Document):

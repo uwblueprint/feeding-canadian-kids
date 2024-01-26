@@ -81,9 +81,7 @@ type SchedulingFormReviewAndSubmitProps = {
   handleBack: () => void;
 };
 
-const SchedulingFormReviewAndSubmit: React.FunctionComponent<
-  SchedulingFormReviewAndSubmitProps
-> = ({
+const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormReviewAndSubmitProps> = ({
   scheduledDropOffTime,
   mealRequestDates,
   address,
@@ -102,7 +100,6 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
 
   const navigate = useNavigate();
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
-
 
   const handleSubmit = async () => {
     await setIsSubmitLoading(true);
@@ -285,7 +282,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           onClick={handleSubmit}
           disabled={isSubmitLoading}
         >
-          {isSubmitLoading? <Spinner/> : "Submit"}
+          {isSubmitLoading ? <Spinner /> : "Submit"}
         </Button>
       </GridItem>
     </Grid>

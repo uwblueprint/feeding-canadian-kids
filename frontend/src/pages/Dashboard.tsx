@@ -182,11 +182,6 @@ const Dashboard = (): React.ReactElement => {
     },
   );
 
-  console.log(authenticatedUser);
-  console.log("Data is", mealRequests, "error is", getMealRequestsError);
-  console.log(JSON.stringify(getMealRequestsError, null, 2));
-
-
   if (!authenticatedUser) {
     console.log("return");
     return <Navigate replace to={LOGIN_PAGE} />;
@@ -195,7 +190,7 @@ const Dashboard = (): React.ReactElement => {
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
       (mealRequest: MealRequest) => ({
-        title: mealRequest.description,
+        title: mealRequest.mealInfo.portions === 1 ? `Request for ${mealRequest.mealInfo.portions} meal` : `Request for ${mealRequest.mealInfo.portions} meals`,
         date: mealRequest.dropOffDatetime.toLocaleString().split('T')[0],
         extendedProps: { mealRequest },
         backgroundColor: "#3BA948",

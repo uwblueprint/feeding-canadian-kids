@@ -51,6 +51,10 @@ const Default = (): React.ReactElement => {
           text="Create Meal Request"
           path={Routes.CREATE_MEAL_REQUEST_PAGE}
         />
+        <Button
+          text="Onboarding Requests"
+          path={Routes.ONBOARDING_REQUESTS_PAGE}
+        />
       </Wrap>
       <div style={{ height: "2rem" }} />
     </div>

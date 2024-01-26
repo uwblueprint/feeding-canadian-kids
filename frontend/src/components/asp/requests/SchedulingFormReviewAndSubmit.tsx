@@ -129,6 +129,8 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
         navigate(DASHBOARD_PAGE);
       }
     } catch (e: unknown) {
+      console.log(e);
+
       toast({
         title: "Failed to create meal request. Please try again.",
         status: "error",

@@ -41,7 +41,7 @@ import MealRequestForm from "./MealRequestForm";
 import Logout from "../components/auth/Logout";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-import { LOGIN_PAGE } from "../constants/Routes";
+import { CREATE_MEAL_REQUEST_PAGE, LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 import {
   MealRequest,
@@ -80,14 +80,12 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
           }
         }
       }
-      description
       status
       dropOffDatetime
       dropOffLocation
       mealInfo {
         portions
         dietaryRestrictions
-        mealSuggestions
       }
       onsiteStaff {
         name
@@ -185,6 +183,9 @@ const Dashboard = (): React.ReactElement => {
   );
 
   console.log(authenticatedUser);
+  console.log("Data is", mealRequests, "error is", getMealRequestsError);
+  console.log(JSON.stringify(getMealRequestsError, null, 2));
+
 
   if (!authenticatedUser) {
     console.log("return");
@@ -218,39 +219,39 @@ const Dashboard = (): React.ReactElement => {
   }
 
   return (
-    <>
-      <Box
-        marginLeft={["20px", "20px", "150px", "150px"]}
-        marginRight={["20px", "20px", "150px", "150px"]}
-        marginTop={["50px", "150px"]}
-        marginBottom={["50px", "150px"]}
-        textAlign="center"
+    <Box
+      marginLeft={["20px", "20px", "150px", "150px"]}
+      marginRight={["20px", "20px", "150px", "150px"]}
+      marginTop={["50px", "150px"]}
+      marginBottom={["50px", "150px"]}
+      textAlign="center"
+    >
+      <Text
+        fontFamily="Dimbo"
+        fontStyle="normal"
+        fontWeight="400"
+        fontSize={["26px", "40px"]}
+        pb={["8px", "10px"]}
       >
-        <Text
-          fontFamily="Dimbo"
-          fontStyle="normal"
-          fontWeight="400"
-          fontSize={["26px", "40px"]}
-          pb={["8px", "10px"]}
-        >
-          Your Dashboard
-        </Text>
+        Your Dashboard
+      </Text>
 
-        <Text
-          fontFamily="Inter"
-          fontWeight="400"
-          fontSize={["12px", "16px"]}
-          pb="10px"
-        >
-          Use this page to see your upcoming food deliveries.
-        </Text>
+      <Text
+        fontFamily="Inter"
+        fontWeight="400"
+        fontSize={["12px", "16px"]}
+        pb="10px"
+      >
+        Use this page to see your upcoming food deliveries.
+      </Text>
 
-        <Flex
-          justifyContent={["center", "flex-end"]}
-          flexDirection={["column", "row"]}
-          alignItems={["center", "flex-start"]}
-        >
-          <ChakraButton
+      <Flex
+        justifyContent={["center", "flex-end"]}
+        flexDirection={["column", "row"]}
+        alignItems={["center", "flex-start"]}
+      >
+        <NavButton text="+ Create Request" path={CREATE_MEAL_REQUEST_PAGE} />
+        {/* <ChakraButton
             colorScheme="green"
             fontSize={["12px", "16px", "16px", "16px"]}
             width={["100%", "100%", "100%", "auto"]}
@@ -258,116 +259,115 @@ const Dashboard = (): React.ReactElement => {
             mb="20px"
           >
             + Create Request
-          </ChakraButton>
-        </Flex>
+          </ChakraButton> */}
+      </Flex>
 
-        {/* tabs */}
-        <Tabs colorScheme="black">
-          <TabList>
-            <Tab>
-              <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
-                <CalendarIcon boxSize={4} mr={2} />
-                Calendar
-              </Text>
-            </Tab>
-            <Tab>
-              <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
-                <HamburgerIcon boxSize={4} mr={2} />
-                List
-              </Text>
-            </Tab>
-            <Tab>
-              <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
-                Test Buttons
-              </Text>
-            </Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              {isWebView && (
-                <Stack direction="row">
-                  <div style={{ width: "100%" }}>
-                    <FullCalendar
-                      headerToolbar={{
-                        left: "prev",
-                        center: "title",
-                        right: "next",
-                      }}
-                      themeSystem="Simplex"
-                      plugins={[dayGridPlugin]}
-                      initialView="dayGridMonth"
-                      events={realEvents}
-                      // eventContent={renderEventContent}
-                      eventClick={(info) => {
-                        setSelectedMealRequest(
-                          info.event.extendedProps.mealRequest,
-                        );
-                        // info.el.style.borderColor = "red";
-                      }}
-                      eventMouseLeave={() => {
-                        setSelectedMealRequest(undefined);
-                      }}
-                    />
+      {/* tabs */}
+      <Tabs colorScheme="black">
+        <TabList>
+          <Tab>
+            <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
+              <CalendarIcon boxSize={4} mr={2} />
+              Calendar
+            </Text>
+          </Tab>
+          <Tab>
+            <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
+              <HamburgerIcon boxSize={4} mr={2} />
+              List
+            </Text>
+          </Tab>
+          <Tab>
+            <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
+              Test Buttons
+            </Text>
+          </Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            {isWebView && (
+              <Stack direction="row">
+                <div style={{ width: "100%" }}>
+                  <FullCalendar
+                    headerToolbar={{
+                      left: "prev",
+                      center: "title",
+                      right: "next",
+                    }}
+                    themeSystem="Simplex"
+                    plugins={[dayGridPlugin]}
+                    initialView="dayGridMonth"
+                    events={realEvents}
+                    // eventContent={renderEventContent}
+                    eventClick={(info) => {
+                      setSelectedMealRequest(
+                        info.event.extendedProps.mealRequest,
+                      );
+                      // info.el.style.borderColor = "red";
+                    }}
+                    eventMouseLeave={() => {
+                      setSelectedMealRequest(undefined);
+                    }}
+                  />
+                </div>
+                {selectedMealRequest && (
+                  <div style={{ width: "30%", margin: "20px", marginTop: "0px", marginRight: '0px' }}>
+                    <Text fontSize='md' padding={5} paddingTop={1}>
+                      Upcoming Delivery
+                    </Text>
+                    <Card padding={3} variant='outline'>
+                      <CardBody>
+                        <Table variant="unstyled" size="lg">
+                          <Tr>
+                            <Td>
+                              <AtSignIcon />
+                            </Td>
+                            <Text>
+                              <strong>
+                                Location: <br />
+                              </strong>
+                              {selectedMealRequest.dropOffLocation}
+                            </Text>
+                          </Tr>
+                          <Tr>
+                            <Td>
+                              <InfoIcon />
+                            </Td>
+                            <Text>
+                              <strong>Onsite Staff:</strong>
+                            </Text>
+                            {selectedMealRequest.onsiteStaff.map(
+                              (staffMember) => (
+                                <>
+                                  <Text>{staffMember.name}</Text>
+                                  <Text>{staffMember.email}</Text>
+                                  <Text>{staffMember.phone}</Text>
+                                </>
+                              ),
+                            )}
+                          </Tr>
+
+                          <Tr>
+                            <Td>
+                              <EmailIcon />
+                            </Td>
+                            <Text>
+                              <strong>Delivery notes: </strong>
+                              <br />
+                              {selectedMealRequest.deliveryInstructions}
+                            </Text>
+                          </Tr>
+                        </Table>
+                      </CardBody>
+                    </Card>
                   </div>
-                  {selectedMealRequest && (
-                    <div style={{ width: "30%", margin: "20px", marginTop: "0px", marginRight: '0px' }}>
-                      <Text fontSize='md' padding={5} paddingTop={1}>
-                        Upcoming Delivery
-                      </Text>
-                      <Card padding={3} variant='outline'>
-                        <CardBody>
-                          <Table variant="unstyled" size="lg">
-                            <Tr>
-                              <Td>
-                                <AtSignIcon />
-                              </Td>
-                              <Text>
-                                <strong>
-                                  Location: <br />
-                                </strong>
-                                {selectedMealRequest.dropOffLocation}
-                              </Text>
-                            </Tr>
-                            <Tr>
-                              <Td>
-                                <InfoIcon />
-                              </Td>
-                              <Text>
-                                <strong>Onsite Staff:</strong>
-                              </Text>
-                              {selectedMealRequest.onsiteStaff.map(
-                                (staffMember) => (
-                                  <>
-                                    <Text>{staffMember.name}</Text>
-                                    <Text>{staffMember.email}</Text>
-                                    <Text>{staffMember.phone}</Text>
-                                  </>
-                                ),
-                              )}
-                            </Tr>
-
-                            <Tr>
-                              <Td>
-                                <EmailIcon />
-                              </Td>
-                              <Text>
-                                <strong>Delivery notes: </strong>
-                                <br />
-                                {selectedMealRequest.deliveryInstructions}
-                              </Text>
-                            </Tr>
-                          </Table>
-                        </CardBody>
-                      </Card>
-                    </div>
-                  )}
-                </Stack>
-              )}
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </Box>
-    </>
+                )}
+              </Stack>
+            )}
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </Box>
   );
 };
 

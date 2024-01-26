@@ -11,6 +11,7 @@ import {
   Select,
   SimpleGrid,
   Spacer,
+  Spinner,
   Table,
   TableContainer,
   Tbody,
@@ -100,8 +101,12 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
   const toast = useToast();
 
   const navigate = useNavigate();
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+
 
   const handleSubmit = async () => {
+    await setIsSubmitLoading(true);
+
     try {
       const response = await createMealRequest({
         variables: {
@@ -135,6 +140,8 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
         isClosable: true,
       });
     }
+
+    await setIsSubmitLoading(false);
   };
 
   return (
@@ -276,8 +283,9 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           width={{ base: "10%", md: "10%" }}
           bg="primary.green"
           onClick={handleSubmit}
+          disabled={isSubmitLoading}
         >
-          Submit
+          {isSubmitLoading? <Spinner/> : "Submit"}
         </Button>
       </GridItem>
     </Grid>

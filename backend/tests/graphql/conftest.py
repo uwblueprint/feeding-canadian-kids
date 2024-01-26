@@ -1,12 +1,14 @@
 import pytest
 from app.models.user import User
 from app.models.onboarding_request import OnboardingRequest
+from app.models.meal_request import MealRequest
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_SNAKE,
     MOCK_INFO2_SNAKE,
     MOCK_USER1_SNAKE,
     MOCK_USER2_SNAKE,
     MOCK_USER3_SNAKE,
+    MOCK_MEALREQUEST1_SNAKE,
 )
 
 
@@ -46,3 +48,15 @@ def user_setup():
     user_1.delete()
     user_2.delete()
     user_3.delete()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def meal_request_setup(user_setup):
+    requestor, donor, _ = user_setup
+    meal_request = MealRequest(requestor=requestor, **MOCK_MEALREQUEST1_SNAKE).save()
+
+    yield requestor, donor, meal_request
+
+    requestor.delete()
+    donor.delete()
+    meal_request.delete()

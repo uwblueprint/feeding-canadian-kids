@@ -140,3 +140,50 @@ def test_get_user_by_id(user_setup):
     user_result = executed.data["getUserById"]
     assert user_result["id"] == str(user_2.id)
     assert user_result["info"] == MOCK_INFO2_CAMEL
+
+
+# Note: mongomock does not currently support $geoNear queries, so cannot test
+# https://github.com/mongomock/mongomock/blob/develop/Missing_Features.rst
+# def test_get_asp_near_location(user_setup):
+#     user_1, user_2, user_3 = user_setup
+#     executed = graphql_schema.execute(
+#         f"""{{
+#             getASPNearLocation(requestorId: "{str(user_2.id)}", maxDistance: 100) {{
+#                 id
+#                 info {{
+#                     email
+#                     organizationAddress
+#                     organizationName
+#                     organizationDesc
+#                     organizationCoordinates
+#                     role
+#                     roleInfo {{
+#                         aspInfo {{
+#                             numKids
+#                         }}
+#                         donorInfo {{
+#                             type
+#                             tags
+#                         }}
+#                     }}
+#                     primaryContact {{
+#                         name
+#                         phone
+#                         email
+#                     }}
+#                     onsiteContacts {{
+#                         name
+#                         phone
+#                         email
+#                     }}
+#                     active
+#                 }}
+#                 distance
+#             }}
+#         }}"""
+#     )
+
+#     asp_result = executed.data["getASPNearLocation"][0]
+#     assert asp_result["id"] == str(user_1.id)
+#     assert asp_result["info"] == MOCK_INFO1_CAMEL
+#     assert asp_result["distance"] <= 100

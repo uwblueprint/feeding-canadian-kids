@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from typing import Union
+
+from ...resources.meal_request_dto import MealRequestDTO
 
 
 class IMealRequestService(ABC):
@@ -9,7 +12,6 @@ class IMealRequestService(ABC):
     @abstractmethod
     def create_meal_request(
         self,
-        description: str,
         requestor_id,
         request_dates,
         meal_info,
@@ -31,7 +33,6 @@ class IMealRequestService(ABC):
     @abstractmethod
     def update_meal_request(
         self,
-        description,
         requestor,
         meal_info,
         drop_off_datetime,
@@ -40,6 +41,16 @@ class IMealRequestService(ABC):
         onsite_staff,
         meal_request_id,
     ):
+        pass
+
+    @abstractmethod
+    def commit_to_meal_request(
+        self,
+        donor_id: str,
+        meal_request_ids: [str],
+        meal_description: str,
+        additional_info: Union[str, None],
+    ) -> [MealRequestDTO]:
         pass
 
     @abstractmethod
@@ -62,7 +73,7 @@ class IMealRequestService(ABC):
         :type min_drop_off_date: datetime
         :param max_drop_off_date: the maximum drop off date
         :type max_drop_off_date: datetime
-        :param status: the status of the MealRequest (Open, Fulfilled, Cancelled)
+        :param status: the status of the MealRequest
         :type status: string
         :param offset: the offset to start from
         :type offset: int

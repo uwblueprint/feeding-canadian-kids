@@ -1,17 +1,59 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import type { Value } from "react-multi-date-picker";
+import { Navigate } from "react-router-dom";
 
+import SchedulingFormCalendar from "./SchedulingFormCalendar";
+import SchedulingFormMealInfo from "./SchedulingFormMealInfo";
+import SchedulingFormReviewAndSubmit from "./SchedulingFormReviewAndSubmit";
 import SchedulingFormWeekly from "./SchedulingFormWeekly";
 import TitleSection from "./TitleSection";
 
+import { LOGIN_PAGE } from "../../../constants/Routes";
+import AuthContext from "../../../contexts/AuthContext";
+import { Contact, UserInfo } from "../../../types/UserTypes";
 import ThreeStepForm from "../../common/ThreeStepForm";
 
 const CreateMealRequest = (): React.ReactElement => {
   // Part 1: Scheduling
-  const [isWeeklyInput, setIsWeeklyInput] = useState(true); // Are we in weekly input mode (false means we are in calendar mode)
+  const [isWeeklyInput, setIsWeeklyInput] = useState(false); // Are we in weekly input mode (false means we are in calendar mode)
   const [donationFrequency, setDonationFrequency] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [scheduledDropOffTime, setScheduledDropOffTime] = useState("");
+
+  const [mealRequestDates, setMealRequestDates] = useState<Date[]>([]);
+
+  // Part 2: Meal Donation Information
+  const [numMeals, setNumMeals] = useState<number>(0);
+  const [dietaryRestrictions, setDietaryRestrictions] = useState<string>("");
+  const [deliveryInstructions, setDeliveryInstructions] = useState<string>("");
+
+  // This is the selected onsite staff
+  const [onsiteStaff, setOnsiteStaff] = useState<Contact[]>([
+    {
+      name: "",
+      email: "",
+      phone: "",
+    },
+  ]);
+
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  const [userId, setUserId] = useState<string>(authenticatedUser?.id || "");
+
+  const [userInfo, setUserInfo] = useState<UserInfo>(
+    authenticatedUser?.info || null,
+  );
+
+  // This is the list of available onsite staff
+  const [availableStaff, setAvailableStaff] = useState<Array<Contact>>(
+    userInfo ? JSON.parse(JSON.stringify(userInfo.onsiteContacts)) : [],
+  );
+
+  // User's address
+  const [address, setAddress] = useState<string>(
+    userInfo ? userInfo.organizationAddress : "",
+  );
 
   // Button state (array of booleans)
   const [weekdayButtonStates, setWeekdayButtonStates] = useState(
@@ -40,14 +82,18 @@ const CreateMealRequest = (): React.ReactElement => {
     };
   }, []);
 
+  if (!authenticatedUser) {
+    return <Navigate replace to={LOGIN_PAGE} />;
+  }
+
   return (
     <div>
       <TitleSection />
 
       <ThreeStepForm
         header1="Scheduling"
-        header2="Meal Donation Information"
-        header3="Review & Submit"
+        header2="Meal donation information"
+        header3="Review & submit"
         panel1={
           isWeeklyInput ? (
             <SchedulingFormWeekly
@@ -65,11 +111,45 @@ const CreateMealRequest = (): React.ReactElement => {
               handleNext={() => {}} // Will be assigned by three step form
             />
           ) : (
-            <p>one!</p>
+            <SchedulingFormCalendar
+              scheduledDropOffTime={scheduledDropOffTime}
+              setScheduledDropOffTime={setScheduledDropOffTime}
+              dates={mealRequestDates}
+              setDates={setMealRequestDates}
+              setIsWeeklyInput={setIsWeeklyInput}
+              handleNext={() => {}} // Will be assigned by three step form
+            />
           )
         }
-        panel2={<p>two!</p>}
-        panel3={<p>three!</p>}
+        panel2={
+          <SchedulingFormMealInfo
+            address={address}
+            numMeals={numMeals}
+            setNumMeals={setNumMeals}
+            dietaryRestrictions={dietaryRestrictions}
+            setDietaryRestrictions={setDietaryRestrictions}
+            deliveryInstructions={deliveryInstructions}
+            setDeliveryInstructions={setDeliveryInstructions}
+            onsiteStaff={onsiteStaff}
+            setOnsiteStaff={setOnsiteStaff}
+            availableStaff={availableStaff}
+            handleBack={() => {}} // Will be assigned by three step form
+            handleNext={() => {}} // Will be assigned by three step form
+          />
+        }
+        panel3={
+          <SchedulingFormReviewAndSubmit
+            scheduledDropOffTime={scheduledDropOffTime}
+            mealRequestDates={mealRequestDates}
+            numMeals={numMeals}
+            dietaryRestrictions={dietaryRestrictions}
+            deliveryInstructions={deliveryInstructions}
+            onsiteStaff={onsiteStaff}
+            address={address}
+            userId={userId}
+            handleBack={() => {}} // Will be assigned by three step form
+          />
+        }
       />
     </div>
   );

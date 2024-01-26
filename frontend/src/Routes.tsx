@@ -15,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import Default from "./pages/Default";
 import DisplayPage from "./pages/DisplayPage";
 import HooksDemo from "./pages/HooksDemo";
+import MealDonorDashboard from "./pages/MealDonorDashboard";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import SimpleEntityCreatePage from "./pages/SimpleEntityCreatePage";
@@ -40,6 +41,10 @@ const Routes = (): React.ReactElement => (
     <Route path="" element={<AuthWall />}>
       <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
       <Route path={Paths.DASHBOARD_PAGE} element={<Dashboard />} />
+      <Route
+        path={Paths.MEAL_DONOR_DASHBOARD_PAGE}
+        element={<MealDonorDashboard />}
+      />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
       <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />
       <Route path={Paths.DISPLAY_ENTITY_PAGE} element={<DisplayPage />} />

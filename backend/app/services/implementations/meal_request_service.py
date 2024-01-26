@@ -3,7 +3,9 @@ from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
 from datetime import datetime
 
+from ...models.meal_request import DonationInfo, MealStatus
 from ...models.user import User
+from ...models.user_info import UserInfoRole
 from ...graphql.types import SortDirection
 from ...resources.meal_request_dto import MealRequestDTO
 
@@ -14,7 +16,6 @@ class MealRequestService(IMealRequestService):
 
     def create_meal_request(
         self,
-        description,
         requestor_id,
         request_dates,
         meal_info,
@@ -32,7 +33,6 @@ class MealRequestService(IMealRequestService):
             meal_requests = []
             for request_date in request_dates:
                 new_meal_request = MealRequest(
-                    description=description,
                     requestor=requestor,
                     meal_info=meal_info,
                     drop_off_datetime=datetime.combine(request_date, drop_off_time),
@@ -49,7 +49,6 @@ class MealRequestService(IMealRequestService):
 
     def update_meal_request(
         self,
-        description,
         requestor,
         meal_info,
         drop_off_datetime,
@@ -64,9 +63,6 @@ class MealRequestService(IMealRequestService):
         if not original_meal_request:
             raise Exception(f"meal request with id {meal_request_id} not found")
 
-        if description is not None:
-            original_meal_request.description = description
-
         if requestor is not None:
             original_meal_request.requestor = requestor
 
@@ -77,7 +73,6 @@ class MealRequestService(IMealRequestService):
             original_meal_request.meal_info = MealInfo(
                 portions=meal_info.portions,
                 dietary_restrictions=meal_info.dietary_restrictions,
-                meal_suggestions=meal_info.meal_suggestions,
             )
 
         if drop_off_location is not None:
@@ -101,6 +96,59 @@ class MealRequestService(IMealRequestService):
         original_meal_request.save()
         return meal_request_dto
 
+    def commit_to_meal_request(
+        self,
+        donor_id: str,
+        meal_request_ids: [str],
+        meal_description: str,
+        additional_info: str,
+    ) -> [MealRequestDTO]:
+        try:
+            donor = User.objects(id=donor_id).first()
+            if not donor:
+                raise Exception(f'user "{donor_id}" not found')
+            # The user committing to the meal request must have the "Donor" role
+            if donor.info.role != UserInfoRole.DONOR.value:
+                raise Exception(f'user "{donor_id}" is not a donor')
+
+            if len(meal_request_ids) == 0:
+                raise Exception("no meal requests to commit to")
+
+            meal_request_dtos = []
+            for meal_request_id in meal_request_ids:
+                meal_request = MealRequest.objects(id=meal_request_id).first()
+                if not meal_request:
+                    raise Exception(f'meal request "{meal_request_id}" not found')
+                # The meal request must be in the "Open" status
+                if meal_request.status != MealStatus.OPEN.value:
+                    raise Exception(
+                        f'meal request "{meal_request_id}" is not open for commitment'
+                    )
+
+                meal_request.donation_info = DonationInfo(
+                    donor=donor,
+                    commitment_date=datetime.utcnow(),
+                    meal_description=meal_description,
+                    additional_info=additional_info,
+                )
+
+                # Change the meal request's status to "Upcoming"
+                meal_request.status = MealStatus.UPCOMING.value
+
+                meal_request_dtos.append(
+                    self.convert_meal_request_to_dto(
+                        meal_request, meal_request.requestor
+                    )
+                )
+
+                meal_request.save()
+
+            return meal_request_dtos
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error
+
     def convert_meal_request_to_dto(
         self, request: MealRequest, requestor: User
     ) -> MealRequestDTO:
@@ -113,6 +161,7 @@ class MealRequestService(IMealRequestService):
             if not donor:
                 raise Exception(f'donor "{donor_id}" not found')
             request_dict["donation_info"]["donor"] = donor.to_serializable_dict()
+
         return MealRequestDTO(**request_dict)
 
     def get_meal_requests_by_requestor_id(

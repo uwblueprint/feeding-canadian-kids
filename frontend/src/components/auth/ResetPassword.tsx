@@ -71,9 +71,8 @@ const ResetPassword = (): React.ReactElement => {
 
   const { data: userData, error: getUserError } = useQuery(GET_USER);
 
-  const [resetPassword, { loading: resetPasswordLoading }] = useMutation(
-    RESET_PASSWORD,
-  );
+  const [resetPassword, { loading: resetPasswordLoading }] =
+    useMutation(RESET_PASSWORD);
 
   const handleResetPassword = async () => {
     try {

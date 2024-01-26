@@ -1,10 +1,8 @@
 from datetime import datetime
 
 from ..models.user_info import (
+    UserInfoRole,
     USERINFO_ROLES,
-    USERINFO_ROLE_ASP,
-    USERINFO_ROLE_ADMIN,
-    USERINFO_ROLE_DONOR,
 )
 
 
@@ -28,12 +26,12 @@ def validate_contact(contact, contact_str, error_list):
 
 
 def validate_role_info(role, role_info, role_info_str, error_list):
-    if not isinstance(role_info, dict) and role != USERINFO_ROLE_ADMIN:
+    if not isinstance(role_info, dict) and role != UserInfoRole.ADMIN.value:
         error_list.append(f"The {role_info_str} supplied is not a dict.")
         return error_list
 
     asp_info_fields = ["num_kids"]
-    if role == USERINFO_ROLE_ASP:
+    if role == UserInfoRole.ASP.value:
         for field in asp_info_fields:
             role_info = role_info["asp_info"]
             if field not in role_info:
@@ -90,7 +88,7 @@ def validate_userinfo(userinfo, error_list):
 
     for field in userinfo_fields:
         if field not in userinfo and (
-            field != "role_info" or userinfo["role"] != USERINFO_ROLE_ADMIN
+            field != "role_info" or userinfo["role"] != UserInfoRole.ADMIN.value
         ):
             error_list.append(f'The info supplied does not have field "{field}".')
     for key, val in userinfo.items():
@@ -177,7 +175,7 @@ def validate_donation_info(donation_info, error_list):
             )
         elif key == "donor":
             validate_user(val, "donation_info.donor", error_list)
-            if val["info"]["role"] != USERINFO_ROLE_DONOR:
+            if val["info"]["role"] != UserInfoRole.DONOR.value:
                 error_list.append(
                     "The donation_info.donor supplied is not a donor user."
                 )
@@ -186,8 +184,6 @@ def validate_donation_info(donation_info, error_list):
                 error_list.append(
                     "The commitment_date supplied is not a datetime object."
                 )
-            if val < datetime.now():
-                error_list.append("The commitment_date supplied is invalid.")
         elif key == "meal_description" and type(val) is not str:
             error_list.append("The meal_description supplied is not a string.")
         elif key == "additional_info" and type(val) is not str:

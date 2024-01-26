@@ -25,6 +25,10 @@ import {
   Wrap,
   useMediaQuery,
 } from "@chakra-ui/react";
+
+// eslint-disable-next-line import/order
+import { b2 } from "@fullcalendar/core/internal-common";
+
 // eslint-disable-next-line import/order
 import dayGridPlugin from "@fullcalendar/daygrid";
 // eslint-disable-next-line import/order
@@ -45,7 +49,7 @@ import {
   MealRequestsVariables,
   MealStatus,
 } from "../types/MealRequestTypes";
-import { b2 } from "@fullcalendar/core/internal-common";
+
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
@@ -282,7 +286,7 @@ const Dashboard = (): React.ReactElement => {
             {isWebView && (
               <Stack direction="row">
                 <div style={{ width: "100%" }}>
-                <FullCalendar
+                  <FullCalendar
                     headerToolbar={{
                       left: "prev",
                       center: "title",

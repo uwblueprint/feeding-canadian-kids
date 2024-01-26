@@ -34,6 +34,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 // eslint-disable-next-line import/order
 import FullCalendar from "@fullcalendar/react";
 import React, { useContext, useState } from "react";
+import { IoLocationOutline } from "react-icons/io5";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import MealRequestForm from "./MealRequestForm";
@@ -49,6 +50,7 @@ import {
   MealRequestsVariables,
   MealStatus,
 } from "../types/MealRequestTypes";
+
 
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
@@ -190,7 +192,7 @@ const Dashboard = (): React.ReactElement => {
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
       (mealRequest: MealRequest) => ({
-        title: mealRequest.mealInfo.portions === 1 ? `Request for ${mealRequest.mealInfo.portions} meal` : `Request for ${mealRequest.mealInfo.portions} meals`,
+        title: `${new Date(mealRequest.dropOffDatetime.toLocaleString()).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`,
         date: mealRequest.dropOffDatetime.toLocaleString().split('T')[0],
         extendedProps: { mealRequest },
         backgroundColor: "#3BA948",
@@ -309,13 +311,14 @@ const Dashboard = (): React.ReactElement => {
                   <div style={{ width: "30%", margin: "20px", marginTop: "0px", marginRight: '0px' }}>
                     <Text fontSize='md' padding={5} paddingTop={1}>
                       Upcoming Delivery
-                    </Text>
+                     </Text>
                     <Card padding={3} variant='outline'>
                       <CardBody>
                         <Table variant="unstyled" size="lg">
                           <Tr>
                             <Td>
-                              <AtSignIcon />
+                            <IoLocationOutline />
+
                             </Td>
                             <Text>
                               <strong>

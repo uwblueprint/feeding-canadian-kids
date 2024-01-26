@@ -181,7 +181,7 @@ class MealRequestService(IMealRequestService):
 
             requestor = User.objects(id=requestor_id).first()
             requests = MealRequest.objects(
-                requestor=requestor,
+                # donation_info__donor=requestor,
                 status__in=status,
             ).order_by(f"{sort_prefix}date_created")
 
@@ -205,6 +205,56 @@ class MealRequestService(IMealRequestService):
             for request in requests:
                 meal_request_dtos.append(
                     self.convert_meal_request_to_dto(request, requestor)
+                )
+
+            return meal_request_dtos
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error
+
+
+    def get_meal_requests_by_donor_id(
+        self,
+        donor_id,
+        min_drop_off_date,
+        max_drop_off_date,
+        status,
+        offset,
+        limit,
+        sort_by_date_direction,
+    ):
+        try:
+            sort_prefix = "+"
+            if sort_by_date_direction == SortDirection.DESCENDING:
+                sort_prefix = "-"
+
+            donor = User.objects(id=donor_id).first()
+            requests = MealRequest.objects(
+                donation_info__donor__id=donor_id,
+                status__in=status,
+            ).order_by(f"{sort_prefix}date_created")
+
+            # Filter results by optional parameters.
+            # Since we want to filter these optionally (i.e. filter only if specified),
+            # we cannot include them in the query above.
+            if min_drop_off_date is not None:
+                requests = requests.filter(
+                    drop_off_datetime__gte=min_drop_off_date,
+                )
+            if max_drop_off_date is not None:
+                requests = requests.filter(
+                    drop_off_datetime__lte=max_drop_off_date,
+                )
+            if limit is not None:
+                requests = requests[offset : offset + limit]
+            else:
+                requests = requests[offset:]
+
+            meal_request_dtos = []
+            for request in requests:
+                meal_request_dtos.append(
+                    self.convert_meal_request_to_dto(request, donor)
                 )
 
             return meal_request_dtos

@@ -86,3 +86,38 @@ class IMealRequestService(ABC):
         :raises Exception: if MealRequest could not be retrieved
         """
         pass
+    
+    @abstractmethod
+    def get_meal_requests_by_donor_id(
+        self,
+        donor_id,
+        min_drop_off_date,
+        max_drop_off_date,
+        status,
+        offset,
+        limit,
+        sort_by_date_direction,
+    ):
+        """
+        Gets MealRequest by donor id
+
+        :param donor_id: the MealRequest donor's id
+        :type donor_id: string
+        :param min_drop_off_date: the minimum drop off date
+        :type min_drop_off_date: datetime
+        :param max_drop_off_date: the maximum drop off date
+        :type max_drop_off_date: datetime
+        :param status: the status of the MealRequest
+        :type status: string
+        :param offset: the offset to start from
+        :type offset: int
+        :param limit: the limit of results to return
+        :type limit: int
+        :param sort_by_date_direction: the direction to sort by (ASC or DESC)
+        :type sort_by_date_direction: string
+        :return: MealRequest object dict
+        :rtype: MealRequestDTO
+        :raises Exception: if MealRequest could not be retrieved
+        """
+        pass
+    

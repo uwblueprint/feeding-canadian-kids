@@ -1,4 +1,5 @@
 import graphene
+from graphql import GraphQLError
 
 from .types import (
     ContactInput,
@@ -163,10 +164,42 @@ class CommitToMealRequest(Mutation):
         return CommitToMealRequest(meal_requests=result)
 
 
+class CancelDonation(Mutation):
+    class Arguments:
+        meal_request_id = graphene.ID(required=True)
+        requestor_id = graphene.ID(required=True)
+
+    # return values (return updated meal request)
+    meal_request = graphene.Field(MealRequestResponse)
+
+    def mutate(self, meal_request_id, requestor_id):
+        user = services["user_service"].get_user_by_id(requestor_id)
+        requestor_auth_id = user.get_auth_id_by_user_id(requestor_id)
+        requestor_role = user.get_user_role_by_auth_id(requestor_auth_id)
+
+        try:
+            if requestor_role != "Admin":
+                raise Exception("Only admins can cancel donations")
+
+            meal_request = services["meal_request_service"].cancel_donation(
+                meal_request_id
+            )
+            if not meal_request:
+                raise Exception("Meal request not found")
+        except Exception as e:
+            raise GraphQLError(str(e))
+
+        if meal_request.donation_info is not None:
+            meal_request.donation_info = None
+
+        return CancelDonation(meal_request=meal_request)
+
+
 class MealRequestMutations(MutationList):
     create_meal_request = CreateMealRequests.Field()
     update_meal_request = UpdateMealRequest.Field()
     commit_to_meal_request = CommitToMealRequest.Field()
+    cancel_donation = CancelDonation.Field()
 
 
 class MealRequestQueries(QueryList):

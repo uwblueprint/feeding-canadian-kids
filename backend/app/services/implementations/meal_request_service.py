@@ -213,7 +213,6 @@ class MealRequestService(IMealRequestService):
             self.logger.error(str(error))
             raise error
 
-
     def get_meal_requests_by_donor_id(
         self,
         donor_id,

@@ -86,7 +86,7 @@ class IMealRequestService(ABC):
         :raises Exception: if MealRequest could not be retrieved
         """
         pass
-    
+
     @abstractmethod
     def get_meal_requests_by_donor_id(
         self,
@@ -120,4 +120,3 @@ class IMealRequestService(ABC):
         :raises Exception: if MealRequest could not be retrieved
         """
         pass
-    

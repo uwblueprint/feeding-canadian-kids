@@ -223,7 +223,7 @@ class MealRequestQueries(QueryList):
             )
             for meal_request_dto in meal_request_dtos
         ]
-    
+
     getMealRequestsByDonorId = graphene.List(
         MealRequestResponse,
         donor_id=graphene.ID(required=True),

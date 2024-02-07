@@ -445,8 +445,29 @@ def test_cancel_donation_as_non_admin(meal_request_setup):
         requestorId: "{str(non_admin.id)}"
       )
       {{
-        mealRequest {{
+        mealRequest{{
           id
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo{{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteStaff{{
+            name
+            email
+            phone
+          }}
+          donationInfo{{
+            donor{{
+              id
+              info{{
+                email
+              }}
+            }}
+          }}
+          deliveryInstructions
         }}
       }}
     }}

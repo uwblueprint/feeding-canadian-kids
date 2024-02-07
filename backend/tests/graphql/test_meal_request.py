@@ -386,72 +386,69 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
     assert result["requestor"]["id"] == str(requestor.id)
     assert result["id"] == str(meal_request.id)
 
-def test_cancel_donation_as_admin(meal_request_setup):
-    _, admin, meal_request = meal_request_setup
+def test_cancel_donation_as_admin(meal_request_setup, user_setup):
+    _, _, meal_request = meal_request_setup
+    _, _, admin = user_setup
 
-    executed = graphql_schema.execute(
-        f"""
-        mutation testCancelDonation {{
-          cancelDonation(
-            mealRequestId: "{str(meal_request.id)}",
-            requestorId: "{str(admin.id)}"
-          )
-          {{
-            mealRequest {{
+    mutation = f"""
+    mutation testCancelDonation {{
+      cancelDonation(
+        mealRequestId: "{str(meal_request.id)}",
+        requestorId: "{str(admin.id)}"
+      )
+      {{
+        mealRequest{{
+          id
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo{{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteStaff{{
+            name
+            email
+            phone
+          }}
+          donationInfo{{
+            donor{{
               id
+              info{{
+                email
+              }}
             }}
           }}
+          deliveryInstructions
         }}
-        """
-    )
+      }}
+    }}
+    """
 
-    print(executed.data)
-    cancelledDonation = executed.data["cancelDonation"]["mealRequest"]
+    executed = graphql_schema.execute(mutation)
 
-    if cancelledDonation is not None:
-      assert cancelledDonation["donationInfo"] == None
+    print("#####")
+    print(executed)
+    result = executed.data["cancelDonation"]["mealRequest"]
+    assert result["donationInfo"] == None
+    assert result["id"] == str(meal_request.id) 
 
-# def test_cancel_donation_as_non_admin(meal_request_setup):
-#     _, non_admin, meal_request = meal_request_setup
+def test_cancel_donation_as_non_admin(meal_request_setup):
+    _, non_admin, meal_request = meal_request_setup
 
-#     mutation = f"""
-#     mutation testCancelDonation {{
-#       cancelDonation(
-#         mealRequestId: "{str(meal_request.id)}",
-#         requestorId: "{str(non_admin.id)}"
-#       )
-#       {{
-#         mealRequest {{
-#           id
-#         }}
-#       }}
-#     }}
-#     """
+    mutation = f"""
+    mutation testCancelDonation {{
+      cancelDonation(
+        mealRequestId: "{str(meal_request.id)}",
+        requestorId: "{str(non_admin.id)}"
+      )
+      {{
+        mealRequest {{
+          id
+        }}
+      }}
+    }}
+    """
 
-#     result = graphql_schema.execute(mutation)
-
-#     assert result.errors is not None
-
-
-# def test_cancel_donation_with_invalid_meal_request_id(meal_request_setup):
-#     _, admin, _ = meal_request_setup
-
-#     invalid_meal_request_id = "invalid_id"
-
-#     mutation = f"""
-#     mutation testCancelDonation {{
-#       CancelDonation(
-#         mealRequestId: "{invalid_meal_request_id}",
-#         requestorId: "{str(admin.id)}"
-#       )
-#       {{
-#         mealRequest {{
-#           id
-#         }}
-#       }}
-#     }}
-#     """
-
-#     result = graphql_schema.execute(mutation)
-
-#     assert result.errors is not None
+    executed = graphql_schema.execute(mutation)
+    assert executed.data["cancelDonation"] == None

@@ -167,13 +167,13 @@ class CommitToMealRequest(Mutation):
 class CancelDonation(Mutation):
     class Arguments:
         meal_request_id = graphene.ID(required=True)
-        requestor_id = graphene.ID(required=True)
+        requestor_id = graphene.String(required=True)
 
     # return values (return updated meal request)
     meal_request = graphene.Field(MealRequestResponse)
 
-    def mutate(self, meal_request_id, requestor_id):
-        user = services["user_service"].get_user_by_id(requestor_id)
+    def mutate(self, info, meal_request_id, requestor_id):
+        user = services["user_service"]
         requestor_auth_id = user.get_auth_id_by_user_id(requestor_id)
         requestor_role = user.get_user_role_by_auth_id(requestor_auth_id)
 

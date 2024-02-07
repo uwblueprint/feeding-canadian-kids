@@ -12,6 +12,7 @@ import {
   CardBody,
   Button as ChakraButton,
   Flex,
+  HStack,
   Stack,
   Tab,
   TabList,
@@ -25,16 +26,18 @@ import {
   Wrap,
   useMediaQuery,
 } from "@chakra-ui/react";
-
 // eslint-disable-next-line import/order
 import { b2 } from "@fullcalendar/core/internal-common";
-
 // eslint-disable-next-line import/order
 import dayGridPlugin from "@fullcalendar/daygrid";
 // eslint-disable-next-line import/order
 import FullCalendar from "@fullcalendar/react";
 import React, { useContext, useState } from "react";
-import { IoLocationOutline } from "react-icons/io5";
+import {
+  IoInformationCircleOutline,
+  IoLocationOutline,
+  IoPersonOutline,
+} from "react-icons/io5";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import MealRequestForm from "./MealRequestForm";
@@ -50,8 +53,6 @@ import {
   MealRequestsVariables,
   MealStatus,
 } from "../types/MealRequestTypes";
-
-
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
@@ -189,19 +190,51 @@ const Dashboard = (): React.ReactElement => {
     return <Navigate replace to={LOGIN_PAGE} />;
   }
 
+  function formatDate(inputDate: string): string {
+    const date = new Date(inputDate);
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    return date.toLocaleDateString("en-US", options);
+  }
+
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
-      (mealRequest: MealRequest) => ({
-        title: `${new Date(mealRequest.dropOffDatetime.toLocaleString()).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`,
-        date: mealRequest.dropOffDatetime.toLocaleString().split('T')[0],
-        extendedProps: { mealRequest },
-        backgroundColor: "#3BA948",
-        borderColor: "#3BA948",
-        borderRadius: "10%"
-      }),
+      (mealRequest: MealRequest) => {
+        //
+        const date = new Date(
+          mealRequest.dropOffDatetime.toString().split("T")[0],
+        );
+        const dateParts = date
+          .toLocaleString("en-US", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          .split(",")[0]
+          .split("/");
+        const realDate = dateParts[2] + "-" + dateParts[0] + "-" + dateParts[1];
+        //
+        return {
+          title: `${new Date(
+            mealRequest.dropOffDatetime.toLocaleString(),
+          ).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          })}`,
+          date: realDate,
+          extendedProps: { mealRequest },
+          backgroundColor: "#3BA948",
+          borderColor: "#3BA948",
+          borderRadius: "10%",
+        };
+      },
     ) ?? [];
 
-  console.log(realEvents);
+  // console.log(realEvents);
 
   if (getMealRequestsLoading) {
     <Box
@@ -297,40 +330,80 @@ const Dashboard = (): React.ReactElement => {
                     events={realEvents}
                     // eventContent={renderEventContent}
                     eventClick={(info) => {
-                      setSelectedMealRequest(
-                        info.event.extendedProps.mealRequest,
-                      );
-                      // info.el.style.borderColor = "red";
+                      if(selectedMealRequest === info.event.extendedProps.mealRequest) {
+                        setSelectedMealRequest(
+                          undefined
+                        );
+                      }
+                      else{
+                        setSelectedMealRequest(
+                          info.event.extendedProps.mealRequest,
+                        );
+                      }
                     }}
-                    eventMouseLeave={() => {
-                      setSelectedMealRequest(undefined);
-                    }}
+                    // eventMouseLeave={() => {
+                    //   setSelectedMealRequest(undefined);
+                    // }}
                   />
                 </div>
                 {selectedMealRequest && (
-                  <div style={{ width: "30%", margin: "20px", marginTop: "0px", marginRight: '0px' }}>
-                    <Text fontSize='md' padding={5} paddingTop={1}>
+                  <div
+                    style={{
+                      width: "30%",
+                      margin: "20px",
+                      marginTop: "0px",
+                      marginRight: "0px",
+                    }}
+                  >
+                    <Text fontSize="md" padding={5} paddingTop={1}>
                       Upcoming Delivery
-                     </Text>
-                    <Card padding={3} variant='outline'>
-                      <CardBody>
-                        <Table variant="unstyled" size="lg">
-                          <Tr>
-                            <Td>
+                    </Text>
+                    <Card padding={3} width={80} variant="outline">
+                      {/* <CardBody> */}
+                      <HStack
+                        padding={3}
+                        style={{ justifyContent: "space-between" }}
+                      >
+                        <Text>
+                          {formatDate(
+                            selectedMealRequest.dropOffDatetime
+                              .toLocaleString()
+                              .split("T")[0],
+                          )}
+                        </Text>
+                        <Text>
+                          {new Date(
+                            selectedMealRequest.dropOffDatetime.toLocaleString(),
+                          ).toLocaleTimeString("en-US", {
+                            hour: "numeric",
+                            minute: "numeric",
+                            hour12: true,
+                          })}
+                        </Text>
+                      </HStack>
+                      <Table
+                        variant="unstyled"
+                        size="md"
+                        __css={{ "table-layout": "fixed", width: "full" }}
+                      >
+                        <Tr>
+                          <Td width={2}>
                             <IoLocationOutline />
-
-                            </Td>
+                          </Td>
+                          <Td>
                             <Text>
                               <strong>
-                                Location: <br />
+                                Location:<br />
                               </strong>
                               {selectedMealRequest.dropOffLocation}
                             </Text>
-                          </Tr>
-                          <Tr>
-                            <Td>
-                              <InfoIcon />
-                            </Td>
+                          </Td>
+                        </Tr>
+                        <Tr>
+                          <Td width={2}>
+                            <IoPersonOutline />
+                          </Td>
+                          <Td>
                             <Text>
                               <strong>Onsite Staff:</strong>
                             </Text>
@@ -343,20 +416,42 @@ const Dashboard = (): React.ReactElement => {
                                 </>
                               ),
                             )}
-                          </Tr>
+                          </Td>
+                        </Tr>
 
-                          <Tr>
-                            <Td>
-                              <EmailIcon />
-                            </Td>
+                        <Tr>
+                          <Td width={2}>
+                            <EmailIcon />
+                          </Td>
+                          <Td>
                             <Text>
-                              <strong>Delivery notes: </strong>
+                              <strong>Delivery Notes:</strong>
                               <br />
                               {selectedMealRequest.deliveryInstructions}
                             </Text>
-                          </Tr>
-                        </Table>
-                      </CardBody>
+                          </Td>
+                        </Tr>
+                        <HStack padding={3} width={40}>
+                          <Text>Meal Information</Text>
+                        </HStack>
+                        <Tr>
+                          <Td width={2}>
+                            <IoInformationCircleOutline />
+                          </Td>
+                          <Td>
+                            <Text>
+                              <strong>Meal Description: </strong>
+                              <br />
+                              {selectedMealRequest.mealInfo.portions}{" "}
+                              {selectedMealRequest.mealInfo.dietaryRestrictions}{" "}
+                              {selectedMealRequest.mealInfo.portions === 1
+                                ? "meal"
+                                : "meals"}
+                            </Text>
+                          </Td>
+                        </Tr>
+                      </Table>
+                      {/* </CardBody> */}
                     </Card>
                   </div>
                 )}

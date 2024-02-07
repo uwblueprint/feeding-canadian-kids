@@ -7,11 +7,13 @@ export default {
   },
   secondary: {
     critical: "#E53E3E",
+    blue: "#343C9F"
   },
   text: {
     default: "#1A1A1A",
     subtitle: "#69696B",
     white: "#FFFFFF",
+    black: "#000000",
   },
   background: {
     white: "#FFFFFF",

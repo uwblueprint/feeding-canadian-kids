@@ -203,7 +203,6 @@ const Dashboard = (): React.ReactElement => {
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
       (mealRequest: MealRequest) => {
-        //
         const date = new Date(
           mealRequest.dropOffDatetime.toString().split("T")[0],
         );
@@ -216,7 +215,6 @@ const Dashboard = (): React.ReactElement => {
           .split(",")[0]
           .split("/");
         const realDate = dateParts[2] + "-" + dateParts[0] + "-" + dateParts[1];
-        //
         return {
           title: `${new Date(
             mealRequest.dropOffDatetime.toLocaleString(),
@@ -233,8 +231,6 @@ const Dashboard = (): React.ReactElement => {
         };
       },
     ) ?? [];
-
-  // console.log(realEvents);
 
   if (getMealRequestsLoading) {
     <Box
@@ -281,15 +277,6 @@ const Dashboard = (): React.ReactElement => {
         alignItems={["center", "flex-start"]}
       >
         <NavButton text="+ Create Request" path={CREATE_MEAL_REQUEST_PAGE} />
-        {/* <ChakraButton
-            colorScheme="green"
-            fontSize={["12px", "16px", "16px", "16px"]}
-            width={["100%", "100%", "100%", "auto"]}
-            mt="10px"
-            mb="20px"
-          >
-            + Create Request
-          </ChakraButton> */}
       </Flex>
 
       {/* tabs */}
@@ -328,7 +315,6 @@ const Dashboard = (): React.ReactElement => {
                     plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
                     events={realEvents}
-                    // eventContent={renderEventContent}
                     eventClick={(info) => {
                       if(selectedMealRequest === info.event.extendedProps.mealRequest) {
                         setSelectedMealRequest(
@@ -341,9 +327,6 @@ const Dashboard = (): React.ReactElement => {
                         );
                       }
                     }}
-                    // eventMouseLeave={() => {
-                    //   setSelectedMealRequest(undefined);
-                    // }}
                   />
                 </div>
                 {selectedMealRequest && (
@@ -359,7 +342,6 @@ const Dashboard = (): React.ReactElement => {
                       Upcoming Delivery
                     </Text>
                     <Card padding={3} width={80} variant="outline">
-                      {/* <CardBody> */}
                       <HStack
                         padding={3}
                         style={{ justifyContent: "space-between" }}
@@ -451,7 +433,6 @@ const Dashboard = (): React.ReactElement => {
                           </Td>
                         </Tr>
                       </Table>
-                      {/* </CardBody> */}
                     </Card>
                   </div>
                 )}

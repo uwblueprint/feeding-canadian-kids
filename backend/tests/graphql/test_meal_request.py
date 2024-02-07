@@ -386,6 +386,7 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
     assert result["requestor"]["id"] == str(requestor.id)
     assert result["id"] == str(meal_request.id)
 
+
 def test_cancel_donation_as_admin(meal_request_setup, user_setup):
     _, _, meal_request = meal_request_setup
     _, _, admin = user_setup
@@ -431,7 +432,8 @@ def test_cancel_donation_as_admin(meal_request_setup, user_setup):
     print(executed)
     result = executed.data["cancelDonation"]["mealRequest"]
     assert result["donationInfo"] == None
-    assert result["id"] == str(meal_request.id) 
+    assert result["id"] == str(meal_request.id)
+
 
 def test_cancel_donation_as_non_admin(meal_request_setup):
     _, non_admin, meal_request = meal_request_setup

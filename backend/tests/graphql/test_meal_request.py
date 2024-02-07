@@ -431,7 +431,7 @@ def test_cancel_donation_as_admin(meal_request_setup, user_setup):
     print("#####")
     print(executed)
     result = executed.data["cancelDonation"]["mealRequest"]
-    assert result["donationInfo"] == None
+    assert result["donationInfo"] is None
     assert result["id"] == str(meal_request.id)
 
 
@@ -453,4 +453,4 @@ def test_cancel_donation_as_non_admin(meal_request_setup):
     """
 
     executed = graphql_schema.execute(mutation)
-    assert executed.data["cancelDonation"] == None
+    assert executed.data["cancelDonation"] is None

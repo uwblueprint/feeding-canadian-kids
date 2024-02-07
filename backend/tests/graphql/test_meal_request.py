@@ -385,3 +385,46 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
     result = executed.data["getMealRequestsByRequestorId"][0]
     assert result["requestor"]["id"] == str(requestor.id)
     assert result["id"] == str(meal_request.id)
+
+
+def test_get_meal_request_by_donor_id(meal_request_setup):
+    _, donor, meal_request = meal_request_setup
+
+    executed = graphql_schema.execute(
+        f"""{{
+          getMealRequestsByDonorId(donorId: "{str(donor.id)}") {{
+            id
+            requestor {{
+              id
+            }},
+            status,
+            dropOffDatetime,
+            dropOffLocation,
+            mealInfo {{
+              portions
+              dietaryRestrictions
+            }},
+            onsiteStaff {{
+              name
+              email
+              phone
+            }},
+            dateCreated,
+            dateUpdated,
+            deliveryInstructions,
+            donationInfo {{
+              donor {{
+                id
+              }},
+              commitmentDate
+              mealDescription
+              additionalInfo
+            }}
+          }}
+      }}"""
+    )
+
+    assert len(executed.data["getMealRequestsByDonorId"]) == 1
+    result = executed.data["getMealRequestsByDonorId"][0]
+    assert result["donationInfo"]["donor"]["id"] == str(donor.id)
+    assert result["id"] == str(meal_request.id)

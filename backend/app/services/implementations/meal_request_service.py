@@ -181,7 +181,7 @@ class MealRequestService(IMealRequestService):
 
             requestor = User.objects(id=requestor_id).first()
             requests = MealRequest.objects(
-                # donation_info__donor=requestor,
+                requestor=requestor,
                 status__in=status,
             ).order_by(f"{sort_prefix}date_created")
 
@@ -231,7 +231,7 @@ class MealRequestService(IMealRequestService):
 
             donor = User.objects(id=donor_id).first()
             requests = MealRequest.objects(
-                donation_info__donor__id=donor_id,
+                donation_info__donor=donor,
                 status__in=status,
             ).order_by(f"{sort_prefix}date_created")
 

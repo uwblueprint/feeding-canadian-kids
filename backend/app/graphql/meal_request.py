@@ -210,7 +210,7 @@ class MealRequestQueries(QueryList):
         return [
             MealRequestResponse(
                 id=meal_request_dto.id,
-                requestor=meal_request_dto.requestor,
+                donor=meal_request_dto.donor,
                 status=meal_request_dto.status,
                 drop_off_datetime=meal_request_dto.drop_off_datetime,
                 drop_off_location=meal_request_dto.drop_off_location,
@@ -238,7 +238,7 @@ class MealRequestQueries(QueryList):
         sort_by_date_direction=SortDirection(default_value=SortDirection.ASCENDING),
     )
 
-    def resolve_getMealRequestByDonorId(
+    def resolve_getMealRequestsByDonorId(
         self,
         info,
         donor_id,
@@ -277,4 +277,3 @@ class MealRequestQueries(QueryList):
             )
             for meal_request_dto in meal_request_dtos
         ]
-    

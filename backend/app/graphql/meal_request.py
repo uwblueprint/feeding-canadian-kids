@@ -210,7 +210,7 @@ class MealRequestQueries(QueryList):
         return [
             MealRequestResponse(
                 id=meal_request_dto.id,
-                donor=meal_request_dto.donor,
+                requestor=meal_request_dto.requestor,
                 status=meal_request_dto.status,
                 drop_off_datetime=meal_request_dto.drop_off_datetime,
                 drop_off_location=meal_request_dto.drop_off_location,

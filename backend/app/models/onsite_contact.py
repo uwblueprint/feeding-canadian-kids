@@ -24,5 +24,7 @@ class OnsiteContact(mg.Document):
         return dict
     def to_dto(self) -> OnsiteContactDTO:
         return OnsiteContactDTO(**self.to_serializable_dict()) # type: ignore #
+    def __str__(self):
+        return f"OnsiteContact({self.id}, {self.organization_id}, {self.name}, {self.email}, {self.phone})"
 
     meta = {"collection": "onsite_contacts"}

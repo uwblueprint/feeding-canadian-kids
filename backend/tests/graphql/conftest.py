@@ -25,7 +25,7 @@ def graphql_schema():
     yield graphql_schema
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def onboarding_request_setup():
     onboarding_request_1 = OnboardingRequest(
         info=MOCK_INFO1_SNAKE, status="Pending"
@@ -40,7 +40,7 @@ def onboarding_request_setup():
     onboarding_request_2.delete()
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def user_setup():
 
     users = []
@@ -66,7 +66,7 @@ def user_setup():
         user.delete()
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def meal_request_setup(user_setup):
     requestor, donor, _ = user_setup
     meal_request = MealRequest(requestor=requestor, **MOCK_MEALREQUEST1_SNAKE).save()
@@ -82,19 +82,26 @@ def meal_request_setup(user_setup):
 @pytest.fixture(scope="function", autouse=True)
 def onsite_contact_setup(user_setup):
     asp, donor, _ = user_setup
-    onsite_contact = OnsiteContact(
+    asp_onsite_contact = OnsiteContact(
         name="Sample Contact",
         email="sample@test.com",
         phone="123-456-7890",
         organization_id=asp.id
     ).save()
-    OnsiteContact(
+    asp_onsite_contact2 = OnsiteContact(
+        name="Sample Contact 2",
+        email="sample2@test.com",
+        phone="123-456-7890",
+        organization_id=asp.id
+    ).save()
+    donor_onsite_contact = OnsiteContact(
         name="Sample Contact 2",
         email="sample2@test.com",
         phone="123-333-7890",
         organization_id=donor.id
     ).save()
 
-    yield asp, donor, onsite_contact
-    onsite_contact.delete()
+    yield asp, donor, [asp_onsite_contact, asp_onsite_contact2], donor_onsite_contact
+    asp_onsite_contact.delete()
+    donor_onsite_contact.delete()
 

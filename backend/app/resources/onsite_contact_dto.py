@@ -24,11 +24,6 @@ class OnsiteContactDTO:
         if type(self.id) is not str:
             error_list.append("The id supplied is not a string.")
 
-        print("type is", type(self.organization_id))
-
-
-
-
         for field in [self.name, self.email, self.phone, self.organization_id]:
             if type(field) is not str:
                 error_list.append(f'The field "{field}" in onsite_contact {self.id} is not a string.')

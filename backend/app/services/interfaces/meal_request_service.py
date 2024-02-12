@@ -18,7 +18,7 @@ class IMealRequestService(ABC):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_staff : List[str],
     ):
         """Create a new MealRequest object and corresponding MealRequests
 

@@ -1,6 +1,8 @@
+from mongomock import ObjectId
 from app.graphql import schema as graphql_schema
 from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
+from app.models.onsite_contact import OnsiteContact
 
 """
 Tests for MealRequestchema and query/mutation logic
@@ -8,8 +10,11 @@ Running graphql_schema.execute(...) also tests the service logic
 """
 
 
-def test_create_meal_request(meal_request_setup):
-    requestor, _, _ = meal_request_setup
+def test_create_meal_request(meal_request_setup, onsite_contact_setup):
+    asp, donor, [asp_onsite_contact, asp_onsite_contact2], donor_onsite_contact = onsite_contact_setup
+
+    contacts = OnsiteContact.objects().all()
+    print("before", contacts)
 
     mutation = f"""
     mutation testCreateMealRequest {{
@@ -21,19 +26,8 @@ def test_create_meal_request(meal_request_setup):
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: [
-          {{
-            name: "John Doe",
-            email: "john.doe@example.com",
-            phone: "+1234567890"
-          }},
-          {{
-            name: "Jane Smith",
-            email: "jane.smith@example.com",
-            phone: "+9876543210"
-          }}
-        ],
-        requestorId: "{str(requestor.id)}",
+        onsiteStaff: ["{asp_onsite_contact.id}", "{asp_onsite_contact2.id}"],
+        requestorId: "{str(asp.id)}",
         requestDates: [
             "2023-06-01",
             "2023-06-02",
@@ -48,13 +42,20 @@ def test_create_meal_request(meal_request_setup):
             portions
             dietaryRestrictions
           }}
+          onsiteStaff{{
+            id
+            name
+            email
+            phone
+            organizationId
+          }}
         }}
       }}
     }}
   """
 
     result = graphql_schema.execute(mutation)
-
+    contacts = OnsiteContact.objects().all()
     assert result.errors is None
     assert result.data["createMealRequest"]["mealRequests"][0]["status"] == "OPEN"
     assert (
@@ -76,9 +77,61 @@ def test_create_meal_request(meal_request_setup):
         == "2023-06-02T16:30:00+00:00"
     )
 
+    created_onsite_contacts = result.data["createMealRequest"]["mealRequests"][0]["onsiteStaff"]
+    expected_onsite_contacts =  [asp_onsite_contact, asp_onsite_contact2] if created_onsite_contacts[0]["id"] == str(asp_onsite_contact.id) else [asp_onsite_contact2, asp_onsite_contact]
+    for created, expected in zip(created_onsite_contacts, expected_onsite_contacts):
+      assert(created["id"] == str(expected.id))
+      assert(created["name"] == str(expected.name))
+      assert(created["email"] == str(expected.email))
+      assert(created["phone"] == str(expected.phone))
+      assert(created["organizationId"] == str(expected.organization_id))
+
     # Delete the created meal requests
     for meal_request in result.data["createMealRequest"]["mealRequests"]:
         MealRequest.objects(id=meal_request["id"]).delete()
+
+def test_create_meal_request_fails_invalid_onsite_contact(meal_request_setup, onsite_contact_setup):
+    asp, donor, asp_onsite_contact, donor_onsite_contact = onsite_contact_setup
+
+    counter_before = MealRequest.objects().count()
+    mutation = f"""
+    mutation testCreateMealRequest {{
+      createMealRequest(
+        deliveryInstructions: "Leave at front door",
+        dropOffLocation: "123 Main Street",
+        dropOffTime: "16:30:00Z",
+        mealInfo: {{
+          portions: 40,
+          dietaryRestrictions: "7 gluten free, 7 no beef",
+        }},
+        onsiteStaff: ["{asp_onsite_contact}, fdsfdja"],
+        requestorId: "{str(asp.id)}",
+        requestDates: [
+            "2023-06-01",
+            "2023-06-02",
+        ],
+      )
+      {{
+        mealRequests {{
+          status
+          id
+          dropOffDatetime
+          mealInfo {{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteStaff{{
+            id
+          }}
+        }}
+      }}
+    }}
+  """
+
+    result = graphql_schema.execute(mutation)
+    assert result.errors is not None
+    counter_after = MealRequest.objects().count()
+    assert counter_before == counter_after
 
 
 # Happy path: A donor commits to fulfilling one meal request
@@ -165,6 +218,7 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
 
     for role in INVALID_USERINFO_ROLES:
         donor.info.role = role
+        donor.save()
 
         mutation = f"""
       mutation testCommitToMealRequest {{
@@ -200,6 +254,7 @@ def test_commit_to_meal_request_fails_if_not_open(meal_request_setup):
 
     for meal_status in INVALID_MEAL_STATUSES:
         meal_request.status = meal_status
+        meal_request.save()
 
         mutation = f"""
       mutation testCommitToMealRequest {{

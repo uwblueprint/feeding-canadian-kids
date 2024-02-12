@@ -80,9 +80,7 @@ type SchedulingFormReviewAndSubmitProps = {
   handleBack: () => void;
 };
 
-const SchedulingFormReviewAndSubmit: React.FunctionComponent<
-  SchedulingFormReviewAndSubmitProps
-> = ({
+const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormReviewAndSubmitProps> = ({
   scheduledDropOffTime,
   mealRequestDates,
   address,
@@ -217,7 +215,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
                       </Text>
                     </Th>
                     <Th textTransform="none">
-                      <Text color="black" variant="desktop-xs">
+                    <Text color="black" variant="desktop-xs">
                         Email
                       </Text>
                     </Th>

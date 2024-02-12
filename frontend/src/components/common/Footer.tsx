@@ -20,7 +20,7 @@ const Footer = () => {
   const isWebView = useIsWebView();
 
   return isWebView ? (
-    <VStack width="100wh" bg="#F8F8FB">
+    <VStack width="100wh" bg="#F8F8FB" marginTop="auto">
       <Stack direction="row" h="15%" padding="16px 48px">
         <Image
           src={Logo}

@@ -124,8 +124,7 @@ const Join = (): React.ReactElement => {
     return <Navigate replace to={DASHBOARD_PAGE} />;
   }
 
-  const getTitleSection = (): React.ReactElement => {
-    return (
+  const getTitleSection = (): React.ReactElement => (
       <>
         <Text
           alignSelf={{ base: "center", lg: "unset" }}
@@ -145,10 +144,8 @@ const Join = (): React.ReactElement => {
         </Text>
       </>
     );
-  };
 
-  const getUserTypeSection = (): React.ReactElement => {
-    return (
+  const getUserTypeSection = (): React.ReactElement => (
       <Flex flexDir="column">
         <FormControl isRequired>
           <FormLabel
@@ -175,10 +172,8 @@ const Join = (): React.ReactElement => {
         </FormControl>
       </Flex>
     );
-  };
 
-  const getEmailSection = (): React.ReactElement => {
-    return (
+  const getEmailSection = (): React.ReactElement => (
       <Flex flexDir="column">
         <FormControl
           isRequired
@@ -209,10 +204,8 @@ const Join = (): React.ReactElement => {
         </FormControl>
       </Flex>
     );
-  };
 
-  const getWebOrganizationSection = (): React.ReactElement => {
-    return (
+  const getWebOrganizationSection = (): React.ReactElement => (
       <>
         <Text variant="desktop-heading">Organization Information</Text>
         <Flex flexDir="row" gap="24px">
@@ -288,10 +281,8 @@ const Join = (): React.ReactElement => {
         </Flex>
       </>
     );
-  };
 
-  const getMobileOrganizationSection = (): React.ReactElement => {
-    return (
+  const getMobileOrganizationSection = (): React.ReactElement => (
       <Flex flexDir="column" gap="8px">
         <FormControl isRequired>
           <FormLabel variant="mobile-form-label-bold">
@@ -350,10 +341,8 @@ const Join = (): React.ReactElement => {
         </FormControl>
       </Flex>
     );
-  };
 
-  const getWebContactSection = (): React.ReactElement => {
-    return (
+  const getWebContactSection = (): React.ReactElement => (
       <>
         <Text variant="desktop-heading">Contact Information</Text>
         <Flex flexDir="column" gap="24px">
@@ -423,10 +412,8 @@ const Join = (): React.ReactElement => {
         </Flex>
       </>
     );
-  };
 
-  const getMobileContactSection = (): React.ReactElement => {
-    return (
+  const getMobileContactSection = (): React.ReactElement => (
       <Flex flexDir="column" gap="8px">
         <FormControl isRequired>
           <FormLabel variant="mobile-form-label-bold">
@@ -484,7 +471,6 @@ const Join = (): React.ReactElement => {
         </FormControl>
       </Flex>
     );
-  };
 
   const handleSignUp = async (userInfo: UserInfo) => {
     try {
@@ -574,8 +560,7 @@ const Join = (): React.ReactElement => {
     handleSignUp(request);
   };
 
-  const getSubmitSection = (): React.ReactElement => {
-    return (
+  const getSubmitSection = (): React.ReactElement => (
       <Flex flexDir="column" alignItems="center" gap="8px">
         <Button
           w={{ base: "100%", lg: "480px" }}
@@ -611,7 +596,6 @@ const Join = (): React.ReactElement => {
         </Text>
       </Flex>
     );
-  };
 
   return (
     <Center

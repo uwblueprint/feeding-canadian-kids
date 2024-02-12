@@ -103,9 +103,7 @@ const SetPassword = (): React.ReactElement => {
 
   const [register, { loading: registerLoading }] = useMutation(REGISTER_USER);
 
-  const dataStatus = () => {
-    return onboardingData?.getOnboardingRequestById?.status !== "Approved";
-  };
+  const dataStatus = () => onboardingData?.getOnboardingRequestById?.status !== "Approved";
 
   const handleRegister = async () => {
     try {

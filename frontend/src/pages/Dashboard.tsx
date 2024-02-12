@@ -26,46 +26,43 @@ const NavigationButton = ({ children, path }: ButtonProps) => {
   return <ChakraButton onClick={() => navigate(path)}>{children}</ChakraButton>;
 };
 
-const OldDashboard = (): React.ReactElement => {
-  return (
-    <div
-      style={{
-        textAlign: "center",
-        paddingTop: "20px",
-        height: "100vh",
-        backgroundImage: `url(${BackgroundImage})`,
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      }}
-    >
-      <Wrap>
-        <RefreshCredentials />
-        <NavigationButton path={Routes.CREATE_ENTITY_PAGE}>
-          Create Entity
-        </NavigationButton>
+const OldDashboard = (): React.ReactElement => (
+  <div
+    style={{
+      textAlign: "center",
+      paddingTop: "20px",
+      backgroundImage: `url(${BackgroundImage})`,
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
+    }}
+  >
+    <Wrap>
+      <RefreshCredentials />
+      <NavigationButton path={Routes.CREATE_ENTITY_PAGE}>
+        Create Entity
+      </NavigationButton>
 
-        <NavigationButton path={Routes.UPDATE_ENTITY_PAGE}>
-          Update Entity
-        </NavigationButton>
-        <NavigationButton path={Routes.DISPLAY_ENTITY_PAGE}>
-          Display Entities
-        </NavigationButton>
-        <NavigationButton path={Routes.CREATE_SIMPLE_ENTITY_PAGE}>
-          Create Simple Entity
-        </NavigationButton>
-        <NavigationButton path={Routes.UPDATE_SIMPLE_ENTITY_PAGE}>
-          Update Simple Entity
-        </NavigationButton>
-        <NavigationButton path={Routes.DISPLAY_SIMPLE_ENTITY_PAGE}>
-          Display Simple Entities
-        </NavigationButton>
-        <NavigationButton path={Routes.HOOKS_PAGE}>Hooks Demo</NavigationButton>
-      </Wrap>
-      <div style={{ height: "2rem" }} />
-    </div>
-  );
-};
+      <NavigationButton path={Routes.UPDATE_ENTITY_PAGE}>
+        Update Entity
+      </NavigationButton>
+      <NavigationButton path={Routes.DISPLAY_ENTITY_PAGE}>
+        Display Entities
+      </NavigationButton>
+      <NavigationButton path={Routes.CREATE_SIMPLE_ENTITY_PAGE}>
+        Create Simple Entity
+      </NavigationButton>
+      <NavigationButton path={Routes.UPDATE_SIMPLE_ENTITY_PAGE}>
+        Update Simple Entity
+      </NavigationButton>
+      <NavigationButton path={Routes.DISPLAY_SIMPLE_ENTITY_PAGE}>
+        Display Simple Entities
+      </NavigationButton>
+      <NavigationButton path={Routes.HOOKS_PAGE}>Hooks Demo</NavigationButton>
+    </Wrap>
+    <div style={{ height: "2rem" }} />
+  </div>
+);
 
 const Dashboard = (): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);

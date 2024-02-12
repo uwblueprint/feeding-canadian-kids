@@ -23,6 +23,13 @@ export type Contact = {
   email: string;
 };
 
+export type OnsiteContact = {
+  id?: string;
+  name: string;
+  phone: string;
+  email: string;
+};
+
 type Donor = "Restaurant" | "Individual";
 
 type ASPInfo = {

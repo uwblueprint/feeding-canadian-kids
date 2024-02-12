@@ -23,7 +23,7 @@ class MealRequestService(IMealRequestService):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_staff: List[str],
     ):
         try:
             # Create MealRequests
@@ -33,6 +33,7 @@ class MealRequestService(IMealRequestService):
 
             meal_requests = []
             for request_date in request_dates:
+                # print("creaing!")
                 new_meal_request = MealRequest(
                     requestor=requestor,
                     meal_info=meal_info,
@@ -41,7 +42,10 @@ class MealRequestService(IMealRequestService):
                     delivery_instructions=delivery_instructions,
                     onsite_staff=onsite_staff,
                 )
+                new_meal_request.validate_onsite_contacts()
+                # print("new is ", new_meal_request.onsite_staff)
                 new_meal_request.save()
+                print("new meal request is", new_meal_request.onsite_staff)
                 meal_requests.append(new_meal_request.to_serializable_dict())
         except Exception as error:
             self.logger.error(str(error))

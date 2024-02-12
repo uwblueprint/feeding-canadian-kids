@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import {
   Box,
   Button,
@@ -18,6 +18,7 @@ import BackgroundImage from "../../assets/background.png";
 import { DASHBOARD_PAGE, JOIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser, LoginData } from "../../types/UserTypes";
+import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!, $idToken: String!) {
@@ -46,6 +47,11 @@ const LOGIN = gql`
             email
           }
           active
+          initialOnsiteContacts {
+            name
+            email
+            phone
+          }
         }
       }
     }
@@ -66,6 +72,7 @@ const Login = (): React.ReactElement => {
       user = await authAPIClient.login(email, password, "", login);
       setError(false);
     } catch (e: unknown) {
+      logPossibleGraphQLError(e as ApolloError);
       setError(true);
     }
     setAuthenticatedUser(user);

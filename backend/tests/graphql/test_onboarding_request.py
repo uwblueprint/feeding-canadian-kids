@@ -22,7 +22,7 @@ def test_create_onboarding_request():
                                     phone: "13579",
                                     email: "anon@gmail.com",
                                 },
-                                onsiteContacts: [],
+                                initialOnsiteContacts: [],
                                 active: false
                             }
                         ) {
@@ -49,7 +49,7 @@ def test_create_onboarding_request():
                                         phone
                                         email
                                     }
-                                    onsiteContacts {
+                                    initialOnsiteContacts {
                                         name
                                         phone
                                         email
@@ -93,7 +93,7 @@ def test_create_onboarding_request_with_existing_email_errors():
                         phone: "123456",
                         email: "jessie123@gmail.com"
                     }},
-                    onsiteContacts: [],
+                    initialOnsiteContacts: [],
                     active: true
                 }}
             ) {{
@@ -120,7 +120,7 @@ def test_create_onboarding_request_with_existing_email_errors():
                             phone
                             email
                         }}
-                        onsiteContacts {{
+                        initialOnsiteContacts {{
                             name
                             phone
                             email
@@ -165,7 +165,7 @@ def test_get_all_requests(onboarding_request_setup):
                             phone
                             email
                         }
-                        onsiteContacts {
+                        initialOnsiteContacts {
                             name
                             phone
                             email
@@ -217,7 +217,7 @@ def test_filter_requests_by_role(onboarding_request_setup):
                             phone
                             email
                         }
-                        onsiteContacts {
+                        initialOnsiteContacts {
                             name
                             phone
                             email
@@ -264,7 +264,7 @@ def test_filter_requests_by_status(onboarding_request_setup):
                             phone
                             email
                         }
-                        onsiteContacts {
+                        initialOnsiteContacts {
                             name
                             phone
                             email
@@ -311,7 +311,7 @@ def test_get_requests_by_id(onboarding_request_setup):
                         phone
                         email
                     }}
-                    onsiteContacts {{
+                    initialOnsiteContacts {{
                         name
                         phone
                         email

@@ -9,7 +9,8 @@ Tests for ONsite contact and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
 """
 def test_create_onsite_contact(onsite_contact_setup):
-    asp, donor, onsite_contact = onsite_contact_setup
+    asp, donor, onsite_contacts, _ = onsite_contact_setup
+    onsite_contact = onsite_contacts[0]
 
     mutation = f"""
     mutation c{{
@@ -40,16 +41,18 @@ def test_create_onsite_contact(onsite_contact_setup):
       assert contact["phone"] == "604-433-1111"
 
 def test_update_onsite_contact(onsite_contact_setup):
-    asp, donor, onsite_contact = onsite_contact_setup
+    asp, donor, asp_onsite_contacts, donor_onsite_contact = onsite_contact_setup
+    onsite_contact = asp_onsite_contacts[0]
 
     # Test for the update mutation
     mutation = f"""
     mutation u{{
       updateOnsiteContact(
-        id: "{onsite_contact.id}",
+        id: "{donor_onsite_contact.id}",
         name: "Updated Bob Cat",
         email: "updated_bob@test.com",
-        phone: "604-433-2222"
+        phone: "604-433-2222",
+        requestorId: "{donor.id}"
       ){{
         onsiteContact{{
           id
@@ -63,7 +66,7 @@ def test_update_onsite_contact(onsite_contact_setup):
     result = graphql_schema.execute(mutation)
     assert result.errors is None
     updated_result_contact = result.data["updateOnsiteContact"]["onsiteContact"]
-    updated_db_result = OnsiteContact.objects(id=onsite_contact['id']).first()
+    updated_db_result = OnsiteContact.objects(id=donor_onsite_contact['id']).first()
 
     for contact in [updated_result_contact, updated_db_result]:
       assert contact["name"] == "Updated Bob Cat"
@@ -72,7 +75,8 @@ def test_update_onsite_contact(onsite_contact_setup):
 
 
 def test_delete_onsite_contact(onsite_contact_setup):
-    asp, donor, onsite_contact = onsite_contact_setup
+    asp, donor, onsite_contacts, _ = onsite_contact_setup
+    onsite_contact = onsite_contacts[0]
 
     # Test for the delete mutation
     mutation = f"""
@@ -93,11 +97,12 @@ def test_delete_onsite_contact(onsite_contact_setup):
 
 
 def test_get_onsite_contacts_for_user_by_id(onsite_contact_setup):
-    asp, donor, onsite_contact = onsite_contact_setup
+    asp, donor, onsite_contacts, _ = onsite_contact_setup
+    onsite_contact = onsite_contacts[0]
 
-    asp = User.objects(id=asp.id).get()
-    asp.info.onsite_contacts = []
-    asp.save()
+    # asp = User.objects(id=asp.id).get()
+    # asp.info.onsite_contacts = []
+    # asp.save()
 
     # Test for the get_onsite_contact_for_user_by_id query
     query = f"""
@@ -115,7 +120,6 @@ def test_get_onsite_contacts_for_user_by_id(onsite_contact_setup):
     result = graphql_schema.execute(query)
     assert result.errors is None
     result = result.data["getOnsiteContactForUserById"][0]
-    print("result is ", result)
 
     assert result["id"] == str(onsite_contact.id)
     assert result["name"] == onsite_contact.name
@@ -123,7 +127,8 @@ def test_get_onsite_contacts_for_user_by_id(onsite_contact_setup):
     assert result["phone"] == onsite_contact.phone
 
 def test_get_onsite_contact_by_id(onsite_contact_setup):
-    asp, donor, onsite_contact = onsite_contact_setup
+    asp, donor, onsite_contacts, _ = onsite_contact_setup
+    onsite_contact = onsite_contacts[0]
 
     # Test for the get_onsite_contact_by_id query
     query = f"""

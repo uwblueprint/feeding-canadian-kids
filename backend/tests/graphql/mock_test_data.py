@@ -19,7 +19,7 @@ MOCK_INFO1_SNAKE = {
         "phone": "123456",
         "email": "jessie123@gmail.com",
     },
-    "onsite_contacts": [],
+    "initial_onsite_contacts": [],
     "active": True,
 }
 
@@ -46,7 +46,7 @@ MOCK_INFO1_CAMEL = {
         "phone": "123456",
         "email": "jessie123@gmail.com",
     },
-    "onsiteContacts": [],
+    "initialOnsiteContacts": [],
     "active": True,
 }
 
@@ -71,8 +71,8 @@ MOCK_INFO2_SNAKE = {
         "phone": "98765",
         "email": "goose@gmail.com",
     },
-    "onsite_contacts": [],
-    # "onsite_contacts": [
+    "initial_onsite_contacts": [],
+    # "initial_onsite_contacts": [
     #     {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
     #     {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
     # ],
@@ -100,8 +100,8 @@ MOCK_INFO2_CAMEL = {
         "phone": "98765",
         "email": "goose@gmail.com",
     },
-    "onsiteContacts": [],
-    # "onsiteContacts": [
+    "initialOnsiteContacts": [],
+    # "initialOnsiteContacts": [
     #     {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
     #     {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
     # ],
@@ -123,8 +123,8 @@ MOCK_INFO3_SNAKE = {
         "phone": "13579",
         "email": "anon@gmail.com",
     },
-    "onsite_contacts": [],
-    # "onsite_contacts": [
+    "initial_onsite_contacts": [],
+    # "initial_onsite_contacts": [
     #     {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
     #     {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
     # ],
@@ -146,8 +146,8 @@ MOCK_INFO3_CAMEL = {
         "phone": "13579",
         "email": "anon@gmail.com",
     },
-    "onsiteContacts": [],
-    # "onsiteContacts": [
+    "initialOnsiteContacts": [],
+    # "initialOnsiteContacts": [
     #     {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
     #     {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
     # ],
@@ -177,13 +177,6 @@ MOCK_MEALREQUEST1_SNAKE = {
         "portions": 10,
         "dietary_restrictions": "Vegan",
     },
-    "onsite_staff": [
-        {
-            "name": "Test name",
-            "email": "test@gmail.com",
-            "phone": "1234567890",
-        }
-    ],
     "date_created": "2023-03-31T00:00:00",
     "date_updated": "2023-03-31T00:00:00",
     "delivery_instructions": "Test instructions",

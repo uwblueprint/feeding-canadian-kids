@@ -27,7 +27,7 @@ test_user_info = {
         "phone": "123-456-7890",
         "email": "ansonjwhe@gmail.com",
     },
-    "onsite_contacts": [
+    "initial_onsite_contacts": [
         {"name": "Abu", "phone": "123-456-7890", "email": "abu@uwblueprint.org"},
         {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
     ],

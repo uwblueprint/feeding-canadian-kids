@@ -16,8 +16,7 @@ import { downloadFile } from "../../utils/FileUtils";
 
 type EntityData = Omit<EntityResponse, "boolField"> & { boolField: string };
 
-const convert = (entityResponse: EntityResponse): EntityData => {
-  return {
+const convert = (entityResponse: EntityResponse): EntityData => ({
     id: entityResponse.id,
     stringField: entityResponse.stringField,
     intField: entityResponse.intField,
@@ -25,8 +24,7 @@ const convert = (entityResponse: EntityResponse): EntityData => {
     enumField: entityResponse.enumField,
     boolField: entityResponse.boolField.toString(),
     fileName: entityResponse.fileName,
-  };
-};
+  });
 
 type TableProps = {
   data: EntityData[];

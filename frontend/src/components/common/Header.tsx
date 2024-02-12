@@ -55,8 +55,7 @@ const Header = () => {
     navigate(LOGIN_PAGE);
   };
 
-  const headerDesktop = (): React.ReactElement => {
-    return (
+  const headerDesktop = (): React.ReactElement => (
       <Flex
         justifyContent="space-between"
         alignItems="center"
@@ -132,10 +131,8 @@ const Header = () => {
         )}
       </Flex>
     );
-  };
 
-  const headerMobile = (): React.ReactElement => {
-    return (
+  const headerMobile = (): React.ReactElement => (
       <Flex
         justifyContent="space-between"
         alignItems="center"
@@ -209,7 +206,6 @@ const Header = () => {
         )}
       </Flex>
     );
-  };
 
   return isWebView ? headerDesktop() : headerMobile();
 };

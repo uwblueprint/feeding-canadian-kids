@@ -36,6 +36,7 @@ class CreateOnsiteContact(Mutation):
             return CreateOnsiteContact(onsite_contact_dto)
 class UpdateOnsiteContact(Mutation):
     class Arguments:
+        requestor_id = graphene.String(required=True)
         id = graphene.String(required=True)
         name = graphene.String()
         phone = graphene.String()
@@ -43,8 +44,19 @@ class UpdateOnsiteContact(Mutation):
 
     onsite_contact = graphene.Field(OnsiteContact)
 
-    def mutate(self, info, id, name=None, phone=None, email=None):
+    def mutate(self, info, requestor_id, id, name=None, phone=None, email=None):
+        # TODO: Add requestor_id check
+        user_service = services["user_service"]
         onsite_contact_service = services["onsite_contact_service"]
+
+        requestor_auth_id = user_service.get_auth_id_by_user_id(requestor_id)
+        requestor_role = user_service.get_user_role_by_auth_id(requestor_auth_id)
+        onsite_contact = onsite_contact_service.get_onsite_contact_by_id(id)
+        organization_id = onsite_contact.organization_id
+
+        if requestor_role != "Admin" and requestor_id != organization_id:
+            raise Exception("Unauthorized")
+
         updated_onsite_contact = onsite_contact_service.update_onsite_contact_by_id(id, name, email, phone)
         return UpdateOnsiteContact(updated_onsite_contact)
 

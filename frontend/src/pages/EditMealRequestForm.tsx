@@ -213,8 +213,7 @@ const EditMealRequestForm = ({
     onClose();
   }
 
-  const getMobileContactSection = (): React.ReactElement => {
-    return (
+  const getMobileContactSection = (): React.ReactElement => (
       <Flex flexDir="column" gap="8px">
         <FormControl isRequired mb={6}>
           <FormLabel variant="mobile-form-label-bold">
@@ -272,10 +271,8 @@ const EditMealRequestForm = ({
         </FormControl>
       </Flex>
     );
-  };
 
-  const getWebContactSection = (): React.ReactElement => {
-    return (
+  const getWebContactSection = (): React.ReactElement => (
       <>
         <Text variant="desktop-heading" pt={4} pb={3}>
           Contact Information
@@ -366,7 +363,6 @@ const EditMealRequestForm = ({
         </Flex>
       </>
     );
-  };
 
   return (
     <>

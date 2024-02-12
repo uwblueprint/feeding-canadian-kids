@@ -1,8 +1,7 @@
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import React from "react";
 
-const LoadingSpinner = (): React.ReactElement => {
-  return (
+const LoadingSpinner = (): React.ReactElement => (
     <Flex gap="24px" alignContent="center">
       <Text height="24px" margin="12px">
         Loading...
@@ -16,6 +15,5 @@ const LoadingSpinner = (): React.ReactElement => {
       />
     </Flex>
   );
-};
 
 export default LoadingSpinner;

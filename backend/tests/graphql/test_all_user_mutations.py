@@ -30,18 +30,7 @@ def test_update_user_by_id(user_setup, mocker):
                         phone: "13579",
                         email: "anon@gmail.com",
                     }},
-                    onsiteContacts: [
-                        {{
-                            name: "ghi",
-                            phone: "135-792-4680",
-                            email: "ghi@uwblueprint.org"
-                        }},
-                        {{
-                            name: "Jack Doe",
-                            phone: "777-888-999",
-                            email: "com@domain.email"
-                        }},
-                    ],
+                    initialOnsiteContacts: [],
                     active: false
                 }}
             ) {{
@@ -68,7 +57,7 @@ def test_update_user_by_id(user_setup, mocker):
                             phone
                             email
                         }}
-                        onsiteContacts {{
+                        initialOnsiteContacts {{
                             name
                             phone
                             email
@@ -80,7 +69,6 @@ def test_update_user_by_id(user_setup, mocker):
         }}"""
     )
 
-    print("Before accsing update!!")
     user_result4 = update_to_user_4_info.data["updateUserByID"]["user"]
     assert user_result4["id"] == str(user_1.id)
     MOCK_INFO4_CAMEL = deepcopy(MOCK_INFO3_CAMEL)
@@ -109,18 +97,7 @@ def test_update_user_by_id(user_setup, mocker):
                         phone: "123456",
                         email: "jessie123@gmail.com"
                     }},
-                    onsiteContacts: [
-                        {{
-                            name: "abc",
-                            phone: "123-456-7890",
-                            email: "abc@uwblueprint.org"
-                        }},
-                        {{
-                            name: "Jane Doe",
-                            phone: "111-222-3333",
-                            email: "example@domain.com"
-                        }}
-                    ],
+                    initialOnsiteContacts: [],
                     active: true
                 }}
             ) {{
@@ -147,7 +124,7 @@ def test_update_user_by_id(user_setup, mocker):
                             phone
                             email
                         }}
-                        onsiteContacts {{
+                        initialOnsiteContacts {{
                             name
                             phone
                             email
@@ -194,7 +171,7 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
                         phone: "123456",
                         email: "jessie123@gmail.com"
                     }},
-                    onsiteContacts: [
+                    initialOnsiteContacts: [
                         {{
                             name: "abc",
                             phone: "123-456-7890",
@@ -232,7 +209,7 @@ def test_number_of_kids_cant_be_set_negative(user_setup, mocker):
                             phone
                             email
                         }}
-                        onsiteContacts {{
+                        initialOnsiteContacts {{
                             name
                             phone
                             email
@@ -283,7 +260,7 @@ def test_activate_user_by_id(user_setup, mocker):
                             phone
                             email
                         }}
-                        onsiteContacts {{
+                        initialOnsiteContacts {{
                             name
                             phone
                             email
@@ -329,7 +306,7 @@ def test_deactivate_user_by_id(user_setup, mocker):
                             phone
                             email
                         }}
-                        onsiteContacts {{
+                        initialOnsiteContacts {{
                             name
                             phone
                             email
@@ -371,7 +348,7 @@ def test_deactivate_user_by_id(user_setup, mocker):
                             phone
                             email
                         }}
-                        onsiteContacts {{
+                        initialOnsiteContacts {{
                             name
                             phone
                             email
@@ -414,7 +391,7 @@ def test_deactivate_user_by_id(user_setup, mocker):
                             phone
                             email
                         }}
-                        onsiteContacts {{
+                        initialOnsiteContacts {{
                             name
                             phone
                             email

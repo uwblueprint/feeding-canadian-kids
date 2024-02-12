@@ -5,6 +5,7 @@ from .types import (
     Contact,
     Mutation,
     MutationList,
+    OnsiteContact,
     QueryList,
     SortDirection,
     User,
@@ -36,6 +37,7 @@ class CreateMealRequestResponse(graphene.ObjectType):
     drop_off_datetime = graphene.DateTime(required=True)
     status = graphene.Field(graphene.Enum.from_enum(MealStatus), required=True)
     meal_info = graphene.Field(MealInfoResponse, required=True)
+    onsite_staff = graphene.List(OnsiteContact)
 
 
 class DonationInfo(graphene.ObjectType):
@@ -52,7 +54,7 @@ class MealRequestResponse(graphene.ObjectType):
     drop_off_datetime = graphene.DateTime()
     drop_off_location = graphene.String()
     meal_info = graphene.Field(MealInfoResponse)
-    onsite_staff = graphene.List(Contact)
+    onsite_staff = graphene.List(OnsiteContact)
     date_created = graphene.DateTime()
     date_updated = graphene.DateTime()
     delivery_instructions = graphene.String()
@@ -70,7 +72,7 @@ class CreateMealRequests(Mutation):
         drop_off_time = graphene.Time(required=True)
         drop_off_location = graphene.String(required=True)
         delivery_instructions = graphene.String(default_value=None)
-        onsite_staff = graphene.List(ContactInput, required=True)
+        onsite_staff = graphene.List(graphene.String, default_value=[])
 
     # return values
     meal_requests = graphene.List(CreateMealRequestResponse)

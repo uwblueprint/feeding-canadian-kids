@@ -1,6 +1,14 @@
 from ..utils.get_unbound_function import get_unbound_function as get_unbound_function
 from ..utils.str_converters import to_camel_case as to_camel_case
-from .definitions import GrapheneEnumType as GrapheneEnumType, GrapheneGraphQLType as GrapheneGraphQLType, GrapheneInputObjectType as GrapheneInputObjectType, GrapheneInterfaceType as GrapheneInterfaceType, GrapheneObjectType as GrapheneObjectType, GrapheneScalarType as GrapheneScalarType, GrapheneUnionType as GrapheneUnionType
+from .definitions import (
+    GrapheneEnumType as GrapheneEnumType,
+    GrapheneGraphQLType as GrapheneGraphQLType,
+    GrapheneInputObjectType as GrapheneInputObjectType,
+    GrapheneInterfaceType as GrapheneInterfaceType,
+    GrapheneObjectType as GrapheneObjectType,
+    GrapheneScalarType as GrapheneScalarType,
+    GrapheneUnionType as GrapheneUnionType,
+)
 from .dynamic import Dynamic as Dynamic
 from .enum import Enum as Enum
 from .field import Field as Field
@@ -8,7 +16,14 @@ from .inputobjecttype import InputObjectType as InputObjectType
 from .interface import Interface as Interface
 from .objecttype import ObjectType as ObjectType
 from .resolver import get_default_resolver as get_default_resolver
-from .scalars import Boolean as Boolean, Float as Float, ID as ID, Int as Int, Scalar as Scalar, String as String
+from .scalars import (
+    Boolean as Boolean,
+    Float as Float,
+    ID as ID,
+    Int as Int,
+    Scalar as Scalar,
+    String as String,
+)
 from .structures import List as List, NonNull as NonNull
 from .union import Union as Union
 from .utils import get_field_as as get_field_as
@@ -28,7 +43,14 @@ class TypeMap(dict):
     mutation: Incomplete
     subscription: Incomplete
     types: Incomplete
-    def __init__(self, query: Incomplete | None = None, mutation: Incomplete | None = None, subscription: Incomplete | None = None, types: Incomplete | None = None, auto_camelcase: bool = True) -> None: ...
+    def __init__(
+        self,
+        query: Incomplete | None = None,
+        mutation: Incomplete | None = None,
+        subscription: Incomplete | None = None,
+        types: Incomplete | None = None,
+        auto_camelcase: bool = True,
+    ) -> None: ...
     def add_type(self, graphene_type): ...
     @staticmethod
     def create_scalar(graphene_type): ...
@@ -48,7 +70,15 @@ class Schema:
     mutation: Incomplete
     subscription: Incomplete
     graphql_schema: Incomplete
-    def __init__(self, query: Incomplete | None = None, mutation: Incomplete | None = None, subscription: Incomplete | None = None, types: Incomplete | None = None, directives: Incomplete | None = None, auto_camelcase: bool = True) -> None: ...
+    def __init__(
+        self,
+        query: Incomplete | None = None,
+        mutation: Incomplete | None = None,
+        subscription: Incomplete | None = None,
+        types: Incomplete | None = None,
+        directives: Incomplete | None = None,
+        auto_camelcase: bool = True,
+    ) -> None: ...
     def __getattr__(self, type_name): ...
     def lazy(self, _type): ...
     def execute(self, *args, **kwargs): ...

@@ -1,5 +1,12 @@
 from _typeshed import Incomplete
-from graphql import GraphQLEnumType, GraphQLInputObjectType, GraphQLInterfaceType, GraphQLObjectType, GraphQLScalarType, GraphQLUnionType
+from graphql import (
+    GraphQLEnumType,
+    GraphQLInputObjectType,
+    GraphQLInterfaceType,
+    GraphQLObjectType,
+    GraphQLScalarType,
+    GraphQLUnionType,
+)
 
 class GrapheneGraphQLType:
     graphene_type: Incomplete

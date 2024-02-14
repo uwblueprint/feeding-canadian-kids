@@ -18,6 +18,7 @@ class MealStatus(Enum):
 MEAL_STATUSES_ENUMS = [status for status in MealStatus]
 MEAL_STATUSES_STRINGS = [status.value for status in MealStatus]
 
+
 # Information on the requested meals, provided by the ASP
 class MealInfo(mg.EmbeddedDocument):
     portions = mg.IntField(required=True)
@@ -35,7 +36,7 @@ class DonationInfo(mg.EmbeddedDocument):
 class MealRequest(mg.Document):
     requestor = mg.ReferenceField(User, required=True)
     # status = mg.EnumField(MealStatus, default=MealStatus.OPEN)
-    status= mg.StringField(
+    status = mg.StringField(
         choices=MEAL_STATUSES_STRINGS, required=True, default=MealStatus.OPEN.value
     )
 
@@ -44,20 +45,24 @@ class MealRequest(mg.Document):
     meal_info = mg.EmbeddedDocumentField(MealInfo, required=True)
 
     # https://docs.mongoengine.org/apireference.html#mongoengine.fields.ReferenceField
-    onsite_staff = mg.ListField(mg.ReferenceField(OnsiteContact, required=True, reverse_delete_rule=4)) # 4 = PULL
+    onsite_staff = mg.ListField(
+        mg.ReferenceField(OnsiteContact, required=True, reverse_delete_rule=4)
+    )  # 4 = PULL
     date_created = mg.DateTimeField(required=True, default=datetime.utcnow)
     date_updated = mg.DateTimeField(required=True, default=datetime.utcnow)
     delivery_instructions = mg.StringField(default=None)
     donation_info = mg.EmbeddedDocumentField(DonationInfo, default=None)
 
     def validate_onsite_contacts(self):
-          if self.onsite_staff:
+        if self.onsite_staff:
             # Try to fetch the referenced document to ensure it exists, will throw an error if it doesn't
             for contact in self.onsite_staff:
                 contact = OnsiteContact.objects(id=contact.id).first()
                 if not contact or contact.organization_id != self.requestor.id:
-                    raise Exception(f"onsite contact {contact.id} not found or not associated with the requestor's organization")
-        
+                    raise Exception(
+                        f"onsite contact {contact.id} not found or not associated with the requestor's organization"
+                    )
+
     def to_serializable_dict(self):
         """
         Returns a dict representation of the document that is JSON serializable

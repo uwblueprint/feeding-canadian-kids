@@ -1,6 +1,6 @@
 from _typeshed import Incomplete
 
-__all__ = ['query', 'update', 'STRING_OPERATORS']
+__all__ = ["query", "update", "STRING_OPERATORS"]
 
 STRING_OPERATORS: Incomplete
 

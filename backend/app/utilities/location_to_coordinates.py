@@ -13,7 +13,9 @@ def getGeocodeFromAddress(organization_address):
 
     response = requests.get(
         '{base_url}?q="{address}"&api_key={api_key}'.format(
-            base_url=GEOCODE_API_URL, address=organization_address, api_key=GEOCODE_API_KEY
+            base_url=GEOCODE_API_URL,
+            address=organization_address,
+            api_key=GEOCODE_API_KEY,
         )
     )
     try:
@@ -27,4 +29,3 @@ def getGeocodeFromAddress(organization_address):
     except Exception as e:
         print("Failed when getting geoencoding from address!")
         raise e
-

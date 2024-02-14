@@ -11,7 +11,9 @@ class UnionOptions(BaseOptions):
 
 class Union(UnmountedType, BaseType):
     @classmethod
-    def __init_subclass_with_meta__(cls, types: Incomplete | None = None, **options) -> None: ...
+    def __init_subclass_with_meta__(
+        cls, types: Incomplete | None = None, **options
+    ) -> None: ...
     @classmethod
     def get_type(cls): ...
     @classmethod

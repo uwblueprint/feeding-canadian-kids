@@ -34,6 +34,8 @@ class CreateOnsiteContact(Mutation):
                 phone,
             )
             return CreateOnsiteContact(onsite_contact_dto)
+
+
 class UpdateOnsiteContact(Mutation):
     class Arguments:
         requestor_id = graphene.String(required=True)
@@ -57,8 +59,11 @@ class UpdateOnsiteContact(Mutation):
         if requestor_role != "Admin" and requestor_id != organization_id:
             raise Exception("Unauthorized")
 
-        updated_onsite_contact = onsite_contact_service.update_onsite_contact_by_id(id, name, email, phone)
+        updated_onsite_contact = onsite_contact_service.update_onsite_contact_by_id(
+            id, name, email, phone
+        )
         return UpdateOnsiteContact(updated_onsite_contact)
+
 
 class DeleteOnsiteContact(Mutation):
     class Arguments:
@@ -87,9 +92,7 @@ class DeleteOnsiteContact(Mutation):
         return DeleteOnsiteContact(success)
 
 
-
 class OnsiteContactMutations(MutationList):
     createOnsiteContact = CreateOnsiteContact.Field()
     updateOnsiteContact = UpdateOnsiteContact.Field()
     deleteOnsiteContact = DeleteOnsiteContact.Field()
-

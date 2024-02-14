@@ -15,7 +15,7 @@ class UserService(IUserService):
     UserService implementation with user management methods
     """
 
-    def __init__(self, logger, onsite_contact_service : IOnsiteContactService):
+    def __init__(self, logger, onsite_contact_service: IOnsiteContactService):
         """
         Create an instance of UserService
 
@@ -177,7 +177,11 @@ class UserService(IUserService):
             )
 
             try:
-                user_info: UserInfo = OnboardingRequest.objects(id=create_user_dto.request_id).first().info
+                user_info: UserInfo = (
+                    OnboardingRequest.objects(id=create_user_dto.request_id)
+                    .first()
+                    .info
+                )
                 new_user: User = User(
                     auth_id=firebase_user.uid,
                     info=user_info,
@@ -188,8 +192,8 @@ class UserService(IUserService):
                         organization_id=new_user.id,
                         name=onsite_contact.name,
                         email=onsite_contact.email,
-                        phone=onsite_contact.phone
-                        )
+                        phone=onsite_contact.phone,
+                    )
 
             except Exception as mongo_error:
                 # rollback user creation in Firebase

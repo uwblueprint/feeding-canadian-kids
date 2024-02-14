@@ -1,6 +1,20 @@
 from _typeshed import Incomplete
 
-__all__ = ['NotRegistered', 'InvalidDocumentError', 'LookUpError', 'DoesNotExist', 'MultipleObjectsReturned', 'InvalidQueryError', 'OperationError', 'NotUniqueError', 'BulkWriteError', 'FieldDoesNotExist', 'ValidationError', 'SaveConditionError', 'DeprecatedError']
+__all__ = [
+    "NotRegistered",
+    "InvalidDocumentError",
+    "LookUpError",
+    "DoesNotExist",
+    "MultipleObjectsReturned",
+    "InvalidQueryError",
+    "OperationError",
+    "NotUniqueError",
+    "BulkWriteError",
+    "FieldDoesNotExist",
+    "ValidationError",
+    "SaveConditionError",
+    "DeprecatedError",
+]
 
 class MongoEngineException(Exception): ...
 class NotRegistered(MongoEngineException): ...
@@ -19,7 +33,7 @@ class ValidationError(AssertionError):
     errors: Incomplete
     field_name: Incomplete
     message: Incomplete
-    def __init__(self, message: str = '', **kwargs) -> None: ...
+    def __init__(self, message: str = "", **kwargs) -> None: ...
     def __getattribute__(self, name): ...
     def to_dict(self): ...
 

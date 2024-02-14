@@ -19,6 +19,20 @@ class MutationOptions(ObjectTypeOptions):
 
 class Mutation(ObjectType):
     @classmethod
-    def __init_subclass_with_meta__(cls, interfaces=(), resolver: Incomplete | None = None, output: Incomplete | None = None, arguments: Incomplete | None = None, _meta: Incomplete | None = None, **options) -> None: ...
+    def __init_subclass_with_meta__(
+        cls,
+        interfaces=(),
+        resolver: Incomplete | None = None,
+        output: Incomplete | None = None,
+        arguments: Incomplete | None = None,
+        _meta: Incomplete | None = None,
+        **options
+    ) -> None: ...
     @classmethod
-    def Field(cls, name: Incomplete | None = None, description: Incomplete | None = None, deprecation_reason: Incomplete | None = None, required: bool = False): ...
+    def Field(
+        cls,
+        name: Incomplete | None = None,
+        description: Incomplete | None = None,
+        deprecation_reason: Incomplete | None = None,
+        required: bool = False,
+    ): ...

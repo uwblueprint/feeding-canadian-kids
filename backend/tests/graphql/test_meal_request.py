@@ -9,17 +9,22 @@ Tests for MealRequestchema and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
 """
 
+
 def compare_returned_onsite_contact(result, onsite_contact):
-  assert result["id"] == str(onsite_contact.id)
-  assert result["name"] == onsite_contact.name
-  assert result["email"] == onsite_contact.email
-  assert result["phone"] == onsite_contact.phone
-  assert result["organizationId"] == str(onsite_contact.organization_id)
-  
+    assert result["id"] == str(onsite_contact.id)
+    assert result["name"] == onsite_contact.name
+    assert result["email"] == onsite_contact.email
+    assert result["phone"] == onsite_contact.phone
+    assert result["organizationId"] == str(onsite_contact.organization_id)
 
 
 def test_create_meal_request(meal_request_setup, onsite_contact_setup):
-    asp, donor, [asp_onsite_contact, asp_onsite_contact2], donor_onsite_contact = onsite_contact_setup
+    (
+        asp,
+        donor,
+        [asp_onsite_contact, asp_onsite_contact2],
+        donor_onsite_contact,
+    ) = onsite_contact_setup
 
     mutation = f"""
     mutation testCreateMealRequest {{
@@ -81,20 +86,29 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
         == "2023-06-02T16:30:00+00:00"
     )
 
-    created_onsite_contacts = result.data["createMealRequest"]["mealRequests"][0]["onsiteStaff"]
-    expected_onsite_contacts =  [asp_onsite_contact, asp_onsite_contact2] if created_onsite_contacts[0]["id"] == str(asp_onsite_contact.id) else [asp_onsite_contact2, asp_onsite_contact]
+    created_onsite_contacts = result.data["createMealRequest"]["mealRequests"][0][
+        "onsiteStaff"
+    ]
+    expected_onsite_contacts = (
+        [asp_onsite_contact, asp_onsite_contact2]
+        if created_onsite_contacts[0]["id"] == str(asp_onsite_contact.id)
+        else [asp_onsite_contact2, asp_onsite_contact]
+    )
     for created, expected in zip(created_onsite_contacts, expected_onsite_contacts):
-      assert(created["id"] == str(expected.id))
-      assert(created["name"] == str(expected.name))
-      assert(created["email"] == str(expected.email))
-      assert(created["phone"] == str(expected.phone))
-      assert(created["organizationId"] == str(expected.organization_id))
+        assert created["id"] == str(expected.id)
+        assert created["name"] == str(expected.name)
+        assert created["email"] == str(expected.email)
+        assert created["phone"] == str(expected.phone)
+        assert created["organizationId"] == str(expected.organization_id)
 
     # Delete the created meal requests
     for meal_request in result.data["createMealRequest"]["mealRequests"]:
         MealRequest.objects(id=meal_request["id"]).delete()
 
-def test_create_meal_request_fails_invalid_onsite_contact(meal_request_setup, onsite_contact_setup):
+
+def test_create_meal_request_fails_invalid_onsite_contact(
+    meal_request_setup, onsite_contact_setup
+):
     asp, donor, asp_onsite_contact, donor_onsite_contact = onsite_contact_setup
 
     counter_before = MealRequest.objects().count()
@@ -189,10 +203,7 @@ def test_commit_to_meal_request(meal_request_setup):
     assert result.errors is None
 
     # Verify that the meal request's status was updated
-    assert (
-        result.data["commitToMealRequest"]["mealRequests"][0]["status"]
-        == "UPCOMING"
-    )
+    assert result.data["commitToMealRequest"]["mealRequests"][0]["status"] == "UPCOMING"
 
     # Verify that the meal request's donationInfo was populated correctly
     assert result.data["commitToMealRequest"]["mealRequests"][0]["donationInfo"][
@@ -346,7 +357,7 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
     assert updatedMealRequest["dropOffLocation"] == updatedDropOffLocation
     assert updatedMealRequest["deliveryInstructions"] == updatedDeliveryInstructions
     assert updatedMealRequest["mealInfo"] == updatedMealInfo
-    returned_onsite_contacts = updatedMealRequest["onsiteStaff"] 
+    returned_onsite_contacts = updatedMealRequest["onsiteStaff"]
     compare_returned_onsite_contact(returned_onsite_contacts[0], onsite_contact1)
     compare_returned_onsite_contact(returned_onsite_contacts[1], onsite_contact2)
 
@@ -446,4 +457,3 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
     result = executed.data["getMealRequestsByRequestorId"][0]
     assert result["requestor"]["id"] == str(requestor.id)
     assert result["id"] == str(meal_request.id)
-

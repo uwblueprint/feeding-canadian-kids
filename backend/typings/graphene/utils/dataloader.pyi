@@ -13,7 +13,16 @@ class DataLoader:
     cache: bool
     batch_load_fn: Incomplete
     get_cache_key: Incomplete
-    def __init__(self, batch_load_fn: Incomplete | None = None, batch: Incomplete | None = None, max_batch_size: Incomplete | None = None, cache: Incomplete | None = None, get_cache_key: Incomplete | None = None, cache_map: Incomplete | None = None, loop: Incomplete | None = None) -> None: ...
+    def __init__(
+        self,
+        batch_load_fn: Incomplete | None = None,
+        batch: Incomplete | None = None,
+        max_batch_size: Incomplete | None = None,
+        cache: Incomplete | None = None,
+        get_cache_key: Incomplete | None = None,
+        cache_map: Incomplete | None = None,
+        loop: Incomplete | None = None,
+    ) -> None: ...
     @property
     def loop(self): ...
     def load(self, key: Incomplete | None = None): ...

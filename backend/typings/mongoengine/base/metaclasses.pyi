@@ -1,4 +1,4 @@
-__all__ = ['DocumentMetaclass', 'TopLevelDocumentMetaclass']
+__all__ = ["DocumentMetaclass", "TopLevelDocumentMetaclass"]
 
 class DocumentMetaclass(type):
     def __new__(mcs, name, bases, attrs): ...

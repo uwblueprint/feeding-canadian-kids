@@ -37,7 +37,6 @@ class OnsiteContactService(IOnsiteContactService):
         onsite_staff = OnsiteContact.objects(organization_id=user_id).all()
         return [staff.to_dto() for staff in onsite_staff]
 
-
     def delete_onsite_contact_by_id(
         self,
         id: str,
@@ -65,9 +64,9 @@ class OnsiteContactService(IOnsiteContactService):
 
         return existing.to_dto()
 
-        
-
-    def create_onsite_contact(self, organization_id: str, name: str, email: str, phone: str) -> OnsiteContactDTO:
+    def create_onsite_contact(
+        self, organization_id: str, name: str, email: str, phone: str
+    ) -> OnsiteContactDTO:
         try:
             # Check that the organization does exist
             organization = User.objects(id=organization_id).first()

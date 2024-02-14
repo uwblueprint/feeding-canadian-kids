@@ -42,7 +42,6 @@ def onboarding_request_setup():
 
 @pytest.fixture(scope="function", autouse=True)
 def user_setup():
-
     users = []
     for MOCK_USER in [MOCK_USER1_SNAKE, MOCK_USER2_SNAKE, MOCK_USER3_SNAKE]:
         user = User(**MOCK_USER)
@@ -78,7 +77,6 @@ def meal_request_setup(user_setup):
     meal_request.delete()
 
 
-
 @pytest.fixture(scope="function", autouse=True)
 def onsite_contact_setup(user_setup):
     asp, donor, _ = user_setup
@@ -86,22 +84,21 @@ def onsite_contact_setup(user_setup):
         name="Sample Contact",
         email="sample@test.com",
         phone="123-456-7890",
-        organization_id=asp.id
+        organization_id=asp.id,
     ).save()
     asp_onsite_contact2 = OnsiteContact(
         name="Sample Contact 2",
         email="sample2@test.com",
         phone="123-456-7890",
-        organization_id=asp.id
+        organization_id=asp.id,
     ).save()
     donor_onsite_contact = OnsiteContact(
         name="Sample Contact 2",
         email="sample2@test.com",
         phone="123-333-7890",
-        organization_id=donor.id
+        organization_id=donor.id,
     ).save()
 
     yield asp, donor, [asp_onsite_contact, asp_onsite_contact2], donor_onsite_contact
     asp_onsite_contact.delete()
     donor_onsite_contact.delete()
-

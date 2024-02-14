@@ -8,7 +8,15 @@ class Argument(MountedType):
     name: Incomplete
     default_value: Incomplete
     description: Incomplete
-    def __init__(self, type_, default_value=..., description: Incomplete | None = None, name: Incomplete | None = None, required: bool = False, _creation_counter: Incomplete | None = None) -> None: ...
+    def __init__(
+        self,
+        type_,
+        default_value=...,
+        description: Incomplete | None = None,
+        name: Incomplete | None = None,
+        required: bool = False,
+        _creation_counter: Incomplete | None = None,
+    ) -> None: ...
     @property
     def type(self): ...
     def __eq__(self, other): ...

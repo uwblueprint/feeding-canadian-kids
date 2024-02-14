@@ -18,7 +18,7 @@ class IMealRequestService(ABC):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff : List[str],
+        onsite_staff: List[str],
     ):
         """Create a new MealRequest object and corresponding MealRequests
 
@@ -55,11 +55,10 @@ class IMealRequestService(ABC):
 
     @abstractmethod
     def get_meal_request_by_id(
-        self, 
+        self,
         id: str,
     ) -> MealRequestDTO:
         pass
-
 
     @abstractmethod
     def get_meal_requests_by_requestor_id(

@@ -29,7 +29,7 @@ class RootQuery(
     UserQueries,
     OnboardingRequestQueries,
     MealRequestQueries,
-    OnsiteContactQueries
+    OnsiteContactQueries,
 ):
     pass
 
@@ -41,7 +41,7 @@ class RootMutation(
     OnboardingRequestMutations,
     MealRequestMutations,
     UserMutations,
-    OnsiteContactMutations
+    OnsiteContactMutations,
 ):
     pass
 
@@ -66,8 +66,13 @@ def init_app(app):
             sender_email=os.getenv("MAILER_USER"),
             display_name="Feeding Canadian Kids",
         )
-        services["onsite_contact_service"] = OnsiteContactService(logger=current_app.logger)
-        services["user_service"] = UserService(logger=current_app.logger, onsite_contact_service=services["onsite_contact_service"])
+        services["onsite_contact_service"] = OnsiteContactService(
+            logger=current_app.logger
+        )
+        services["user_service"] = UserService(
+            logger=current_app.logger,
+            onsite_contact_service=services["onsite_contact_service"],
+        )
         services["auth_service"] = AuthService(
             logger=current_app.logger,
             user_service=services["user_service"],

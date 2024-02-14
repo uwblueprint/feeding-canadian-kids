@@ -1,6 +1,6 @@
 from _typeshed import Incomplete
 
-__all__ = ['BaseDocument', 'NON_FIELD_ERRORS']
+__all__ = ["BaseDocument", "NON_FIELD_ERRORS"]
 
 NON_FIELD_ERRORS: str
 

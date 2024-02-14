@@ -16,7 +16,7 @@ class QueryList(graphene.ObjectType, metaclass=LogErrors(graphene.ObjectType)):
 # get around this, we declare the method initially, then delete it from the
 # class definition once the validation logic has completed. This way, subclasses
 # still get the validation logic.
-class Mutation(graphene.Mutation, metaclass=LogErrors(graphene.Mutation)): #type: ignore
+class Mutation(graphene.Mutation, metaclass=LogErrors(graphene.Mutation)):  # type: ignore
     def mutate(self):
         pass
 
@@ -32,8 +32,6 @@ class Contact(graphene.ObjectType):
     name = graphene.String()
     email = graphene.String()
     phone = graphene.String()
-
-
 
 
 class ASPInfo(graphene.ObjectType):
@@ -101,12 +99,14 @@ class User(graphene.ObjectType):
     id = graphene.String()
     info = graphene.Field(UserInfo)
 
+
 class OnsiteContact(graphene.ObjectType):
     id = graphene.ID()
     organization_id = graphene.String()
     name = graphene.String()
     email = graphene.String()
     phone = graphene.String()
+
 
 class ASPDistance(graphene.ObjectType):
     id = graphene.String()

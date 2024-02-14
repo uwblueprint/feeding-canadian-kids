@@ -1,6 +1,19 @@
-from ..types import Boolean as Boolean, Enum as Enum, Int as Int, Interface as Interface, List as List, NonNull as NonNull, Scalar as Scalar, String as String, Union as Union
+from ..types import (
+    Boolean as Boolean,
+    Enum as Enum,
+    Int as Int,
+    Interface as Interface,
+    List as List,
+    NonNull as NonNull,
+    Scalar as Scalar,
+    String as String,
+    Union as Union,
+)
 from ..types.field import Field as Field
-from ..types.objecttype import ObjectType as ObjectType, ObjectTypeOptions as ObjectTypeOptions
+from ..types.objecttype import (
+    ObjectType as ObjectType,
+    ObjectTypeOptions as ObjectTypeOptions,
+)
 from ..utils.thenables import maybe_thenable as maybe_thenable
 from .node import is_node as is_node
 from _typeshed import Incomplete
@@ -22,7 +35,9 @@ class Connection(ObjectType):
     class Meta:
         abstract: bool
     @classmethod
-    def __init_subclass_with_meta__(cls, node: Incomplete | None = None, name: Incomplete | None = None, **options): ...
+    def __init_subclass_with_meta__(
+        cls, node: Incomplete | None = None, name: Incomplete | None = None, **options
+    ): ...
 
 def connection_adapter(cls, edges, pageInfo): ...
 
@@ -35,4 +50,5 @@ class IterableConnectionField(Field):
     @classmethod
     def connection_resolver(cls, resolver, connection_type, root, info, **args): ...
     def wrap_resolve(self, parent_resolver): ...
+
 ConnectionField = IterableConnectionField

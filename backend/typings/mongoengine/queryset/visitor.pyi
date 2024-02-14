@@ -1,7 +1,7 @@
 from _typeshed import Incomplete
 from mongoengine.errors import InvalidQueryError
 
-__all__ = ['Q', 'QNode']
+__all__ = ["Q", "QNode"]
 
 class QNodeVisitor:
     def visit_combination(self, combination): ...

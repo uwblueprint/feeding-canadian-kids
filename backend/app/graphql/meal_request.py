@@ -189,16 +189,16 @@ class MealRequestQueries(QueryList):
     )
 
     getMealRequestById = graphene.Field(
-        MealRequestResponse, 
-        requestor_id=graphene.ID(required=True), 
+        MealRequestResponse,
+        requestor_id=graphene.ID(required=True),
         id=graphene.ID(required=True),
-        )
+    )
 
     def resolve_getMealRequestById(
-            self ,
-            info, 
-            requestor_id : str,
-            id : str,
+        self,
+        info,
+        requestor_id: str,
+        id: str,
     ):
         meal_request = services["meal_request_service"].get_meal_request_by_id(id)
         return meal_request

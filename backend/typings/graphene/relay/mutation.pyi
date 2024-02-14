@@ -7,6 +7,13 @@ class ClientIDMutation(Mutation):
     class Meta:
         abstract: bool
     @classmethod
-    def __init_subclass_with_meta__(cls, output: Incomplete | None = None, input_fields: Incomplete | None = None, arguments: Incomplete | None = None, name: Incomplete | None = None, **options) -> None: ...
+    def __init_subclass_with_meta__(
+        cls,
+        output: Incomplete | None = None,
+        input_fields: Incomplete | None = None,
+        arguments: Incomplete | None = None,
+        name: Incomplete | None = None,
+        **options
+    ) -> None: ...
     @classmethod
     def mutate(cls, root, info, input): ...

@@ -18,7 +18,20 @@ class Field(MountedType):
     deprecation_reason: Incomplete
     description: Incomplete
     default_value: Incomplete
-    def __init__(self, type_, args: Incomplete | None = None, resolver: Incomplete | None = None, source: Incomplete | None = None, deprecation_reason: Incomplete | None = None, name: Incomplete | None = None, description: Incomplete | None = None, required: bool = False, _creation_counter: Incomplete | None = None, default_value: Incomplete | None = None, **extra_args) -> None: ...
+    def __init__(
+        self,
+        type_,
+        args: Incomplete | None = None,
+        resolver: Incomplete | None = None,
+        source: Incomplete | None = None,
+        deprecation_reason: Incomplete | None = None,
+        name: Incomplete | None = None,
+        description: Incomplete | None = None,
+        required: bool = False,
+        _creation_counter: Incomplete | None = None,
+        default_value: Incomplete | None = None,
+        **extra_args
+    ) -> None: ...
     @property
     def type(self): ...
     get_resolver: Incomplete

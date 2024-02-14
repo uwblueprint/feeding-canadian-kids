@@ -23,8 +23,16 @@ MOCK_INFO1_SNAKE = {
     "active": True,
 }
 
-MOCK_ONSITE_CONTACT_1 = {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"}
-MOCK_ONSITE_CONTACT_2 = {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"}
+MOCK_ONSITE_CONTACT_1 = {
+    "name": "abc",
+    "phone": "123-456-7890",
+    "email": "abc@uwblueprint.org",
+}
+MOCK_ONSITE_CONTACT_2 = {
+    "name": "Jane Doe",
+    "phone": "111-222-3333",
+    "email": "example@domain.com",
+}
 
 MOCK_INFO1_CAMEL = {
     "email": "test1@organization.com",

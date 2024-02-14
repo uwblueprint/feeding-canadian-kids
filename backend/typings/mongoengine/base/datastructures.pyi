@@ -2,7 +2,13 @@ from _typeshed import Incomplete
 from bson import DBRef
 from collections.abc import Generator
 
-__all__ = ['BaseDict', 'StrictDict', 'BaseList', 'EmbeddedDocumentList', 'LazyReference']
+__all__ = [
+    "BaseDict",
+    "StrictDict",
+    "BaseList",
+    "EmbeddedDocumentList",
+    "LazyReference",
+]
 
 class BaseDict(dict):
     def __init__(self, dict_items, instance, name) -> None: ...
@@ -69,6 +75,12 @@ class LazyReference(DBRef):
     def pk(self): ...
     document_type: Incomplete
     passthrough: Incomplete
-    def __init__(self, document_type, pk, cached_doc: Incomplete | None = None, passthrough: bool = False) -> None: ...
+    def __init__(
+        self,
+        document_type,
+        pk,
+        cached_doc: Incomplete | None = None,
+        passthrough: bool = False,
+    ) -> None: ...
     def __getitem__(self, name): ...
     def __getattr__(self, name): ...

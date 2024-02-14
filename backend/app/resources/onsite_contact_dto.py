@@ -1,11 +1,6 @@
 class OnsiteContactDTO:
     def __init__(
-        self,
-        id: str,
-        organization_id: str,
-        name: str,
-        email: str,
-        phone: str
+        self, id: str, organization_id: str, name: str, email: str, phone: str
     ):
         self.id = id
         self.organization_id = organization_id
@@ -26,7 +21,9 @@ class OnsiteContactDTO:
 
         for field in [self.name, self.email, self.phone, self.organization_id]:
             if type(field) is not str:
-                error_list.append(f'The field "{field}" in onsite_contact {self.id} is not a string.')
+                error_list.append(
+                    f'The field "{field}" in onsite_contact {self.id} is not a string.'
+                )
             elif field == "":
                 error_list.append(
                     f'The field "{field}" in onsite_contact {self.id} must not be an empty string.'

@@ -19,6 +19,11 @@ class InputObjectTypeContainer(dict, BaseType):
 
 class InputObjectType(UnmountedType, BaseType):
     @classmethod
-    def __init_subclass_with_meta__(cls, container: Incomplete | None = None, _meta: Incomplete | None = None, **options) -> None: ...
+    def __init_subclass_with_meta__(
+        cls,
+        container: Incomplete | None = None,
+        _meta: Incomplete | None = None,
+        **options
+    ) -> None: ...
     @classmethod
     def get_type(cls): ...

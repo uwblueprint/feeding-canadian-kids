@@ -12,11 +12,49 @@ from .interface import Interface as Interface
 from .json import JSONString as JSONString
 from .mutation import Mutation as Mutation
 from .objecttype import ObjectType as ObjectType
-from .scalars import BigInt as BigInt, Boolean as Boolean, Float as Float, ID as ID, Int as Int, Scalar as Scalar, String as String
+from .scalars import (
+    BigInt as BigInt,
+    Boolean as Boolean,
+    Float as Float,
+    ID as ID,
+    Int as Int,
+    Scalar as Scalar,
+    String as String,
+)
 from .schema import Schema as Schema
 from .structures import List as List, NonNull as NonNull
 from .union import Union as Union
 from .uuid import UUID as UUID
 from graphql import GraphQLResolveInfo as ResolveInfo
 
-__all__ = ['Argument', 'Base64', 'BigInt', 'Boolean', 'Context', 'Date', 'DateTime', 'Decimal', 'Dynamic', 'Enum', 'Field', 'Float', 'ID', 'InputField', 'InputObjectType', 'Int', 'Interface', 'JSONString', 'List', 'Mutation', 'NonNull', 'ObjectType', 'ResolveInfo', 'Scalar', 'Schema', 'String', 'Time', 'UUID', 'Union']
+__all__ = [
+    "Argument",
+    "Base64",
+    "BigInt",
+    "Boolean",
+    "Context",
+    "Date",
+    "DateTime",
+    "Decimal",
+    "Dynamic",
+    "Enum",
+    "Field",
+    "Float",
+    "ID",
+    "InputField",
+    "InputObjectType",
+    "Int",
+    "Interface",
+    "JSONString",
+    "List",
+    "Mutation",
+    "NonNull",
+    "ObjectType",
+    "ResolveInfo",
+    "Scalar",
+    "Schema",
+    "String",
+    "Time",
+    "UUID",
+    "Union",
+]

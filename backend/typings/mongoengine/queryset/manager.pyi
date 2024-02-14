@@ -1,7 +1,7 @@
 from _typeshed import Incomplete
 from mongoengine.queryset.queryset import QuerySet
 
-__all__ = ['queryset_manager', 'QuerySetManager']
+__all__ = ["queryset_manager", "QuerySetManager"]
 
 class QuerySetManager:
     get_queryset: Incomplete

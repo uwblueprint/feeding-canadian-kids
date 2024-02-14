@@ -1,8 +1,20 @@
 from _typeshed import Incomplete
 from mongoengine.base import BaseDocument, DocumentMetaclass, TopLevelDocumentMetaclass
-from mongoengine.queryset import NotUniqueError as NotUniqueError, OperationError as OperationError
+from mongoengine.queryset import (
+    NotUniqueError as NotUniqueError,
+    OperationError as OperationError,
+)
 
-__all__ = ['Document', 'EmbeddedDocument', 'DynamicDocument', 'DynamicEmbeddedDocument', 'OperationError', 'InvalidCollectionError', 'NotUniqueError', 'MapReduceDocument']
+__all__ = [
+    "Document",
+    "EmbeddedDocument",
+    "DynamicDocument",
+    "DynamicEmbeddedDocument",
+    "OperationError",
+    "InvalidCollectionError",
+    "NotUniqueError",
+    "MapReduceDocument",
+]
 
 class InvalidCollectionError(Exception): ...
 
@@ -23,10 +35,24 @@ class Document(BaseDocument, metaclass=TopLevelDocumentMetaclass):
     def __hash__(self): ...
     def to_mongo(self, *args, **kwargs): ...
     def modify(self, query: Incomplete | None = None, **update): ...
-    def save(self, force_insert: bool = False, validate: bool = True, clean: bool = True, write_concern: Incomplete | None = None, cascade: Incomplete | None = None, cascade_kwargs: Incomplete | None = None, _refs: Incomplete | None = None, save_condition: Incomplete | None = None, signal_kwargs: Incomplete | None = None, **kwargs): ...
+    def save(
+        self,
+        force_insert: bool = False,
+        validate: bool = True,
+        clean: bool = True,
+        write_concern: Incomplete | None = None,
+        cascade: Incomplete | None = None,
+        cascade_kwargs: Incomplete | None = None,
+        _refs: Incomplete | None = None,
+        save_condition: Incomplete | None = None,
+        signal_kwargs: Incomplete | None = None,
+        **kwargs
+    ): ...
     def cascade_save(self, **kwargs) -> None: ...
     def update(self, **kwargs): ...
-    def delete(self, signal_kwargs: Incomplete | None = None, **write_concern) -> None: ...
+    def delete(
+        self, signal_kwargs: Incomplete | None = None, **write_concern
+    ) -> None: ...
     def switch_db(self, db_alias, keep_created: bool = True): ...
     def switch_collection(self, collection_name, keep_created: bool = True): ...
     def select_related(self, max_depth: int = 1): ...

@@ -29,4 +29,4 @@ services: ServicesObject = {
     "onboarding_request_service": None,
     "meal_request_service": None,
     "onsite_contact_service": None,
-} # type: ignore
+}  # type: ignore

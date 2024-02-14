@@ -47,6 +47,6 @@ class IOnsiteContactService(ABC):
     @abstractmethod
     def get_onsite_contact_by_id(
         self,
-        id : str,
+        id: str,
     ) -> OnsiteContactDTO:
         pass

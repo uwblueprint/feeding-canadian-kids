@@ -61,12 +61,13 @@ class MealRequestService(IMealRequestService):
         meal_request_id,
     ):
         original_meal_request: MealRequest = MealRequest.objects(
-            id=meal_request_id,
-            requestor=requestor_id
+            id=meal_request_id, requestor=requestor_id
         ).first()
 
         if not original_meal_request:
-            raise Exception(f"meal request with id {meal_request_id} by {requestor_id} not found")
+            raise Exception(
+                f"meal request with id {meal_request_id} by {requestor_id} not found"
+            )
 
         if drop_off_datetime is not None:
             original_meal_request.drop_off_datetime = drop_off_datetime
@@ -93,7 +94,6 @@ class MealRequestService(IMealRequestService):
             original_meal_request, requestor
         )
         original_meal_request.validate_onsite_contacts()
-
 
         original_meal_request.save()
 
@@ -172,7 +172,7 @@ class MealRequestService(IMealRequestService):
         requestor_id,
         min_drop_off_date,
         max_drop_off_date,
-        status : List[MealStatus],
+        status: List[MealStatus],
         offset,
         limit,
         sort_by_date_direction,
@@ -219,6 +219,8 @@ class MealRequestService(IMealRequestService):
 
     def get_meal_request_by_id(self, id: str) -> MealRequestDTO:
         meal_request = MealRequest.objects(id=id).first()
-        meal_request_dto = self.convert_meal_request_to_dto(meal_request, meal_request.requestor)
+        meal_request_dto = self.convert_meal_request_to_dto(
+            meal_request, meal_request.requestor
+        )
 
         return meal_request_dto

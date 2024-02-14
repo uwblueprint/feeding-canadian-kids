@@ -1,6 +1,19 @@
 from _typeshed import Incomplete
 
-__all__ = ['dataclass', 'field', 'Field', 'FrozenInstanceError', 'InitVar', 'MISSING', 'fields', 'asdict', 'astuple', 'make_dataclass', 'replace', 'is_dataclass']
+__all__ = [
+    "dataclass",
+    "field",
+    "Field",
+    "FrozenInstanceError",
+    "InitVar",
+    "MISSING",
+    "fields",
+    "asdict",
+    "astuple",
+    "make_dataclass",
+    "replace",
+    "is_dataclass",
+]
 
 class FrozenInstanceError(AttributeError): ...
 class _HAS_DEFAULT_FACTORY_CLASS: ...
@@ -27,7 +40,9 @@ class Field:
     hash: Incomplete
     compare: Incomplete
     metadata: Incomplete
-    def __init__(self, default, default_factory, init, repr, hash, compare, metadata) -> None: ...
+    def __init__(
+        self, default, default_factory, init, repr, hash, compare, metadata
+    ) -> None: ...
     def __set_name__(self, owner, name) -> None: ...
 
 class _DataclassParams:
@@ -39,11 +54,41 @@ class _DataclassParams:
     frozen: Incomplete
     def __init__(self, init, repr, eq, order, unsafe_hash, frozen) -> None: ...
 
-def field(*, default=..., default_factory=..., init: bool = True, repr: bool = True, hash: Incomplete | None = None, compare: bool = True, metadata: Incomplete | None = None): ...
-def dataclass(_cls: Incomplete | None = None, *, init: bool = True, repr: bool = True, eq: bool = True, order: bool = False, unsafe_hash: bool = False, frozen: bool = False): ...
+def field(
+    *,
+    default=...,
+    default_factory=...,
+    init: bool = True,
+    repr: bool = True,
+    hash: Incomplete | None = None,
+    compare: bool = True,
+    metadata: Incomplete | None = None
+): ...
+def dataclass(
+    _cls: Incomplete | None = None,
+    *,
+    init: bool = True,
+    repr: bool = True,
+    eq: bool = True,
+    order: bool = False,
+    unsafe_hash: bool = False,
+    frozen: bool = False
+): ...
 def fields(class_or_instance): ...
 def is_dataclass(obj): ...
 def asdict(obj, *, dict_factory=...): ...
 def astuple(obj, *, tuple_factory=...): ...
-def make_dataclass(cls_name, fields, *, bases=(), namespace: Incomplete | None = None, init: bool = True, repr: bool = True, eq: bool = True, order: bool = False, unsafe_hash: bool = False, frozen: bool = False): ...
+def make_dataclass(
+    cls_name,
+    fields,
+    *,
+    bases=(),
+    namespace: Incomplete | None = None,
+    init: bool = True,
+    repr: bool = True,
+    eq: bool = True,
+    order: bool = False,
+    unsafe_hash: bool = False,
+    frozen: bool = False
+): ...
 def replace(obj, **changes): ...

@@ -30,9 +30,10 @@ import LoadingSpinner from "../components/common/LoadingSpinner";
 import OnsiteStaffSection from "../components/common/OnsiteStaffSection";
 import AuthContext from "../contexts/AuthContext";
 import { MealRequestsData } from "../types/MealRequestTypes";
-import { Contact } from "../types/UserTypes";
+import { Contact, OnsiteContact } from "../types/UserTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 import { isValidEmail } from "../utils/ValidationUtils";
+import useGetOnsiteContacts from "../utils/useGetOnsiteContacts";
 import useIsWebView from "../utils/useIsWebView";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -55,6 +56,7 @@ const GET_MEAL_REQUEST_BY_ID = gql`
         dietaryRestrictions
       }
       onsiteStaff {
+        id
         name
         email
         phone
@@ -67,12 +69,13 @@ const GET_MEAL_REQUEST_BY_ID = gql`
 `;
 
 const UPDATE_MEAL_REQUEST = gql`
-  mutation testUpdateMealRequest(
+  mutation UpdateMealRequest(
     $requestorId: ID!
     $mealRequestId: ID!
     $updatedDeliveryInstructions: String!
     $updatedMealInfoPortions: Int!
     $updatedMealInfoDietaryRestrictions: String!
+    $updatedOnsiteContacts: [String!]!
   ) {
     updateMealRequest(
       requestorId: $requestorId
@@ -82,6 +85,7 @@ const UPDATE_MEAL_REQUEST = gql`
         portions: $updatedMealInfoPortions
         dietaryRestrictions: $updatedMealInfoDietaryRestrictions
       }
+      onsiteStaff: $updatedOnsiteContacts
     ) {
       mealRequest {
         id
@@ -93,6 +97,7 @@ const UPDATE_MEAL_REQUEST = gql`
           dietaryRestrictions
         }
         onsiteStaff {
+          id
           name
           email
           phone
@@ -149,6 +154,14 @@ const EditMealRequestForm = ({
   const [deliveryInstructions, setDeliveryInstructions] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
+  const toast = useToast();
+  const [onsiteStaff, setOnsiteStaff] = useState<OnsiteContact[]>([]);
+  // This is the list of available onsite staff
+  const [availableOnsiteContacts, setAvailableOnsiteContacts] = useState<
+    Array<Contact>
+  >([]);
+  useGetOnsiteContacts(toast, setAvailableOnsiteContacts, setLoading);
+
   const apolloClient = useApolloClient();
 
   useEffect(() => {
@@ -165,6 +178,9 @@ const EditMealRequestForm = ({
         setNumberOfMeals(mealRequest.mealInfo.portions);
         setDietaryRestrictions(mealRequest.mealInfo.dietaryRestrictions);
         setDeliveryInstructions(mealRequest.deliveryInstructions);
+
+        // Parse/stringify is to make a deep copy of the onsite staff
+        setOnsiteStaff(JSON.parse(JSON.stringify(mealRequest.onsiteStaff)));
         setLoading(false);
       } catch (error) {
         logPossibleGraphQLError(error as ApolloError);
@@ -174,7 +190,6 @@ const EditMealRequestForm = ({
   }, [requestorId, mealRequestId, apolloClient]);
 
   const [updateMealRequest] = useMutation(UPDATE_MEAL_REQUEST);
-  const toast = useToast();
 
   async function submitEditMealRequest() {
     try {
@@ -186,6 +201,7 @@ const EditMealRequestForm = ({
           updatedDeliveryInstructions: deliveryInstructions,
           updatedMealInfoPortions: numberOfMeals,
           updatedMealInfoDietaryRestrictions: dietaryRestrictions,
+          updatedOnsiteContacts: onsiteStaff.map((contact) => contact.id),
         },
       });
       const data = response.data;
@@ -214,75 +230,98 @@ const EditMealRequestForm = ({
   }
 
   const getMobileContactSection = (): React.ReactElement => (
-      <Flex flexDir="column" gap="8px">
-        <FormControl isRequired mb={6}>
-          <FormLabel variant="mobile-form-label-bold">
-            Primary Contact
-          </FormLabel>
-          <Flex flexDir="column" gap="8px">
-            <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && primaryContact.name === ""}
+    <Flex flexDir="column" gap="8px">
+      <FormControl isRequired mb={6}>
+        <FormLabel variant="mobile-form-label-bold">Primary Contact</FormLabel>
+        <Flex flexDir="column" gap="8px">
+          <FormControl
+            isRequired
+            isInvalid={attemptedSubmit && primaryContact.name === ""}
+          >
+            <Input
+              variant="mobile-outline"
+              value={primaryContact.name}
+              onChange={(e) =>
+                setPrimaryContact({ ...primaryContact, name: e.target.value })
+              }
+              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME}
+            />
+          </FormControl>
+          <FormControl
+            isRequired
+            isInvalid={attemptedSubmit && primaryContact.phone === ""}
+          >
+            <Input
+              variant="mobile-outline"
+              type="tel"
+              value={primaryContact.phone}
+              onChange={(e) =>
+                setPrimaryContact({
+                  ...primaryContact,
+                  phone: e.target.value,
+                })
+              }
+              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER}
+            />
+          </FormControl>
+          <FormControl
+            isRequired
+            isInvalid={attemptedSubmit && !isValidEmail(primaryContact.email)}
+          >
+            <Input
+              variant="mobile-outline"
+              type="email"
+              value={primaryContact.email}
+              onChange={(e) =>
+                setPrimaryContact({
+                  ...primaryContact,
+                  email: e.target.value,
+                })
+              }
+              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_EMAIL}
+            />
+          </FormControl>
+        </Flex>
+      </FormControl>
+    </Flex>
+  );
+
+  const getWebContactSection = (): React.ReactElement => (
+    <>
+      <Text variant="desktop-heading" pt={4} pb={3}>
+        Contact Information
+      </Text>
+
+      <Flex flexDir="column" gap="24px">
+        <Flex flexDir="column">
+          <FormControl
+            isRequired
+            isInvalid={attemptedSubmit && primaryContact.name === ""}
+          >
+            <FormLabel
+              variant={{
+                base: "mobile-form-label-bold",
+                md: "form-label-bold",
+              }}
             >
-              <Input
-                variant="mobile-outline"
-                value={primaryContact.name}
-                onChange={(e) =>
-                  setPrimaryContact({ ...primaryContact, name: e.target.value })
-                }
-                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME}
-              />
-            </FormControl>
+              Primary contact name
+            </FormLabel>
+            <Input
+              value={primaryContact.name}
+              placeholder={PLACEHOLDER_WEB_EXAMPLE_FULL_NAME}
+              onChange={(e) =>
+                setPrimaryContact({ ...primaryContact, name: e.target.value })
+              }
+            />
+          </FormControl>
+        </Flex>
+
+        <Flex flexDir="row" gap="24px">
+          <Flex flexDir="column" w="240px">
             <FormControl
               isRequired
               isInvalid={attemptedSubmit && primaryContact.phone === ""}
-            >
-              <Input
-                variant="mobile-outline"
-                type="tel"
-                value={primaryContact.phone}
-                onChange={(e) =>
-                  setPrimaryContact({
-                    ...primaryContact,
-                    phone: e.target.value,
-                  })
-                }
-                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER}
-              />
-            </FormControl>
-            <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && !isValidEmail(primaryContact.email)}
-            >
-              <Input
-                variant="mobile-outline"
-                type="email"
-                value={primaryContact.email}
-                onChange={(e) =>
-                  setPrimaryContact({
-                    ...primaryContact,
-                    email: e.target.value,
-                  })
-                }
-                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_EMAIL}
-              />
-            </FormControl>
-          </Flex>
-        </FormControl>
-      </Flex>
-    );
-
-  const getWebContactSection = (): React.ReactElement => (
-      <>
-        <Text variant="desktop-heading" pt={4} pb={3}>
-          Contact Information
-        </Text>
-
-        <Flex flexDir="column" gap="24px">
-          <Flex flexDir="column">
-            <FormControl
-              isRequired
-              isInvalid={attemptedSubmit && primaryContact.name === ""}
+              mb={6}
             >
               <FormLabel
                 variant={{
@@ -290,79 +329,52 @@ const EditMealRequestForm = ({
                   md: "form-label-bold",
                 }}
               >
-                Primary contact name
+                Phone number
               </FormLabel>
               <Input
-                value={primaryContact.name}
-                placeholder={PLACEHOLDER_WEB_EXAMPLE_FULL_NAME}
+                type="tel"
+                value={primaryContact.phone}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER}
                 onChange={(e) =>
-                  setPrimaryContact({ ...primaryContact, name: e.target.value })
+                  setPrimaryContact({
+                    ...primaryContact,
+                    phone: e.target.value,
+                  })
                 }
               />
             </FormControl>
           </Flex>
 
-          <Flex flexDir="row" gap="24px">
-            <Flex flexDir="column" w="240px">
-              <FormControl
-                isRequired
-                isInvalid={attemptedSubmit && primaryContact.phone === ""}
-                mb={6}
+          <Flex flexDir="column" w="519px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && !isValidEmail(primaryContact.email)}
+            >
+              <FormLabel
+                variant={{
+                  base: "mobile-form-label-bold",
+                  md: "form-label-bold",
+                }}
               >
-                <FormLabel
-                  variant={{
-                    base: "mobile-form-label-bold",
-                    md: "form-label-bold",
-                  }}
-                >
-                  Phone number
-                </FormLabel>
-                <Input
-                  type="tel"
-                  value={primaryContact.phone}
-                  placeholder={PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER}
-                  onChange={(e) =>
-                    setPrimaryContact({
-                      ...primaryContact,
-                      phone: e.target.value,
-                    })
-                  }
-                />
-              </FormControl>
-            </Flex>
-
-            <Flex flexDir="column" w="519px">
-              <FormControl
-                isRequired
-                isInvalid={
-                  attemptedSubmit && !isValidEmail(primaryContact.email)
+                Email address
+              </FormLabel>
+              <Input
+                type="email"
+                value={primaryContact.email}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
+                onChange={(e) =>
+                  setPrimaryContact({
+                    ...primaryContact,
+                    email: e.target.value,
+                  })
                 }
-              >
-                <FormLabel
-                  variant={{
-                    base: "mobile-form-label-bold",
-                    md: "form-label-bold",
-                  }}
-                >
-                  Email address
-                </FormLabel>
-                <Input
-                  type="email"
-                  value={primaryContact.email}
-                  placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
-                  onChange={(e) =>
-                    setPrimaryContact({
-                      ...primaryContact,
-                      email: e.target.value,
-                    })
-                  }
-                />
-              </FormControl>
-            </Flex>
+              />
+            </FormControl>
           </Flex>
         </Flex>
-      </>
-    );
+      </Flex>
+    </>
+  );
 
   return (
     <>
@@ -457,13 +469,13 @@ const EditMealRequestForm = ({
                   <br />
                 </FormControl>
                 {isWebView && <Divider />}
-                {/* {isWebView ? getWebContactSection() : getMobileContactSection()} */}
-
-                {/* <OnsiteStaffSection
-              onsiteInfo={onsiteInfo}
-              setOnsiteInfo={setOnsiteInfo}
-              attemptedSubmit={attemptedSubmit}
-            /> */}
+                <OnsiteStaffSection
+                  onsiteInfo={onsiteStaff}
+                  setOnsiteInfo={setOnsiteStaff}
+                  attemptedSubmit={false /* todo change */}
+                  availableStaff={availableOnsiteContacts}
+                  dropdown
+                />
               </ModalBody>
 
               <ModalFooter>

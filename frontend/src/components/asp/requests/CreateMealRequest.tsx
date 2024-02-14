@@ -50,9 +50,10 @@ const CreateMealRequest = (): React.ReactElement => {
   const toast = useToast();
   const [loading, setLoading] = useState(true);
   // This is the list of available onsite staff
-  const [availableStaff, setAvailableStaff] = useState<Array<Contact>>([]);
-
-  useGetOnsiteContacts(toast, setAvailableStaff, setLoading);
+  const [availableOnsiteContacts, setAvailableOnsiteContacts] = useState<
+    Array<Contact>
+  >([]);
+  useGetOnsiteContacts(toast, setAvailableOnsiteContacts, setLoading);
 
   // User's address
   const [address, setAddress] = useState<string>(
@@ -146,7 +147,7 @@ const CreateMealRequest = (): React.ReactElement => {
             setDeliveryInstructions={setDeliveryInstructions}
             onsiteStaff={onsiteStaff}
             setOnsiteStaff={setOnsiteStaff}
-            availableStaff={availableStaff}
+            availableStaff={availableOnsiteContacts}
             handleBack={() => {}} // Will be assigned by three step form
             handleNext={() => {}} // Will be assigned by three step form
           />

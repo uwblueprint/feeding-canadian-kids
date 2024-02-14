@@ -1,6 +1,6 @@
 import graphene
 from .services import services
-from .types import OnsiteContact, QueryList, User, ASPDistance
+from .types import OnsiteContact, QueryList
 
 
 class OnsiteContactQueries(QueryList):

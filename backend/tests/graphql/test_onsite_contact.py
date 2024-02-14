@@ -1,8 +1,5 @@
 from app.graphql import schema as graphql_schema
-from app.models.meal_request import MealRequest, MealStatus
-from app.models.user_info import UserInfoRole
 from app.models.onsite_contact import OnsiteContact
-from app.models.user import User
 
 """
 Tests for ONsite contact and query/mutation logic
@@ -20,7 +17,6 @@ def compare_returned_onsite_contact(result, onsite_contact):
 
 def test_create_onsite_contact(onsite_contact_setup):
     asp, donor, onsite_contacts, _ = onsite_contact_setup
-    onsite_contact = onsite_contacts[0]
 
     mutation = f"""
     mutation c{{
@@ -28,13 +24,13 @@ def test_create_onsite_contact(onsite_contact_setup):
         email: "bob@test.com",
         name: "Bob Cat",
         organizationId: "{donor.id}",
-        phone: "604-433-1111", 
+        phone: "604-433-1111",
         requestorId: "{donor.id}"
       ){{
         onsiteContact{{
           id
           name
-          email 
+          email
           phone
           organizationId
         }}
@@ -59,7 +55,6 @@ def test_create_onsite_contact(onsite_contact_setup):
 
 def test_update_onsite_contact(onsite_contact_setup):
     asp, donor, asp_onsite_contacts, donor_onsite_contact = onsite_contact_setup
-    onsite_contact = asp_onsite_contacts[0]
 
     # Test for the update mutation
     mutation = f"""
@@ -74,7 +69,7 @@ def test_update_onsite_contact(onsite_contact_setup):
         onsiteContact{{
           id
           name
-          email 
+          email
           phone
         }}
       }}
@@ -129,7 +124,7 @@ def test_get_onsite_contacts_for_user_by_id(onsite_contact_setup):
       ){{
         id
         name
-        email 
+        email
         phone
       }}
     }}
@@ -156,7 +151,7 @@ def test_get_onsite_contact_by_id(onsite_contact_setup):
       ){{
         id
         name
-        email 
+        email
         phone
         organizationId
       }}

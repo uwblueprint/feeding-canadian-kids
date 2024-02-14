@@ -1,8 +1,6 @@
-from mongomock import ObjectId
 from app.graphql import schema as graphql_schema
 from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
-from app.models.onsite_contact import OnsiteContact
 
 """
 Tests for MealRequestchema and query/mutation logic

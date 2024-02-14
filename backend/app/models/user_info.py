@@ -1,8 +1,6 @@
 from enum import Enum
 import mongoengine as mg
 
-from app.models.onsite_contact import OnsiteContact
-
 
 class UserInfoRole(Enum):
     ADMIN = "Admin"

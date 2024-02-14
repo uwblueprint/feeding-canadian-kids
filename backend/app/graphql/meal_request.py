@@ -1,8 +1,6 @@
 import graphene
 
 from .types import (
-    ContactInput,
-    Contact,
     Mutation,
     MutationList,
     OnsiteContact,
@@ -10,7 +8,7 @@ from .types import (
     SortDirection,
     User,
 )
-from ..models.meal_request import MEAL_STATUSES_ENUMS, MealStatus, MEAL_STATUSES_STRINGS
+from ..models.meal_request import MEAL_STATUSES_ENUMS, MealStatus
 from ..graphql.services import services
 
 # Input Types

@@ -6,8 +6,6 @@ from app.models.onsite_contact import OnsiteContact
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_SNAKE,
     MOCK_INFO2_SNAKE,
-    MOCK_ONSITE_CONTACT_1,
-    MOCK_ONSITE_CONTACT_2,
     MOCK_USER1_SNAKE,
     MOCK_USER2_SNAKE,
     MOCK_USER3_SNAKE,

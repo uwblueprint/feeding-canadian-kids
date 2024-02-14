@@ -1,12 +1,9 @@
-from app.resources.update_user_dto import UpdateUserDTO
 import graphene
 from .services import services
 from .types import (
     Mutation,
     MutationList,
     OnsiteContact,
-    User,
-    UserInfoInput,
 )
 
 
@@ -88,6 +85,7 @@ class DeleteOnsiteContact(Mutation):
             onsite_contact_service.delete_onsite_contact_by_id(id)
             success = True
         except Exception as e:
+            print(e)
             success = False
         return DeleteOnsiteContact(success)
 

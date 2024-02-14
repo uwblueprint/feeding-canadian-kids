@@ -5,7 +5,6 @@ from enum import Enum
 from app.models.onsite_contact import OnsiteContact
 
 from .user import User
-from .user_info import Contact
 
 
 class MealStatus(Enum):

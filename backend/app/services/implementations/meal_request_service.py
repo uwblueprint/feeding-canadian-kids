@@ -1,5 +1,4 @@
 from typing import List
-from ...models.user_info import Contact
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
 from datetime import datetime
@@ -177,7 +176,7 @@ class MealRequestService(IMealRequestService):
         limit,
         sort_by_date_direction,
     ):
-        status_value_list = list(map(lambda l: l.value, status))
+        status_value_list = list(map(lambda stat: stat.value, status))
         try:
             sort_prefix = "+"
             if sort_by_date_direction == SortDirection.DESCENDING:

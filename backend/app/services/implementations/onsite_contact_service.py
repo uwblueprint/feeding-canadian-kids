@@ -3,17 +3,9 @@ from typing import List, Optional
 from app.models.onsite_contact import OnsiteContact
 from app.resources.onsite_contact_dto import OnsiteContactDTO
 
-from ...models.user_info import Contact
-from ...models.meal_request import MealInfo, MealRequest
-from ..interfaces.meal_request_service import IMealRequestService
 from ..interfaces.onsite_contact_service import IOnsiteContactService
-from datetime import datetime
 
-from ...models.meal_request import DonationInfo, MealStatus
 from ...models.user import User
-from ...models.user_info import UserInfoRole
-from ...graphql.types import SortDirection
-from ...resources.meal_request_dto import MealRequestDTO
 
 
 class OnsiteContactService(IOnsiteContactService):

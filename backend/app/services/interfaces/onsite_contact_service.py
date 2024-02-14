@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Union, List
+from typing import Optional, List
 
 from ...resources.onsite_contact_dto import OnsiteContactDTO
-from ...resources.meal_request_dto import MealRequestDTO
 
 
 class IOnsiteContactService(ABC):

@@ -214,7 +214,7 @@ const Dashboard = (): React.ReactElement => {
           })
           .split(",")[0]
           .split("/");
-        const realDate = dateParts[2] + "-" + dateParts[0] + "-" + dateParts[1];
+        const realDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
         return {
           title: `${new Date(
             mealRequest.dropOffDatetime.toLocaleString(),
@@ -316,12 +316,12 @@ const Dashboard = (): React.ReactElement => {
                     initialView="dayGridMonth"
                     events={realEvents}
                     eventClick={(info) => {
-                      if(selectedMealRequest === info.event.extendedProps.mealRequest) {
-                        setSelectedMealRequest(
-                          undefined
-                        );
-                      }
-                      else{
+                      if (
+                        selectedMealRequest ===
+                        info.event.extendedProps.mealRequest
+                      ) {
+                        setSelectedMealRequest(undefined);
+                      } else {
                         setSelectedMealRequest(
                           info.event.extendedProps.mealRequest,
                         );
@@ -375,7 +375,8 @@ const Dashboard = (): React.ReactElement => {
                           <Td>
                             <Text>
                               <strong>
-                                Location:<br />
+                                Location:
+                                <br />
                               </strong>
                               {selectedMealRequest.dropOffLocation}
                             </Text>

@@ -53,9 +53,26 @@ export type UserInfo = {
   active?: boolean;
 } | null;
 
+export type ASPDistance = {
+  id: string;
+  info: UserInfo;
+  distance: number;
+} | null;
+
 export type OnboardingRequest = {
   id: string;
   info: UserInfo;
   dateSubmitted: string;
   status: string;
 } | null;
+
+export type GetUserData = {
+  getUserById: {
+    id: string;
+    info: UserInfo;
+  };
+};
+
+export type GetUserVariables = {
+  id: string;
+};

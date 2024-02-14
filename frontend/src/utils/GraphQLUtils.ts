@@ -2,7 +2,7 @@
 import { ApolloError } from "@apollo/client";
 
 export const logPossibleGraphQLError = (
-  graphqlError: ApolloError | undefined,
+  graphqlError: ApolloError | undefined | unknown,
 ) => {
   if (graphqlError === undefined) {
     return;

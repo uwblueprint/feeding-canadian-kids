@@ -43,9 +43,7 @@ class MealRequestService(IMealRequestService):
                     onsite_staff=onsite_staff,
                 )
                 new_meal_request.validate_onsite_contacts()
-                # print("new is ", new_meal_request.onsite_staff)
                 new_meal_request.save()
-                print("new meal request is", new_meal_request.onsite_staff)
                 meal_requests.append(new_meal_request.to_serializable_dict())
         except Exception as error:
             self.logger.error(str(error))
@@ -86,18 +84,19 @@ class MealRequestService(IMealRequestService):
             original_meal_request.delivery_instructions = delivery_instructions
 
         if onsite_staff is not None:
-            original_meal_request.onsite_staff = [
-                Contact(name=staff.name, phone=staff.phone, email=staff.email)
-                for staff in onsite_staff
-            ]
+            original_meal_request.onsite_staff = onsite_staff
 
         requestor = original_meal_request.requestor
+
         # Does validation,
         meal_request_dto = self.convert_meal_request_to_dto(
             original_meal_request, requestor
         )
+        original_meal_request.validate_onsite_contacts()
+
 
         original_meal_request.save()
+
         return meal_request_dto
 
     def commit_to_meal_request(

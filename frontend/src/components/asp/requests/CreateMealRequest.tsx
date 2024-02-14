@@ -1,3 +1,4 @@
+import { Center, Spinner, useToast } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import type { Value } from "react-multi-date-picker";
 import { Navigate } from "react-router-dom";
@@ -11,6 +12,7 @@ import TitleSection from "./TitleSection";
 import { LOGIN_PAGE } from "../../../constants/Routes";
 import AuthContext from "../../../contexts/AuthContext";
 import { Contact, UserInfo } from "../../../types/UserTypes";
+import useGetOnsiteContacts from "../../../utils/useGetOnsiteContacts";
 import ThreeStepForm from "../../common/ThreeStepForm";
 
 const CreateMealRequest = (): React.ReactElement => {
@@ -45,11 +47,12 @@ const CreateMealRequest = (): React.ReactElement => {
     authenticatedUser?.info || null,
   );
 
+  const toast = useToast();
+  const [loading, setLoading] = useState(true);
   // This is the list of available onsite staff
-  const [availableStaff, setAvailableStaff] = useState<Array<Contact>>(
-    [],
-    // userInfo ? JSON.parse(JSON.stringify(userInfo.onsiteContacts)) : [],
-  );
+  const [availableStaff, setAvailableStaff] = useState<Array<Contact>>([]);
+
+  useGetOnsiteContacts(toast, setAvailableStaff, setLoading);
 
   // User's address
   const [address, setAddress] = useState<string>(
@@ -87,6 +90,16 @@ const CreateMealRequest = (): React.ReactElement => {
     return <Navigate replace to={LOGIN_PAGE} />;
   }
 
+  if (loading) {
+    return (
+      <div>
+        <TitleSection />
+        <Center>
+          <Spinner />
+        </Center>
+      </div>
+    );
+  }
   return (
     <div>
       <TitleSection />

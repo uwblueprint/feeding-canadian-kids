@@ -109,7 +109,7 @@ class UpdateMealRequest(Mutation):
         meal_info = MealTypeInput()
         drop_off_location = graphene.String()
         delivery_instructions = graphene.String()
-        onsite_staff = graphene.List(ContactInput)
+        onsite_staff = graphene.List(graphene.String)
 
     # return values
     meal_request = graphene.Field(MealRequestResponse)

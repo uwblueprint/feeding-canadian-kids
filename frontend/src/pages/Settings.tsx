@@ -39,6 +39,7 @@ import {
   isValidEmail,
   trimWhiteSpace,
 } from "../utils/ValidationUtils";
+import useGetOnsiteContacts from "../utils/useGetOnsiteContacts";
 import useIsWebView from "../utils/useIsWebView";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -96,17 +97,6 @@ const UPDATE_USER_BY_ID = gql`
           }
         }
       }
-    }
-  }
-`;
-
-const GET_ONSITE_CONTACTS = gql`
-  query getOnsiteContacts($id: String!) {
-    getOnsiteContactForUserById(userId: $id) {
-      id
-      name
-      email
-      phone
     }
   }
 `;
@@ -198,18 +188,6 @@ const Settings = (): React.ReactElement => {
   const [organizationDesc, setOrganizationDesc] = useState(
     userInfo?.organizationDesc || "",
   );
-  const [onsiteContacts, setOnsiteContacts] = useState<Array<OnsiteContact>>(
-    // userInfo
-    //   ? JSON.parse(JSON.stringify(userInfo.onsiteContacts)):
-    [
-      {
-        id: "",
-        name: "",
-        phone: "",
-        email: "",
-      },
-    ],
-  );
 
   const [serverOnsiteContacts, setServerOnsiteContacts] = useState<
     Array<OnsiteContact>
@@ -221,37 +199,30 @@ const Settings = (): React.ReactElement => {
   const navigate = useNavigate();
   const toast = useToast();
 
+  const [onsiteContacts, setOnsiteContacts] = useState<Array<OnsiteContact>>([
+    {
+      id: "",
+      name: "",
+      phone: "",
+      email: "",
+    },
+  ]);
+
+  useGetOnsiteContacts(
+    toast,
+    (contacts) => {
+      setOnsiteContacts(contacts);
+      setServerOnsiteContacts(contacts);
+    },
+    setIsLoading,
+  );
+
   const [updateUserByID] = useMutation(UPDATE_USER_BY_ID);
   const [createOnsiteContact] = useMutation(CREATE_ONSITE_CONTACT);
   const [updateOnsiteContact] = useMutation(UPDATE_ONSITE_CONTACT);
   const [deleteOnsiteContact] = useMutation(DELETE_ONSITE_CONTACT);
 
   // OnsiteContact query
-  useQuery(GET_ONSITE_CONTACTS, {
-    variables: { id: authenticatedUser?.id },
-    onCompleted: (data) => {
-      if (data.getOnsiteContactForUserById) {
-        console.log("DATA IS: ", [...data.getOnsiteContactForUserById]);
-        // json parse/stringify creates a deep copy of the array of contacts
-        // this prevents setOnsiteInfo from mutating the original state of userInfo.onsiteContacts
-        setOnsiteContacts(
-          JSON.parse(JSON.stringify(data.getOnsiteContactForUserById)),
-        );
-        setServerOnsiteContacts(
-          JSON.parse(JSON.stringify(data.getOnsiteContactForUserById)),
-        );
-      }
-      setIsLoading(false);
-    },
-    onError: (e) => {
-      logPossibleGraphQLError(e);
-      toast({
-        title: "Sorry, something went wrong!",
-        status: "error",
-        isClosable: true,
-      });
-    },
-  });
 
   if (!authenticatedUser) {
     return <Navigate replace to={LOGIN_PAGE} />;
@@ -713,12 +684,9 @@ const Settings = (): React.ReactElement => {
           serverOnsiteContacts.map(async (contact: OnsiteContact) => {
             const id = contact.id;
             const newContact = requestOnsiteContacts.find((c) => c.id === id);
-
-            // console.log("before delete");
             if (newContact) {
               return;
             }
-            console.log("deleting contact", contact);
 
             await deleteOnsiteContact({
               variables: {
@@ -735,6 +703,7 @@ const Settings = (): React.ReactElement => {
         status: "success",
         isClosable: true,
       });
+      setServerOnsiteContacts(requestOnsiteContacts);
       setIsLoading(false);
     } catch (e: unknown) {
       logPossibleGraphQLError(e as ApolloError);

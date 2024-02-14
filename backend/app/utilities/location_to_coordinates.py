@@ -21,7 +21,6 @@ def getGeocodeFromAddress(organization_address):
             raise Exception("Failed to get coordinates from Geocode API")
 
         response_json = response.json()
-        print("out is", [float(response_json[0]["lon"]), float(response_json[0]["lat"])])
         if len(response_json) == 0:
             raise Exception("Failed to get coordinates from Geocode API")
         return [float(response_json[0]["lon"]), float(response_json[0]["lat"])]

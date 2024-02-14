@@ -8,6 +8,14 @@ from app.models.user import User
 Tests for ONsite contact and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
 """
+
+def compare_returned_onsite_contact(result, onsite_contact):
+  assert result["id"] == str(onsite_contact.id)
+  assert result["name"] == onsite_contact.name
+  assert result["email"] == onsite_contact.email
+  assert result["phone"] == onsite_contact.phone
+  assert result["organizationId"] == str(onsite_contact.organization_id)
+
 def test_create_onsite_contact(onsite_contact_setup):
     asp, donor, onsite_contacts, _ = onsite_contact_setup
     onsite_contact = onsite_contacts[0]
@@ -26,6 +34,7 @@ def test_create_onsite_contact(onsite_contact_setup):
           name
           email 
           phone
+          organizationId
         }}
       }}
     }}
@@ -39,6 +48,9 @@ def test_create_onsite_contact(onsite_contact_setup):
       assert contact["name"] == "Bob Cat"
       assert contact["email"] == "bob@test.com"
       assert contact["phone"] == "604-433-1111"
+
+    assert return_result_contact["organizationId"] == str(donor.id)
+    assert db_result.organization_id == donor.id
 
 def test_update_onsite_contact(onsite_contact_setup):
     asp, donor, asp_onsite_contacts, donor_onsite_contact = onsite_contact_setup
@@ -140,6 +152,7 @@ def test_get_onsite_contact_by_id(onsite_contact_setup):
         name
         email 
         phone
+        organizationId
       }}
     }}
     """
@@ -151,4 +164,5 @@ def test_get_onsite_contact_by_id(onsite_contact_setup):
     assert result["name"] == onsite_contact.name
     assert result["email"] == onsite_contact.email
     assert result["phone"] == onsite_contact.phone
+    assert result["organizationId"] == str(onsite_contact.organization_id)
 

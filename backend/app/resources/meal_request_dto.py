@@ -53,7 +53,7 @@ class MealRequestDTO:
         #     error_list.append("The status supplied is not a string.")
 
         if self.status not in MEAL_STATUSES_STRINGS:
-            print("self.status is", self.status)
+            # TODO: revisit this
             pass
             # error_list.append(
             #     "The status {self_status} is not one of {valid_statuses}".format(

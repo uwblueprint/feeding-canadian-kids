@@ -38,7 +38,7 @@ class IMealRequestService(ABC):
         drop_off_datetime,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_staff: List[str],
         meal_request_id,
     ):
         pass

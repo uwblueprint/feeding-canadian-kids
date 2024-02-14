@@ -626,7 +626,6 @@ const Settings = (): React.ReactElement => {
   ) => {
     setIsLoading(true);
     try {
-      console.log(requestUserInfo);
       const response = await updateUserByID({
         variables: {
           requestorId,
@@ -720,7 +719,6 @@ const Settings = (): React.ReactElement => {
   const handleSubmit = () => {
     setAttemptedSave(true);
     if (!isRequestValid()) return;
-    console.log("user info is", userInfo);
 
     const requestUserInfo: UserInfo = {
       email: userInfo?.email || "",

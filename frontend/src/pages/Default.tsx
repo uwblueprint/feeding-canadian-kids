@@ -9,7 +9,6 @@ import useIsMealDonor from "../utils/useIsMealDonor";
 
 const Default = (): React.ReactElement => {
   const isMealDonor = useIsMealDonor();
-  console.log("Is mela donor", isMealDonor);
   return (
     <div
       style={{

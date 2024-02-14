@@ -17,8 +17,6 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-
-
 import { Contact, OnsiteContact } from "../../types/UserTypes";
 import { isValidEmail } from "../../utils/ValidationUtils";
 import useIsWebView from "../../utils/useIsWebView";

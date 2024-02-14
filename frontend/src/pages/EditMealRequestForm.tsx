@@ -205,7 +205,6 @@ const EditMealRequestForm = ({
         },
       });
       const data = response.data;
-      console.log(data);
       if (data) {
         toast({
           title: "Saved successfully",
@@ -462,7 +461,7 @@ const EditMealRequestForm = ({
                     Delivery Notes
                   </FormLabel>
                   <Input
-                    placeholder="Please knock on the door."
+                    placeholder="Ex. Please knock on the door."
                     value={deliveryInstructions}
                     onChange={(e) => setDeliveryInstructions(e.target.value)}
                   />

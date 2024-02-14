@@ -15,7 +15,11 @@ import { Link, Navigate } from "react-router-dom";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import BackgroundImage from "../../assets/background.png";
-import { DASHBOARD_PAGE, JOIN_PAGE } from "../../constants/Routes";
+import {
+  ASP_DASHBOARD_PAGE,
+  HOME_PAGE,
+  JOIN_PAGE,
+} from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser, LoginData } from "../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
@@ -79,7 +83,7 @@ const Login = (): React.ReactElement => {
   };
 
   if (authenticatedUser) {
-    return <Navigate replace to={DASHBOARD_PAGE} />;
+    return <Navigate replace to={HOME_PAGE} />;
   }
 
   return (

@@ -26,7 +26,7 @@ import React, { useState } from "react";
 import { Value } from "react-multi-date-picker";
 import { useNavigate } from "react-router-dom";
 
-import { DASHBOARD_PAGE } from "../../../constants/Routes";
+import { ASP_DASHBOARD_PAGE } from "../../../constants/Routes";
 import { Contact, OnsiteContact } from "../../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
 import OnsiteStaffSection from "../../common/OnsiteStaffSection";
@@ -127,7 +127,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           status: "success",
           isClosable: true,
         });
-        navigate(DASHBOARD_PAGE);
+        navigate(ASP_DASHBOARD_PAGE);
       }
     } catch (e: unknown) {
       logPossibleGraphQLError(e);

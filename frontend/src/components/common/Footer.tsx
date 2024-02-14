@@ -84,7 +84,7 @@ const Footer = () => {
       </Stack>
     </VStack>
   ) : (
-    <VStack width="100wh" bg="#F8F8FB">
+    <VStack width="100wh" bg="#F8F8FB" marginTop="auto">
       <Stack direction="column" h="15%" padding="25px 48px">
         <VStack direction="column" padding="1% 4% 1% 4%">
           <Text fontSize="14px" color="#647488" align="center">

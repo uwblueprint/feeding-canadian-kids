@@ -20,8 +20,6 @@ export const ASP_DASHBOARD_PAGE = "/asp/dashboard";
 
 export const MEAL_DONOR_DASHBOARD_PAGE = "/meal_donor/dashboard";
 
-export const UPCOMING_PAGE = "/meal_donor/upcoming";
-
 export const MEAL_DONOR_CALENDAR_PAGE = "/meal_donor/calendar";
 
 export const MEAL_DONOR_FORM_PAGE = "/meal_donor/donate/";
@@ -44,3 +42,4 @@ export const UPDATE_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity/update";
 
 export const HOOKS_PAGE = "/dashboard/hooks";
 
+export const UPCOMING_PAGE = "/upcoming";

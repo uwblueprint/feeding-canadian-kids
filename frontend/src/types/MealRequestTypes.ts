@@ -17,12 +17,13 @@ export enum MealStatus {
   OPEN = "OPEN",
   UPCOMING = "UPCOMING",
   FULFILLED = "FULFILLED",
-  CANCELLED = "CANCELLED",
+  CANCELLED = "CANCELLED"
 }
 
 export type MealRequest = {
   id: string;
   requestor: Requestor;
+  description: string;
   status: string;
   dropOffDatetime: Date;
   dropOffLocation: string;

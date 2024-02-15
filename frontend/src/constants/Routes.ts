@@ -33,3 +33,5 @@ export const CREATE_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity/create";
 export const UPDATE_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity/update";
 
 export const HOOKS_PAGE = "/dashboard/hooks";
+
+export const UPCOMING_PAGE = "/upcoming";

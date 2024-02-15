@@ -21,6 +21,7 @@ import Settings from "./pages/Settings";
 import SimpleEntityCreatePage from "./pages/SimpleEntityCreatePage";
 import SimpleEntityDisplayPage from "./pages/SimpleEntityDisplayPage";
 import SimpleEntityUpdatePage from "./pages/SimpleEntityUpdatePage";
+import UpcomingPage from "./pages/UpcomingPage";
 import UpdatePage from "./pages/UpdatePage";
 
 const Routes = (): React.ReactElement => (
@@ -48,6 +49,7 @@ const Routes = (): React.ReactElement => (
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
       <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />
       <Route path={Paths.DISPLAY_ENTITY_PAGE} element={<DisplayPage />} />
+      <Route path={Paths.UPCOMING_PAGE} element={<UpcomingPage />} />
       <Route
         path={Paths.CREATE_SIMPLE_ENTITY_PAGE}
         element={<SimpleEntityCreatePage />}

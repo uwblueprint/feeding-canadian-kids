@@ -12,6 +12,11 @@ export type AuthenticatedUser = {
   info: UserInfo;
 } | null;
 
+export type Requestor = {
+  id: string;
+  info: UserInfo;
+};
+
 export type Contact = {
   name: string;
   phone: string;

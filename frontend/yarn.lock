@@ -9123,6 +9123,11 @@ react-icons@^3.10.0:
   dependencies:
     camelcase "^5.0.0"
 
+react-icons@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-5.0.1.tgz#1694e11bfa2a2888cab47dcc30154ce90485feee"
+  integrity sha512-WqLZJ4bLzlhmsvme6iFdgO8gfZP17rfjYEJ2m9RsZjZ+cc4k1hTzknEz63YS1MeT50kVzoa1Nz36f4BEx+Wigw==
+
 "react-is@^16.12.0 || ^17.0.0 || ^18.0.0", react-is@^16.13.1, react-is@^16.3.2, react-is@^16.7.0, react-is@^16.8.4, react-is@^16.9.0:
   version "16.13.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
@@ -9166,7 +9171,7 @@ react-lifecycles-compat@^3.0.4:
 
 react-multi-date-picker@^4.4.1:
   version "4.4.1"
-  resolved "https://registry.npmjs.org/react-multi-date-picker/-/react-multi-date-picker-4.4.1.tgz"
+  resolved "https://registry.yarnpkg.com/react-multi-date-picker/-/react-multi-date-picker-4.4.1.tgz#98e137ab4829f69385d9e14f8ff6d48f31e180c8"
   integrity sha512-z0utCiMYijt2w3UoVJkYgsReE9l1k6DkiL13Vr2RKHnBnorKK0IYq7xpfkuMimvt7sLumFr5wTKsWumCgSkXkA==
   dependencies:
     react-date-object "^2.1.8"

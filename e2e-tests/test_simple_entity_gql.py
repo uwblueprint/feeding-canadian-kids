@@ -59,7 +59,7 @@ def create_entity(backend_url, auth_header, body):
             boolField
             enumField
         }
-    }      
+    }
     """
     response = requests.post(
         f"{backend_url}/graphql",

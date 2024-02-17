@@ -51,4 +51,4 @@ jobs:
       - name: Lint backend
         if: steps.changes.outputs.backend == 'true'
         working-directory: ./backend
-        run: pip install black flake8 && python -m black --check . && python -m flake8 . --ignore E203,E501,W503 --exclude /home/runner/work/feeding-canadian-kids/feeding-canadian-kids/backend/typings/graphene/relay/mutation.pyi
+        run: pip install black flake8

@@ -51,4 +51,4 @@ jobs:
       - name: Lint backend
         if: steps.changes.outputs.backend == 'true'
         working-directory: ./backend
-        run: pip install black flake8 && python -m black --check . --exclude .*typings.*|test_csv.py
+        run: pip install black flake8 && python -m black --check . --exclude "".*typings.*|test_csv.py"

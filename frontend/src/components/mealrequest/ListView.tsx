@@ -157,8 +157,10 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
   const [sort, setSort] = useState<"ASCENDING" | "DESCENDING">("ASCENDING");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentlyEditingMealRequestId, setCurrentlyEditingMealRequestId] =
-    useState<string | undefined>(undefined);
+  const [
+    currentlyEditingMealRequestId,
+    setCurrentlyEditingMealRequestId,
+  ] = useState<string | undefined>(undefined);
 
   // type TableNodeMealRequest = TABLE_LIBRARY_TYPES.TableNode & {};
   const [

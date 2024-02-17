@@ -71,8 +71,6 @@ class MealRequest(mg.Document):
         meal_request_dict = self.to_mongo().to_dict()
         id = meal_request_dict.pop("_id", None)
         meal_request_dict["id"] = str(id)
-        # for staff in meal_request_dict["onsite_staff"]:
-        #     id = staff.
         contacts = [contact.to_mongo().to_dict() for contact in self.onsite_staff]
         for contact in contacts:
             id = contact.pop("_id")

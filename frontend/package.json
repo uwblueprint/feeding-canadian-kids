@@ -39,7 +39,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@codemirror)/\"",
-    "test:ci": " react-scripts test --watchAll=false",
+    "test:ci": " react-scripts test --watchAll=false --transformIgnorePatterns \"node_modules/(?!@codemirror)/\" --verbose",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --cache",
     "fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix --cache"
@@ -49,6 +49,11 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
   },
   "browserslist": {
     "production": [

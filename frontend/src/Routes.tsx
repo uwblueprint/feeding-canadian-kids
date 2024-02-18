@@ -11,7 +11,6 @@ import ResetPassword from "./components/auth/ResetPassword";
 import SetPassword from "./components/auth/SetPassword";
 import * as Paths from "./constants/Routes";
 import CreatePage from "./pages/CreatePage";
-import Dashboard from "./pages/Dashboard";
 import Default from "./pages/Default";
 import DisplayPage from "./pages/DisplayPage";
 import HooksDemo from "./pages/HooksDemo";

@@ -44,17 +44,6 @@ def user_setup():
     for MOCK_USER in [MOCK_USER1_SNAKE, MOCK_USER2_SNAKE, MOCK_USER3_SNAKE]:
         user = User(**MOCK_USER)
         user.save()
-
-        # onsite_contact_1 = OnsiteContact(**MOCK_ONSITE_CONTACT_1)
-        # onsite_contact_1.organization_id = user.id
-        # onsite_contact_1.save()
-
-        # onsite_contact_2 = OnsiteContact(**MOCK_ONSITE_CONTACT_2)
-        # onsite_contact_2.organization_id = user.id
-        # onsite_contact_2.save()
-
-        # user.info.onsite_contacts.extend([onsite_contact_1.id, onsite_contact_2.id])
-        # user.save()
         users.append(user)
 
     yield users

@@ -464,7 +464,55 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
     assert result["id"] == str(meal_request.id)
 
 
+
 def test_cancel_donation_as_admin(meal_request_setup, user_setup):
+    _, _, meal_request = meal_request_setup
+    _, _, admin = user_setup
+
+    
+    test_commit_to_meal_request(meal_request_setup)
+
+    mutation = f"""
+    mutation testCancelDonation {{
+      cancelDonation(
+        mealRequestId: "{str(meal_request.id)}",
+        requestorId: "{str(admin.id)}"
+      )
+      {{
+        mealRequest{{
+          id
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo{{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteStaff{{
+            name
+            email
+            phone
+          }}
+          donationInfo{{
+            donor{{
+              id
+              info{{
+                email
+              }}
+            }}
+          }}
+          deliveryInstructions
+        }}
+      }}
+    }}
+    """
+    executed = graphql_schema.execute(mutation)
+    result = executed.data["cancelDonation"]["mealRequest"]
+    assert result["donationInfo"] is None
+    assert result["id"] == str(meal_request.id)
+
+
+def test_cancel_donation_fails_if_no_donation(meal_request_setup, user_setup):
     _, _, meal_request = meal_request_setup
     _, _, admin = user_setup
 
@@ -503,13 +551,8 @@ def test_cancel_donation_as_admin(meal_request_setup, user_setup):
     }}
     """
     executed = graphql_schema.execute(mutation)
-
-    print("#####")
-    print(executed)
-    result = executed.data["cancelDonation"]["mealRequest"]
-    assert result["donationInfo"] is None
-    assert result["id"] == str(meal_request.id)
-
+    assert executed.errors is not None
+    assert executed.errors[0].message == f'Meal request "{str(meal_request.id)}" does not have a donation'
 
 def test_cancel_donation_as_non_admin(meal_request_setup):
     _, non_admin, meal_request = meal_request_setup
@@ -550,6 +593,8 @@ def test_cancel_donation_as_non_admin(meal_request_setup):
     """
 
     executed = graphql_schema.execute(mutation)
+    assert executed.errors is not None
+    assert executed.errors[0].message == 'Only admins can cancel donations'
     assert executed.data["cancelDonation"] is None
 
 

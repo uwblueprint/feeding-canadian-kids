@@ -226,6 +226,7 @@ class MealRequestService(IMealRequestService):
         limit,
         sort_by_date_direction,
     ):
+        status_value_list = list(map(lambda stat: stat.value, status))
         try:
             sort_prefix = "+"
             if sort_by_date_direction == SortDirection.DESCENDING:
@@ -234,7 +235,7 @@ class MealRequestService(IMealRequestService):
             donor = User.objects(id=donor_id).first()
             requests = MealRequest.objects(
                 donation_info__donor=donor,
-                status__in=status,
+                status__in=status_value_list,
             ).order_by(f"{sort_prefix}date_created")
 
             # Filter results by optional parameters.

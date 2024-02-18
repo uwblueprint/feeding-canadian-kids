@@ -248,7 +248,7 @@ class MealRequestQueries(QueryList):
         max_drop_off_date=graphene.Date(default_value=None),
         status=graphene.List(
             graphene.Enum.from_enum(MealStatus),
-            default_value=MEAL_STATUSES,
+            default_value=MEAL_STATUSES_ENUMS,
         ),
         offset=graphene.Int(default_value=0),
         limit=graphene.Int(default_value=None),

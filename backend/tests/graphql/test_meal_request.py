@@ -220,6 +220,11 @@ def test_commit_to_meal_request(meal_request_setup):
         == "No nuts"
     )
 
+    meal_request_in_db = MealRequest.objects(id=meal_request.id).first().to_serializable_dict()
+    assert meal_request_in_db["donation_info"]["donor"] == donor.id
+    assert meal_request_in_db["donation_info"]["meal_description"] == "Pizza"
+    assert meal_request_in_db["donation_info"]["additional_info"] == "No nuts"
+
 
 # Only user's with role "Donor" should be able to commit
 # to meal requests, otherwise an error is thrown
@@ -362,7 +367,7 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
     assert updatedMealRequest["dropOffDatetime"] == updatedDateTime
 
 
-def test_get_meal_request_failure(meal_request_setup):
+def test_create_meal_request_failure(meal_request_setup):
     requestor, _, _ = meal_request_setup
 
     mutation = f"""
@@ -460,9 +465,26 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
 def test_get_meal_request_by_donor_id(meal_request_setup):
     _, donor, meal_request = meal_request_setup
 
+
+    commit = graphql_schema.execute(
+        f"""mutation testCommitToMealRequest {{
+      commitToMealRequest(
+        requestor: "{str(donor.id)}",
+        mealRequestIds: ["{str(meal_request.id)}"],
+        mealDescription: "Pizza",
+        additionalInfo: "No nuts"
+      )
+      {{
+        mealRequests {{
+          id
+        }}
+      }}
+    }}
+    """)
+
     executed = graphql_schema.execute(
         f"""{{
-          getMealRequestsByDonorId(donorId: "{str(donor.id)}") {{
+          getMealRequestsByDonorId(donorId: "{str(donor.id)}", status: UPCOMING) {{
             id
             requestor {{
               id
@@ -494,7 +516,12 @@ def test_get_meal_request_by_donor_id(meal_request_setup):
       }}"""
     )
 
+    assert executed.errors is None
     assert len(executed.data["getMealRequestsByDonorId"]) == 1
     result = executed.data["getMealRequestsByDonorId"][0]
-    assert result["donationInfo"]["donor"]["id"] == str(donor.id)
+
     assert result["id"] == str(meal_request.id)
+    assert result["donationInfo"]["donor"]["id"] == str(donor.id)
+    assert result["donationInfo"]["mealDescription"] == "Pizza"
+    assert result["donationInfo"]["additionalInfo"] == "No nuts"
+    

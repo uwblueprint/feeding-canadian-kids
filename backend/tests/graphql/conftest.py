@@ -68,6 +68,7 @@ def meal_request_setup(user_setup):
     requestor, donor, _ = user_setup
     meal_request = MealRequest(requestor=requestor, **MOCK_MEALREQUEST1_SNAKE).save()
 
+
     yield requestor, donor, meal_request
 
     requestor.delete()

@@ -151,6 +151,31 @@ class MealRequestService(IMealRequestService):
             self.logger.error(str(error))
             raise error
 
+    def cancel_donation(self, meal_request_id: str) -> MealRequestDTO:
+        try:
+            meal_request = MealRequest.objects(id=meal_request_id).first()
+            if not meal_request:
+                raise Exception(f'Meal request "{meal_request_id}" not found')
+
+            if not meal_request.donation_info:
+                raise Exception(
+                    f'Meal request "{meal_request_id}" does not have a donation'
+                )
+
+            meal_request.donation_info = None
+
+            meal_request_dto = self.convert_meal_request_to_dto(
+                meal_request, meal_request.requestor
+            )
+
+            meal_request.save()
+
+            return meal_request_dto
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error
+
     def convert_meal_request_to_dto(
         self, request: MealRequest, requestor: User
     ) -> MealRequestDTO:

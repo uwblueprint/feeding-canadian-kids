@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from app.resources.auth_dto import AuthDTO
+
 
 class IAuthService(ABC):
     """
@@ -7,7 +9,7 @@ class IAuthService(ABC):
     """
 
     @abstractmethod
-    def generate_token(self, email, password):
+    def generate_token(self, email, password) -> AuthDTO:
         """
         Generate a short-lived JWT access token and a long-lived refresh token
         when supplied user's email and password

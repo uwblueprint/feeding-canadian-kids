@@ -2,15 +2,14 @@ import graphene
 from graphql import GraphQLError
 
 from .types import (
-    ContactInput,
-    Contact,
     Mutation,
     MutationList,
+    OnsiteContact,
     QueryList,
     SortDirection,
     User,
 )
-from ..models.meal_request import MealStatus, MEAL_STATUSES
+from ..models.meal_request import MEAL_STATUSES_ENUMS, MealStatus
 from ..graphql.services import services
 
 # Input Types
@@ -35,8 +34,9 @@ class MealInfoResponse(graphene.ObjectType):
 class CreateMealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
     drop_off_datetime = graphene.DateTime(required=True)
-    status = graphene.String(required=True)
+    status = graphene.Field(graphene.Enum.from_enum(MealStatus), required=True)
     meal_info = graphene.Field(MealInfoResponse, required=True)
+    onsite_staff = graphene.List(OnsiteContact)
 
 
 class DonationInfo(graphene.ObjectType):
@@ -49,11 +49,11 @@ class DonationInfo(graphene.ObjectType):
 class MealRequestResponse(graphene.ObjectType):
     id = graphene.ID()
     requestor = graphene.Field(User)
-    status = graphene.String()
+    status = graphene.Field(graphene.Enum.from_enum(MealStatus), required=True)
     drop_off_datetime = graphene.DateTime()
     drop_off_location = graphene.String()
     meal_info = graphene.Field(MealInfoResponse)
-    onsite_staff = graphene.List(Contact)
+    onsite_staff = graphene.List(OnsiteContact)
     date_created = graphene.DateTime()
     date_updated = graphene.DateTime()
     delivery_instructions = graphene.String()
@@ -71,7 +71,7 @@ class CreateMealRequests(Mutation):
         drop_off_time = graphene.Time(required=True)
         drop_off_location = graphene.String(required=True)
         delivery_instructions = graphene.String(default_value=None)
-        onsite_staff = graphene.List(ContactInput, required=True)
+        onsite_staff = graphene.List(graphene.String, default_value=[])
 
     # return values
     meal_requests = graphene.List(CreateMealRequestResponse)
@@ -103,12 +103,12 @@ class CreateMealRequests(Mutation):
 class UpdateMealRequest(Mutation):
     class Arguments:
         meal_request_id = graphene.ID(required=True)
-        requestor = graphene.ID(required=False)
+        requestor_id = graphene.ID(required=False)
         drop_off_datetime = graphene.DateTime(required=False)
         meal_info = MealTypeInput()
         drop_off_location = graphene.String()
         delivery_instructions = graphene.String()
-        onsite_staff = graphene.List(ContactInput)
+        onsite_staff = graphene.List(graphene.String)
 
     # return values
     meal_request = graphene.Field(MealRequestResponse)
@@ -117,7 +117,7 @@ class UpdateMealRequest(Mutation):
         self,
         info,
         meal_request_id,
-        requestor=None,
+        requestor_id: str,
         drop_off_datetime=None,
         meal_info=None,
         drop_off_location=None,
@@ -125,7 +125,7 @@ class UpdateMealRequest(Mutation):
         onsite_staff=None,
     ):
         result = services["meal_request_service"].update_meal_request(
-            requestor=requestor,
+            requestor_id=requestor_id,
             meal_info=meal_info,
             drop_off_datetime=drop_off_datetime,
             drop_off_location=drop_off_location,
@@ -139,7 +139,7 @@ class UpdateMealRequest(Mutation):
 
 class CommitToMealRequest(Mutation):
     class Arguments:
-        requester = graphene.ID(required=True)
+        requestor = graphene.ID(required=True)
         meal_request_ids = graphene.List(graphene.ID, required=True)
         meal_description = graphene.String(required=True)
         additional_info = graphene.String(default_value=None)
@@ -149,13 +149,13 @@ class CommitToMealRequest(Mutation):
     def mutate(
         self,
         info,
-        requester,
+        requestor,
         meal_request_ids,
         meal_description,
         additional_info=None,
     ):
         result = services["meal_request_service"].commit_to_meal_request(
-            donor_id=requester,
+            donor_id=requestor,
             meal_request_ids=meal_request_ids,
             meal_description=meal_description,
             additional_info=additional_info,
@@ -208,14 +208,31 @@ class MealRequestQueries(QueryList):
         requestor_id=graphene.ID(required=True),
         min_drop_off_date=graphene.Date(default_value=None),
         max_drop_off_date=graphene.Date(default_value=None),
+        # status=graphene.List(graphene.Enum.from_enum(MealStatus)),
         status=graphene.List(
             graphene.Enum.from_enum(MealStatus),
-            default_value=MEAL_STATUSES,
+            # MealStatus,
+            default_value=MEAL_STATUSES_ENUMS,
         ),
         offset=graphene.Int(default_value=0),
         limit=graphene.Int(default_value=None),
         sort_by_date_direction=SortDirection(default_value=SortDirection.ASCENDING),
     )
+
+    getMealRequestById = graphene.Field(
+        MealRequestResponse,
+        requestor_id=graphene.ID(required=True),
+        id=graphene.ID(required=True),
+    )
+
+    def resolve_getMealRequestById(
+        self,
+        info,
+        requestor_id: str,
+        id: str,
+    ):
+        meal_request = services["meal_request_service"].get_meal_request_by_id(id)
+        return meal_request
 
     def resolve_getMealRequestsByRequestorId(
         self,
@@ -232,6 +249,60 @@ class MealRequestQueries(QueryList):
             "meal_request_service"
         ].get_meal_requests_by_requestor_id(
             requestor_id,
+            min_drop_off_date,
+            max_drop_off_date,
+            status,
+            offset,
+            limit,
+            sort_by_date_direction,
+        )
+
+        return [
+            MealRequestResponse(
+                id=meal_request_dto.id,
+                requestor=meal_request_dto.requestor,
+                status=meal_request_dto.status,
+                drop_off_datetime=meal_request_dto.drop_off_datetime,
+                drop_off_location=meal_request_dto.drop_off_location,
+                meal_info=meal_request_dto.meal_info,
+                onsite_staff=meal_request_dto.onsite_staff,
+                date_created=meal_request_dto.date_created,
+                date_updated=meal_request_dto.date_updated,
+                delivery_instructions=meal_request_dto.delivery_instructions,
+                donation_info=meal_request_dto.donation_info,
+            )
+            for meal_request_dto in meal_request_dtos
+        ]
+
+    getMealRequestsByDonorId = graphene.List(
+        MealRequestResponse,
+        donor_id=graphene.ID(required=True),
+        min_drop_off_date=graphene.Date(default_value=None),
+        max_drop_off_date=graphene.Date(default_value=None),
+        status=graphene.List(
+            graphene.Enum.from_enum(MealStatus),
+            default_value=MEAL_STATUSES_ENUMS,
+        ),
+        offset=graphene.Int(default_value=0),
+        limit=graphene.Int(default_value=None),
+        sort_by_date_direction=SortDirection(default_value=SortDirection.ASCENDING),
+    )
+
+    def resolve_getMealRequestsByDonorId(
+        self,
+        info,
+        donor_id,
+        min_drop_off_date,
+        max_drop_off_date,
+        status,
+        offset,
+        limit,
+        sort_by_date_direction,
+    ):
+        meal_request_dtos = services[
+            "meal_request_service"
+        ].get_meal_requests_by_donor_id(
+            donor_id,
             min_drop_off_date,
             max_drop_off_date,
             status,

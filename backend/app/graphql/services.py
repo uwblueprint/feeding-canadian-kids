@@ -1,4 +1,6 @@
 from typing import TypedDict
+
+from ..services.interfaces.onsite_contact_service import IOnsiteContactService
 from ..services.interfaces.user_service import IUserService
 from ..services.interfaces.auth_service import IAuthService
 from ..services.interfaces.email_service import IEmailService
@@ -17,6 +19,7 @@ class ServicesObject(TypedDict):
     auth_service: IAuthService
     onboarding_request_service: IOnboardingRequestService
     meal_request_service: IMealRequestService
+    onsite_contact_service: IOnsiteContactService
 
 
 services: ServicesObject = {
@@ -25,4 +28,5 @@ services: ServicesObject = {
     "auth_service": None,
     "onboarding_request_service": None,
     "meal_request_service": None,
-}
+    "onsite_contact_service": None,
+}  # type: ignore

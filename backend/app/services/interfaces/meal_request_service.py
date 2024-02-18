@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Union, List
 
 from ...resources.meal_request_dto import MealRequestDTO
 
@@ -18,7 +18,7 @@ class IMealRequestService(ABC):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_staff: List[str],
     ):
         """Create a new MealRequest object and corresponding MealRequests
 
@@ -33,12 +33,12 @@ class IMealRequestService(ABC):
     @abstractmethod
     def update_meal_request(
         self,
-        requestor,
+        requestor_id: str,
         meal_info,
         drop_off_datetime,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_staff: List[str],
         meal_request_id,
     ):
         pass
@@ -47,10 +47,17 @@ class IMealRequestService(ABC):
     def commit_to_meal_request(
         self,
         donor_id: str,
-        meal_request_ids: [str],
+        meal_request_ids: List[str],
         meal_description: str,
         additional_info: Union[str, None],
-    ) -> [MealRequestDTO]:
+    ) -> List[MealRequestDTO]:
+        pass
+
+    @abstractmethod
+    def get_meal_request_by_id(
+        self,
+        id: str,
+    ) -> MealRequestDTO:
         pass
 
     @abstractmethod

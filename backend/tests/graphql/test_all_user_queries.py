@@ -33,7 +33,7 @@ def test_all_users(user_setup):
                         phone
                         email
                     }
-                    onsiteContacts {
+                    initialOnsiteContacts {
                         name
                         phone
                         email
@@ -45,7 +45,6 @@ def test_all_users(user_setup):
     )
 
     assert len(executed.data["getAllUsers"]) == 3
-    print(executed.data["getAllUsers"])
     user_result1 = executed.data["getAllUsers"][0]
     assert user_result1["id"] == str(user_1.id)
     assert user_result1["info"] == MOCK_INFO1_CAMEL
@@ -84,7 +83,7 @@ def test_all_users_filter_by_role(user_setup):
                     phone
                     email
                 }
-                onsiteContacts {
+                initialOnsiteContacts {
                     name
                     phone
                     email
@@ -127,7 +126,7 @@ def test_get_user_by_id(user_setup):
                         phone
                         email
                     }}
-                    onsiteContacts {{
+                    initialOnsiteContacts {{
                         name
                         phone
                         email
@@ -171,7 +170,7 @@ def test_get_user_by_id(user_setup):
 #                         phone
 #                         email
 #                     }}
-#                     onsiteContacts {{
+#                     initialOnsiteContacts {{
 #                         name
 #                         phone
 #                         email

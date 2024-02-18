@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import BackgroundImage from "../../assets/background.png";
 import { LOGIN_PAGE } from "../../constants/Routes";
+import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 
 const SetPassword = (): React.ReactElement => {
   const [notMatching, setNotMatching] = useState(false);
@@ -49,11 +50,6 @@ const SetPassword = (): React.ReactElement => {
             }
           }
           primaryContact {
-            name
-            phone
-            email
-          }
-          onsiteContacts {
             name
             phone
             email
@@ -95,11 +91,6 @@ const SetPassword = (): React.ReactElement => {
               phone
               email
             }
-            onsiteContacts {
-              name
-              phone
-              email
-            }
           }
         }
       }
@@ -112,9 +103,7 @@ const SetPassword = (): React.ReactElement => {
 
   const [register, { loading: registerLoading }] = useMutation(REGISTER_USER);
 
-  const dataStatus = () => {
-    return onboardingData?.getOnboardingRequestById?.status !== "Approved";
-  };
+  const dataStatus = () => onboardingData?.getOnboardingRequestById?.status !== "Approved";
 
   const handleRegister = async () => {
     try {
@@ -146,6 +135,8 @@ const SetPassword = (): React.ReactElement => {
 
     handleRegister();
   };
+
+  logPossibleGraphQLError(onboardingError);
 
   return (
     <Flex

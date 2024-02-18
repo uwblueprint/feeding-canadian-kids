@@ -79,7 +79,7 @@ def validate_userinfo(userinfo, error_list):
         "role",
         "role_info",
         "primary_contact",
-        "onsite_contacts",
+        "initial_onsite_contacts",
         "active",
     ]
     if not isinstance(userinfo, dict):
@@ -94,7 +94,7 @@ def validate_userinfo(userinfo, error_list):
     for key, val in userinfo.items():
         if key == "primary_contact":
             error_list = validate_contact(val, "info.primary_contact", error_list)
-        elif key == "onsite_contacts":
+        elif key == "initial_onsite_contacts":
             if not isinstance(val, list):
                 error_list.append("The info.onsite_contacts supplied is not a list.")
             else:

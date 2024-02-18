@@ -60,7 +60,18 @@ docker-compose up --build
 
 The backend runs at http://localhost:5000 and the frontend runs at http://localhost:3000.
 
-If you need to login as a user, there is a user in the development db: `test@test.com` with password `12345678`.
+### Test Users
+
+Password For all test accounts: `12345678`
+
+Test ASP:
+Email: `shahan.neda+asptest1@gmail.com`
+
+Test Donor:
+Email: `shahan.neda+mealdonortest1@gmail.com`
+
+Test Admin:
+Email: `shahan.neda+testadmin1@gmail.com`
 
 ## Useful Commands
 

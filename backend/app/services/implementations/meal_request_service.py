@@ -1,4 +1,4 @@
-from ...models.user_info import Contact
+from typing import List
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
 from datetime import datetime
@@ -22,7 +22,7 @@ class MealRequestService(IMealRequestService):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_staff: List[str],
     ):
         try:
             # Create MealRequests
@@ -32,6 +32,7 @@ class MealRequestService(IMealRequestService):
 
             meal_requests = []
             for request_date in request_dates:
+                # print("creaing!")
                 new_meal_request = MealRequest(
                     requestor=requestor,
                     meal_info=meal_info,
@@ -40,6 +41,7 @@ class MealRequestService(IMealRequestService):
                     delivery_instructions=delivery_instructions,
                     onsite_staff=onsite_staff,
                 )
+                new_meal_request.validate_onsite_contacts()
                 new_meal_request.save()
                 meal_requests.append(new_meal_request.to_serializable_dict())
         except Exception as error:
@@ -49,7 +51,7 @@ class MealRequestService(IMealRequestService):
 
     def update_meal_request(
         self,
-        requestor,
+        requestor_id,
         meal_info,
         drop_off_datetime,
         drop_off_location,
@@ -58,13 +60,13 @@ class MealRequestService(IMealRequestService):
         meal_request_id,
     ):
         original_meal_request: MealRequest = MealRequest.objects(
-            id=meal_request_id
+            id=meal_request_id, requestor=requestor_id
         ).first()
-        if not original_meal_request:
-            raise Exception(f"meal request with id {meal_request_id} not found")
 
-        if requestor is not None:
-            original_meal_request.requestor = requestor
+        if not original_meal_request:
+            raise Exception(
+                f"meal request with id {meal_request_id} by {requestor_id} not found"
+            )
 
         if drop_off_datetime is not None:
             original_meal_request.drop_off_datetime = drop_off_datetime
@@ -82,18 +84,18 @@ class MealRequestService(IMealRequestService):
             original_meal_request.delivery_instructions = delivery_instructions
 
         if onsite_staff is not None:
-            original_meal_request.onsite_staff = [
-                Contact(name=staff.name, phone=staff.phone, email=staff.email)
-                for staff in onsite_staff
-            ]
+            original_meal_request.onsite_staff = onsite_staff
 
         requestor = original_meal_request.requestor
+
         # Does validation,
         meal_request_dto = self.convert_meal_request_to_dto(
             original_meal_request, requestor
         )
+        original_meal_request.validate_onsite_contacts()
 
         original_meal_request.save()
+
         return meal_request_dto
 
     def commit_to_meal_request(
@@ -102,7 +104,7 @@ class MealRequestService(IMealRequestService):
         meal_request_ids: [str],
         meal_description: str,
         additional_info: str,
-    ) -> [MealRequestDTO]:
+    ) -> List[MealRequestDTO]:
         try:
             donor = User.objects(id=donor_id).first()
             if not donor:
@@ -169,11 +171,12 @@ class MealRequestService(IMealRequestService):
         requestor_id,
         min_drop_off_date,
         max_drop_off_date,
-        status,
+        status: List[MealStatus],
         offset,
         limit,
         sort_by_date_direction,
     ):
+        status_value_list = list(map(lambda stat: stat.value, status))
         try:
             sort_prefix = "+"
             if sort_by_date_direction == SortDirection.DESCENDING:
@@ -182,8 +185,8 @@ class MealRequestService(IMealRequestService):
             requestor = User.objects(id=requestor_id).first()
             requests = MealRequest.objects(
                 requestor=requestor,
-                status__in=status,
-            ).order_by(f"{sort_prefix}date_created")
+                status__in=status_value_list,
+            ).order_by(f"{sort_prefix}drop_off_datetime")
 
             # Filter results by optional parameters.
             # Since we want to filter these optionally (i.e. filter only if specified),
@@ -212,3 +215,11 @@ class MealRequestService(IMealRequestService):
         except Exception as error:
             self.logger.error(str(error))
             raise error
+
+    def get_meal_request_by_id(self, id: str) -> MealRequestDTO:
+        meal_request = MealRequest.objects(id=id).first()
+        meal_request_dto = self.convert_meal_request_to_dto(
+            meal_request, meal_request.requestor
+        )
+
+        return meal_request_dto

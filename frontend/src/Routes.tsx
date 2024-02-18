@@ -10,8 +10,8 @@ import Login from "./components/auth/Login";
 import ResetPassword from "./components/auth/ResetPassword";
 import SetPassword from "./components/auth/SetPassword";
 import * as Paths from "./constants/Routes";
+import Dashboard from "./pages/ASPDashboard";
 import CreatePage from "./pages/CreatePage";
-import Dashboard from "./pages/Dashboard";
 import Default from "./pages/Default";
 import DisplayPage from "./pages/DisplayPage";
 import HooksDemo from "./pages/HooksDemo";
@@ -40,7 +40,7 @@ const Routes = (): React.ReactElement => (
 
     <Route path="" element={<AuthWall />}>
       <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
-      <Route path={Paths.DASHBOARD_PAGE} element={<Dashboard />} />
+      <Route path={Paths.ASP_DASHBOARD_PAGE} element={<Dashboard />} />
       <Route
         path={Paths.MEAL_DONOR_DASHBOARD_PAGE}
         element={<MealDonorDashboard />}

@@ -189,9 +189,6 @@ class CancelDonation(Mutation):
         except Exception as e:
             raise GraphQLError(str(e))
 
-        if meal_request.donation_info is not None:
-            meal_request.donation_info = None
-
         return CancelDonation(meal_request=meal_request)
 
 

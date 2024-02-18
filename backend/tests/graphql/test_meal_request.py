@@ -509,6 +509,10 @@ def test_cancel_donation_as_admin(meal_request_setup, user_setup):
     assert result["donationInfo"] is None
     assert result["id"] == str(meal_request.id)
 
+    db_meal_request = MealRequest.objects(id=meal_request.id).first().to_serializable_dict()
+    assert db_meal_request.get("donation_info", None) is None
+
+
 
 def test_cancel_donation_fails_if_no_donation(meal_request_setup, user_setup):
     _, _, meal_request = meal_request_setup
@@ -554,6 +558,7 @@ def test_cancel_donation_fails_if_no_donation(meal_request_setup, user_setup):
         executed.errors[0].message
         == f'Meal request "{str(meal_request.id)}" does not have a donation'
     )
+
 
 
 def test_cancel_donation_as_non_admin(meal_request_setup):

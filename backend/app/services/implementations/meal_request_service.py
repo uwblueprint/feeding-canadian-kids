@@ -157,10 +157,10 @@ class MealRequestService(IMealRequestService):
             if not meal_request:
                 raise Exception(f'Meal request "{meal_request_id}" not found')
 
-            
             if not meal_request.donation_info:
-                raise Exception(f'Meal request "{meal_request_id}" does not have a donation')
-                
+                raise Exception(
+                    f'Meal request "{meal_request_id}" does not have a donation'
+                )
 
             meal_request.donation_info = None
 

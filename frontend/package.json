@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/preset-env": "^7.22.14",
     "@apollo/client": "^3.8.0",
+    "@babel/preset-env": "^7.22.14",
     "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/react": "^2.4.1",
     "@chakra-ui/stepper": "^2.2.0",
@@ -29,7 +29,7 @@
     "react": "^18.2.0",
     "react-bootstrap": "^1.5.2",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.11.0",
+    "react-icons": "^5.0.1",
     "react-json-schema": "^1.2.2",
     "react-jsonschema-form": "^1.8.1",
     "react-multi-date-picker": "^4.4.1",

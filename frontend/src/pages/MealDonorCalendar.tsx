@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
-import React from "react";
+import React, { useState } from "react";
 import {
   IoArrowBackCircleOutline,
   IoLocationOutline,
@@ -212,6 +212,8 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
     },
   );
 
+  const [selectedMealRequests, setSelectedMealRequests] = useState<string[]>([]);
+
   logPossibleGraphQLError(getMealRequestsError);
 
   function formatDate(inputDate: string): string {
@@ -239,23 +241,35 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
           .split(",")[0]
           .split("/");
         const realDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
+
+        // console.log(mealRequest.dropOffDatetime)
+
         return {
           title: `${mealRequest.mealInfo.portions}`,
-          // start: `${new Date(
-          //   mealRequest.dropOffDatetime.toLocaleString(),
-          // ).toLocaleTimeString("en-US", {
-          //   hour: "numeric",
-          //   minute: "numeric",
-          //   hour12: true,
-          // })}`,
-          date: realDate,
-          extendedProps: { mealRequest },
-          backgroundColor: "#3BA948",
-          borderColor: "#3BA948",
-          borderRadius: "10%",
+        //   start: `${new Date(
+        //     mealRequest.dropOffDatetime.toLocaleString(),
+        //   ).toLocaleTimeString("en-US", {
+        //     hour: "numeric",
+        //     minute: "numeric",
+        //     hour12: true,
+        //   })}`,
+            start: mealRequest.dropOffDatetime,
+          // date: realDate,
+          extendedProps: { 
+            id: `${mealRequest.id}`,
+            icon: 'test'
+            },
+          backgroundColor: `${selectedMealRequests.includes(mealRequest.id) ? "#444444" : "#E2E8F0"}`,
+          color: "#000000",
+          // eventAfterRender
+           display: "block"
+        //   borderColor: "#3BA948",
+        //   borderRadius: "10%",
         };
       },
     ) ?? [];
+
+    console.log(realEvents)
 
   if (getMealRequestsLoading) {
     return (
@@ -285,7 +299,7 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
         *each date displays the meal delivery time slot & number of meals needed
         <PiForkKnifeFill />
       </Text>
-      <Text margin="20px 0px">Number selected</Text>
+      <Text margin="20px 0px">Number selected: {selectedMealRequests.length}</Text>
 
       <FullCalendar
         headerToolbar={{
@@ -299,11 +313,17 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
         events={realEvents}
         selectable
         // eventContent={renderEventContent}
-        // eventClick={(info) => {
-        //   setSelectedMealRequest(
-        //     info.event.extendedProps.mealRequest,
-        //   );
-        //   // info.el.style.borderColor = "red";
+        eventClick={(info) => {
+            if (selectedMealRequests.includes(info.event.extendedProps.id)) {
+                setSelectedMealRequests(selectedMealRequests.filter(id => id !== info.event.extendedProps.id));
+            } else {
+                setSelectedMealRequests(prevSelected => [...prevSelected, info.event.extendedProps.id]);
+            }
+        }}
+        // eventContent={(arg, element) => {
+        //     if (arg.event.extendedProps) {
+        //         // element.find(".fc-title").prepend(<PiForkKnifeFill />);
+        //     }
         // }}
         // eventMouseLeave={() => {
         //   setSelectedMealRequest(undefined);

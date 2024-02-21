@@ -1,5 +1,6 @@
 import graphene
 from graphql import GraphQLError
+import json
 
 from .types import (
     Mutation,
@@ -192,11 +193,42 @@ class CancelDonation(Mutation):
         return CancelDonation(meal_request=meal_request)
 
 
+class DeleteMealRequest(Mutation):
+    class Arguments:
+        meal_request_id = graphene.ID(required=True)
+        requestor_id = graphene.String(required=True)
+    
+    meal_request = graphene.Field(MealRequestResponse)
+
+    def mutate(self, info, meal_request_id, requestor_id):
+        user = services["user_service"]
+        requestor_auth_id = user.get_auth_id_by_user_id(requestor_id)
+        requestor_role = user.get_user_role_by_auth_id(requestor_auth_id)
+
+        try:
+          meal_request = services["meal_request_service"].get_meal_request_by_id(meal_request_id)
+          if not meal_request:
+            raise Exception("Meal request not found")
+
+          if (requestor_role == "Admin") or (meal_request.requestor['id'] == requestor_id and not meal_request.donation_info):
+            meal_request = services["meal_request_service"].delete_meal_request(
+                meal_request_id
+            )
+          else:
+            raise Exception("Only admins or requestors who have not found a donor can delete meal requests.")
+
+        except Exception as e:
+            raise GraphQLError(str(e))
+
+        return DeleteMealRequest(meal_request=meal_request)
+
+
 class MealRequestMutations(MutationList):
     create_meal_request = CreateMealRequests.Field()
     update_meal_request = UpdateMealRequest.Field()
     commit_to_meal_request = CommitToMealRequest.Field()
     cancel_donation = CancelDonation.Field()
+    delete_meal_request = DeleteMealRequest.Field()
 
 
 class MealRequestQueries(QueryList):

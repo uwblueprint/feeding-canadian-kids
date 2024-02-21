@@ -301,8 +301,9 @@ class MealRequestService(IMealRequestService):
 
     def get_meal_requests_by_ids(self, ids: str) -> List[MealRequestDTO]:
         meal_requests = MealRequest.objects(id__in=ids).all()
-        meal_request_dtos = [self.convert_meal_request_to_dto(
-            meal_request, meal_request.requestor
-        ) for meal_request in meal_requests]
+        meal_request_dtos = [
+            self.convert_meal_request_to_dto(meal_request, meal_request.requestor)
+            for meal_request in meal_requests
+        ]
 
         return meal_request_dtos

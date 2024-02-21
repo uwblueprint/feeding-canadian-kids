@@ -669,10 +669,12 @@ def test_get_meal_request_by_donor_id(meal_request_setup):
     assert result["donationInfo"]["mealDescription"] == "Pizza"
     assert result["donationInfo"]["additionalInfo"] == "No nuts"
 
+
 def test_get_meal_requests_by_ids(meal_request_setup):
     asp, donor, meal_request = meal_request_setup
 
-    create = graphql_schema.execute(f"""
+    create = graphql_schema.execute(
+        f"""
     mutation m{{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
@@ -695,11 +697,12 @@ def test_get_meal_requests_by_ids(meal_request_setup):
         }}
       }}
     }}
-    """)
+    """
+    )
     assert create.errors is None
     created_ml_id = create.data["createMealRequest"]["mealRequests"][0]["id"]
     created_db_meal_request = MealRequest.objects(id=created_ml_id).first()
-  
+
     executed = graphql_schema.execute(
         f"""query test {{
       getMealRequestsByIds(
@@ -740,9 +743,14 @@ def test_get_meal_requests_by_ids(meal_request_setup):
     )
 
     assert executed.errors is None
-    meal_requests = executed.data["getMealRequestsByIds"];
+    meal_requests = executed.data["getMealRequestsByIds"]
     assert len(meal_requests) == 2
 
-    for [returned_meal_request, expected] in zip(meal_requests, [meal_request, created_db_meal_request]):
-      assert returned_meal_request["id"] == str(expected.id)
-      assert returned_meal_request["mealInfo"]["dietaryRestrictions"] == expected.meal_info.dietary_restrictions
+    for [returned_meal_request, expected] in zip(
+        meal_requests, [meal_request, created_db_meal_request]
+    ):
+        assert returned_meal_request["id"] == str(expected.id)
+        assert (
+            returned_meal_request["mealInfo"]["dietaryRestrictions"]
+            == expected.meal_info.dietary_restrictions
+        )

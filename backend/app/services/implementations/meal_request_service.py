@@ -175,7 +175,7 @@ class MealRequestService(IMealRequestService):
         except Exception as error:
             self.logger.error(str(error))
             raise error
-    
+
     def delete_meal_request(self, meal_request_id: str) -> MealRequestDTO:
         try:
             meal_request = MealRequest.objects(id=meal_request_id).first()

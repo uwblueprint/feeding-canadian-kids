@@ -1,9 +1,12 @@
+# NOTE: The coodinates have been mocked out in testing
 MOCK_INFO1_SNAKE = {
     "email": "test1@organization.com",
     "organization_address": "255 King St N",
     "organization_name": "Test1 Org",
     "organization_desc": "Testing123",
-    "organization_coordinates": [-80.52565465, 43.477876300000005],
+    "organization_coordinates": [-11.1, 11.1],
+    # Real Coordinates:
+    # "organization_coordinates": [-80.52565465, 43.477876300000005],
     "role": "ASP",
     "role_info": {
         "asp_info": {
@@ -16,11 +19,19 @@ MOCK_INFO1_SNAKE = {
         "phone": "123456",
         "email": "jessie123@gmail.com",
     },
-    "onsite_contacts": [
-        {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"},
-        {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
-    ],
+    "initial_onsite_contacts": [],
     "active": True,
+}
+
+MOCK_ONSITE_CONTACT_1 = {
+    "name": "abc",
+    "phone": "123-456-7890",
+    "email": "abc@uwblueprint.org",
+}
+MOCK_ONSITE_CONTACT_2 = {
+    "name": "Jane Doe",
+    "phone": "111-222-3333",
+    "email": "example@domain.com",
 }
 
 MOCK_INFO1_CAMEL = {
@@ -28,7 +39,9 @@ MOCK_INFO1_CAMEL = {
     "organizationAddress": "255 King St N",
     "organizationName": "Test1 Org",
     "organizationDesc": "Testing123",
-    "organizationCoordinates": [-80.52565465, 43.477876300000005],
+    "organizationCoordinates": [-11.1, 11.1],
+    # Real Coordinates:
+    # "organizationCoordinates": [-80.52565465, 43.477876300000005],
     "role": "ASP",
     "roleInfo": {
         "aspInfo": {
@@ -41,10 +54,7 @@ MOCK_INFO1_CAMEL = {
         "phone": "123456",
         "email": "jessie123@gmail.com",
     },
-    "onsiteContacts": [
-        {"name": "abc", "phone": "123-456-7890", "email": "abc@uwblueprint.org"},
-        {"name": "Jane Doe", "phone": "111-222-3333", "email": "example@domain.com"},
-    ],
+    "initialOnsiteContacts": [],
     "active": True,
 }
 
@@ -53,7 +63,9 @@ MOCK_INFO2_SNAKE = {
     "organization_address": "370 Highland Rd W",
     "organization_name": "Test2 Org",
     "organization_desc": "Testing123",
-    "organization_coordinates": [-80.5118701, 43.4384664],
+    "organization_coordinates": [-11.1, 11.1],
+    # Real Coordinates:
+    # "organization_coordinates": [-80.5118701, 43.4384664],
     "role": "Donor",
     "role_info": {
         "asp_info": None,
@@ -67,10 +79,11 @@ MOCK_INFO2_SNAKE = {
         "phone": "98765",
         "email": "goose@gmail.com",
     },
-    "onsite_contacts": [
-        {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
-        {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
-    ],
+    "initial_onsite_contacts": [],
+    # "initial_onsite_contacts": [
+    #     {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
+    #     {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
+    # ],
     "active": True,
 }
 
@@ -79,7 +92,9 @@ MOCK_INFO2_CAMEL = {
     "organizationAddress": "370 Highland Rd W",
     "organizationName": "Test2 Org",
     "organizationDesc": "Testing123",
-    "organizationCoordinates": [-80.5118701, 43.4384664],
+    "organizationCoordinates": [-11.1, 11.1],
+    # Real Coordinates:
+    # "organizationCoordinates": [-80.5118701, 43.4384664],
     "role": "Donor",
     "roleInfo": {
         "aspInfo": None,
@@ -93,10 +108,11 @@ MOCK_INFO2_CAMEL = {
         "phone": "98765",
         "email": "goose@gmail.com",
     },
-    "onsiteContacts": [
-        {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
-        {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
-    ],
+    "initialOnsiteContacts": [],
+    # "initialOnsiteContacts": [
+    #     {"name": "def", "phone": "098-765-4321", "email": "def@uwblueprint.org"},
+    #     {"name": "John Doe", "phone": "444-555-6666", "email": "elpmaxe@niamod.moc"},
+    # ],
     "active": True,
 }
 
@@ -105,7 +121,9 @@ MOCK_INFO3_SNAKE = {
     "organization_address": "170 University Ave W",
     "organization_name": "Test3 Org",
     "organization_desc": "Testing 123",
-    "organization_coordinates": [-80.5373252901463, 43.472995850000004],
+    "organization_coordinates": [-11.1, 11.1],
+    # Real Coordinates:
+    # "organization_coordinates": [-80.5373252901463, 43.472995850000004],
     "role": "Admin",
     "role_info": None,
     "primary_contact": {
@@ -113,10 +131,11 @@ MOCK_INFO3_SNAKE = {
         "phone": "13579",
         "email": "anon@gmail.com",
     },
-    "onsite_contacts": [
-        {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
-        {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
-    ],
+    "initial_onsite_contacts": [],
+    # "initial_onsite_contacts": [
+    #     {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
+    #     {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
+    # ],
     "active": False,
 }
 
@@ -125,7 +144,9 @@ MOCK_INFO3_CAMEL = {
     "organizationAddress": "170 University Ave W",
     "organizationName": "Test3 Org",
     "organizationDesc": "Testing 123",
-    "organizationCoordinates": [-80.5373252901463, 43.472995850000004],
+    # Real Coordinates:
+    # "organizationCoordinates": [-80.5373252901463, 43.472995850000004],
+    "organizationCoordinates": [-11.1, 11.1],
     "role": "Admin",
     "roleInfo": None,
     "primaryContact": {
@@ -133,10 +154,11 @@ MOCK_INFO3_CAMEL = {
         "phone": "13579",
         "email": "anon@gmail.com",
     },
-    "onsiteContacts": [
-        {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
-        {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
-    ],
+    "initialOnsiteContacts": [],
+    # "initialOnsiteContacts": [
+    #     {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
+    #     {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
+    # ],
     "active": False,
 }
 
@@ -163,13 +185,6 @@ MOCK_MEALREQUEST1_SNAKE = {
         "portions": 10,
         "dietary_restrictions": "Vegan",
     },
-    "onsite_staff": [
-        {
-            "name": "Test name",
-            "email": "test@gmail.com",
-            "phone": "1234567890",
-        }
-    ],
     "date_created": "2023-03-31T00:00:00",
     "date_updated": "2023-03-31T00:00:00",
     "delivery_instructions": "Test instructions",

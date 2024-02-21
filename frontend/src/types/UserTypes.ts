@@ -12,7 +12,19 @@ export type AuthenticatedUser = {
   info: UserInfo;
 } | null;
 
+export type Requestor = {
+  id: string;
+  info: UserInfo;
+};
+
 export type Contact = {
+  name: string;
+  phone: string;
+  email: string;
+};
+
+export type OnsiteContact = {
+  id?: string;
   name: string;
   phone: string;
   email: string;
@@ -44,7 +56,7 @@ export type UserInfo = {
   role: Role;
   roleInfo: RoleInfo;
   primaryContact: Contact;
-  onsiteContacts: Array<Contact>;
+  initialOnsiteContacts: Array<Contact>;
   active?: boolean;
 } | null;
 

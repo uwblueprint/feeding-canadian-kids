@@ -14,7 +14,7 @@ export const SET_PASSWORD_PAGE = "/:objectID/set-password";
 
 export const CREATE_MEAL_REQUEST_PAGE = "/request/scheduling";
 
-export const DASHBOARD_PAGE = "/dashboard";
+export const ASP_DASHBOARD_PAGE = "/asp/dashboard";
 
 export const MEAL_DONOR_DASHBOARD_PAGE = "/meal_donor/dashboard";
 

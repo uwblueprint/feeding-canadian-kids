@@ -1,3 +1,5 @@
+import { OnsiteContact } from "../types/UserTypes";
+
 // returns true if string is a valid email
 export const isValidEmail = (emailStr: string): boolean => {
   const emailRegex =
@@ -6,9 +8,8 @@ export const isValidEmail = (emailStr: string): boolean => {
 };
 
 // replaces all consecutive white spaces with single space then trims
-export const trimWhiteSpace = (s: string): string => {
-  return s.replace(/\s+/g, " ").trim();
-};
+export const trimWhiteSpace = (s: string): string =>
+  s.replace(/\s+/g, " ").trim();
 
 // returns true if string is a valid non-negative integer
 export const isNonNegativeInt = (s: string): boolean => {
@@ -16,3 +17,12 @@ export const isNonNegativeInt = (s: string): boolean => {
   if (Number.isNaN(parsedInt) || parsedInt < 0) return false;
   return true;
 };
+
+export const onsiteContactsDiffer = (
+  contact1: OnsiteContact,
+  contact2: OnsiteContact,
+): boolean =>
+  contact1.id !== contact2.id ||
+  contact1.name !== contact2.name ||
+  contact1.phone !== contact2.phone ||
+  contact1.email !== contact2.email;

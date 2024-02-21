@@ -27,8 +27,9 @@ import React, { useState } from "react";
 import { Value } from "react-multi-date-picker";
 import { useNavigate } from "react-router-dom";
 
-import { DASHBOARD_PAGE } from "../../../constants/Routes";
-import { Contact } from "../../../types/UserTypes";
+import { ASP_DASHBOARD_PAGE } from "../../../constants/Routes";
+import { Contact, OnsiteContact } from "../../../types/UserTypes";
+import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
 import OnsiteStaffSection from "../../common/OnsiteStaffSection";
 
 // Create the GraphQL mutation
@@ -38,7 +39,7 @@ const CREATE_MEAL_REQUEST = gql`
     $numMeals: Int!
     $dietaryRestrictions: String
     $deliveryInstructions: String
-    $onsiteStaff: [ContactInput!]!
+    $onsiteStaff: [String!]!
     $scheduledDropOffTime: Time!
     $mealRequestDates: [Date!]!
     $userId: ID!
@@ -72,7 +73,7 @@ type SchedulingFormReviewAndSubmitProps = {
   numMeals: number;
   dietaryRestrictions: string;
   deliveryInstructions: string;
-  onsiteStaff: Contact[];
+  onsiteStaff: OnsiteContact[];
 
   // User ID
   userId: string;
@@ -111,7 +112,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
           numMeals,
           dietaryRestrictions,
           deliveryInstructions,
-          onsiteStaff,
+          onsiteStaff: onsiteStaff.map((staff: OnsiteContact) => staff.id),
           // Format the scheduled drop off time with the current time zone
           scheduledDropOffTime,
           userId,
@@ -128,9 +129,10 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
           status: "success",
           isClosable: true,
         });
-        navigate(DASHBOARD_PAGE);
+        navigate(ASP_DASHBOARD_PAGE);
       }
     } catch (e: unknown) {
+      logPossibleGraphQLError(e);
       toast({
         title: "Failed to create meal request. Please try again.",
         status: "error",

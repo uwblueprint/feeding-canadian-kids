@@ -24,13 +24,21 @@ const App = (): React.ReactElement => {
   // Providers for app-specific state like contexts are here.
   // For providers for libraries like Apollo and OAuth, see index.tsx.
   return (
-    <AuthContext.Provider value={currentAuthContext}>
-      <BrowserRouter>
-        <Header />
-        <Routes />
-        <Footer />
-      </BrowserRouter>
-    </AuthContext.Provider>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <AuthContext.Provider value={currentAuthContext}>
+        <BrowserRouter>
+          <Header />
+          <Routes />
+          <Footer />
+        </BrowserRouter>
+      </AuthContext.Provider>
+    </div>
   );
 };
 

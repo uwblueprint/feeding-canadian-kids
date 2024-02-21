@@ -1,5 +1,6 @@
 import graphene
 from graphql import GraphQLError
+from typing import List
 
 from .types import (
     Mutation,
@@ -222,6 +223,12 @@ class MealRequestQueries(QueryList):
         id=graphene.ID(required=True),
     )
 
+    getMealRequestsByIds = graphene.Field(
+        graphene.List(MealRequestResponse),
+        requestor_id=graphene.ID(required=True),
+        ids=graphene.List(graphene.ID),
+    )
+
     def resolve_getMealRequestById(
         self,
         info,
@@ -230,6 +237,15 @@ class MealRequestQueries(QueryList):
     ):
         meal_request = services["meal_request_service"].get_meal_request_by_id(id)
         return meal_request
+
+    def resolve_getMealRequestsByIds(
+        self,
+        info,
+        requestor_id: str,
+        ids: List[str],
+    ):
+        meal_requests = services["meal_request_service"].get_meal_requests_by_ids(ids)
+        return meal_requests
 
     def resolve_getMealRequestsByRequestorId(
         self,

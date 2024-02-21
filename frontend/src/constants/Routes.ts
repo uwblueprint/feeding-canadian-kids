@@ -18,6 +18,8 @@ export const DASHBOARD_PAGE = "/dashboard";
 
 export const MEAL_DONOR_DASHBOARD_PAGE = "/meal_donor/dashboard";
 
+export const YOUR_MATCHES_PAGE = "/meal_donor/matches";
+
 export const SETTINGS_PAGE = "/settings";
 
 export const DISPLAY_ENTITY_PAGE = "/dashboard/entity";

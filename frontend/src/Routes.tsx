@@ -22,6 +22,7 @@ import SimpleEntityCreatePage from "./pages/SimpleEntityCreatePage";
 import SimpleEntityDisplayPage from "./pages/SimpleEntityDisplayPage";
 import SimpleEntityUpdatePage from "./pages/SimpleEntityUpdatePage";
 import UpdatePage from "./pages/UpdatePage";
+import YourMatchesPage from "./pages/YourMatchesPage";
 
 const Routes = (): React.ReactElement => (
   <RouteContainer>
@@ -45,6 +46,7 @@ const Routes = (): React.ReactElement => (
         path={Paths.MEAL_DONOR_DASHBOARD_PAGE}
         element={<MealDonorDashboard />}
       />
+      <Route path={Paths.YOUR_MATCHES_PAGE} element={<YourMatchesPage />} />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
       <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />
       <Route path={Paths.DISPLAY_ENTITY_PAGE} element={<DisplayPage />} />

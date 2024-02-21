@@ -20,7 +20,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
-import type { Value } from "react-multi-date-picker";
+import {
+  IoInformationCircleOutline,
+  IoLocationOutline,
+  IoPersonOutline,
+} from "react-icons/io5";
 import { Navigate } from "react-router-dom";
 
 import type { ASPDistance, Contact } from "../../types/UserTypes";
@@ -36,12 +40,15 @@ const NearbySchoolList = ({
   const getCityFromAddress = (address: string): string => {
     const addressSplit = address.split(",");
     console.log(address);
-    return addressSplit[addressSplit.length - 3].trim();
+    return addressSplit[1] ? addressSplit[1].trim() : "City";
   };
 
   return (
     <div>
-      <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+      <Grid
+        templateColumns={{ base: "repeat(1, 1fr)", sm: "repeat(2, 1fr)" }}
+        gap={6}
+      >
         <Flex
           flex="1"
           direction="column"
@@ -58,12 +65,7 @@ const NearbySchoolList = ({
             donation preferences.
           </Text>
         </Flex>
-        <Flex
-          flex="1"
-          justifyContent="center"
-          alignItems="center"
-          padding="0 10vw"
-        >
+        <Flex justifyContent="center" alignItems="center" padding="0 10vw">
           <Flex direction="column" justifyItems="center" alignItems="center">
             {schools.slice(0, 3).map((school) => (
               <Card
@@ -72,10 +74,9 @@ const NearbySchoolList = ({
                 borderRadius="lg"
                 p={4}
                 m={4}
-                w="100%"
                 direction={{ base: "column", sm: "row" }}
               >
-                <Flex flex="1">
+                <Flex>
                   <Image
                     src="https://images.squarespace-cdn.com/content/v1/5dc5d641498834108f7c46a5/6384d8a2-9c31-4ae6-a287-256643f2271e/responsiveclassroom.png?format=1500w"
                     alt={school?.info?.organizationName}
@@ -83,45 +84,46 @@ const NearbySchoolList = ({
                     objectFit="contain"
                   />
                 </Flex>
-                <Spacer />
 
-                <Stack>
-                  <CardBody justifyContent="left" alignItems="left">
-                    <Text>{school?.distance} km away</Text>
-                    <Text fontSize="lg" fontWeight="bold">
-                      {school?.info?.organizationName}
-                    </Text>
-                    <Flex
-                      justifyContent="space-between"
-                      alignItems="center"
-                      mt={2}
-                    >
-                      <Badge colorScheme="blue">
-                        {school?.info?.roleInfo.aspInfo?.numKids} children
-                      </Badge>
-                      <Text>
-                        {getCityFromAddress(
-                          school?.info?.organizationAddress || "",
-                        )}
+                <CardBody justifyContent="left" alignItems="left">
+                  <Center h="100%">
+                    <Flex direction="column" width="100%">
+                      <Text>{school?.distance} km away</Text>
+                      <Text fontSize="lg" fontWeight="bold">
+                        {school?.info?.organizationName}
+                      </Text>
+                      <Flex
+                        justifyContent="space-between"
+                        alignItems="center"
+                        mt={2}
+                      >
+                        <Text>
+                          {school?.info?.roleInfo.aspInfo?.numKids} children
+                        </Text>
+                        <Spacer />
+                        <Text>
+                          {getCityFromAddress(
+                            school?.info?.organizationAddress || "",
+                          )}
+                        </Text>
+                      </Flex>
+                      <Text color="primary.blue" fontSize="xs">
+                        <button
+                          style={{
+                            textDecoration: "underline",
+                            fontWeight: "bold",
+                          }}
+                          onClick={() => {
+                            // TODO
+                          }}
+                          type="button"
+                        >
+                          View meals needed 🡒
+                        </button>
                       </Text>
                     </Flex>
-                    <Text color="primary.blue" fontSize="xs">
-                      <button
-                        style={{
-                          textDecoration: "underline",
-                          fontWeight: "bold",
-                        }}
-                        onClick={() => {
-                          // TODO
-                        }}
-                        type="button"
-                      >
-                        View meals needed 🡒
-                      </button>
-                    </Text>
-                  </CardBody>
-                </Stack>
-                <Spacer />
+                  </Center>
+                </CardBody>
               </Card>
             ))}
           </Flex>

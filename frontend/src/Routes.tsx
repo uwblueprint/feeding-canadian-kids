@@ -15,6 +15,7 @@ import CreatePage from "./pages/CreatePage";
 import Default from "./pages/Default";
 import DisplayPage from "./pages/DisplayPage";
 import HooksDemo from "./pages/HooksDemo";
+import MealDonorCalendar from "./pages/MealDonorCalendar";
 import MealDonorDashboard from "./pages/MealDonorDashboard";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
@@ -44,6 +45,10 @@ const Routes = (): React.ReactElement => (
       <Route
         path={Paths.MEAL_DONOR_DASHBOARD_PAGE}
         element={<MealDonorDashboard />}
+      />
+      <Route
+        path={Paths.MEAL_DONOR_CALENDAR_PAGE}
+        element={<MealDonorCalendar />}
       />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
       <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />

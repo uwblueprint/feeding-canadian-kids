@@ -624,7 +624,6 @@ def test_get_meal_request_by_donor_id(meal_request_setup):
     }}
     """
     )
-
     assert commit.errors is None
 
     executed = graphql_schema.execute(
@@ -669,3 +668,89 @@ def test_get_meal_request_by_donor_id(meal_request_setup):
     assert result["donationInfo"]["donor"]["id"] == str(donor.id)
     assert result["donationInfo"]["mealDescription"] == "Pizza"
     assert result["donationInfo"]["additionalInfo"] == "No nuts"
+
+
+def test_get_meal_requests_by_ids(meal_request_setup):
+    asp, donor, meal_request = meal_request_setup
+
+    create = graphql_schema.execute(
+        f"""
+    mutation m{{
+      createMealRequest(
+        deliveryInstructions: "Leave at front door",
+        dropOffLocation: "123 Main Street",
+        dropOffTime: "16:30:00Z",
+        mealInfo: {{
+          portions: 40,
+          dietaryRestrictions: "7 gluten free, 7 no beef",
+        }},
+        onsiteStaff: [],
+        requestorId: "{str(asp.id)}",
+        requestDates: [
+            "2023-06-01",
+            "2023-06-02",
+        ],
+      )
+      {{
+        mealRequests {{
+          id
+        }}
+      }}
+    }}
+    """
+    )
+    assert create.errors is None
+    created_ml_id = create.data["createMealRequest"]["mealRequests"][0]["id"]
+    created_db_meal_request = MealRequest.objects(id=created_ml_id).first()
+
+    executed = graphql_schema.execute(
+        f"""query test {{
+      getMealRequestsByIds(
+        requestorId: "{str(donor.id)}",
+        ids: ["{str(meal_request.id)}", "{str(created_ml_id)}"],
+      )
+      {{
+            id
+            requestor {{
+              id
+            }},
+            status,
+            dropOffDatetime,
+            dropOffLocation,
+            mealInfo {{
+              portions
+              dietaryRestrictions
+            }},
+            onsiteStaff {{
+              name
+              email
+              phone
+            }},
+            dateCreated,
+            dateUpdated,
+            deliveryInstructions,
+            donationInfo {{
+              donor {{
+                id
+              }},
+              commitmentDate
+              mealDescription
+              additionalInfo
+            }}
+        }}
+      }}
+    """
+    )
+
+    assert executed.errors is None
+    meal_requests = executed.data["getMealRequestsByIds"]
+    assert len(meal_requests) == 2
+
+    for [returned_meal_request, expected] in zip(
+        meal_requests, [meal_request, created_db_meal_request]
+    ):
+        assert returned_meal_request["id"] == str(expected.id)
+        assert (
+            returned_meal_request["mealInfo"]["dietaryRestrictions"]
+            == expected.meal_info.dietary_restrictions
+        )

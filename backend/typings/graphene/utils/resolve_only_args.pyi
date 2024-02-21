@@ -1,0 +1,3 @@
+from .deprecated import deprecated as deprecated
+
+def resolve_only_args(func): ...

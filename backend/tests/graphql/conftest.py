@@ -2,6 +2,7 @@ import pytest
 from app.models.user import User
 from app.models.onboarding_request import OnboardingRequest
 from app.models.meal_request import MealRequest
+from app.models.onsite_contact import OnsiteContact
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_SNAKE,
     MOCK_INFO2_SNAKE,
@@ -22,7 +23,7 @@ def graphql_schema():
     yield graphql_schema
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def onboarding_request_setup():
     onboarding_request_1 = OnboardingRequest(
         info=MOCK_INFO1_SNAKE, status="Pending"
@@ -37,20 +38,21 @@ def onboarding_request_setup():
     onboarding_request_2.delete()
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def user_setup():
-    user_1 = User(**MOCK_USER1_SNAKE).save()
-    user_2 = User(**MOCK_USER2_SNAKE).save()
-    user_3 = User(**MOCK_USER3_SNAKE).save()
+    users = []
+    for MOCK_USER in [MOCK_USER1_SNAKE, MOCK_USER2_SNAKE, MOCK_USER3_SNAKE]:
+        user = User(**MOCK_USER)
+        user.save()
+        users.append(user)
 
-    yield user_1, user_2, user_3
+    yield users
 
-    user_1.delete()
-    user_2.delete()
-    user_3.delete()
+    for user in users:
+        user.delete()
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def meal_request_setup(user_setup):
     requestor, donor, _ = user_setup
     meal_request = MealRequest(requestor=requestor, **MOCK_MEALREQUEST1_SNAKE).save()
@@ -60,3 +62,30 @@ def meal_request_setup(user_setup):
     requestor.delete()
     donor.delete()
     meal_request.delete()
+
+
+@pytest.fixture(scope="function", autouse=True)
+def onsite_contact_setup(user_setup):
+    asp, donor, _ = user_setup
+    asp_onsite_contact = OnsiteContact(
+        name="Sample Contact",
+        email="sample@test.com",
+        phone="123-456-7890",
+        organization_id=asp.id,
+    ).save()
+    asp_onsite_contact2 = OnsiteContact(
+        name="Sample Contact 2",
+        email="sample2@test.com",
+        phone="123-456-7890",
+        organization_id=asp.id,
+    ).save()
+    donor_onsite_contact = OnsiteContact(
+        name="Sample Contact 2",
+        email="sample2@test.com",
+        phone="123-333-7890",
+        organization_id=donor.id,
+    ).save()
+
+    yield asp, donor, [asp_onsite_contact, asp_onsite_contact2], donor_onsite_contact
+    asp_onsite_contact.delete()
+    donor_onsite_contact.delete()

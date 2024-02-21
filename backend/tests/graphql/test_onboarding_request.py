@@ -22,18 +22,7 @@ def test_create_onboarding_request():
                                     phone: "13579",
                                     email: "anon@gmail.com",
                                 },
-                                onsiteContacts: [
-                                    {
-                                        name: "ghi",
-                                        phone: "135-792-4680",
-                                        email: "ghi@uwblueprint.org"
-                                    },
-                                    {
-                                        name: "Jack Doe",
-                                        phone: "777-888-999",
-                                        email: "com@domain.email"
-                                    },
-                                ],
+                                initialOnsiteContacts: [],
                                 active: false
                             }
                         ) {
@@ -60,7 +49,7 @@ def test_create_onboarding_request():
                                         phone
                                         email
                                     }
-                                    onsiteContacts {
+                                    initialOnsiteContacts {
                                         name
                                         phone
                                         email
@@ -104,18 +93,7 @@ def test_create_onboarding_request_with_existing_email_errors():
                         phone: "123456",
                         email: "jessie123@gmail.com"
                     }},
-                    onsiteContacts: [
-                        {{
-                            name: "abc",
-                            phone: "123-456-7890",
-                            email: "abc@uwblueprint.org"
-                        }},
-                        {{
-                            name: "Jane Doe",
-                            phone: "111-222-3333",
-                            email: "example@domain.com"
-                        }}
-                    ],
+                    initialOnsiteContacts: [],
                     active: true
                 }}
             ) {{
@@ -142,7 +120,7 @@ def test_create_onboarding_request_with_existing_email_errors():
                             phone
                             email
                         }}
-                        onsiteContacts {{
+                        initialOnsiteContacts {{
                             name
                             phone
                             email
@@ -187,7 +165,7 @@ def test_get_all_requests(onboarding_request_setup):
                             phone
                             email
                         }
-                        onsiteContacts {
+                        initialOnsiteContacts {
                             name
                             phone
                             email
@@ -239,7 +217,7 @@ def test_filter_requests_by_role(onboarding_request_setup):
                             phone
                             email
                         }
-                        onsiteContacts {
+                        initialOnsiteContacts {
                             name
                             phone
                             email
@@ -286,7 +264,7 @@ def test_filter_requests_by_status(onboarding_request_setup):
                             phone
                             email
                         }
-                        onsiteContacts {
+                        initialOnsiteContacts {
                             name
                             phone
                             email
@@ -333,7 +311,7 @@ def test_get_requests_by_id(onboarding_request_setup):
                         phone
                         email
                     }}
-                    onsiteContacts {{
+                    initialOnsiteContacts {{
                         name
                         phone
                         email

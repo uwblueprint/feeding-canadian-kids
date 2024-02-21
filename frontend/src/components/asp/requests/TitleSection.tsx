@@ -1,8 +1,7 @@
 import { Text, VStack } from "@chakra-ui/react";
 import React from "react";
 
-const TitleSection = (): React.ReactElement => {
-  return (
+const TitleSection = (): React.ReactElement => (
     <div>
       <VStack
         spacing={4}
@@ -34,6 +33,5 @@ const TitleSection = (): React.ReactElement => {
       </VStack>
     </div>
   );
-};
 
 export default TitleSection;

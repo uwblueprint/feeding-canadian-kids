@@ -11,6 +11,7 @@ import {
   Select,
   SimpleGrid,
   Spacer,
+  Spinner,
   Table,
   TableContainer,
   Tbody,
@@ -26,8 +27,9 @@ import React, { useState } from "react";
 import { Value } from "react-multi-date-picker";
 import { useNavigate } from "react-router-dom";
 
-import { DASHBOARD_PAGE } from "../../../constants/Routes";
-import { Contact } from "../../../types/UserTypes";
+import { ASP_DASHBOARD_PAGE } from "../../../constants/Routes";
+import { Contact, OnsiteContact } from "../../../types/UserTypes";
+import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
 import OnsiteStaffSection from "../../common/OnsiteStaffSection";
 
 // Create the GraphQL mutation
@@ -37,7 +39,7 @@ const CREATE_MEAL_REQUEST = gql`
     $numMeals: Int!
     $dietaryRestrictions: String
     $deliveryInstructions: String
-    $onsiteStaff: [ContactInput!]!
+    $onsiteStaff: [String!]!
     $scheduledDropOffTime: Time!
     $mealRequestDates: [Date!]!
     $userId: ID!
@@ -71,7 +73,7 @@ type SchedulingFormReviewAndSubmitProps = {
   numMeals: number;
   dietaryRestrictions: string;
   deliveryInstructions: string;
-  onsiteStaff: Contact[];
+  onsiteStaff: OnsiteContact[];
 
   // User ID
   userId: string;
@@ -80,9 +82,7 @@ type SchedulingFormReviewAndSubmitProps = {
   handleBack: () => void;
 };
 
-const SchedulingFormReviewAndSubmit: React.FunctionComponent<
-  SchedulingFormReviewAndSubmitProps
-> = ({
+const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormReviewAndSubmitProps> = ({
   scheduledDropOffTime,
   mealRequestDates,
   address,
@@ -100,8 +100,11 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
   const toast = useToast();
 
   const navigate = useNavigate();
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
 
   const handleSubmit = async () => {
+    await setIsSubmitLoading(true);
+
     try {
       const response = await createMealRequest({
         variables: {
@@ -109,7 +112,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           numMeals,
           dietaryRestrictions,
           deliveryInstructions,
-          onsiteStaff,
+          onsiteStaff: onsiteStaff.map((staff: OnsiteContact) => staff.id),
           // Format the scheduled drop off time with the current time zone
           scheduledDropOffTime,
           userId,
@@ -126,17 +129,18 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           status: "success",
           isClosable: true,
         });
-        navigate(DASHBOARD_PAGE);
+        navigate(ASP_DASHBOARD_PAGE);
       }
     } catch (e: unknown) {
-      console.log(e);
-
+      logPossibleGraphQLError(e);
       toast({
         title: "Failed to create meal request. Please try again.",
         status: "error",
         isClosable: true,
       });
     }
+
+    await setIsSubmitLoading(false);
   };
 
   return (
@@ -278,8 +282,9 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           width={{ base: "10%", md: "10%" }}
           bg="primary.green"
           onClick={handleSubmit}
+          disabled={isSubmitLoading}
         >
-          Submit
+          {isSubmitLoading ? <Spinner /> : "Submit"}
         </Button>
       </GridItem>
     </Grid>

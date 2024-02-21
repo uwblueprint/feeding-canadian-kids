@@ -14,15 +14,15 @@ type DonationInfo = {
 };
 
 export enum MealStatus {
-  OPEN = "Open",
-  FULFILLED = "Fulfilled",
-  CANCELLED = "Cancelled",
+  OPEN = "OPEN",
+  UPCOMING = "UPCOMING",
+  FULFILLED = "FULFILLED",
+  CANCELLED = "CANCELLED",
 }
 
 export type MealRequest = {
   id: string;
   requestor: Requestor;
-  description: string;
   status: string;
   dropOffDatetime: Date;
   dropOffLocation: string;
@@ -38,12 +38,13 @@ export type MealRequestsVariables = {
   requestorId: string;
   minDropOffDate?: Date;
   maxDropOffDate?: Date;
-  status?: MealStatus;
+  status?: Array<MealStatus>;
   offset?: number;
   limit?: number;
-  sortByDateDirection?: "ASC" | "DESC";
+  sortByDateDirection?: "ASCENDING" | "DESCENDING";
 };
 
 export type MealRequestsData = {
   getMealRequestsByRequestorId: Array<MealRequest>;
+  getMealRequestById: MealRequest;
 };

@@ -4,8 +4,7 @@ import React from "react";
 import BackgroundImage from "../../assets/background.png";
 import { HOME_PAGE } from "../../constants/Routes";
 
-const JoinSuccess = (): React.ReactElement => {
-  return (
+const JoinSuccess = (): React.ReactElement => (
     <Center
       h="100vh"
       style={{
@@ -44,6 +43,5 @@ const JoinSuccess = (): React.ReactElement => {
       </Flex>
     </Center>
   );
-};
 
 export default JoinSuccess;

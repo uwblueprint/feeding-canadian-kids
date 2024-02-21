@@ -31,6 +31,7 @@ import {
   MealStatus,
 } from "../types/MealRequestTypes";
 import { ASPDistance, GetUserData, GetUserVariables } from "../types/UserTypes";
+import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
 type ButtonProps = { text: string; path: string };
 type SchoolSidebarProps = { aspId: string; distance: string };
@@ -113,7 +114,7 @@ const GET_USER = gql`
           phone
           email
         }
-        onsiteContacts {
+        initialOnsiteContacts {
           name
           phone
           email
@@ -138,6 +139,8 @@ const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
       id: aspId,
     },
   });
+
+  logPossibleGraphQLError(getUserError);
 
   const schoolInfo = userInfo?.getUserById?.info;
 
@@ -208,6 +211,8 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
       },
     },
   );
+
+  logPossibleGraphQLError(getMealRequestsError);
 
   function formatDate(inputDate: string): string {
     const date = new Date(inputDate);
@@ -317,7 +322,7 @@ const MealDonorDashboard = (): React.ReactElement => {
 
   // const aspId = searchParams.get("aspId");
   // const distance = searchParams.get("distance");
-  const aspId = "6552e75a3b64d203016dade2";
+  const aspId = "65b6fc756aacd51b15a859ce";
   const distance = "4";
 
   return (
@@ -341,6 +346,6 @@ const MealDonorDashboard = (): React.ReactElement => {
       </Flex>
     </Flex>
   );
-};
+}
 
 export default MealDonorDashboard;

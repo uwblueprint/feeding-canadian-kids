@@ -124,11 +124,6 @@ const GET_USER = gql`
   }
 `;
 
-const Button = ({ text, path }: ButtonProps) => {
-  const navigate = useNavigate();
-  return <ChakraButton onClick={() => navigate(path)}>{text}</ChakraButton>;
-};
-
 const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
   const {
     data: userInfo,
@@ -143,6 +138,7 @@ const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
   logPossibleGraphQLError(getUserError);
 
   const schoolInfo = userInfo?.getUserById?.info;
+  const navigate = useNavigate();
 
   return (
     <Flex
@@ -151,7 +147,7 @@ const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
       borderRight="2px solid #D9D9D9"
       padding="20px 40px"
     >
-      <IoArrowBackCircleOutline size="38px" color="#CFCECE"/>
+      <IoArrowBackCircleOutline size="38px" color="#CFCECE" cursor="pointer" onClick={() => navigate(Routes.MEAL_DONOR_DASHBOARD_PAGE)}/>
       <Flex marginBottom="30px">
         <Image
           src="https://images.squarespace-cdn.com/content/v1/5dc5d641498834108f7c46a5/6384d8a2-9c31-4ae6-a287-256643f2271e/responsiveclassroom.png?format=1500w"
@@ -216,6 +212,11 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
 
   logPossibleGraphQLError(getMealRequestsError);
 
+  function handleNext() {
+    // Do something with selectedMealRequests
+    console.log(selectedMealRequests)
+  }
+
   function formatDate(inputDate: string): string {
     const date = new Date(inputDate);
     const options: Intl.DateTimeFormatOptions = {
@@ -229,40 +230,23 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
       (mealRequest: MealRequest) => {
-        const date = new Date(
-          mealRequest.dropOffDatetime.toString().split("T")[0],
-        );
-        const dateParts = date
-          .toLocaleString("en-US", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          .split(",")[0]
-          .split("/");
-        const realDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
-
-        // console.log(mealRequest.dropOffDatetime)
+        const startDate = new Date(mealRequest.dropOffDatetime);
+        const endDate = new Date(startDate); 
+        endDate.setHours(endDate.getHours() + 1);
 
         return {
           title: `${mealRequest.mealInfo.portions}`,
-        //   start: `${new Date(
-        //     mealRequest.dropOffDatetime.toLocaleString(),
-        //   ).toLocaleTimeString("en-US", {
-        //     hour: "numeric",
-        //     minute: "numeric",
-        //     hour12: true,
-        //   })}`,
-            start: mealRequest.dropOffDatetime,
+          start: startDate,
+          end: endDate,
           // date: realDate,
           extendedProps: { 
             id: `${mealRequest.id}`,
             icon: 'test'
-            },
+          },
           backgroundColor: `${selectedMealRequests.includes(mealRequest.id) ? "#444444" : "#E2E8F0"}`,
           color: "#000000",
           // eventAfterRender
-           display: "block"
+          display: "block"
         //   borderColor: "#3BA948",
         //   borderRadius: "10%",
         };
@@ -299,8 +283,9 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
         *each date displays the meal delivery time slot & number of meals needed
         <PiForkKnifeFill />
       </Text>
-      <Text margin="20px 0px">Number selected: {selectedMealRequests.length}</Text>
-
+      <Text margin="20px 0px">Dates selected: {selectedMealRequests.length}</Text>
+      
+      <Box fontSize="12px">
       <FullCalendar
         headerToolbar={{
           left: "prev",
@@ -312,6 +297,7 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
         initialView="dayGridMonth"
         events={realEvents}
         selectable
+        displayEventEnd
         // eventContent={renderEventContent}
         eventClick={(info) => {
             if (selectedMealRequests.includes(info.event.extendedProps.id)) {
@@ -320,17 +306,21 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
                 setSelectedMealRequests(prevSelected => [...prevSelected, info.event.extendedProps.id]);
             }
         }}
+        eventDidMount={(props) => {
+          // props.event
+          // props.el.innerHTML.
+          // console.log(event)
+        }}
         // eventContent={(arg, element) => {
         //     if (arg.event.extendedProps) {
         //         // element.find(".fc-title").prepend(<PiForkKnifeFill />);
         //     }
         // }}
-        // eventMouseLeave={() => {
-        //   setSelectedMealRequest(undefined);
-        // }}
       />
+      </Box>
 
-      <ChakraButton float="right" margin="20px 0px">
+
+      <ChakraButton float="right" margin="20px 0px" onClick={() => handleNext()}>
         Next
       </ChakraButton>
     </Box>

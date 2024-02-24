@@ -14,6 +14,7 @@ export default {
     subtitle: "#69696B",
     white: "#FFFFFF",
     black: "#000000",
+    red: "#E53E3E",
   },
   background: {
     white: "#FFFFFF",

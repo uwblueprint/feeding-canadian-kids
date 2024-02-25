@@ -14,7 +14,6 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { on } from "events";
 import React from "react";
 
 import { BanIcon } from "../assets/icons/BanIcon";
@@ -34,7 +33,11 @@ const GET_ASP_ONBOARDING_REQUESTS = gql`
         organizationAddress
         organizationName
         organizationDesc
-        role
+        roleInfo {
+          aspInfo {
+            numKids
+          }
+        }
         primaryContact {
           name
           email
@@ -47,72 +50,75 @@ const GET_ASP_ONBOARDING_REQUESTS = gql`
   }
 `;
 
-const getTitleSection = (): React.ReactElement => {
-  return (
-    <Flex flexDir="column" width="100%">
-      <Flex width="100%" justifyContent="flex-end">
-        <Button
-          width="15%"
-          height={{ base: "40px", lg: "45px" }}
-          color="text.black"
-          bgColor="background.white"
-          borderRadius="6px 0 0 6px"
-          border="1px solid"
-          borderColor="text.black"
-          _hover={{
-            bgColor: "gray.gray83",
-          }}
-          onClick={() => {
-            console.log("clicked");
-          }}
-        >
-          Meal Donors
-        </Button>
-        <Button
-          width="15%"
-          height={{ base: "40px", lg: "45px" }}
-          color="text.white"
-          bgColor="primary.blue"
-          borderRadius="0 6px 6px 0"
-          border="1px solid"
-          borderColor="text.black"
-          _hover={{
-            bgColor: "secondary.blue",
-          }}
-          onClick={() => {
-            console.log("clicked");
-          }}
-        >
-          After School Program
-        </Button>
-      </Flex>
-      <TitleSection
-        title="Onboarding Requests"
-        description="These are After School Program onboarding requests"
-      />
-    </Flex>
-  );
-};
+const GET_MEAL_DONOR_ONBOARDING_REQUESTS = gql`
+  query GetMealDonorOnboardingRequests {
+    getAllOnboardingRequests(status: "Pending", role: "Donor", number: 100) {
+      id
+      info {
+        email
+        organizationAddress
+        organizationName
+        organizationDesc
+        primaryContact {
+          name
+          email
+          phone
+        }
+        active
+      }
+      dateSubmitted
+    }
+  }
+`;
 
 const ApproveDenyModal = ({
   isOpen,
   onClose,
+  approve,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  approve: boolean;
 }): React.ReactElement => {
+  const onApprove = () => {
+    onClose();
+  };
+
+  const onDeny = () => {
+    onClose();
+  };
+
   return (
     <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered>
       <ModalOverlay />
       <ModalContent p="0.5%">
-        <ModalHeader fontSize="md">Approve?</ModalHeader>
+        <ModalHeader fontSize="md">
+          {approve ? "Approve?" : "Deny?"}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          If you click approve, this will allow this organization to sign onto
-          the platform.
+          {approve
+            ? "If you click approve, this will allow this organization to sign onto the platform."
+            : "If you click deny, this will deny this organization to sign onto the platform."}
         </ModalBody>
         <ModalFooter>
-          <Button onClick={onClose}>Approve</Button>
+          {approve ? (
+            <Button width="25%" onClick={onApprove}>
+              Approve
+            </Button>
+          ) : (
+            <Button
+              width="25%"
+              color="text.white"
+              bgColor="text.red"
+              _hover={{
+                bgColor: "background.darkred",
+              }}
+              onClick={onDeny}
+            >
+              Deny
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
@@ -121,10 +127,13 @@ const ApproveDenyModal = ({
 
 const ASPCard = ({
   onboardingRequest,
+  isASP,
 }: {
   onboardingRequest: OnboardingRequest;
+  isASP: boolean;
 }): React.ReactElement => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isApproved, setIsApproved] = React.useState(false);
 
   return (
     <Card width="31%" padding="2%" mb="3%">
@@ -158,20 +167,26 @@ const ASPCard = ({
             <Text>{onboardingRequest?.info?.organizationDesc}</Text>
           </Flex>
         </Flex>
-        <Flex flexDir="row" mt="20px">
-          <ChildIcon />
-          <Flex flexDir="column">
-            <Text fontWeight="bold">Number of Kids</Text>
-            <Text>40</Text>
-          </Flex>
-        </Flex>
-        <Flex flexDir="row" mt="20px">
-          <BanIcon />
-          <Flex flexDir="column">
-            <Text fontWeight="bold">Dietary Restrictions</Text>
-            <Text>Peanuts, Eggs</Text>
-          </Flex>
-        </Flex>
+        {isASP ? (
+          <>
+            <Flex flexDir="row" mt="20px">
+              <ChildIcon />
+              <Flex flexDir="column">
+                <Text fontWeight="bold">Number of Kids</Text>
+                <Text>
+                  {onboardingRequest?.info?.roleInfo?.aspInfo?.numKids}
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex flexDir="row" mt="20px">
+              <BanIcon />
+              <Flex flexDir="column">
+                <Text fontWeight="bold">Dietary Restrictions</Text>
+                <Text>TODO: ADD DIET HERE</Text>
+              </Flex>
+            </Flex>
+          </>
+        ) : null}
         <Flex flexDir="row" mt="20px" justifyContent="flex-end">
           <Button
             width="30%"
@@ -184,20 +199,31 @@ const ASPCard = ({
               bgColor: "gray.gray83",
             }}
             onClick={() => {
+              setIsApproved(false);
               onOpen();
             }}
           >
             Deny
+            <ApproveDenyModal
+              isOpen={isOpen}
+              onClose={onClose}
+              approve={isApproved}
+            />
           </Button>
           <Button
             width="30%"
             mr="5px"
             onClick={() => {
+              setIsApproved(true);
               onOpen();
             }}
           >
-            <ApproveDenyModal isOpen={isOpen} onClose={onClose} />
             Approve
+            <ApproveDenyModal
+              isOpen={isOpen}
+              onClose={onClose}
+              approve={isApproved}
+            />
           </Button>
         </Flex>
       </Flex>
@@ -207,8 +233,10 @@ const ASPCard = ({
 
 const ASPCardDisplay = ({
   onboardingRequests,
+  isASP,
 }: {
   onboardingRequests: OnboardingRequest[];
+  isASP: boolean;
 }): React.ReactElement => {
   return (
     <Flex
@@ -219,7 +247,11 @@ const ASPCardDisplay = ({
     >
       {onboardingRequests
         ? onboardingRequests.map((request: OnboardingRequest) => (
-            <ASPCard key={request?.id} onboardingRequest={request} />
+            <ASPCard
+              key={request?.id}
+              onboardingRequest={request}
+              isASP={isASP}
+            />
           ))
         : null}
     </Flex>
@@ -227,13 +259,68 @@ const ASPCardDisplay = ({
 };
 
 const OnboardingRequestsPage = (): React.ReactElement => {
-  const {
-    data: aspOnboardingData,
-    loading: aspOnboardingLoading,
-    error: aspOnboardingError,
-  } = useQuery(GET_ASP_ONBOARDING_REQUESTS);
+  const [isASP, setIsASP] = React.useState(true);
 
-  if (aspOnboardingLoading) return <Spinner />;
+  const {
+    data: OnboardingData,
+    loading: OnboardingLoading,
+    error: OnboardingError,
+  } = useQuery(
+    isASP ? GET_ASP_ONBOARDING_REQUESTS : GET_MEAL_DONOR_ONBOARDING_REQUESTS,
+  );
+
+  // if (OnboardingLoading) return <Spinner />;
+
+  const getTitleSection = (): React.ReactElement => {
+    return (
+      <Flex flexDir="column" width="100%">
+        <Flex width="100%" justifyContent="flex-end">
+          <Button
+            width="15%"
+            height={{ base: "40px", lg: "45px" }}
+            color={isASP ? "text.black" : "text.white"}
+            bgColor={isASP ? "background.white" : "primary.blue"}
+            borderRadius="6px 0 0 6px"
+            border="1px solid"
+            borderColor="text.black"
+            _hover={{
+              bgColor: isASP ? "gray.gray83" : "secondary.blue",
+            }}
+            onClick={() => {
+              setIsASP(false);
+            }}
+          >
+            Meal Donors
+          </Button>
+          <Button
+            width="15%"
+            height={{ base: "40px", lg: "45px" }}
+            color={isASP ? "text.white" : "text.black"}
+            bgColor={isASP ? "primary.blue" : "background.white"}
+            borderRadius="0 6px 6px 0"
+            border="1px solid"
+            borderColor="text.black"
+            _hover={{
+              bgColor: isASP ? "secondary.blue" : "gray.gray83",
+            }}
+            onClick={() => {
+              setIsASP(true);
+            }}
+          >
+            After School Program
+          </Button>
+        </Flex>
+        <TitleSection
+          title="Onboarding Requests"
+          description={
+            isASP
+              ? "These are After School Program onboarding requests"
+              : "These are Meal Donor onboarding requests"
+          }
+        />
+      </Flex>
+    );
+  };
 
   return (
     <Flex
@@ -247,9 +334,10 @@ const OnboardingRequestsPage = (): React.ReactElement => {
       alignItems="center"
     >
       {getTitleSection()}
-      {aspOnboardingData ? (
+      {OnboardingData ? (
         <ASPCardDisplay
-          onboardingRequests={aspOnboardingData.getAllOnboardingRequests}
+          onboardingRequests={OnboardingData.getAllOnboardingRequests}
+          isASP={isASP}
         />
       ) : null}
     </Flex>

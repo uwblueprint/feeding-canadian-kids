@@ -7,7 +7,7 @@ export default {
   },
   secondary: {
     critical: "#E53E3E",
-    blue: "#343C9F"
+    blue: "#13174F",
   },
   text: {
     default: "#1A1A1A",
@@ -19,6 +19,7 @@ export default {
   background: {
     white: "#FFFFFF",
     grey: "#F8F8F9",
+    darkred: "#CC3333",
     interactive: "#EBF6ED",
   },
   gray: {

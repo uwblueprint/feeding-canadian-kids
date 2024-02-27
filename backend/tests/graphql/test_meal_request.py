@@ -646,15 +646,61 @@ def test_delete_meal_request_as_admin(meal_request_setup, user_setup):
     assert executed.errors is None
     result = executed.data["deleteMealRequest"]["mealRequest"]
     assert result["id"] == str(meal_request.id)
+    assert MealRequest.objects(id=meal_request.id).first() is None
 
 
-def test_delete_meal_request_as_non_admin(meal_request_setup):
-    _, non_admin, meal_request = meal_request_setup
+def test_delete_meal_request_as_asp(meal_request_setup):
+    asp, non_admin, meal_request = meal_request_setup
     mutation = f"""
     mutation testDeleteMealRequest {{
       deleteMealRequest(
         mealRequestId: "{str(meal_request.id)}",
-        requestorId: "{str(non_admin.id)}"
+        requestorId: "{str(asp.id)}"
+      )
+      {{
+        mealRequest{{
+          id
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo{{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteStaff{{
+            name
+            email
+            phone
+          }}
+          donationInfo{{
+            donor{{
+              id
+              info{{
+                email
+              }}
+            }}
+          }}
+          deliveryInstructions
+        }}
+      }}
+    }}
+    """
+    executed = graphql_schema.execute(mutation)
+    assert executed.errors is None
+    result = executed.data["deleteMealRequest"]["mealRequest"]
+    assert result["id"] == str(meal_request.id)
+    assert MealRequest.objects(id=meal_request.id).first() is None
+
+
+def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
+    asp, meal_donor, meal_request = meal_request_setup
+    test_commit_to_meal_request(meal_request_setup)
+
+    mutation = f"""
+    mutation testDeleteMealRequest {{
+      deleteMealRequest(
+        mealRequestId: "{str(meal_request.id)}",
+        requestorId: "{str(asp.id)}"
       )
       {{
         mealRequest{{
@@ -689,6 +735,7 @@ def test_delete_meal_request_as_non_admin(meal_request_setup):
         executed.errors[0].message
         == "Only admins or requestors who have not found a donor can delete meal requests."
     )
+    assert MealRequest.objects(id=meal_request.id).first() is not None
 
 
 def test_get_meal_request_by_donor_id(meal_request_setup):

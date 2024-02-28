@@ -94,7 +94,11 @@ const CreateMealRequest = (): React.ReactElement => {
   if (loading) {
     return (
       <div>
-        <TitleSection />
+        <TitleSection
+          title="Create a meal request"
+          description="Tell us a little bit about your requirements and we'll connect
+          you with a meal donor. This program aims to support kids age 6 to 12."
+        />
         <Center>
           <Spinner />
         </Center>

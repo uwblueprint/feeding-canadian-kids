@@ -32,7 +32,9 @@ const Default = (): React.ReactElement => {
   if (isAdmin) {
     return (
       <div style={wrapperStyles}>
-        <Button> Go to Admin Dashboard (unimplemented)</Button>
+        <Link as={RouterLink} to={Routes.ONBOARDING_REQUESTS_PAGE}>
+          <Button> Go to Admin Dashboard</Button>
+        </Link>
       </div>
     );
   }

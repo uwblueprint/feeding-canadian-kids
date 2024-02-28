@@ -9,8 +9,7 @@ interface TitleSectionProps {
 const TitleSection = ({
   title,
   description,
-}: TitleSectionProps): React.ReactElement => {
-  return (
+}: TitleSectionProps): React.ReactElement => (
     <div>
       <VStack
         spacing={4}
@@ -41,6 +40,5 @@ const TitleSection = ({
       </VStack>
     </div>
   );
-};
 
 export default TitleSection;

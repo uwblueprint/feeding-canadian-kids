@@ -237,8 +237,7 @@ const ASPCardDisplay = ({
 }: {
   onboardingRequests: OnboardingRequest[];
   isASP: boolean;
-}): React.ReactElement => {
-  return (
+}): React.ReactElement => (
     <Flex
       flexDir="row"
       flexWrap="wrap"
@@ -256,7 +255,6 @@ const ASPCardDisplay = ({
         : null}
     </Flex>
   );
-};
 
 const OnboardingRequestsPage = (): React.ReactElement => {
   const [isASP, setIsASP] = React.useState(true);
@@ -271,8 +269,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
 
   // if (OnboardingLoading) return <Spinner />;
 
-  const getTitleSection = (): React.ReactElement => {
-    return (
+  const getTitleSection = (): React.ReactElement => (
       <Flex flexDir="column" width="100%">
         <Flex width="100%" justifyContent="flex-end">
           <Button
@@ -320,7 +317,6 @@ const OnboardingRequestsPage = (): React.ReactElement => {
         />
       </Flex>
     );
-  };
 
   return (
     <Flex

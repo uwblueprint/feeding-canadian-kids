@@ -39,7 +39,7 @@ const YourMatchesPage = (): React.ReactElement => {
           email: "john@doe.com",
           phone: "123-456-7890",
         },
-        onsiteContacts: [
+        initialOnsiteContacts: [
           {
             name: "Jane Doe",
             email: "jane@doe.com",
@@ -73,7 +73,7 @@ const YourMatchesPage = (): React.ReactElement => {
           email: "john@doe.com",
           phone: "123-456-7890",
         },
-        onsiteContacts: [
+        initialOnsiteContacts: [
           {
             name: "Jane Doe",
             email: "jane@doe.com",
@@ -107,7 +107,7 @@ const YourMatchesPage = (): React.ReactElement => {
           email: "john@doe.com",
           phone: "123-456-7890",
         },
-        onsiteContacts: [
+        initialOnsiteContacts: [
           {
             name: "Jane Doe",
             email: "jane@doe.com",
@@ -121,6 +121,40 @@ const YourMatchesPage = (): React.ReactElement => {
         ],
       },
       distance: 3,
+    },
+    {
+      id: "4",
+      info: {
+        organizationName: "School 4",
+        organizationAddress: "124 Main St, San Jose, CA 95112",
+        email: "iamanotherschool@school.ca",
+        organizationDesc: "This is a school",
+        role: "ASP",
+        roleInfo: {
+          aspInfo: {
+            numKids: 100,
+          },
+          donorInfo: null,
+        },
+        primaryContact: {
+          name: "John Doe",
+          email: "john@doe.com",
+          phone: "124-456-7890",
+        },
+        initialOnsiteContacts: [
+          {
+            name: "Jane Doe",
+            email: "jane@doe.com",
+            phone: "124-456-7890",
+          },
+          {
+            name: "John Doe",
+            email: "john@doe.com",
+            phone: "124-456-7890",
+          },
+        ],
+      },
+      distance: 4,
     },
   ];
 
@@ -150,7 +184,7 @@ const YourMatchesPage = (): React.ReactElement => {
             email
             phone
           }
-          onsiteContacts {
+          initialOnsiteContacts {
             name
             email
             phone
@@ -174,28 +208,13 @@ const YourMatchesPage = (): React.ReactElement => {
   console.log("error: ", aspsError);
   console.log("user id: ", userId);
 
-  return (
-    /* <div
-      style={{
-        textAlign: "center",
-        paddingTop: "20px",
-        height: "100vh",
-        backgroundImage: `url(${BackgroundImage})`,
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      }}
-    >
-      <Wrap>
-        <Text>Meal Donor Dashboard</Text>
-      </Wrap>
-      <div style={{ height: "2rem" }} />
-    </div> */
-    aspsLoading ? (
-      <Spinner />
-    ) : (
-      <NearbySchoolList schools={aspsData.getASPNearLocation} />
-    )
+  return aspsLoading ? (
+    <Spinner />
+  ) : (
+    <NearbySchoolList
+      // schools={aspsData.getASPNearLocation}
+      schools={tempSchoolInfo}
+    />
   );
 };
 

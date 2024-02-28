@@ -1,11 +1,11 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import {
-    AtSignIcon,
-    CalendarIcon,
-    EmailIcon,
-    HamburgerIcon,
-    InfoIcon,
-  } from "@chakra-ui/icons";
+  AtSignIcon,
+  CalendarIcon,
+  EmailIcon,
+  HamburgerIcon,
+  InfoIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Card,
@@ -30,11 +30,11 @@ import {
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import {
-    IoBanOutline,
+  IoBanOutline,
   IoInformationCircleOutline,
   IoLocationOutline,
   IoPersonOutline,
-  IoRestaurant
+  IoRestaurant,
 } from "react-icons/io5";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -128,6 +128,108 @@ const NavButton = ({ text, path }: ButtonProps) => {
   return <ChakraButton onClick={() => navigate(path)}>{text}</ChakraButton>;
 };
 
+function formatDate(inputDate: string): string {
+  const date = new Date(inputDate);
+  const options: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+  return date.toLocaleDateString("en-US", options);
+}
+
+export const UpcomingCard = ({ event }: any) => {
+  const { mealRequest } = event.extendedProps;
+  return (
+    <div
+      style={{
+        width: "55%",
+      }}
+    >
+      <Card padding={3} variant="outline">
+        <HStack dir="row">
+          <VStack padding={10}>
+            <Text fontSize="md">
+              {formatDate(
+                mealRequest.dropOffDatetime.toLocaleString().split("T")[0],
+              )}
+            </Text>
+            <Text fontSize="20px">
+              {new Date(
+                mealRequest.dropOffDatetime.toLocaleString(),
+              ).toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}
+            </Text>
+            <HStack>
+              <IoRestaurant height={20} width={20} />
+              <Text fontSize="20px">
+                {mealRequest.mealInfo.portions}{" "}
+                {mealRequest.mealInfo.portions === 1 ? "meal" : "meals"}
+              </Text>
+            </HStack>
+            {"\n"}
+            <ChakraButton>Edit My Donation</ChakraButton>
+          </VStack>
+          <VStack alignItems="left" padding={6}>
+            <HStack alignItems="top">
+              <IoLocationOutline />
+              <VStack alignItems="left">
+                <Text fontSize="xs">
+                  <strong>
+                    Location:
+                    <br />
+                  </strong>
+                  {mealRequest.dropOffLocation}
+                </Text>
+              </VStack>
+            </HStack>
+
+            <HStack alignItems="top">
+              <IoPersonOutline />
+              <VStack alignItems="left">
+                <Text fontSize="xs">
+                  <strong>ASP Onsite Staff:</strong>
+                </Text>
+                {mealRequest.onsiteStaff.map((staffMember: any) => (
+                  <>
+                    <Text fontSize="xs">{staffMember.name}</Text>
+                    <Text fontSize="xs">{staffMember.email}</Text>
+                    <Text fontSize="xs">{staffMember.phone}</Text>
+                  </>
+                ))}
+              </VStack>
+            </HStack>
+
+            <HStack alignItems="top">
+              <IoBanOutline />
+              <VStack alignItems="left">
+                <Text fontSize="xs">
+                  <strong>Dietary Restrictions: </strong>
+                  <br />
+                  {mealRequest.mealInfo.dietaryRestrictions}
+                </Text>
+              </VStack>
+            </HStack>
+            <HStack alignItems="top">
+              <EmailIcon />
+              <VStack alignItems="left">
+                <Text fontSize="xs">
+                  <strong>Delivery Notes:</strong>
+                  <br />
+                  {mealRequest.deliveryInstructions}
+                </Text>
+              </VStack>
+            </HStack>
+          </VStack>
+        </HStack>
+      </Card>
+    </div>
+  );
+};
+
 const UpcomingPage = (): React.ReactElement => {
   const [isWebView] = useMediaQuery("(min-width: 62em)");
 
@@ -157,19 +259,10 @@ const UpcomingPage = (): React.ReactElement => {
     return <Navigate replace to={LOGIN_PAGE} />;
   }
 
-  function formatDate(inputDate: string): string {
-    const date = new Date(inputDate);
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
-  }
-
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
       (mealRequest: MealRequest) => {
+        console.log("hi", mealRequest);
         const date = new Date(
           mealRequest.dropOffDatetime.toString().split("T")[0],
         );
@@ -181,7 +274,8 @@ const UpcomingPage = (): React.ReactElement => {
           })
           .split(",")[0]
           .split("/");
-        const realDate = dateParts[2] + "-" + dateParts[0] + "-" + dateParts[1];
+        const realDate =
+          `${dateParts[2]}` + "-" + `${dateParts[0]}` + "-" + `${dateParts[1]}`;
         return {
           title: `${new Date(
             mealRequest.dropOffDatetime.toLocaleString(),
@@ -208,6 +302,9 @@ const UpcomingPage = (): React.ReactElement => {
       h="200px"
     ></Box>;
   }
+
+  const currentTime = new Date();
+  console.log("yo", currentTime);
 
   return (
     <Box
@@ -270,120 +367,32 @@ const UpcomingPage = (): React.ReactElement => {
           <TabPanel>
             {isWebView && (
               <Stack direction="column">
-                {realEvents.reverse().map((event) => (
-                  <div
-                    style={{
-                      width: "55%",
-                    }}
-                  >
-                    {/* <Text fontSize="md" padding={5} paddingTop={1}>
-                      Upcoming Delivery
-                    </Text> */}
-                    <Card padding={3} variant="outline">
-                      <HStack dir="row">
-                        <VStack padding={10}>
-                          <Text fontSize="md">
-                            {formatDate(
-                              event.extendedProps.mealRequest.dropOffDatetime
-                                .toLocaleString()
-                                .split("T")[0],
-                            )}
-                          </Text>
-                          <Text fontSize="20px">
-                            {new Date(
-                              event.extendedProps.mealRequest.dropOffDatetime.toLocaleString(),
-                            ).toLocaleTimeString("en-US", {
-                              hour: "numeric",
-                              minute: "numeric",
-                              hour12: true,
-                            })}
-                          </Text>
-                          <HStack>
-                            <IoRestaurant height={20} width={20}/>
-                            <Text fontSize="20px">
-                            {event.extendedProps.mealRequest.mealInfo.portions}{" "}
-                            {event.extendedProps.mealRequest.mealInfo
-                              .portions === 1
-                              ? "meal"
-                              : "meals"}
-                          </Text>
-                          </HStack>
-                          {"\n"}
-                          <ChakraButton>Edit My Donation</ChakraButton>
-                          
-                        </VStack>
-                        <VStack alignItems="left" padding={6}>
-                          <HStack alignItems="top">
-                            <IoLocationOutline />
-                            <VStack alignItems="left">
-                              <Text fontSize="xs">
-                                <strong>
-                                  Location:
-                                  <br />
-                                </strong>
-                                {
-                                  event.extendedProps.mealRequest
-                                    .dropOffLocation
-                                }
-                              </Text>
-                            </VStack>
-                          </HStack>
-
-                          <HStack alignItems="top">
-                            <IoPersonOutline />
-                            <VStack alignItems="left">
-                              <Text fontSize="xs">
-                                <strong>ASP Onsite Staff:</strong>
-                              </Text>
-                              {event.extendedProps.mealRequest.onsiteStaff.map(
-                                (staffMember) => (
-                                  <>
-                                    <Text fontSize="xs">
-                                      {staffMember.name}
-                                    </Text>
-                                    <Text fontSize="xs">
-                                      {staffMember.email}
-                                    </Text>
-                                    <Text fontSize="xs">
-                                      {staffMember.phone}
-                                    </Text>
-                                  </>
-                                ),
-                              )}
-                            </VStack>
-                          </HStack>
-
-                        <HStack alignItems="top">
-                            <IoBanOutline />
-                          <VStack alignItems="left">
-                            <Text fontSize="xs">
-                              <strong>Dietary Restrictions: </strong>
-                              <br />
-                              {
-                                event.extendedProps.mealRequest.mealInfo
-                                  .dietaryRestrictions
-                              }
-                            </Text>
-                          </VStack>
-                          </HStack>
-                          <HStack alignItems="top">
-                                    <EmailIcon />
-                          <VStack alignItems="left">
-                            <Text fontSize="xs">
-                              <strong>Delivery Notes:</strong>
-                              <br />
-                              {
-                                event.extendedProps.mealRequest
-                                  .deliveryInstructions
-                              }
-                            </Text>
-                          </VStack>
-                          </HStack>
-                        </VStack>
-                      </HStack>
-                    </Card>
-                  </div>
-                ))}
+                {realEvents
+                  .filter((event) => {
+                    const dropOffDatetime = new Date(
+                      event.extendedProps.mealRequest.dropOffDatetime,
+                    );
+                    return currentTime < dropOffDatetime;
+                  })
+                  .map((event) => (
+                    <UpcomingCard event={event} />
+                  ))}
+              </Stack>
+            )}
+          </TabPanel>
+          <TabPanel>
+            {isWebView && (
+              <Stack direction="column">
+                {realEvents
+                  .filter((event) => {
+                    const dropOffDatetime = new Date(
+                      event.extendedProps.mealRequest.dropOffDatetime,
+                    );
+                    return currentTime > dropOffDatetime;
+                  })
+                  .map((event) => (
+                    <UpcomingCard event={event} />
+                  ))}
               </Stack>
             )}
           </TabPanel>

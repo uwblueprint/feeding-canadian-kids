@@ -78,7 +78,7 @@ def create_user(backend_url, auth_header, body):
             email
             role
         }
-    }        
+    }
     """
     response = requests.post(
         f"{backend_url}/graphql",
@@ -104,7 +104,7 @@ def update_user(backend_url, auth_header, id, body):
             email
             role
         }
-    }        
+    }
     """
     response = requests.post(
         f"{backend_url}/graphql",

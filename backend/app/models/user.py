@@ -1,6 +1,6 @@
 import mongoengine as mg
 
-from .user_info import UserInfo
+from app.models.user_info import UserInfo
 
 
 class User(mg.Document):

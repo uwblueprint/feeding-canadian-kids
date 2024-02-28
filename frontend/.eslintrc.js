@@ -20,14 +20,14 @@ module.exports = {
     "airbnb",
     "airbnb-typescript",
     "prettier",
-    "plugin:prettier/recommended",
+    // "plugin:prettier/recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
   ],
   rules: {
-    "prettier/prettier": ["warn", { endOfLine: "auto" }],
+    // "prettier/prettier": ["warn", { endOfLine: "auto" }],
     "react/require-default-props": "off",
     "react/no-array-index-key": "off",
     "jsx-a11y/click-events-have-key-events": "off",
@@ -41,6 +41,7 @@ module.exports = {
       },
     ],
     "sort-imports": ["error", { ignoreDeclarationSort: true }],
+    "prefer-destructuring": ["off"],
     "import/order": [
       "error",
       {
@@ -57,6 +58,8 @@ module.exports = {
         },
       },
     ],
+    "import/prefer-default-export": ["off"],
+    "@typescript-eslint/naming-convention": "off",
   },
   ignorePatterns: ["build/*"],
 };

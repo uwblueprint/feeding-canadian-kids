@@ -110,7 +110,7 @@ def create_entity(backend_url, auth_header, body, fs, file, filename_field):
                 enumField
                 fileName
             }
-        }        
+        }
         """
         # https://github.com/jaydenseric/graphql-multipart-request-spec
         operations = json.dumps(
@@ -137,7 +137,7 @@ def create_entity(backend_url, auth_header, body, fs, file, filename_field):
                 boolField
                 enumField
             }
-        }      
+        }
         """
         response = requests.post(
             f"{backend_url}/graphql",

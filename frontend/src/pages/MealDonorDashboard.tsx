@@ -15,8 +15,7 @@ const Button = ({ text, path }: ButtonProps) => {
   return <ChakraButton onClick={() => navigate(path)}>{text}</ChakraButton>;
 };
 
-const MealDonorDashboard = (): React.ReactElement => {
-  return (
+const MealDonorDashboard = (): React.ReactElement => (
     <div
       style={{
         textAlign: "center",
@@ -30,10 +29,10 @@ const MealDonorDashboard = (): React.ReactElement => {
     >
       <Wrap>
         <Text> Meal Donor Dashboard</Text>
+        <Button text="Upcoming Donations" path={Routes.UPCOMING_PAGE}/>
       </Wrap>
       <div style={{ height: "2rem" }} />
     </div>
   );
-};
 
 export default MealDonorDashboard;

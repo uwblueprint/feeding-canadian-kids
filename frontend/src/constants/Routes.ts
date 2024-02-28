@@ -14,9 +14,11 @@ export const SET_PASSWORD_PAGE = "/:objectID/set-password";
 
 export const CREATE_MEAL_REQUEST_PAGE = "/request/scheduling";
 
-export const DASHBOARD_PAGE = "/dashboard";
+export const ASP_DASHBOARD_PAGE = "/asp/dashboard";
 
 export const MEAL_DONOR_DASHBOARD_PAGE = "/meal_donor/dashboard";
+
+export const UPCOMING_PAGE = "/meal_donor/upcoming";
 
 export const SETTINGS_PAGE = "/settings";
 
@@ -34,4 +36,3 @@ export const UPDATE_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity/update";
 
 export const HOOKS_PAGE = "/dashboard/hooks";
 
-export const UPCOMING_PAGE = "/upcoming";

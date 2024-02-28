@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/preset-env": "^7.22.14",
     "@apollo/client": "^3.8.0",
     "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/react": "^2.4.1",
@@ -12,6 +13,7 @@
     "@react-oauth/google": "^0.5.0",
     "@rjsf/bootstrap-4": "^2.5.1",
     "@rjsf/core": "^2.5.1",
+    "@table-library/react-table-library": "^4.1.4",
     "@tanstack/react-table": "^8.7.0",
     "apollo-upload-client": "^17.0.0",
     "axios": "^0.21.1",
@@ -24,7 +26,7 @@
     "react": "^18.2.0",
     "react-bootstrap": "^1.5.2",
     "react-dom": "^18.2.0",
-    "react-icons": "^5.0.1",
+    "react-icons": "^4.11.0",
     "react-json-schema": "^1.2.2",
     "react-jsonschema-form": "^1.8.1",
     "react-multi-date-picker": "^4.4.1",
@@ -36,8 +38,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "test:ci": " react-scripts test --watchAll=false",
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@codemirror)/\"",
+    "test:ci": " react-scripts test --watchAll=false --transformIgnorePatterns \"node_modules/(?!@codemirror)/\" --verbose",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --cache",
     "fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix --cache"
@@ -47,6 +49,11 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
   },
   "browserslist": {
     "production": [

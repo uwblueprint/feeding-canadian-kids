@@ -2,10 +2,16 @@ import firebase_admin.auth
 
 from ..interfaces.auth_service import IAuthService
 from ...resources.auth_dto import AuthDTO
+from pathlib import Path
+import os
 
 # from ...resources.create_user_dto import CreateUserDTO
 # from ...resources.token import Token
 from ...utilities.firebase_rest_client import FirebaseRestClient
+
+def read_email_template(file_path):
+  with open(file_path, 'r') as file:
+    return file.read()
 
 
 class AuthService(IAuthService):
@@ -115,18 +121,10 @@ class AuthService(IAuthService):
             set_password_link = "{url}/{ObjectID}/reset-password".format(
                 url=url, ObjectID=user.id
             )
-
-            email_body = """
-            Hello,
-            <br><br>
-            We have received your reset password request.
-            Please reset your password using the following link.
-            <br><br>
-            <a href="{reset_link}">Reset Password</a>
-            """.format(
+            email_body = read_email_template('email_templates/reset_password.html').format(
                 reset_link=set_password_link
             )
-
+            print(email_body)
             self.email_service.send_email(email, "FCK Reset Password Link", email_body)
 
         except Exception as e:
@@ -175,15 +173,7 @@ class AuthService(IAuthService):
             verification_link = firebase_admin.auth.generate_email_verification_link(
                 email
             )
-            email_body = """
-                Hello,
-                <br><br>
-                Please click the following link to verify your email and
-                activate your account.
-                <strong>This link is only valid for 1 hour.</strong>
-                <br><br>
-                <a href={verification_link}>Verify email</a>
-                """.format(
+            email_body = read_email_template('../email_templates/verification_email.html').format(
                 verification_link=verification_link
             )
             self.email_service.send_email(email, "Verify your email", email_body)

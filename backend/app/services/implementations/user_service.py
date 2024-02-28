@@ -1,4 +1,7 @@
 import firebase_admin.auth
+from app.models.user_info import UserInfo
+
+from app.services.interfaces.onsite_contact_service import IOnsiteContactService
 from ...models.onboarding_request import OnboardingRequest
 from ..interfaces.user_service import IUserService
 from ...models.user import User
@@ -12,7 +15,7 @@ class UserService(IUserService):
     UserService implementation with user management methods
     """
 
-    def __init__(self, logger):
+    def __init__(self, logger, onsite_contact_service: IOnsiteContactService):
         """
         Create an instance of UserService
 
@@ -20,6 +23,7 @@ class UserService(IUserService):
         :type logger: logger
         """
         self.logger = logger
+        self.onsite_contact_service = onsite_contact_service
 
     def get_user_by_id(self, user_id):
         try:
@@ -173,13 +177,24 @@ class UserService(IUserService):
             )
 
             try:
+                user_info: UserInfo = (
+                    OnboardingRequest.objects(id=create_user_dto.request_id)
+                    .first()
+                    .info
+                )
                 new_user: User = User(
                     auth_id=firebase_user.uid,
-                    info=OnboardingRequest.objects(id=create_user_dto.request_id)
-                    .first()
-                    .info,
+                    info=user_info,
                 )
                 new_user.save()
+                for onsite_contact in user_info.initial_onsite_contacts:
+                    self.onsite_contact_service.create_onsite_contact(
+                        organization_id=new_user.id,
+                        name=onsite_contact.name,
+                        email=onsite_contact.email,
+                        phone=onsite_contact.phone,
+                    )
+
             except Exception as mongo_error:
                 # rollback user creation in Firebase
                 try:

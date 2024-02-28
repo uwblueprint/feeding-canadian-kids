@@ -44,7 +44,11 @@ class UserInfo(mg.EmbeddedDocument):
     role = mg.StringField(choices=USERINFO_ROLES, required=True)
     role_info = mg.EmbeddedDocumentField(RoleInfo)
     primary_contact = mg.EmbeddedDocumentField(Contact, required=True)
-    onsite_contacts = mg.EmbeddedDocumentListField(Contact, required=True)
+
+    # This information is given as part of the onboarding request
+    # When a user actually signs up, these contacts get turned into separate OnsiteContact documents
+    initial_onsite_contacts = mg.EmbeddedDocumentListField(Contact, required=False)
+
     active = mg.BooleanField(default=True)
 
     meta = {"allow_inheritance": True}

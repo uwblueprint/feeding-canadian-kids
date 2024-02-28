@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Union, List
 
 from ...resources.meal_request_dto import MealRequestDTO
 
@@ -18,7 +18,7 @@ class IMealRequestService(ABC):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_staff: List[str],
     ):
         """Create a new MealRequest object and corresponding MealRequests
 
@@ -33,12 +33,12 @@ class IMealRequestService(ABC):
     @abstractmethod
     def update_meal_request(
         self,
-        requestor,
+        requestor_id: str,
         meal_info,
         drop_off_datetime,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_staff: List[str],
         meal_request_id,
     ):
         pass
@@ -47,10 +47,24 @@ class IMealRequestService(ABC):
     def commit_to_meal_request(
         self,
         donor_id: str,
-        meal_request_ids: [str],
+        meal_request_ids: List[str],
         meal_description: str,
         additional_info: Union[str, None],
-    ) -> [MealRequestDTO]:
+    ) -> List[MealRequestDTO]:
+        pass
+
+    @abstractmethod
+    def get_meal_request_by_id(
+        self,
+        id: str,
+    ) -> MealRequestDTO:
+        pass
+
+    @abstractmethod
+    def get_meal_requests_by_ids(
+        self,
+        ids: List[str],
+    ) -> List[MealRequestDTO]:
         pass
 
     @abstractmethod
@@ -69,6 +83,40 @@ class IMealRequestService(ABC):
 
         :param requestor_id: the MealRequest requestor's id
         :type requestor_id: string
+        :param min_drop_off_date: the minimum drop off date
+        :type min_drop_off_date: datetime
+        :param max_drop_off_date: the maximum drop off date
+        :type max_drop_off_date: datetime
+        :param status: the status of the MealRequest
+        :type status: string
+        :param offset: the offset to start from
+        :type offset: int
+        :param limit: the limit of results to return
+        :type limit: int
+        :param sort_by_date_direction: the direction to sort by (ASC or DESC)
+        :type sort_by_date_direction: string
+        :return: MealRequest object dict
+        :rtype: MealRequestDTO
+        :raises Exception: if MealRequest could not be retrieved
+        """
+        pass
+
+    @abstractmethod
+    def get_meal_requests_by_donor_id(
+        self,
+        donor_id,
+        min_drop_off_date,
+        max_drop_off_date,
+        status,
+        offset,
+        limit,
+        sort_by_date_direction,
+    ):
+        """
+        Gets MealRequest by donor id
+
+        :param donor_id: the MealRequest donor's id
+        :type donor_id: string
         :param min_drop_off_date: the minimum drop off date
         :type min_drop_off_date: datetime
         :param max_drop_off_date: the maximum drop off date

@@ -17,16 +17,14 @@ type EntityData = Omit<SimpleEntityResponse, "boolField"> & {
   boolField: string;
 };
 
-const convert = (entityResponse: SimpleEntityResponse): EntityData => {
-  return {
+const convert = (entityResponse: SimpleEntityResponse): EntityData => ({
     id: entityResponse.id,
     stringField: entityResponse.stringField,
     intField: entityResponse.intField,
     stringArrayField: entityResponse.stringArrayField,
     enumField: entityResponse.enumField,
     boolField: entityResponse.boolField.toString(),
-  };
-};
+  });
 
 type TableProps = {
   data: EntityData[];

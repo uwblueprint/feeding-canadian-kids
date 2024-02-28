@@ -17,6 +17,7 @@ try:
     decodedJson = json.loads(rawInput)
 except Exception as e:
     print("Unable to retrieve secrets from Vault and obtain valid json result.")
+    print(e)
     print(
         "Please ensure you are authenticated and have supplied the correct path argument."
     )

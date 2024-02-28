@@ -1,5 +1,6 @@
 import * as jwt from "jose";
 
+
 export const decodeJWT = (token: string | null): jwt.JWTPayload | null => {
   if (!token) return null;
   return jwt.decodeJwt(token);

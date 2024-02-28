@@ -1,0 +1,6 @@
+from _typeshed import Incomplete
+
+string_types: Incomplete
+
+def warn_deprecation(text) -> None: ...
+def deprecated(reason): ...

@@ -227,6 +227,16 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
     return date.toLocaleDateString("en-US", options);
   }
 
+  const renderEventContent = (eventInfo: any) => (
+      <>
+        <Flex alignItems="center" gap="2px" fontSize="11px">
+          <b>{eventInfo.event.title}</b>
+          <PiForkKnifeFill />
+        </Flex>
+        <Box>{eventInfo.timeText.replace(/([ap])/g, "$1m")}</Box>
+      </>
+    )
+
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
       (mealRequest: MealRequest) => {
@@ -238,22 +248,15 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
           title: `${mealRequest.mealInfo.portions}`,
           start: startDate,
           end: endDate,
-          // date: realDate,
           extendedProps: { 
             id: `${mealRequest.id}`,
             icon: 'test'
           },
-          backgroundColor: `${selectedMealRequests.includes(mealRequest.id) ? "#444444" : "#E2E8F0"}`,
-          color: "#000000",
-          // eventAfterRender
-          display: "block"
-        //   borderColor: "#3BA948",
-        //   borderRadius: "10%",
+          backgroundColor: `${selectedMealRequests.includes(mealRequest.id) ? "#c4c4c4": "#FFFFFF" }`,
+          display: "block",
         };
       },
     ) ?? [];
-
-    console.log(realEvents)
 
   if (getMealRequestsLoading) {
     return (
@@ -285,38 +288,30 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
       </Text>
       <Text margin="20px 0px">Dates selected: {selectedMealRequests.length}</Text>
       
-      <Box fontSize="12px">
-      <FullCalendar
-        headerToolbar={{
-          left: "prev",
-          center: "title",
-          right: "next",
-        }}
-        themeSystem="Simplex"
-        plugins={[dayGridPlugin]}
-        initialView="dayGridMonth"
-        events={realEvents}
-        selectable
-        displayEventEnd
-        // eventContent={renderEventContent}
-        eventClick={(info) => {
-            if (selectedMealRequests.includes(info.event.extendedProps.id)) {
-                setSelectedMealRequests(selectedMealRequests.filter(id => id !== info.event.extendedProps.id));
-            } else {
-                setSelectedMealRequests(prevSelected => [...prevSelected, info.event.extendedProps.id]);
-            }
-        }}
-        eventDidMount={(props) => {
-          // props.event
-          // props.el.innerHTML.
-          // console.log(event)
-        }}
-        // eventContent={(arg, element) => {
-        //     if (arg.event.extendedProps) {
-        //         // element.find(".fc-title").prepend(<PiForkKnifeFill />);
-        //     }
-        // }}
-      />
+      <Box fontSize="10px">
+        <FullCalendar
+          headerToolbar={{
+            left: "prev",
+            center: "title",
+            right: "next",
+          }}
+          themeSystem="Simplex"
+          plugins={[dayGridPlugin]}
+          initialView="dayGridMonth"
+          events={realEvents}
+          selectable
+          displayEventEnd
+          eventTextColor="#000000"
+          eventBorderColor="#FFFFFF"
+          eventClick={(info) => {
+              if (selectedMealRequests.includes(info.event.extendedProps.id)) {
+                  setSelectedMealRequests(selectedMealRequests.filter(id => id !== info.event.extendedProps.id));
+              } else {
+                  setSelectedMealRequests(prevSelected => [...prevSelected, info.event.extendedProps.id]);
+              }
+          }}
+          eventContent={renderEventContent}
+        />
       </Box>
 
 
@@ -337,15 +332,6 @@ const MealDonorCalendar = (): React.ReactElement => {
 
   return (
     <Flex
-      // style={{
-      //   textAlign: "center",
-      //   paddingTop: "20px",
-      //   height: "100vh",
-      //   backgroundImage: `url(${BackgroundImage})`,
-      //   backgroundPosition: "center",
-      //   backgroundRepeat: "no-repeat",
-      //   backgroundSize: "cover",
-      // }}
       borderTop="2px solid #D9D9D9"
     >
       <Flex width="400px" justifyContent="center">

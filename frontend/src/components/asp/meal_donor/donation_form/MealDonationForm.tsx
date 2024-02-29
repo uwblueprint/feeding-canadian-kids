@@ -1,12 +1,17 @@
-import { useToast } from "@chakra-ui/react";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { Center, Spinner, useToast } from "@chakra-ui/react";
+import { error } from "console";
 import React, { useContext, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 import MealDonationFormContactInfo from "./MealDonationFormContactInfo";
 
 import { LOGIN_PAGE } from "../../../../constants/Routes";
 import AuthContext from "../../../../contexts/AuthContext";
+import { MealRequestsData } from "../../../../types/MealRequestTypes";
 import { Contact, UserInfo } from "../../../../types/UserTypes";
+import { ErrorMessage } from "../../../../utils/ErrorUtils";
+import { logPossibleGraphQLError } from "../../../../utils/GraphQLUtils";
 import useGetOnsiteContacts from "../../../../utils/useGetOnsiteContacts";
 import ThreeStepForm from "../../../common/ThreeStepForm";
 import TitleSection from "../../../common/ThreeStepFormTitleSection";
@@ -23,7 +28,7 @@ const MealDonationForm = (): React.ReactElement => {
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const toast = useToast();
-  const [loading, setLoading] = useState(true);
+  const [onsiteContactsLoading, setOnsiteContactsLoading] = useState(true);
 
   const [userInfo, setUserInfo] = useState<UserInfo>(
     authenticatedUser?.info || null,
@@ -32,12 +37,61 @@ const MealDonationForm = (): React.ReactElement => {
   const [availableOnsiteContacts, setAvailableOnsiteContacts] = useState<
     Array<Contact>
   >([]);
-  useGetOnsiteContacts(toast, setAvailableOnsiteContacts, setLoading);
-
-  // This is the list of available onsite staff
-  const [availableStaff, setAvailableStaff] = useState<Array<Contact>>(
-    userInfo ? JSON.parse(JSON.stringify(availableOnsiteContacts)) : [],
+  useGetOnsiteContacts(
+    toast,
+    setAvailableOnsiteContacts,
+    setOnsiteContactsLoading,
   );
+
+  const requestorId = authenticatedUser?.id;
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const idsParam = searchParams.get("ids");
+  // Split the idsParam by dot to get an array of ids
+  const ids = idsParam ? idsParam.split(",") : [];
+
+  const GET_MEAL_REQUESTS = gql`
+  query getMealRequestsByIds{
+    getMealRequestsByIds(
+      requestorId: "${requestorId}"
+      ids: [${ids?.map((id) => `"${id}"`).join(", ")}],
+    ) {
+      id
+      requestor {
+        id
+      }
+      status
+      dropOffDatetime
+      dropOffLocation
+      mealInfo {
+        portions
+        dietaryRestrictions
+      }
+      onsiteStaff {
+        name
+        email
+        phone
+      }
+      dateCreated
+      dateUpdated
+      deliveryInstructions
+      donationInfo {
+        donor {
+          id
+        }
+        commitmentDate
+        mealDescription
+        additionalInfo
+      }
+    }
+  }
+  `;
+
+  const {
+    data: mealRequestData,
+    error: getUserError,
+    loading: getMealRequestsLoading,
+  } = useQuery<MealRequestsData>(GET_MEAL_REQUESTS);
 
   const alertUser = (e: {
     returnValue: string;
@@ -55,6 +109,11 @@ const MealDonationForm = (): React.ReactElement => {
     };
   }, []);
 
+  logPossibleGraphQLError(getUserError);
+  if (getUserError) {
+    return <ErrorMessage />;
+  }
+
   if (!authenticatedUser) {
     return <Navigate replace to={LOGIN_PAGE} />;
   }
@@ -62,22 +121,31 @@ const MealDonationForm = (): React.ReactElement => {
   return (
     <div>
       <TitleSection title="Meal Donation Form" showDescription={false} />
-      <ThreeStepForm
-        header1="Contact Information"
-        header2="Meal Details"
-        header3="Review & submit"
-        panel1={
-          <MealDonationFormContactInfo
-            onsiteStaff={onsiteStaff}
-            setOnsiteStaff={setOnsiteStaff}
-            availableStaff={availableStaff}
-            authenticatedUser={authenticatedUser}
-            handleNext={() => {}}
-          />
-        }
-        panel2={<div />}
-        panel3={<div />}
-      />
+      {onsiteContactsLoading || getMealRequestsLoading ? (
+        <Center height="100%">
+          <Spinner />
+        </Center>
+      ) : (
+        <ThreeStepForm
+          header1="Contact Information"
+          header2="Meal Details"
+          header3="Review & submit"
+          panel1={
+            <MealDonationFormContactInfo
+              onsiteStaff={onsiteStaff}
+              setOnsiteStaff={setOnsiteStaff}
+              availableStaff={availableOnsiteContacts}
+              authenticatedUser={authenticatedUser}
+              handleNext={() => {}}
+              mealRequestsInformation={
+                mealRequestData?.getMealRequestsByIds ?? []
+              }
+            />
+          }
+          panel2={<div />}
+          panel3={<div />}
+        />
+      )}
     </div>
   );
 };

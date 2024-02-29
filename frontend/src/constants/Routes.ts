@@ -20,6 +20,10 @@ export const MEAL_DONOR_DASHBOARD_PAGE = "/meal_donor/dashboard";
 
 export const UPCOMING_PAGE = "/meal_donor/upcoming";
 
+export const MEAL_DONOR_CALENDAR_PAGE = "/meal_donor/calendar";
+
+export const YOUR_MATCHES_PAGE = "/meal_donor/matches";
+
 export const SETTINGS_PAGE = "/settings";
 
 export const DISPLAY_ENTITY_PAGE = "/dashboard/entity";

@@ -60,6 +60,12 @@ export type UserInfo = {
   active?: boolean;
 } | null;
 
+export type ASPDistance = {
+  id: string;
+  info: UserInfo;
+  distance: number;
+} | null;
+
 export type OnboardingRequest = {
   id: string;
   info: UserInfo;

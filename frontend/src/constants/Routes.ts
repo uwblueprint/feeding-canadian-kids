@@ -18,6 +18,8 @@ export const ASP_DASHBOARD_PAGE = "/asp/dashboard";
 
 export const MEAL_DONOR_DASHBOARD_PAGE = "/meal_donor/dashboard";
 
+export const MEAL_DONOR_FORM_PAGE = "/meal_donor/donate/";
+
 export const MEAL_DONOR_CALENDAR_PAGE = "/meal_donor/calendar";
 
 export const YOUR_MATCHES_PAGE = "/meal_donor/matches";

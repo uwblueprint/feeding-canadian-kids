@@ -5,6 +5,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 import BackgroundImage from "../assets/background.png";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import NearbySchoolList from "../components/donor/NearbySchoolList";
 import * as Routes from "../constants/Routes";
 import { LOGIN_PAGE } from "../constants/Routes";
@@ -69,7 +70,7 @@ const YourMatchesPage = (): React.ReactElement => {
   }
 
   return aspsLoading ? (
-    <Spinner />
+    <LoadingSpinner />
   ) : (
     <NearbySchoolList schools={aspsData.getASPNearLocation} />
   );

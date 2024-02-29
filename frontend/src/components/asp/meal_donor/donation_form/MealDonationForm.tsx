@@ -13,6 +13,7 @@ import { Contact, UserInfo } from "../../../../types/UserTypes";
 import { ErrorMessage } from "../../../../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../../../../utils/GraphQLUtils";
 import useGetOnsiteContacts from "../../../../utils/useGetOnsiteContacts";
+import LoadingSpinner from "../../../common/LoadingSpinner";
 import ThreeStepForm from "../../../common/ThreeStepForm";
 import TitleSection from "../../../common/ThreeStepFormTitleSection";
 
@@ -117,13 +118,20 @@ const MealDonationForm = (): React.ReactElement => {
   if (!authenticatedUser) {
     return <Navigate replace to={LOGIN_PAGE} />;
   }
+  if (!ids || ids.length === 0) {
+    return (
+      <Center>
+        No meal requests selected! Please go back and select some meal requests.
+      </Center>
+    );
+  }
 
   return (
     <div>
       <TitleSection title="Meal Donation Form" showDescription={false} />
       {onsiteContactsLoading || getMealRequestsLoading ? (
         <Center height="100%">
-          <Spinner />
+          <LoadingSpinner />
         </Center>
       ) : (
         <ThreeStepForm

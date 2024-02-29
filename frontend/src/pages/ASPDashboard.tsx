@@ -13,6 +13,8 @@ import {
 import React, { useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
+import ASPCalandar from "./ASPCalendar";
+
 import BackgroundImage from "../assets/background.png";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
 import ListView from "../components/mealrequest/ListView";
@@ -79,7 +81,7 @@ const Dashboard = (): React.ReactElement => {
       <Text variant="desktop-caption" mb="20px">
         Use this page to see your upcoming food deliveries
       </Text>
-      <Tabs defaultIndex={1} w="100%">
+      <Tabs defaultIndex={0} w="100%">
         <Flex flexDir="row" justifyContent="space-between">
           <TabList>
             <Tab gap="8px">
@@ -100,10 +102,10 @@ const Dashboard = (): React.ReactElement => {
         </Flex>
 
         <TabPanels>
-          <TabPanel>
-            <p>Insert Calendar Here</p>
+          <TabPanel defaultChecked>
+            <ASPCalandar />
           </TabPanel>
-          <TabPanel p="0">
+          <TabPanel>
             <ListView authId={authenticatedUser.id} />
           </TabPanel>
           <TabPanel>

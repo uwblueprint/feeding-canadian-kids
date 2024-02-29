@@ -15,7 +15,7 @@ import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
 import useGetOnsiteContacts from "../../../utils/useGetOnsiteContacts";
 import LoadingSpinner from "../../common/LoadingSpinner";
 import ThreeStepForm from "../../common/ThreeStepForm";
-import TitleSection from "../../common/ThreeStepFormTitleSection";
+import ThreeStepFormTitleSection from "../../common/ThreeStepFormTitleSection";
 
 const MealDonationForm = (): React.ReactElement => {
   // This is the selected onsite staff
@@ -128,7 +128,7 @@ const MealDonationForm = (): React.ReactElement => {
 
   return (
     <div>
-      <TitleSection title="Meal Donation Form" showDescription={false} />
+      <ThreeStepFormTitleSection title="Meal Donation Form" />
       {onsiteContactsLoading || getMealRequestsLoading ? (
         <Center height="100%">
           <LoadingSpinner />

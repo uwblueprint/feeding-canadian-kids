@@ -3,46 +3,44 @@ import React from "react";
 
 interface TitleSectionProps {
   title: string;
-  showDescription?: boolean;
+  description?: string;
 }
 
-const TitleSection: React.FC<TitleSectionProps> = ({
+const ThreeStepFormTitleSection: React.FC<TitleSectionProps> = ({
   title,
-  showDescription = true,
+  description,
 }): React.ReactElement => (
-    <div>
-      <VStack
-        spacing={4}
-        alignItems="center"
-        height="fit-content"
-        style={{
-          background: "white",
-        }}
-        padding={{ base: "1rem", lg: "2rem" }}
+  <div>
+    <VStack
+      spacing={4}
+      alignItems="center"
+      height="fit-content"
+      style={{
+        background: "white",
+      }}
+      padding={{ base: "1rem", lg: "2rem" }}
+    >
+      <Text
+        alignSelf={{ base: "center", lg: "unset" }}
+        variant="desktop-display-xl"
+        color="primary.blue"
+        as="b"
       >
+        {title}
+      </Text>
+
+      {description ? (
         <Text
           alignSelf={{ base: "center", lg: "unset" }}
-          variant="desktop-display-xl"
-          color="primary.blue"
-          as="b"
+          variant="desktop-body"
+          textAlign="center"
+          maxWidth="100%"
         >
-          {title}
+          {description}
         </Text>
+      ) : undefined}
+    </VStack>
+  </div>
+);
 
-        {showDescription && (
-          <Text
-            alignSelf={{ base: "center", lg: "unset" }}
-            variant="desktop-body"
-            textAlign="center"
-            maxWidth="100%"
-          >
-            Tell us a little bit about your requirements and we&apos;ll connect
-            you with a meal donor. This program aims to support kids age 6 to
-            12.
-          </Text>
-        )}
-      </VStack>
-    </div>
-  );
-
-export default TitleSection;
+export default ThreeStepFormTitleSection;

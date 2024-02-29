@@ -13,7 +13,7 @@ import AuthContext from "../../../contexts/AuthContext";
 import { Contact, UserInfo } from "../../../types/UserTypes";
 import useGetOnsiteContacts from "../../../utils/useGetOnsiteContacts";
 import ThreeStepForm from "../../common/ThreeStepForm";
-import TitleSection from "../../common/ThreeStepFormTitleSection";
+import ThreeStepFormTitleSection from "../../common/ThreeStepFormTitleSection";
 
 const CreateMealRequest = (): React.ReactElement => {
   // Part 1: Scheduling
@@ -94,7 +94,7 @@ const CreateMealRequest = (): React.ReactElement => {
   if (loading) {
     return (
       <div>
-        <TitleSection title = "Create Meal Request"/>
+        <ThreeStepFormTitleSection title="Create Meal Request" />
         <Center>
           <Spinner />
         </Center>
@@ -103,7 +103,12 @@ const CreateMealRequest = (): React.ReactElement => {
   }
   return (
     <div>
-      <TitleSection title = "Create Meal Request"/>
+      <ThreeStepFormTitleSection
+        title="Create Meal Request"
+        description="
+          Tell us a little bit about your requirements and we'll connect
+          you with a meal donor. This program aims to support kids age 6 to 12."
+      />
 
       <ThreeStepForm
         header1="Scheduling"

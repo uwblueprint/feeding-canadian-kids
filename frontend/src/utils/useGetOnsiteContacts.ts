@@ -35,10 +35,6 @@ const useGetOnsiteContacts = (
           JSON.parse(JSON.stringify(data.getOnsiteContactForUserById)),
         );
       }
-      //   setServerOnsiteContacts(
-      //     JSON.parse(JSON.stringify(data.getOnsiteContactForUserById)),
-      //   );
-      // }
       if (setLoading) {
         setLoading(false);
       }

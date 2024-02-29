@@ -13,7 +13,7 @@ import AuthContext from "../../../contexts/AuthContext";
 import { Contact, UserInfo } from "../../../types/UserTypes";
 import useGetOnsiteContacts from "../../../utils/useGetOnsiteContacts";
 import ThreeStepForm from "../../common/ThreeStepForm";
-import ThreeStepFormTitleSection from "../../common/ThreeStepFormTitleSection";
+import TitleSection from "../../common/ThreeStepFormTitleSection";
 
 const CreateMealRequest = (): React.ReactElement => {
   // Part 1: Scheduling
@@ -94,7 +94,7 @@ const CreateMealRequest = (): React.ReactElement => {
   if (loading) {
     return (
       <div>
-        <ThreeStepFormTitleSection title="Create Meal Request" />
+        <TitleSection title="Create Meal Request" />
         <Center>
           <Spinner />
         </Center>
@@ -103,7 +103,7 @@ const CreateMealRequest = (): React.ReactElement => {
   }
   return (
     <div>
-      <ThreeStepFormTitleSection
+      <TitleSection
         title="Create Meal Request"
         description="
           Tell us a little bit about your requirements and we'll connect

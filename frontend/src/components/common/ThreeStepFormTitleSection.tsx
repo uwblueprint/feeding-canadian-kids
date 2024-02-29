@@ -6,7 +6,7 @@ interface TitleSectionProps {
   description?: string;
 }
 
-const ThreeStepFormTitleSection: React.FC<TitleSectionProps> = ({
+const TitleSection: React.FC<TitleSectionProps> = ({
   title,
   description,
 }): React.ReactElement => (
@@ -43,4 +43,4 @@ const ThreeStepFormTitleSection: React.FC<TitleSectionProps> = ({
   </div>
 );
 
-export default ThreeStepFormTitleSection;
+export default TitleSection;

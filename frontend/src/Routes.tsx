@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Routes as RouteContainer } from "react-router-dom";
 
-import MealDonationForm from "./components/asp/meal_donor/donation_form/MealDonationForm";
 import CreateMealRequest from "./components/asp/requests/CreateMealRequest";
 import AuthWall from "./components/auth/AuthWall";
 import ForgotPassword from "./components/auth/ForgotPassword";
@@ -10,6 +9,7 @@ import JoinSuccess from "./components/auth/JoinSuccess";
 import Login from "./components/auth/Login";
 import ResetPassword from "./components/auth/ResetPassword";
 import SetPassword from "./components/auth/SetPassword";
+import MealDonationForm from "./components/meal_donor/donation_form/MealDonationForm";
 import * as Paths from "./constants/Routes";
 import Dashboard from "./pages/ASPDashboard";
 import CreatePage from "./pages/CreatePage";
@@ -39,7 +39,7 @@ const Routes = (): React.ReactElement => (
       path={Paths.CREATE_MEAL_REQUEST_PAGE}
       element={<CreateMealRequest />}
     />
-    <Route path={Paths.MEAL_DONOR_FORM_PAGE} element = {<MealDonationForm/>}/>
+    <Route path={Paths.MEAL_DONOR_FORM_PAGE} element={<MealDonationForm />} />
     <Route path="" element={<AuthWall />}>
       <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
       <Route path={Paths.ASP_DASHBOARD_PAGE} element={<Dashboard />} />

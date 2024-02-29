@@ -6,16 +6,16 @@ import { Navigate, useLocation } from "react-router-dom";
 
 import MealDonationFormContactInfo from "./MealDonationFormContactInfo";
 
-import { LOGIN_PAGE } from "../../../../constants/Routes";
-import AuthContext from "../../../../contexts/AuthContext";
-import { MealRequestsData } from "../../../../types/MealRequestTypes";
-import { Contact, UserInfo } from "../../../../types/UserTypes";
-import { ErrorMessage } from "../../../../utils/ErrorUtils";
-import { logPossibleGraphQLError } from "../../../../utils/GraphQLUtils";
-import useGetOnsiteContacts from "../../../../utils/useGetOnsiteContacts";
-import LoadingSpinner from "../../../common/LoadingSpinner";
-import ThreeStepForm from "../../../common/ThreeStepForm";
-import TitleSection from "../../../common/ThreeStepFormTitleSection";
+import { LOGIN_PAGE } from "../../../constants/Routes";
+import AuthContext from "../../../contexts/AuthContext";
+import { MealRequestsData } from "../../../types/MealRequestTypes";
+import { Contact, UserInfo } from "../../../types/UserTypes";
+import { ErrorMessage } from "../../../utils/ErrorUtils";
+import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
+import useGetOnsiteContacts from "../../../utils/useGetOnsiteContacts";
+import LoadingSpinner from "../../common/LoadingSpinner";
+import ThreeStepForm from "../../common/ThreeStepForm";
+import TitleSection from "../../common/ThreeStepFormTitleSection";
 
 const MealDonationForm = (): React.ReactElement => {
   // This is the selected onsite staff

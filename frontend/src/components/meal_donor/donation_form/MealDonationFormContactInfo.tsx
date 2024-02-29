@@ -17,9 +17,9 @@ import React from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { useLocation } from "react-router-dom";
 
-import { MealRequest } from "../../../../types/MealRequestTypes";
-import { AuthenticatedUser, Contact } from "../../../../types/UserTypes";
-import OnsiteStaffSection from "../../../common/OnsiteStaffSection";
+import { MealRequest } from "../../../types/MealRequestTypes";
+import { AuthenticatedUser, Contact } from "../../../types/UserTypes";
+import OnsiteStaffSection from "../../common/OnsiteStaffSection";
 
 type MealDonationFormContactInfoProps = {
   onsiteStaff: Contact[];

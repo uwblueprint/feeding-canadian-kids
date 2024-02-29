@@ -8,12 +8,12 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import { IoPersonOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 import { MEAL_DONOR_CALENDAR_PAGE } from "../../constants/Routes";
-import type { ASPDistance, Contact } from "../../types/UserTypes";
+import type { ASPDistance } from "../../types/UserTypes";
 
 // Props: we need a list of ASPDistance
 type NearbySchoolListProps = {
@@ -74,7 +74,7 @@ const NearbySchoolList = ({
                   marginRight="1vw"
                 >
                   <Image
-                    src="https://images.squarespace-cdn.com/content/v1/5dc5d641498834108f7c46a5/6384d8a2-9c31-4ae6-a287-256643f2271e/responsiveclassroom.png?format=1500w"
+                    src="/classroom.png"
                     alt={school?.info?.organizationName}
                     borderRadius="full"
                     w={{ base: "10vh", sm: "20vh" }}

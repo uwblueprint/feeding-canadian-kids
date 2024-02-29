@@ -10,154 +10,12 @@ import * as Routes from "../constants/Routes";
 import { LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 import { ASPDistance } from "../types/UserTypes";
+import { ErrorMessage } from "../utils/ErrorUtils";
+import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
 type ButtonProps = { text: string; path: string };
 
-const Button = ({ text, path }: ButtonProps) => {
-  const navigate = useNavigate();
-  return <ChakraButton onClick={() => navigate(path)}>{text}</ChakraButton>;
-};
-
 const YourMatchesPage = (): React.ReactElement => {
-  const tempSchoolInfo: ASPDistance[] = [
-    {
-      id: "1",
-      info: {
-        organizationName: "School 1",
-        organizationAddress: "121 Main St, San Jose, CA 95112",
-        email: "test@sdff.ca",
-        organizationDesc: "This is a school",
-        role: "ASP",
-        roleInfo: {
-          aspInfo: {
-            numKids: 100,
-          },
-          donorInfo: null,
-        },
-        primaryContact: {
-          name: "John Doe",
-          email: "john@doe.com",
-          phone: "123-456-7890",
-        },
-        initialOnsiteContacts: [
-          {
-            name: "Jane Doe",
-            email: "jane@doe.com",
-            phone: "123-456-7890",
-          },
-          {
-            name: "John Doe",
-            email: "john@doe.com",
-            phone: "123-456-7890",
-          },
-        ],
-      },
-      distance: 1,
-    },
-    {
-      id: "2",
-      info: {
-        organizationName: "School 2",
-        organizationAddress: "122 Main St, San Jose, CA 95112",
-        email: "iamanotherschool@school.ca",
-        organizationDesc: "This is a school",
-        role: "ASP",
-        roleInfo: {
-          aspInfo: {
-            numKids: 100,
-          },
-          donorInfo: null,
-        },
-        primaryContact: {
-          name: "John Doe",
-          email: "john@doe.com",
-          phone: "123-456-7890",
-        },
-        initialOnsiteContacts: [
-          {
-            name: "Jane Doe",
-            email: "jane@doe.com",
-            phone: "123-456-7890",
-          },
-          {
-            name: "John Doe",
-            email: "john@doe.com",
-            phone: "123-456-7890",
-          },
-        ],
-      },
-      distance: 2,
-    },
-    {
-      id: "3",
-      info: {
-        organizationName: "School 3",
-        organizationAddress: "123 Main St, San Jose, CA 95112",
-        email: "iamanotherschool@school.ca",
-        organizationDesc: "This is a school",
-        role: "ASP",
-        roleInfo: {
-          aspInfo: {
-            numKids: 100,
-          },
-          donorInfo: null,
-        },
-        primaryContact: {
-          name: "John Doe",
-          email: "john@doe.com",
-          phone: "123-456-7890",
-        },
-        initialOnsiteContacts: [
-          {
-            name: "Jane Doe",
-            email: "jane@doe.com",
-            phone: "123-456-7890",
-          },
-          {
-            name: "John Doe",
-            email: "john@doe.com",
-            phone: "123-456-7890",
-          },
-        ],
-      },
-      distance: 3,
-    },
-    {
-      id: "4",
-      info: {
-        organizationName: "School 4",
-        organizationAddress: "124 Main St, San Jose, CA 95112",
-        email: "iamanotherschool@school.ca",
-        organizationDesc: "This is a school",
-        role: "ASP",
-        roleInfo: {
-          aspInfo: {
-            numKids: 100,
-          },
-          donorInfo: null,
-        },
-        primaryContact: {
-          name: "John Doe",
-          email: "john@doe.com",
-          phone: "124-456-7890",
-        },
-        initialOnsiteContacts: [
-          {
-            name: "Jane Doe",
-            email: "jane@doe.com",
-            phone: "124-456-7890",
-          },
-          {
-            name: "John Doe",
-            email: "john@doe.com",
-            phone: "124-456-7890",
-          },
-        ],
-      },
-      distance: 4,
-    },
-  ];
-
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const [userId, setUserId] = useState<string>(authenticatedUser?.id || "");
@@ -204,17 +62,16 @@ const YourMatchesPage = (): React.ReactElement => {
   }
 
   // Print out the ASPs near the donor
-  console.log(aspsData);
-  console.log("error: ", aspsError);
-  console.log("user id: ", userId);
+  logPossibleGraphQLError(aspsError);
+
+  if (aspsError) {
+    return <ErrorMessage />;
+  }
 
   return aspsLoading ? (
     <Spinner />
   ) : (
-    <NearbySchoolList
-      // schools={aspsData.getASPNearLocation}
-      schools={tempSchoolInfo}
-    />
+    <NearbySchoolList schools={aspsData.getASPNearLocation} />
   );
 };
 

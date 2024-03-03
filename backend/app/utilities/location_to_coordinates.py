@@ -28,4 +28,5 @@ def getGeocodeFromAddress(organization_address):
         return [float(response_json[0]["lon"]), float(response_json[0]["lat"])]
     except Exception as e:
         print("Failed when getting geoencoding from address!")
+        print(f"Status code is: {response.status_code}")
         raise e

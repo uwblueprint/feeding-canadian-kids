@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   Button,
   Card,
@@ -13,6 +13,7 @@ import {
   Spinner,
   Text,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -23,6 +24,7 @@ import { LocationIcon } from "../assets/icons/LocationIcon";
 import { PersonIcon } from "../assets/icons/PersonIcon";
 import TitleSection from "../components/asp/requests/TitleSection";
 import { OnboardingRequest } from "../types/UserTypes";
+import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
 const GET_ASP_ONBOARDING_REQUESTS = gql`
   query GetASPOnboardingRequests {
@@ -75,17 +77,100 @@ const ApproveDenyModal = ({
   isOpen,
   onClose,
   approve,
+  onboardingRequest,
 }: {
   isOpen: boolean;
   onClose: () => void;
   approve: boolean;
+  onboardingRequest: OnboardingRequest;
 }): React.ReactElement => {
-  const onApprove = () => {
+  const APPROVE_ONBOARDING_REQUEST = gql`
+    mutation ApproveOnboardingRequest($id: ID!) {
+      approveOnboardingRequest(id: $id) {
+        onboardingRequest {
+          id
+        }
+      }
+    }
+  `;
+
+  const REJECT_ONBOARDING_REQUEST = gql`
+    mutation RejectOnboardingRequest($id: ID!) {
+      rejectOnboardingRequest(id: $id) {
+        onboardingRequest {
+          id
+        }
+      }
+    }
+  `;
+
+  const toast = useToast();
+  const [isSubmitLoading, setIsSubmitLoading] = React.useState(false);
+  const [approveOnboardingRequest] = useMutation<{
+    approveOnboardingRequest: { id: string };
+  }>(APPROVE_ONBOARDING_REQUEST);
+  const [rejectOnboardingRequest] = useMutation<{
+    rejectOnboardingRequest: { id: string };
+  }>(REJECT_ONBOARDING_REQUEST);
+
+  const onApprove = async () => {
+    await setIsSubmitLoading(true);
+
+    try {
+      const response = await approveOnboardingRequest({
+        variables: {
+          id: onboardingRequest?.id,
+        },
+      });
+
+      if (response.data) {
+        toast({
+          title: "Approve Successful!",
+          status: "success",
+          isClosable: true,
+        });
+      }
+    } catch (e: unknown) {
+      logPossibleGraphQLError(e);
+      toast({
+        title: "Failed to approve. Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+    await setIsSubmitLoading(false);
     onClose();
   };
 
-  const onDeny = () => {
+  const onDeny = async () => {
+    await setIsSubmitLoading(true);
+
+    try {
+      const response = await rejectOnboardingRequest({
+        variables: {
+          id: onboardingRequest?.id,
+        },
+      });
+
+      if (response.data) {
+        toast({
+          title: "Deny Successful!",
+          status: "success",
+          isClosable: true,
+        });
+      }
+    } catch (e: unknown) {
+      logPossibleGraphQLError(e);
+      toast({
+        title: "Failed to deny. Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+    }
+
     onClose();
+    await setIsSubmitLoading(false);
   };
 
   return (
@@ -103,8 +188,8 @@ const ApproveDenyModal = ({
         </ModalBody>
         <ModalFooter>
           {approve ? (
-            <Button width="25%" onClick={onApprove}>
-              Approve
+            <Button width="25%" onClick={onApprove} disabled={isSubmitLoading}>
+              {isSubmitLoading ? <Spinner /> : "Approve"}
             </Button>
           ) : (
             <Button
@@ -115,8 +200,9 @@ const ApproveDenyModal = ({
                 bgColor: "background.darkred",
               }}
               onClick={onDeny}
+              disabled={isSubmitLoading}
             >
-              Deny
+              {isSubmitLoading ? <Spinner /> : "Deny"}
             </Button>
           )}
         </ModalFooter>
@@ -208,6 +294,7 @@ const ASPCard = ({
               isOpen={isOpen}
               onClose={onClose}
               approve={isApproved}
+              onboardingRequest={onboardingRequest}
             />
           </Button>
           <Button
@@ -223,6 +310,7 @@ const ASPCard = ({
               isOpen={isOpen}
               onClose={onClose}
               approve={isApproved}
+              onboardingRequest={onboardingRequest}
             />
           </Button>
         </Flex>
@@ -238,23 +326,23 @@ const ASPCardDisplay = ({
   onboardingRequests: OnboardingRequest[];
   isASP: boolean;
 }): React.ReactElement => (
-    <Flex
-      flexDir="row"
-      flexWrap="wrap"
-      justifyContent="space-between"
-      margin="3%"
-    >
-      {onboardingRequests
-        ? onboardingRequests.map((request: OnboardingRequest) => (
-            <ASPCard
-              key={request?.id}
-              onboardingRequest={request}
-              isASP={isASP}
-            />
-          ))
-        : null}
-    </Flex>
-  );
+  <Flex
+    flexDir="row"
+    flexWrap="wrap"
+    justifyContent="space-between"
+    margin="3%"
+  >
+    {onboardingRequests
+      ? onboardingRequests.map((request: OnboardingRequest) => (
+          <ASPCard
+            key={request?.id}
+            onboardingRequest={request}
+            isASP={isASP}
+          />
+        ))
+      : null}
+  </Flex>
+);
 
 const OnboardingRequestsPage = (): React.ReactElement => {
   const [isASP, setIsASP] = React.useState(true);
@@ -270,53 +358,53 @@ const OnboardingRequestsPage = (): React.ReactElement => {
   // if (OnboardingLoading) return <Spinner />;
 
   const getTitleSection = (): React.ReactElement => (
-      <Flex flexDir="column" width="100%">
-        <Flex width="100%" justifyContent="flex-end">
-          <Button
-            width="15%"
-            height={{ base: "40px", lg: "45px" }}
-            color={isASP ? "text.black" : "text.white"}
-            bgColor={isASP ? "background.white" : "primary.blue"}
-            borderRadius="6px 0 0 6px"
-            border="1px solid"
-            borderColor="text.black"
-            _hover={{
-              bgColor: isASP ? "gray.gray83" : "secondary.blue",
-            }}
-            onClick={() => {
-              setIsASP(false);
-            }}
-          >
-            Meal Donors
-          </Button>
-          <Button
-            width="15%"
-            height={{ base: "40px", lg: "45px" }}
-            color={isASP ? "text.white" : "text.black"}
-            bgColor={isASP ? "primary.blue" : "background.white"}
-            borderRadius="0 6px 6px 0"
-            border="1px solid"
-            borderColor="text.black"
-            _hover={{
-              bgColor: isASP ? "secondary.blue" : "gray.gray83",
-            }}
-            onClick={() => {
-              setIsASP(true);
-            }}
-          >
-            After School Program
-          </Button>
-        </Flex>
-        <TitleSection
-          title="Onboarding Requests"
-          description={
-            isASP
-              ? "These are After School Program onboarding requests"
-              : "These are Meal Donor onboarding requests"
-          }
-        />
+    <Flex flexDir="column" width="100%">
+      <Flex width="100%" justifyContent="flex-end">
+        <Button
+          width="15%"
+          height={{ base: "40px", lg: "45px" }}
+          color={isASP ? "text.black" : "text.white"}
+          bgColor={isASP ? "background.white" : "primary.blue"}
+          borderRadius="6px 0 0 6px"
+          border="1px solid"
+          borderColor="text.black"
+          _hover={{
+            bgColor: isASP ? "gray.gray83" : "secondary.blue",
+          }}
+          onClick={() => {
+            setIsASP(false);
+          }}
+        >
+          Meal Donors
+        </Button>
+        <Button
+          width="15%"
+          height={{ base: "40px", lg: "45px" }}
+          color={isASP ? "text.white" : "text.black"}
+          bgColor={isASP ? "primary.blue" : "background.white"}
+          borderRadius="0 6px 6px 0"
+          border="1px solid"
+          borderColor="text.black"
+          _hover={{
+            bgColor: isASP ? "secondary.blue" : "gray.gray83",
+          }}
+          onClick={() => {
+            setIsASP(true);
+          }}
+        >
+          After School Program
+        </Button>
       </Flex>
-    );
+      <TitleSection
+        title="Onboarding Requests"
+        description={
+          isASP
+            ? "These are After School Program onboarding requests"
+            : "These are Meal Donor onboarding requests"
+        }
+      />
+    </Flex>
+  );
 
   return (
     <Flex

@@ -2,17 +2,21 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   AtSignIcon,
   CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   EmailIcon,
   HamburgerIcon,
   InfoIcon,
 } from "@chakra-ui/icons";
 import {
   Box,
+  Button,
   Card,
   CardBody,
   Button as ChakraButton,
   Flex,
   HStack,
+  Select,
   Stack,
   Tab,
   TabIndicator,
@@ -28,7 +32,7 @@ import {
   Wrap,
   useMediaQuery,
 } from "@chakra-ui/react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   IoBanOutline,
   IoInformationCircleOutline,
@@ -48,6 +52,8 @@ import {
   MealRequestsVariables,
   MealStatus,
 } from "../types/MealRequestTypes";
+import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
@@ -239,10 +245,18 @@ const UpcomingPage = (): React.ReactElement => {
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
+  const [offset, setOffset] = useState(0);
+  const currentTime = new Date();
+  const formattedTime = currentTime.toISOString();
+  const dateObject = new Date(formattedTime);
+
+  const [filter, setFilter] = useState("DESCENDING");
+  console.log(formattedTime);
+
   const {
-    data: mealRequests,
-    error: getMealRequestsError,
-    loading: getMealRequestsLoading,
+    data: upcomingMealRequests,
+    error: getUpdatedMealRequestsError,
+    loading: getUpdatedMealRequestsLoading,
   } = useQuery<MealRequestsData, MealRequestsVariables>(
     GET_MEAL_REQUESTS_BY_ID,
     {
@@ -250,19 +264,45 @@ const UpcomingPage = (): React.ReactElement => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         requestorId: authenticatedUser!.id,
+        limit: 3,
+        offset: offset,
+        sortByDateDirection: filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
+        // maxDropOffDate: "2023-06-01"
       },
     },
   );
+
+  logPossibleGraphQLError(getUpdatedMealRequestsError);
+
+  const {
+    data: completedMealRequests,
+    error: getCompletedMealRequestsError,
+    loading: getCompletedMealRequestsLoading,
+  } = useQuery<MealRequestsData, MealRequestsVariables>(
+    GET_MEAL_REQUESTS_BY_ID,
+    {
+      variables: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        requestorId: authenticatedUser!.id,
+        limit: 3,
+        offset: offset,
+        sortByDateDirection: filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
+
+      },
+    },
+  );
+
+  logPossibleGraphQLError(getCompletedMealRequestsError)
 
   if (!authenticatedUser) {
     console.log("return");
     return <Navigate replace to={LOGIN_PAGE} />;
   }
 
-  const realEvents =
-    mealRequests?.getMealRequestsByRequestorId.map(
+  const upcomingEvents =
+    upcomingMealRequests?.getMealRequestsByRequestorId.map(
       (mealRequest: MealRequest) => {
-        console.log("hi", mealRequest);
         const date = new Date(
           mealRequest.dropOffDatetime.toString().split("T")[0],
         );
@@ -293,18 +333,42 @@ const UpcomingPage = (): React.ReactElement => {
       },
     ) ?? [];
 
-  if (getMealRequestsLoading) {
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      w="100%"
-      h="200px"
-    ></Box>;
-  }
+  const completedEvents =
+    completedMealRequests?.getMealRequestsByRequestorId.map(
+      (mealRequest: MealRequest) => {
+        const date = new Date(
+          mealRequest.dropOffDatetime.toString().split("T")[0],
+        );
+        const dateParts = date
+          .toLocaleString("en-US", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          .split(",")[0]
+          .split("/");
+        const realDate =
+          `${dateParts[2]}` + "-" + `${dateParts[0]}` + "-" + `${dateParts[1]}`;
+        return {
+          title: `${new Date(
+            mealRequest.dropOffDatetime.toLocaleString(),
+          ).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          })}`,
+          date: realDate,
+          extendedProps: { mealRequest },
+          backgroundColor: "#3BA948",
+          borderColor: "#3BA948",
+          borderRadius: "10%",
+        };
+      },
+    ) ?? [];
 
-  const currentTime = new Date();
-  console.log("yo", currentTime);
+  if (getUpdatedMealRequestsLoading || getCompletedMealRequestsLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <Box
@@ -356,6 +420,23 @@ const UpcomingPage = (): React.ReactElement => {
               Completed
             </Text>
           </Tab>
+          <Select
+          value={filter}
+          onChange={(e) => {
+            const { target } = e;
+            if (target.type === "select-one") {
+              const selectValue = target.selectedOptions[0].value;
+              setFilter(selectValue);
+            }
+          }}
+          fontSize="xs"
+          placeholder="Select option"
+          width={60}
+          pl={5}
+        >
+          <option value="DESCENDING">Newest to Oldest</option>
+          <option value="ASCENDING">Oldest to Newest</option>
+        </Select>
         </TabList>
         <TabIndicator
           mt="-1.5px"
@@ -367,37 +448,46 @@ const UpcomingPage = (): React.ReactElement => {
           <TabPanel>
             {isWebView && (
               <Stack direction="column">
-                {realEvents
-                  .filter((event) => {
-                    const dropOffDatetime = new Date(
-                      event.extendedProps.mealRequest.dropOffDatetime,
-                    );
-                    return currentTime < dropOffDatetime;
-                  })
-                  .map((event) => (
-                    <UpcomingCard event={event} />
-                  ))}
+                {upcomingEvents.map((event) => (
+                  <UpcomingCard event={event} />
+                ))}
               </Stack>
             )}
           </TabPanel>
           <TabPanel>
             {isWebView && (
               <Stack direction="column">
-                {realEvents
-                  .filter((event) => {
-                    const dropOffDatetime = new Date(
-                      event.extendedProps.mealRequest.dropOffDatetime,
-                    );
-                    return currentTime > dropOffDatetime;
-                  })
-                  .map((event) => (
-                    <UpcomingCard event={event} />
-                  ))}
+                {completedEvents.map((event) => (
+                  <UpcomingCard event={event} />
+                ))}
               </Stack>
             )}
           </TabPanel>
         </TabPanels>
       </Tabs>
+      <HStack>
+        <Button
+          leftIcon={<ChevronLeftIcon />}
+          colorScheme="black"
+          variant="ghost"
+          onClick={() => {
+            if (offset > 0) {
+              setOffset(offset - 3);
+            }
+          }}
+        />
+        <Text>{offset / 3 + 1}</Text>
+        <Button
+          rightIcon={<ChevronRightIcon />}
+          colorScheme="black"
+          variant="ghost"
+          onClick={() => {
+            if ((completedEvents.length >= offset) || (upcomingEvents.length >= offset)) {
+              setOffset(offset + 3);
+            }
+          }}
+        />
+      </HStack>
     </Box>
   );
 };

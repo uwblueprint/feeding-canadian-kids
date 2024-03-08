@@ -132,8 +132,8 @@ class MealRequestService(IMealRequestService):
                 meal_requestor_id = meal_request.requestor.id
                 meal_requestor = User.objects(id=meal_requestor_id).first()
 
-                self.send_donor_commit_email(meal_request_id, donor.info.email)
-                self.send_requestor_commit_email(meal_request_id, meal_requestor.info.email)
+                self.send_donor_commit_email(meal_request, donor.info.email)
+                self.send_requestor_commit_email(meal_request, meal_requestor.info.email)
 
                 meal_request.donation_info = DonationInfo(
                     donor=donor,
@@ -335,7 +335,7 @@ class MealRequestService(IMealRequestService):
         return meal_request_dtos
     
 
-    def send_donor_commit_email(self, meal_request_id, email):
+    def send_donor_commit_email(self, meal_request, email):
         if not self.email_service:
             error_message = """
                 Attempted to call committed_to_meal_request but this
@@ -346,7 +346,9 @@ class MealRequestService(IMealRequestService):
 
         try:
             email_body = EmailService.read_email_template('email_templates/committed_to_meal_request.html').format(
-                meal_request_id=meal_request_id
+              dropoff_location=meal_request.drop_off_location,
+              dropoff_time=meal_request.drop_off_datetime,
+              num_meals=meal_request.meal_info.portions,
             )
             self.email_service.send_email(
                 email, "Thank you for committing to a meal request!", email_body
@@ -358,7 +360,7 @@ class MealRequestService(IMealRequestService):
             )
             raise e
     
-    def send_requestor_commit_email(self, meal_request_id, email):
+    def send_requestor_commit_email(self, meal_request, email):
         if not self.email_service:
             error_message = """
                 Attempted to call meal_request_success but this
@@ -369,7 +371,9 @@ class MealRequestService(IMealRequestService):
 
         try:
             email_body = EmailService.read_email_template('email_templates/meal_request_success.html').format(
-                meal_request_id=meal_request_id
+                dropoff_location=meal_request.drop_off_location,
+                dropoff_time=meal_request.drop_off_datetime,
+                num_meals=meal_request.meal_info.portions,
             )
             self.email_service.send_email(
                 email, "Your meal request has been fulfilled!", email_body

@@ -1,6 +1,7 @@
 from app.graphql import schema as graphql_schema
 from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
+from app.services.implementations.mock_email_service import MockEmailService
 
 """
 Tests for MealRequestchema and query/mutation logic
@@ -226,6 +227,37 @@ def test_commit_to_meal_request(meal_request_setup):
     assert meal_request_in_db["donation_info"]["donor"] == donor.id
     assert meal_request_in_db["donation_info"]["meal_description"] == "Pizza"
     assert meal_request_in_db["donation_info"]["additional_info"] == "No nuts"
+
+    email_service = MockEmailService.instance
+    assert email_service is not None
+    all_emails_sent = email_service.get_all_emails_sent()
+    donor_email = all_emails_sent[-2]
+    requestor_email = all_emails_sent[-1]
+    
+    assert donor_email is not None
+    assert(requestor_email is not None)
+    
+    assert donor_email["subject"] == "Thank you for committing to a meal request!"
+    assert donor_email["to"] == donor.info.email
+    assert "Thank you for committing to a meal request!" in donor_email["body"]
+    assert f"Number of Meals: {str(meal_request.meal_info.portions)}" in donor_email["body"]
+    assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
+    assert f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}" in donor_email["body"]
+
+    assert requestor_email["subject"] == "Your meal request has been fulfilled!"
+    assert requestor_email["to"] == meal_request.requestor.info.email
+    assert "Your meal request has been fulfilled!" in requestor_email["body"]
+    assert f"Number of Meals: {str(meal_request.meal_info.portions)}" in donor_email["body"]
+    assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
+    assert f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}" in donor_email["body"]
+    assert (
+        donor_email["from_"]
+        == "Feeding Canadian Kids <feedingcanadiankids@uwblueprint.org>"
+    )
+    assert (
+        requestor_email["from_"]
+        == "Feeding Canadian Kids <feedingcanadiankids@uwblueprint.org>"
+    )
 
 
 # Only user's with role "Donor" should be able to commit

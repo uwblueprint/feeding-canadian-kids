@@ -38,6 +38,7 @@ class MockEmailService(IEmailService):
             "subject": subject,
             "body": body,
         }
+        print(body)
         self.emails_sent.append(message)
 
     def get_last_email_sent(self):

@@ -36,8 +36,8 @@ export type MealRequest = {
 
 export type MealRequestsVariables = {
   requestorId: string;
-  minDropOffDate?: Date;
-  maxDropOffDate?: Date;
+  minDropOffDate?: string;
+  maxDropOffDate?: string;
   status?: Array<MealStatus>;
   offset?: number;
   limit?: number;

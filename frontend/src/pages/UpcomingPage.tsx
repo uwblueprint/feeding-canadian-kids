@@ -44,6 +44,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 import Logout from "../components/auth/Logout";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import { CREATE_MEAL_REQUEST_PAGE, LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 import {
@@ -53,7 +54,6 @@ import {
   MealStatus,
 } from "../types/MealRequestTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
-import LoadingSpinner from "../components/common/LoadingSpinner";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
@@ -265,9 +265,10 @@ const UpcomingPage = (): React.ReactElement => {
         // @ts-ignore
         requestorId: authenticatedUser!.id,
         limit: 3,
-        offset: offset,
-        sortByDateDirection: filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
-        // maxDropOffDate: "2023-06-01"
+        offset,
+        sortByDateDirection:
+          filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
+        minDropOffDate: "2024-03-01",
       },
     },
   );
@@ -286,14 +287,13 @@ const UpcomingPage = (): React.ReactElement => {
         // @ts-ignore
         requestorId: authenticatedUser!.id,
         limit: 3,
-        offset: offset,
-        sortByDateDirection: filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
-
+        offset,
+        sortByDateDirection:
+          filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
       },
     },
   );
-
-  logPossibleGraphQLError(getCompletedMealRequestsError)
+  logPossibleGraphQLError(getCompletedMealRequestsError);
 
   if (!authenticatedUser) {
     console.log("return");
@@ -314,9 +314,9 @@ const UpcomingPage = (): React.ReactElement => {
           })
           .split(",")[0]
           .split("/");
-        const realDate =
-          `${dateParts[2]}` + "-" + `${dateParts[0]}` + "-" + `${dateParts[1]}`;
+        const realDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
         return {
+          id: mealRequest.id,
           title: `${new Date(
             mealRequest.dropOffDatetime.toLocaleString(),
           ).toLocaleTimeString("en-US", {
@@ -347,9 +347,9 @@ const UpcomingPage = (): React.ReactElement => {
           })
           .split(",")[0]
           .split("/");
-        const realDate =
-          `${dateParts[2]}` + "-" + `${dateParts[0]}` + "-" + `${dateParts[1]}`;
+        const realDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
         return {
+          id: mealRequest.id,
           title: `${new Date(
             mealRequest.dropOffDatetime.toLocaleString(),
           ).toLocaleTimeString("en-US", {
@@ -421,22 +421,22 @@ const UpcomingPage = (): React.ReactElement => {
             </Text>
           </Tab>
           <Select
-          value={filter}
-          onChange={(e) => {
-            const { target } = e;
-            if (target.type === "select-one") {
-              const selectValue = target.selectedOptions[0].value;
-              setFilter(selectValue);
-            }
-          }}
-          fontSize="xs"
-          placeholder="Select option"
-          width={60}
-          pl={5}
-        >
-          <option value="DESCENDING">Newest to Oldest</option>
-          <option value="ASCENDING">Oldest to Newest</option>
-        </Select>
+            value={filter}
+            onChange={(e) => {
+              const { target } = e;
+              if (target.type === "select-one") {
+                const selectValue = target.selectedOptions[0].value;
+                setFilter(selectValue);
+              }
+            }}
+            fontSize="xs"
+            placeholder="Select option"
+            width={60}
+            pl={5}
+          >
+            <option value="DESCENDING">Newest to Oldest</option>
+            <option value="ASCENDING">Oldest to Newest</option>
+          </Select>
         </TabList>
         <TabIndicator
           mt="-1.5px"
@@ -449,7 +449,7 @@ const UpcomingPage = (): React.ReactElement => {
             {isWebView && (
               <Stack direction="column">
                 {upcomingEvents.map((event) => (
-                  <UpcomingCard event={event} />
+                  <UpcomingCard event={event} key={event.id} />
                 ))}
               </Stack>
             )}
@@ -458,7 +458,7 @@ const UpcomingPage = (): React.ReactElement => {
             {isWebView && (
               <Stack direction="column">
                 {completedEvents.map((event) => (
-                  <UpcomingCard event={event} />
+                  <UpcomingCard event={event} key={event.id} />
                 ))}
               </Stack>
             )}
@@ -482,7 +482,10 @@ const UpcomingPage = (): React.ReactElement => {
           colorScheme="black"
           variant="ghost"
           onClick={() => {
-            if ((completedEvents.length >= offset) || (upcomingEvents.length >= offset)) {
+            if (
+              completedEvents.length >= offset ||
+              upcomingEvents.length >= offset
+            ) {
               setOffset(offset + 3);
             }
           }}

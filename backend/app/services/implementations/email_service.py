@@ -9,6 +9,9 @@ class EmailService(IEmailService):
     """
     EmailService implementation for handling email related functionality
     """
+    def read_email_template(file_path):
+      with open(file_path, 'r') as file:
+        return file.read()
 
     def __init__(self, logger, credentials, sender_email, display_name=None):
         """

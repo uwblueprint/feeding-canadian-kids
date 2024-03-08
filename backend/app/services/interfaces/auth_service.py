@@ -85,7 +85,7 @@ class IAuthService(ABC):
         :raises Exception: if unable to generate link or send email
         """
         pass
-
+    
     @abstractmethod
     def send_email_verification_link(self, email):
         """

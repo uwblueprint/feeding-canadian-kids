@@ -90,4 +90,7 @@ def init_app(app):
         services["onboarding_request_service"] = OnboardingRequestService(
             logger=current_app.logger, email_service=services["email_service"]
         )
-        services["meal_request_service"] = MealRequestService(logger=current_app.logger)
+        services["meal_request_service"] = MealRequestService(
+            logger=current_app.logger,
+            email_service=services["email_service"]
+        )

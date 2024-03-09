@@ -247,11 +247,9 @@ const UpcomingPage = (): React.ReactElement => {
 
   const [offset, setOffset] = useState(0);
   const currentTime = new Date();
-  const formattedTime = currentTime.toISOString();
-  const dateObject = new Date(formattedTime);
+  const formattedTime = currentTime.toISOString().split('T')[0];
 
   const [filter, setFilter] = useState("DESCENDING");
-  console.log(formattedTime);
 
   const {
     data: upcomingMealRequests,
@@ -268,7 +266,7 @@ const UpcomingPage = (): React.ReactElement => {
         offset,
         sortByDateDirection:
           filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
-        minDropOffDate: "2024-03-01",
+        minDropOffDate: formattedTime,
       },
     },
   );
@@ -290,6 +288,7 @@ const UpcomingPage = (): React.ReactElement => {
         offset,
         sortByDateDirection:
           filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
+        maxDropOffDate: formattedTime,
       },
     },
   );
@@ -406,7 +405,7 @@ const UpcomingPage = (): React.ReactElement => {
       </Flex>
 
       {/* tabs */}
-      <Tabs variant="unstyled">
+      <Tabs variant="unstyled" onChange={() => setOffset(0)}>
         <TabList>
           <Tab>
             <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
@@ -453,19 +452,7 @@ const UpcomingPage = (): React.ReactElement => {
                 ))}
               </Stack>
             )}
-          </TabPanel>
-          <TabPanel>
-            {isWebView && (
-              <Stack direction="column">
-                {completedEvents.map((event) => (
-                  <UpcomingCard event={event} key={event.id} />
-                ))}
-              </Stack>
-            )}
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-      <HStack>
+            <HStack>
         <Button
           leftIcon={<ChevronLeftIcon />}
           colorScheme="black"
@@ -483,14 +470,52 @@ const UpcomingPage = (): React.ReactElement => {
           variant="ghost"
           onClick={() => {
             if (
-              completedEvents.length >= offset ||
               upcomingEvents.length >= offset
             ) {
+              console.log(upcomingEvents.length);
               setOffset(offset + 3);
             }
           }}
         />
       </HStack>
+          </TabPanel>
+          <TabPanel>
+            {isWebView && (
+              <Stack direction="column">
+                {completedEvents.map((event) => (
+                  <UpcomingCard event={event} key={event.id} />
+                ))}
+              </Stack>
+            )}
+            <HStack>
+        <Button
+          leftIcon={<ChevronLeftIcon />}
+          colorScheme="black"
+          variant="ghost"
+          onClick={() => {
+            if (offset > 0) {
+              setOffset(offset - 3);
+            }
+          }}
+        />
+        <Text>{offset / 3 + 1}</Text>
+        <Button
+          rightIcon={<ChevronRightIcon />}
+          colorScheme="black"
+          variant="ghost"
+          onClick={() => {
+            if (
+              completedEvents.length >= offset 
+            ) {
+              // console.log(completedEvents.length)
+              setOffset(offset + 3);
+            }
+          }}
+        />
+      </HStack>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Box>
   );
 };

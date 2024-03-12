@@ -47,17 +47,12 @@ const MealDonationFormMealDetails: React.FunctionComponent<MealDonationFormMealD
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
   const validateData = () => {
-    console.log("VAlidating data");
     if (mealDescription === "") {
       setAttemptedSubmit(true);
       return;
     }
 
     setAttemptedSubmit(false);
-    console.log(
-      "MealDonationFormMealDetails: validateData: mealDescription: ",
-      mealDescription,
-    );
     handleNext();
   };
 

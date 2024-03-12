@@ -9,7 +9,7 @@ type MealDeliveryDetailsProps = {
   mealRequestsInformation: Array<MealRequest>;
 };
 
-export const MealDeliveryDetails: React.FunctionComponent<MealDeliveryDetailsProps> = ({
+const MealDeliveryDetails: React.FunctionComponent<MealDeliveryDetailsProps> = ({
   mealRequestsInformation,
 }) => {
   const [selectedMealRequest, setSelectedMealRequest] = useState<MealRequest>(
@@ -80,3 +80,5 @@ export const MealDeliveryDetails: React.FunctionComponent<MealDeliveryDetailsPro
     </Stack>
   );
 };
+
+export default MealDeliveryDetails;

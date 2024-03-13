@@ -3,6 +3,7 @@ from tests.graphql.mock_test_data import (
     MOCK_INFO1_CAMEL,
     MOCK_INFO3_CAMEL,
 )
+from app.services.implementations.mock_email_service import MockEmailService
 from copy import deepcopy
 
 
@@ -402,3 +403,40 @@ def test_deactivate_user_by_id(user_setup, mocker):
             }}
         }}"""
     )
+  
+
+class FirebaseReturnValueMock:
+  def __init__(self, auth_id):
+    self.uid = auth_id
+
+def test_reset_password(user_setup, mocker):
+    user_1, user_2, user_3 = user_setup
+    firebase_return_mock = FirebaseReturnValueMock(user_2.auth_id)
+
+    mocker.patch(
+        "firebase_admin.auth.get_user_by_email",
+        return_value = firebase_return_mock,
+    )
+
+    reset_password = graphql_schema.execute(
+        f"""mutation ForgotPassword {{
+            forgotPassword (
+                email: "{str(user_2.info.email)}"
+            ) {{
+                success
+            }}
+        }}"""
+    )
+    email_service = MockEmailService.instance
+    assert email_service is not None
+    last_email = email_service.get_last_email_sent()
+    assert last_email is not None
+    assert last_email["subject"] == "FCK Reset Password Link"
+    assert last_email["to"] == user_2.info.email
+    assert "We have received your reset password request." in last_email["body"]
+    assert (
+        last_email["from_"]
+        == "Feeding Canadian Kids <feedingcanadiankids@uwblueprint.org>"
+    )
+
+

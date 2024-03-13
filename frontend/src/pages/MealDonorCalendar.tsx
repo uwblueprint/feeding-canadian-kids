@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import {
   Box,
   Button as ChakraButton,
@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   IoArrowBackCircleOutline,
   IoLocationOutline,
@@ -195,37 +195,58 @@ const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
 };
 
 const CalendarView = ({ aspId }: CalendarViewProps) => {
-  const {
-    data: mealRequests,
-    error: getMealRequestsError,
-    loading: getMealRequestsLoading,
-  } = useQuery<MealRequestsData, MealRequestsVariables>(
-    GET_MEAL_REQUESTS_BY_ID,
+  const [
+    getMealRequests,
     {
-      variables: {
-        requestorId: aspId,
-      },
-    },
+      data: mealRequests,
+      error: getMealRequestsError,
+      loading: getMealRequestsLoading,
+    }
+  ] = useLazyQuery<MealRequestsData, MealRequestsVariables>(
+    GET_MEAL_REQUESTS_BY_ID
   );
 
   const [selectedMealRequests, setSelectedMealRequests] = useState<string[]>([]);
+  const [date, setDate] = useState(new Date());
 
-  logPossibleGraphQLError(getMealRequestsError);
+  function formatDate(inputDate: Date): string {
+    return inputDate.toISOString().split('T')[0];
+  }
+
+  function reloadMealRequests() {
+    const monthBefore = new Date(date);
+    monthBefore.setMonth(monthBefore.getMonth() - 1);
+    const monthAfter = new Date(date);
+    monthAfter.setMonth(monthAfter.getMonth() + 1);
+    getMealRequests({
+      variables: {
+        requestorId: aspId,
+        minDropOffDate: formatDate(monthBefore),
+        maxDropOffDate: formatDate(monthAfter)
+      }
+    });
+    // console.log(getMealRequestsError)
+    logPossibleGraphQLError(getMealRequestsError);
+  }
 
   function handleNext() {
     // Do something with selectedMealRequests
     console.log(selectedMealRequests)
   }
 
-  function formatDate(inputDate: string): string {
-    const date = new Date(inputDate);
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
-  }
+  useEffect(() => {
+    const prevButton = document.querySelectorAll(".fc-prev-button");
+    console.log(prevButton)
+    if (prevButton[0] !== undefined) {
+      prevButton[0].addEventListener("click", () => {
+        alert("test")
+        const prevMonth = new Date(date);
+        prevMonth.setMonth(prevMonth.getMonth() - 1);
+        setDate(prevMonth)
+      })
+    }
+    reloadMealRequests();
+  }, [date]);
 
   const renderEventContent = (eventInfo: any) => (
       <>
@@ -311,6 +332,10 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
               }
           }}
           eventContent={renderEventContent}
+          // datesSet={(dateInfo) => {
+          //   const newDate = new Date(dateInfo.startStr);
+          //   setDate(newDate);
+          // }}
         />
       </Box>
 

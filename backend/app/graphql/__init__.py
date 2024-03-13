@@ -91,6 +91,5 @@ def init_app(app):
             logger=current_app.logger, email_service=services["email_service"]
         )
         services["meal_request_service"] = MealRequestService(
-            logger=current_app.logger,
-            email_service=services["email_service"]
+            logger=current_app.logger, email_service=services["email_service"]
         )

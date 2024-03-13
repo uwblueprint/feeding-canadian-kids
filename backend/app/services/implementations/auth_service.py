@@ -3,8 +3,6 @@ import firebase_admin.auth
 
 from ..interfaces.auth_service import IAuthService
 from ...resources.auth_dto import AuthDTO
-from pathlib import Path
-import os
 
 # from ...resources.create_user_dto import CreateUserDTO
 # from ...resources.token import Token
@@ -118,9 +116,9 @@ class AuthService(IAuthService):
             set_password_link = "{url}/{ObjectID}/reset-password".format(
                 url=url, ObjectID=user.id
             )
-            email_body = EmailService.read_email_template('email_templates/reset_password.html').format(
-                reset_link=set_password_link
-            )
+            email_body = EmailService.read_email_template(
+                "email_templates/reset_password.html"
+            ).format(reset_link=set_password_link)
             self.email_service.send_email(email, "FCK Reset Password Link", email_body)
 
         except Exception as e:
@@ -169,9 +167,9 @@ class AuthService(IAuthService):
             verification_link = firebase_admin.auth.generate_email_verification_link(
                 email
             )
-            email_body = EmailService.read_email_template('email_templates/verification_email.html').format(
-                verification_link=verification_link
-            )
+            email_body = EmailService.read_email_template(
+                "email_templates/verification_email.html"
+            ).format(verification_link=verification_link)
             self.email_service.send_email(email, "Verify your email", email_body)
         except Exception as e:
             self.logger.error(
@@ -195,9 +193,9 @@ class AuthService(IAuthService):
                 url=url, ObjectID=objectID
             )
 
-            email_body = EmailService.read_email_template('email_templates/onboarding_request_approved.html').format(
-              set_password_link=set_password_link
-            )
+            email_body = EmailService.read_email_template(
+                "email_templates/onboarding_request_approved.html"
+            ).format(set_password_link=set_password_link)
 
             self.email_service.send_email(
                 email, "Onboarding request approved. Set Password", email_body
@@ -219,7 +217,9 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            email_body = EmailService.EmailService.read_email_template('email_templates/onboarding_request_rejected.html')
+            email_body = EmailService.EmailService.read_email_template(
+                "email_templates/onboarding_request_rejected.html"
+            )
             self.email_service.send_email(
                 email, "Onboarding request rejected", email_body
             )
@@ -228,7 +228,7 @@ class AuthService(IAuthService):
             self.logger.error(
                 "Failed to send onboarding request rejected email for user "
             )
-            raise e  
+            raise e
 
     def __is_authorized_by_condition(self, context, condition):
         return context.firebase_user.email_verified and (

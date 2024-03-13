@@ -2,7 +2,6 @@ from app.graphql.onboarding_request import ONBOARDING_REQUEST_EMAIL_ALREADY_EXIS
 from app.models.onboarding_request import OnboardingRequest
 from app.graphql import schema as graphql_schema
 from app.services.implementations.mock_email_service import MockEmailService
-from app.services.implementations.email_service import EmailService
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_CAMEL,
     MOCK_INFO2_CAMEL,
@@ -426,7 +425,10 @@ def test_approve_onboarding_request():
     assert last_email is not None
     assert last_email["subject"] == "Onboarding request approved. Set Password"
     assert last_email["to"] == "test@test.com"
-    assert "We have received your onboarding request and it has been approved" in last_email["body"]
+    assert (
+        "We have received your onboarding request and it has been approved"
+        in last_email["body"]
+    )
     assert (
         last_email["from_"]
         == "Feeding Canadian Kids <feedingcanadiankids@uwblueprint.org>"

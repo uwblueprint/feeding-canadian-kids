@@ -233,23 +233,35 @@ def test_commit_to_meal_request(meal_request_setup):
     all_emails_sent = email_service.get_all_emails_sent()
     donor_email = all_emails_sent[-2]
     requestor_email = all_emails_sent[-1]
-    
+
     assert donor_email is not None
-    assert(requestor_email is not None)
-    
+    assert requestor_email is not None
+
     assert donor_email["subject"] == "Thank you for committing to a meal request!"
     assert donor_email["to"] == donor.info.email
     assert "Thank you for committing to a meal request!" in donor_email["body"]
-    assert f"Number of Meals: {str(meal_request.meal_info.portions)}" in donor_email["body"]
+    assert (
+        f"Number of Meals: {str(meal_request.meal_info.portions)}"
+        in donor_email["body"]
+    )
     assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
-    assert f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}" in donor_email["body"]
+    assert (
+        f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}"
+        in donor_email["body"]
+    )
 
     assert requestor_email["subject"] == "Your meal request has been fulfilled!"
     assert requestor_email["to"] == meal_request.requestor.info.email
     assert "Your meal request has been fulfilled!" in requestor_email["body"]
-    assert f"Number of Meals: {str(meal_request.meal_info.portions)}" in donor_email["body"]
+    assert (
+        f"Number of Meals: {str(meal_request.meal_info.portions)}"
+        in donor_email["body"]
+    )
     assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
-    assert f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}" in donor_email["body"]
+    assert (
+        f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}"
+        in donor_email["body"]
+    )
     assert (
         donor_email["from_"]
         == "Feeding Canadian Kids <feedingcanadiankids@uwblueprint.org>"

@@ -134,16 +134,16 @@ class IMealRequestService(ABC):
         :raises Exception: if MealRequest could not be retrieved
         """
         pass
-    
+
     @abstractmethod
     def send_donor_commit_email(self, meal_request_id, email):
-      """
-      Sends an email to the user with the given email, notifying them that they have committed to a meal request
-      :param meal_request_id: the id of the meal request
-      :type email: str
-      :raises Exception: if unable to send email
-      """
-    
+        """
+        Sends an email to the user with the given email, notifying them that they have committed to a meal request
+        :param meal_request_id: the id of the meal request
+        :type email: str
+        :raises Exception: if unable to send email
+        """
+
     @abstractmethod
     def send_requestor_commit_email(self, meal_request_id, email):
         """

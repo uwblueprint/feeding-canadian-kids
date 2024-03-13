@@ -250,6 +250,7 @@ const UpcomingPage = (): React.ReactElement => {
   const formattedTime = currentTime.toISOString().split('T')[0];
 
   const [filter, setFilter] = useState("DESCENDING");
+  const [tabSelected, setTabSelected] = useState(0);
 
   const {
     data: upcomingMealRequests,
@@ -405,7 +406,15 @@ const UpcomingPage = (): React.ReactElement => {
       </Flex>
 
       {/* tabs */}
-      <Tabs variant="unstyled" onChange={() => setOffset(0)}>
+      <Tabs variant="unstyled" onChange={() => {
+        setOffset(0);
+        if (tabSelected === 0) {
+          setTabSelected(1);
+        }
+        else {
+          setTabSelected(0);
+        }
+      }} defaultIndex={tabSelected}>
         <TabList>
           <Tab>
             <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
@@ -472,7 +481,6 @@ const UpcomingPage = (): React.ReactElement => {
             if (
               upcomingEvents.length >= offset
             ) {
-              console.log(upcomingEvents.length);
               setOffset(offset + 3);
             }
           }}
@@ -507,7 +515,6 @@ const UpcomingPage = (): React.ReactElement => {
             if (
               completedEvents.length >= offset 
             ) {
-              // console.log(completedEvents.length)
               setOffset(offset + 3);
             }
           }}

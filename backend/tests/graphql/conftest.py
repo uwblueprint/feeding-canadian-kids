@@ -3,6 +3,8 @@ from app.models.user import User
 from app.models.onboarding_request import OnboardingRequest
 from app.models.meal_request import MealRequest
 from app.models.onsite_contact import OnsiteContact
+from app.services.implementations.mock_email_service import MockEmailService
+from app.services.implementations.reminder_email_service import ReminderEmailService
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_SNAKE,
     MOCK_INFO2_SNAKE,
@@ -11,6 +13,7 @@ from tests.graphql.mock_test_data import (
     MOCK_USER3_SNAKE,
     MOCK_MEALREQUEST1_SNAKE,
 )
+from flask import current_app
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -89,3 +92,12 @@ def onsite_contact_setup(user_setup):
     yield asp, donor, [asp_onsite_contact, asp_onsite_contact2], donor_onsite_contact
     asp_onsite_contact.delete()
     donor_onsite_contact.delete()
+
+
+
+@pytest.fixture(scope="function", autouse=True)
+def reminder_email_setup():
+    mock_email_service = MockEmailService.instance
+    logger = current_app.logger
+    reminder_email_service = ReminderEmailService(logger,  mock_email_service) # type: ignore
+    yield reminder_email_service

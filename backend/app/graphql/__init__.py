@@ -1,7 +1,8 @@
 import graphene
 import os
+from app.services.implementations.reminder_email_service import ReminderEmailService
 
-from flask import current_app
+from flask import current_app, g
 
 
 from .onsite_contact_mutations import OnsiteContactMutations
@@ -53,28 +54,32 @@ schema = graphene.Schema(
 )
 
 
+def init_email_service(app):
+    print("Initializing email service")
+    if app.config["TESTING"]:
+        print("Using mock email service in testings!")
+        services["email_service"] = MockEmailService(
+            logger=current_app.logger,
+            credentials={},
+            sender_email=os.getenv("MAILER_USER"),
+            display_name="Feeding Canadian Kids",
+        )
+    else:
+        services["email_service"] = EmailService(
+            logger=current_app.logger,
+            credentials={
+                "refresh_token": os.getenv("MAILER_REFRESH_TOKEN"),
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "client_id": os.getenv("MAILER_CLIENT_ID"),
+                "client_secret": os.getenv("MAILER_CLIENT_SECRET"),
+            },
+            sender_email=os.getenv("MAILER_USER"),
+            display_name="Feeding Canadian Kids",
+        )
+
 def init_app(app):
     with app.app_context():
-        if app.config["TESTING"]:
-            print("Using mock email service in testings!")
-            services["email_service"] = MockEmailService(
-                logger=current_app.logger,
-                credentials={},
-                sender_email=os.getenv("MAILER_USER"),
-                display_name="Feeding Canadian Kids",
-            )
-        else:
-            services["email_service"] = EmailService(
-                logger=current_app.logger,
-                credentials={
-                    "refresh_token": os.getenv("MAILER_REFRESH_TOKEN"),
-                    "token_uri": "https://oauth2.googleapis.com/token",
-                    "client_id": os.getenv("MAILER_CLIENT_ID"),
-                    "client_secret": os.getenv("MAILER_CLIENT_SECRET"),
-                },
-                sender_email=os.getenv("MAILER_USER"),
-                display_name="Feeding Canadian Kids",
-            )
+        init_email_service(app)
         services["onsite_contact_service"] = OnsiteContactService(
             logger=current_app.logger
         )
@@ -93,3 +98,9 @@ def init_app(app):
         services["meal_request_service"] = MealRequestService(
             logger=current_app.logger, email_service=services["email_service"]
         )
+        services["reminder_email_service"] = ReminderEmailService(
+            logger=current_app.logger, email_service=services["email_service"]
+        )
+
+        return services
+

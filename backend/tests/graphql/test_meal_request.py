@@ -510,7 +510,7 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
 
 def test_cancel_donation_as_admin(meal_request_setup, user_setup):
     _, _, meal_request = meal_request_setup
-    _, _, admin = user_setup
+    requestor, donor, admin = user_setup
 
     test_commit_to_meal_request(meal_request_setup)
 
@@ -931,3 +931,5 @@ def test_get_meal_requests_by_ids(meal_request_setup):
             returned_meal_request["mealInfo"]["dietaryRestrictions"]
             == expected.meal_info.dietary_restrictions
         )
+
+  

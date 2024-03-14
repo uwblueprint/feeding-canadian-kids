@@ -1,6 +1,7 @@
 import os
 import re
 import firebase_admin
+from app.models.meal_request import MealRequest
 
 from flask import Flask
 from flask.cli import ScriptInfo
@@ -12,8 +13,11 @@ from .config import app_config
 from .graphql import schema as graphql_schema
 
 
+
+from flask_apscheduler import APScheduler
+from flask import g
+
 def create_app(config_name):
-    # configure Flask logger
     dictConfig(
         {
             "version": 1,
@@ -56,6 +60,7 @@ def create_app(config_name):
         re.compile(r"^https:\/\/uw-blueprint-starter-code--pr.*\.web\.app$"),
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
+    app.config["SCHEDULER_API_ENABLED"] = True
     CORS(app)
 
     firebase_admin.initialize_app(
@@ -85,6 +90,22 @@ def create_app(config_name):
     from . import models, graphql
 
     models.init_app(app)
-    graphql.init_app(app)
+    services = graphql.init_app(app)
+
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+
+    @scheduler.task('interval', id='do_job_1', seconds=6000, misfire_grace_time=900)
+    def job1():
+        try:
+            with scheduler.app.app_context():
+                services["reminder_email_service"].send_regularly_scheduled_emails()
+        except Exception as e:
+            print("Error in Scheduled Task!", e)
+
+    scheduler.start()
+
+
 
     return app
+

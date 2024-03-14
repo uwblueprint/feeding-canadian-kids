@@ -29,6 +29,7 @@ class EmailService(IEmailService):
         :param display_name: the sender's display name, defaults to None
         :type display_name: str, optional
         """
+
         self.logger = logger
         creds = Credentials(None, **credentials)
         self.service = build("gmail", "v1", credentials=creds)
@@ -59,3 +60,9 @@ class EmailService(IEmailService):
                 )
             )
             raise e
+
+    def send_regularly_scheduled_emails(self):
+        # feel free to rename this as needed
+        self.send_email("")
+        print("sending regularly scheduled emails")
+        

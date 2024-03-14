@@ -403,11 +403,12 @@ def test_deactivate_user_by_id(user_setup, mocker):
             }}
         }}"""
     )
-  
+
 
 class FirebaseReturnValueMock:
-  def __init__(self, auth_id):
-    self.uid = auth_id
+    def __init__(self, auth_id):
+        self.uid = auth_id
+
 
 def test_reset_password(user_setup, mocker):
     user_1, user_2, user_3 = user_setup
@@ -415,7 +416,7 @@ def test_reset_password(user_setup, mocker):
 
     mocker.patch(
         "firebase_admin.auth.get_user_by_email",
-        return_value = firebase_return_mock,
+        return_value=firebase_return_mock,
     )
 
     reset_password = graphql_schema.execute(
@@ -438,5 +439,3 @@ def test_reset_password(user_setup, mocker):
         last_email["from_"]
         == "Feeding Canadian Kids <feedingcanadiankids@uwblueprint.org>"
     )
-
-

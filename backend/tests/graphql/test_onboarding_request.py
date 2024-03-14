@@ -408,7 +408,6 @@ def test_approve_onboarding_request():
     approve_request_result = result.data["approveOnboardingRequest"][
         "onboardingRequest"
     ]
-    print(approve_request_result)
 
     assert approve_request_result["id"] == result_id
     assert approve_request_result["info"]["email"] == "test@test.com"

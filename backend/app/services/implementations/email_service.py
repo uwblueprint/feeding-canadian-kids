@@ -10,7 +10,8 @@ class EmailService(IEmailService):
     EmailService implementation for handling email related functionality
     """
 
-    def read_email_template(file_path):
+    @staticmethod
+    def read_email_template(file_path: str):
         with open(file_path, "r") as file:
             return file.read()
 

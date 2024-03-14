@@ -38,7 +38,7 @@ class MockEmailService(IEmailService):
             "subject": subject,
             "body": body,
         }
-        print(body)
+        print(f"MockEmailService: Sent email to {message['to']} from {message['from_']} with subject '{message['subject']}'")
         self.emails_sent.append(message)
 
     def get_last_email_sent(self):

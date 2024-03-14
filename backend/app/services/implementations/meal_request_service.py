@@ -35,7 +35,6 @@ class MealRequestService(IMealRequestService):
 
             meal_requests = []
             for request_date in request_dates:
-                # print("creaing!")
                 new_meal_request = MealRequest(
                     requestor=requestor,
                     meal_info=meal_info,
@@ -359,7 +358,7 @@ class MealRequestService(IMealRequestService):
 
         except Exception as e:
             self.logger.error(
-                "Failed to send committed to meal request email for user "
+                f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}" 
             )
             raise e
 
@@ -383,7 +382,8 @@ class MealRequestService(IMealRequestService):
             self.email_service.send_email(
                 email, "Your meal request has been fulfilled!", email_body
             )
-
         except Exception as e:
-            self.logger.error("Failed to send meal request success email for user ")
+            self.logger.error(
+                f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}" 
+            )
             raise e

@@ -419,7 +419,7 @@ def test_reset_password(user_setup, mocker):
         return_value=firebase_return_mock,
     )
 
-    _ = graphql_schema.execute(
+    reset_password = graphql_schema.execute(
         f"""mutation ForgotPassword {{
             forgotPassword (
                 email: "{str(user_2.info.email)}"
@@ -428,6 +428,8 @@ def test_reset_password(user_setup, mocker):
             }}
         }}"""
     )
+    assert reset_password.errors is None
+
     email_service = MockEmailService.instance
     assert email_service is not None
     last_email = email_service.get_last_email_sent()

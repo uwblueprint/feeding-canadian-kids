@@ -16,6 +16,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  HStack,
   Input,
   Spinner,
   Text,
@@ -27,6 +28,7 @@ import { GraphQLError } from "graphql";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
+import Logout from "../components/auth/Logout";
 import OnsiteStaffSection from "../components/common/OnsiteStaffSection";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { LOGIN_PAGE } from "../constants/Routes";
@@ -298,20 +300,23 @@ const Settings = (): React.ReactElement => {
           <Text variant="desktop-body-bold">Email Address</Text>
           <Text variant="desktop-body">{userInfo?.email}</Text>
         </Flex>
-        <Button
-          width="190px"
-          height="45px"
-          variant="desktop-button-bold"
-          color="primary.green"
-          bgColor="background.white"
-          border="1px solid"
-          borderColor="primary.green"
-          borderRadius="6px"
-          _hover={{ color: "text.white", bgColor: "primary.green" }}
-          onClick={onClickResetPassword}
-        >
-          Reset Password
-        </Button>
+        <HStack>
+          <Logout/>
+          <Button
+            width="190px"
+            height="45px"
+            variant="desktop-button-bold"
+            color="primary.green"
+            bgColor="background.white"
+            border="1px solid"
+            borderColor="primary.green"
+            borderRadius="6px"
+            _hover={{ color: "text.white", bgColor: "primary.green" }}
+            onClick={onClickResetPassword}
+          >
+            Reset Password
+          </Button>
+        </HStack>
       </Flex>
     </Flex>
   );

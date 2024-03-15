@@ -479,7 +479,7 @@ const UpcomingPage = (): React.ReactElement => {
           variant="ghost"
           onClick={() => {
             if (
-              upcomingEvents.length >= offset
+              upcomingEvents.length > offset
             ) {
               setOffset(offset + 3);
             }
@@ -513,7 +513,7 @@ const UpcomingPage = (): React.ReactElement => {
           variant="ghost"
           onClick={() => {
             if (
-              completedEvents.length >= offset 
+              completedEvents.length > offset 
             ) {
               setOffset(offset + 3);
             }

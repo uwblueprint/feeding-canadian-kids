@@ -1,5 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
-import { Button as ChakraButton, Spinner, Text, Wrap } from "@chakra-ui/react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@chakra-ui/icons";
+import { Button as ChakraButton, HStack, Spinner, Text, VStack, Wrap } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -23,8 +27,15 @@ const YourMatchesPage = (): React.ReactElement => {
 
   // Query to get all ASPs near the donor
   const GET_ASPS = gql`
-    query GetASPNearLocation {
-      getASPNearLocation(requestorId: "${userId}", maxDistance: 50) {
+    query GetASPNearLocation(
+      $offset: Int
+      $limit: Int
+    ) {
+      getASPNearLocation(
+        requestorId: "${userId}", 
+        maxDistance: 50, 
+        offset: $offset
+        limit: $limit) {
         id
         distance
         info {
@@ -53,8 +64,18 @@ const YourMatchesPage = (): React.ReactElement => {
     }
   `;
 
+  const [offset, setOffset] = useState(0);
+
   const { data: aspsData, error: aspsError, loading: aspsLoading } = useQuery(
     GET_ASPS,
+    {
+      variables: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        limit: 3,
+        offset,
+      },
+    },
   );
 
   // If user is not authenticated, redirect to login page
@@ -72,7 +93,34 @@ const YourMatchesPage = (): React.ReactElement => {
   return aspsLoading ? (
     <LoadingSpinner />
   ) : (
+    <VStack>
     <NearbySchoolList schools={aspsData.getASPNearLocation} />
+      <HStack alignSelf="center">
+        <ChakraButton
+          leftIcon={<ChevronLeftIcon />}
+          colorScheme="black"
+          variant="ghost"
+          onClick={() => {
+            if (offset > 0) {
+              setOffset(offset - 3);
+            }
+          }}
+        />
+        <Text>{offset / 3 + 1}</Text>
+        <ChakraButton
+          rightIcon={<ChevronRightIcon />}
+          colorScheme="black"
+          variant="ghost"
+          onClick={() => {
+            if (
+              aspsData.getASPNearLocation.length > offset 
+            ) {
+              setOffset(offset + 3);
+            }
+          }}
+        />
+      </HStack>
+      </VStack>
   );
 };
 

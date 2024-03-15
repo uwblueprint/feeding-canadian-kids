@@ -103,4 +103,3 @@ def init_app(app):
         )
 
         return services
-

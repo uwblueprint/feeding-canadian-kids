@@ -358,7 +358,7 @@ class MealRequestService(IMealRequestService):
 
         except Exception as e:
             self.logger.error(
-                f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}" 
+                f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}"
             )
             raise e
 
@@ -384,6 +384,6 @@ class MealRequestService(IMealRequestService):
             )
         except Exception as e:
             self.logger.error(
-                f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}" 
+                f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}"
             )
             raise e

@@ -13,9 +13,9 @@ from .config import app_config
 from .graphql import schema as graphql_schema
 
 
-
 from flask_apscheduler import APScheduler
 from flask import g
+
 
 def create_app(config_name):
     dictConfig(
@@ -95,7 +95,8 @@ def create_app(config_name):
     scheduler = APScheduler()
     scheduler.init_app(app)
 
-    @scheduler.task('interval', id='do_job_1', seconds=6000, misfire_grace_time=900)
+    # checks every hour for meal requests that are one day away within one hour of the scheduled time
+    @scheduler.task("interval", id="do_job_1", seconds=3600, misfire_grace_time=900)
     def job1():
         try:
             with scheduler.app.app_context():
@@ -105,7 +106,4 @@ def create_app(config_name):
 
     scheduler.start()
 
-
-
     return app
-

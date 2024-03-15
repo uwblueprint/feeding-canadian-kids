@@ -94,10 +94,9 @@ def onsite_contact_setup(user_setup):
     donor_onsite_contact.delete()
 
 
-
 @pytest.fixture(scope="function", autouse=True)
 def reminder_email_setup():
     mock_email_service = MockEmailService.instance
     logger = current_app.logger
-    reminder_email_service = ReminderEmailService(logger,  mock_email_service) # type: ignore
+    reminder_email_service = ReminderEmailService(logger, mock_email_service)  # type: ignore
     yield reminder_email_service

@@ -65,4 +65,3 @@ class EmailService(IEmailService):
         # feel free to rename this as needed
         self.send_email("")
         print("sending regularly scheduled emails")
-        

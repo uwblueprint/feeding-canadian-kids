@@ -931,5 +931,3 @@ def test_get_meal_requests_by_ids(meal_request_setup):
             returned_meal_request["mealInfo"]["dietaryRestrictions"]
             == expected.meal_info.dietary_restrictions
         )
-
-  

@@ -70,7 +70,6 @@ const Header = () => {
 
   useEffect(() => {
     if (authenticatedUser?.info) {
-      console.log(authenticatedUser?.info?.role);
       setButtons(HeaderButtonsData[authenticatedUser?.info?.role] || []);
     }
   }, [authenticatedUser]);

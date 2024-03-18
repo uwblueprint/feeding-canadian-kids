@@ -385,7 +385,7 @@ const ASPCardDisplay = ({
 }): React.ReactElement => (
   <Flex
     width="90%"
-    margin="5%"
+    margin="0 5% 5%"
     display="grid"
     gridTemplateColumns="repeat(3, 1fr)" // Creates 3 columns
     gridColumnGap="3%" // Adjust the gap as needed
@@ -510,18 +510,26 @@ const OnboardingRequestsPage = (): React.ReactElement => {
             : "These are Meal Donor onboarding requests"
         }
       />
-      <Text fontSize="xl" fontWeight="bold">
-        Filtering By:
-        <Badge ml="1" fontSize="0.8em" colorScheme="yellow">
-          Pending
-        </Badge>
-        <Badge ml="3" fontSize="0.8em" colorScheme="green">
-          Approved
-        </Badge>
-        <Badge ml="3" fontSize="0.8em" colorScheme="red">
-          Rejected
-        </Badge>
-      </Text>
+      <Center>
+        <Text fontSize="sm" fontWeight="500">
+          Filtering By:
+          {filter.includes(OnboardingRequestStatuses.PENDING) && (
+            <Badge ml="1" fontSize="0.7em" colorScheme="yellow">
+              Pending
+            </Badge>
+          )}
+          {filter.includes(OnboardingRequestStatuses.APPROVED) && (
+            <Badge ml="3" fontSize="0.7em" colorScheme="green">
+              Approved
+            </Badge>
+          )}
+          {filter.includes(OnboardingRequestStatuses.REJECTED) && (
+            <Badge ml="3" fontSize="0.7em" colorScheme="red">
+              Rejected
+            </Badge>
+          )}
+        </Text>
+      </Center>
     </Flex>
   );
 
@@ -530,7 +538,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
       flexDir="column"
       w={{ base: "100%" }}
       p={{ base: "24px", sm: "36px", lg: "48px" }}
-      gap={{ base: "20px", lg: "32px" }}
+      gap={{ base: "32px", lg: "45px" }}
       borderRadius="8px"
       bgColor="background.white"
       justifyContent="center"

@@ -1,8 +1,17 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import {
+  Badge,
+  Box,
   Button,
   Card,
+  Center,
   Flex,
+  Grid,
+  Menu,
+  MenuButton,
+  MenuItemOption,
+  MenuList,
+  MenuOptionGroup,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -10,12 +19,14 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spacer,
   Spinner,
   Text,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import React from "react";
+import { FiFilter } from "react-icons/fi";
 
 import { BanIcon } from "../assets/icons/BanIcon";
 import { ChildIcon } from "../assets/icons/ChildIcon";
@@ -23,12 +34,15 @@ import { InformationIcon } from "../assets/icons/InformationIcon";
 import { LocationIcon } from "../assets/icons/LocationIcon";
 import { PersonIcon } from "../assets/icons/PersonIcon";
 import TitleSection from "../components/asp/requests/TitleSection";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import { ONBOARDING_REQUESTS_PAGE } from "../constants/Routes";
 import { OnboardingRequest } from "../types/UserTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
+import useIsWebView from "../utils/useIsWebView";
 
 const GET_ASP_ONBOARDING_REQUESTS = gql`
-  query GetASPOnboardingRequests {
-    getAllOnboardingRequests(status: "Pending", role: "ASP", number: 100) {
+  query GetASPOnboardingRequests($status: [String!]) {
+    getAllOnboardingRequests(status: $status, role: "ASP", number: 100) {
       id
       info {
         email
@@ -48,13 +62,14 @@ const GET_ASP_ONBOARDING_REQUESTS = gql`
         active
       }
       dateSubmitted
+      status
     }
   }
 `;
 
 const GET_MEAL_DONOR_ONBOARDING_REQUESTS = gql`
-  query GetMealDonorOnboardingRequests {
-    getAllOnboardingRequests(status: "Pending", role: "Donor", number: 100) {
+  query GetMealDonorOnboardingRequests($status: [String!]) {
+    getAllOnboardingRequests(status: $status, role: "Donor", number: 100) {
       id
       info {
         email
@@ -69,20 +84,29 @@ const GET_MEAL_DONOR_ONBOARDING_REQUESTS = gql`
         active
       }
       dateSubmitted
+      status
     }
   }
 `;
+
+enum OnboardingRequestStatuses {
+  PENDING = "Pending",
+  APPROVED = "Approved",
+  REJECTED = "Rejected",
+}
 
 const ApproveDenyModal = ({
   isOpen,
   onClose,
   approve,
   onboardingRequest,
+  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
   approve: boolean;
   onboardingRequest: OnboardingRequest;
+  refetch: () => void;
 }): React.ReactElement => {
   const APPROVE_ONBOARDING_REQUEST = gql`
     mutation ApproveOnboardingRequest($id: ID!) {
@@ -139,8 +163,9 @@ const ApproveDenyModal = ({
       });
     }
 
-    await setIsSubmitLoading(false);
+    refetch();
     onClose();
+    await setIsSubmitLoading(false);
   };
 
   const onDeny = async () => {
@@ -169,6 +194,7 @@ const ApproveDenyModal = ({
       });
     }
 
+    refetch();
     onClose();
     await setIsSubmitLoading(false);
   };
@@ -214,123 +240,156 @@ const ApproveDenyModal = ({
 const ASPCard = ({
   onboardingRequest,
   isASP,
+  refetch,
 }: {
   onboardingRequest: OnboardingRequest;
   isASP: boolean;
+  refetch: () => void;
 }): React.ReactElement => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isApproved, setIsApproved] = React.useState(false);
 
+  const getStatusBadge = (status: OnboardingRequestStatuses) => {
+    switch (status) {
+      case OnboardingRequestStatuses.PENDING:
+        return (
+          <Badge colorScheme="yellow" borderRadius="8px">
+            Pending
+          </Badge>
+        );
+      case OnboardingRequestStatuses.APPROVED:
+        return (
+          <Badge colorScheme="green" borderRadius="8px">
+            Approved
+          </Badge>
+        );
+      case OnboardingRequestStatuses.REJECTED:
+        return (
+          <Badge colorScheme="red" borderRadius="8px">
+            Rejected
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <Card width="31%" padding="2%" mb="3%">
-      <Flex flexDir="column">
-        <Text variant="desktop-heading" color="primary.blue" mb="10px">
-          {onboardingRequest?.info?.organizationName}
-        </Text>
-        <Text fontWeight="500" mb="20px">
-          {onboardingRequest?.info?.email}
-        </Text>
-        <Flex flexDir="row">
-          <PersonIcon />
-          <Flex flexDir="column">
-            <Text fontWeight="bold">Primary Contact</Text>
-            <Text>{onboardingRequest?.info?.primaryContact?.name}</Text>
-            <Text>{onboardingRequest?.info?.primaryContact?.email}</Text>
-            <Text>{onboardingRequest?.info?.primaryContact?.phone}</Text>
-          </Flex>
-        </Flex>
-        <Flex flexDir="row" mt="20px">
-          <LocationIcon />
-          <Flex flexDir="column">
-            <Text fontWeight="bold">Address</Text>
-            <Text>{onboardingRequest?.info?.organizationAddress}</Text>
-          </Flex>
-        </Flex>
-        <Flex flexDir="row" mt="20px">
-          <InformationIcon />
-          <Flex flexDir="column">
-            <Text fontWeight="bold">Description of Organization</Text>
-            <Text>{onboardingRequest?.info?.organizationDesc}</Text>
-          </Flex>
-        </Flex>
-        {isASP ? (
+    <Box as="section" p="8%" mb="3%" boxShadow="lg" borderRadius="md">
+      <Grid templateColumns="auto 1fr" gap={6}>
+        <Box gridColumn="span 2">
+          <Text variant="desktop-heading" color="primary.blue" mb="2">
+            <Flex>
+              {onboardingRequest?.info?.organizationName}
+              <Spacer />
+              {getStatusBadge(
+                onboardingRequest?.status as OnboardingRequestStatuses,
+              )}
+            </Flex>
+          </Text>
+          <Text fontWeight="500" mb="4">
+            {onboardingRequest?.info?.email}
+          </Text>
+        </Box>
+
+        <PersonIcon />
+        <Box>
+          <Text fontWeight="bold">Primary Contact</Text>
+          <Text>{onboardingRequest?.info?.primaryContact?.name}</Text>
+          <Text>{onboardingRequest?.info?.primaryContact?.email}</Text>
+          <Text>{onboardingRequest?.info?.primaryContact?.phone}</Text>
+        </Box>
+
+        <LocationIcon />
+        <Box>
+          <Text fontWeight="bold">Address</Text>
+          <Text>{onboardingRequest?.info?.organizationAddress}</Text>
+        </Box>
+
+        <InformationIcon />
+        <Box>
+          <Text fontWeight="bold">Description of Organization</Text>
+          <Text>{onboardingRequest?.info?.organizationDesc}</Text>
+        </Box>
+
+        {isASP && (
           <>
-            <Flex flexDir="row" mt="20px">
-              <ChildIcon />
-              <Flex flexDir="column">
-                <Text fontWeight="bold">Number of Kids</Text>
-                <Text>
-                  {onboardingRequest?.info?.roleInfo?.aspInfo?.numKids}
-                </Text>
-              </Flex>
-            </Flex>
-            <Flex flexDir="row" mt="20px">
-              <BanIcon />
-              <Flex flexDir="column">
-                <Text fontWeight="bold">Dietary Restrictions</Text>
-                <Text>TODO: ADD DIET HERE</Text>
-              </Flex>
-            </Flex>
+            <ChildIcon />
+            <Box>
+              <Text fontWeight="bold">Number of Kids</Text>
+              <Text>{onboardingRequest?.info?.roleInfo?.aspInfo?.numKids}</Text>
+            </Box>
+
+            <BanIcon />
+            <Box>
+              <Text fontWeight="bold">Dietary Restrictions</Text>
+              <Text>TODO: ADD DIET HERE</Text>
+            </Box>
           </>
+        )}
+        {onboardingRequest?.status === OnboardingRequestStatuses.PENDING ? (
+          <Box
+            gridColumn="span 2"
+            display="flex"
+            justifyContent="flex-end"
+            gap="3%"
+          >
+            <Button
+              width="30%"
+              color="text.red"
+              bgColor="text.white"
+              border="2px solid"
+              borderColor="text.red"
+              _hover={{
+                bgColor: "gray.gray83",
+              }}
+              onClick={() => {
+                setIsApproved(false);
+                onOpen();
+              }}
+            >
+              Deny
+            </Button>
+            <Button
+              width="30%"
+              onClick={() => {
+                setIsApproved(true);
+                onOpen();
+              }}
+            >
+              Approve
+            </Button>
+          </Box>
         ) : null}
-        <Flex flexDir="row" mt="20px" justifyContent="flex-end">
-          <Button
-            width="30%"
-            mr="5%"
-            color="text.red"
-            bgColor="text.white"
-            border="2px solid"
-            borderColor="text.red"
-            _hover={{
-              bgColor: "gray.gray83",
-            }}
-            onClick={() => {
-              setIsApproved(false);
-              onOpen();
-            }}
-          >
-            Deny
-            <ApproveDenyModal
-              isOpen={isOpen}
-              onClose={onClose}
-              approve={isApproved}
-              onboardingRequest={onboardingRequest}
-            />
-          </Button>
-          <Button
-            width="30%"
-            mr="5px"
-            onClick={() => {
-              setIsApproved(true);
-              onOpen();
-            }}
-          >
-            Approve
-            <ApproveDenyModal
-              isOpen={isOpen}
-              onClose={onClose}
-              approve={isApproved}
-              onboardingRequest={onboardingRequest}
-            />
-          </Button>
-        </Flex>
-      </Flex>
-    </Card>
+      </Grid>
+
+      <ApproveDenyModal
+        isOpen={isOpen}
+        onClose={onClose}
+        approve={isApproved}
+        onboardingRequest={onboardingRequest}
+        refetch={refetch}
+      />
+    </Box>
   );
 };
 
 const ASPCardDisplay = ({
   onboardingRequests,
   isASP,
+  refetch,
 }: {
   onboardingRequests: OnboardingRequest[];
   isASP: boolean;
+  refetch: () => void;
 }): React.ReactElement => (
   <Flex
-    flexDir="row"
-    flexWrap="wrap"
-    justifyContent="space-between"
-    margin="3%"
+    width="90%"
+    margin="5%"
+    display="grid"
+    gridTemplateColumns="repeat(3, 1fr)" // Creates 3 columns
+    gridColumnGap="3%" // Adjust the gap as needed
+    gridRowGap="3%" // Adjust the gap as needed
   >
     {onboardingRequests
       ? onboardingRequests.map((request: OnboardingRequest) => (
@@ -338,6 +397,7 @@ const ASPCardDisplay = ({
             key={request?.id}
             onboardingRequest={request}
             isASP={isASP}
+            refetch={refetch}
           />
         ))
       : null}
@@ -346,54 +406,101 @@ const ASPCardDisplay = ({
 
 const OnboardingRequestsPage = (): React.ReactElement => {
   const [isASP, setIsASP] = React.useState(true);
+  const [filter, setFilter] = React.useState<Array<OnboardingRequestStatuses>>([
+    OnboardingRequestStatuses.PENDING,
+  ]);
+  const isWebView = useIsWebView();
 
   const {
     data: OnboardingData,
     loading: OnboardingLoading,
     error: OnboardingError,
+    refetch,
   } = useQuery(
     isASP ? GET_ASP_ONBOARDING_REQUESTS : GET_MEAL_DONOR_ONBOARDING_REQUESTS,
+    {
+      variables: {
+        status: filter,
+      },
+    },
   );
-
-  // if (OnboardingLoading) return <Spinner />;
 
   const getTitleSection = (): React.ReactElement => (
     <Flex flexDir="column" width="100%">
-      <Flex width="100%" justifyContent="flex-end">
-        <Button
-          width="15%"
-          height={{ base: "40px", lg: "45px" }}
-          color={isASP ? "text.black" : "text.white"}
-          bgColor={isASP ? "background.white" : "primary.blue"}
-          borderRadius="6px 0 0 6px"
-          border="1px solid"
-          borderColor="text.black"
-          _hover={{
-            bgColor: isASP ? "gray.gray83" : "secondary.blue",
-          }}
-          onClick={() => {
-            setIsASP(false);
-          }}
-        >
-          Meal Donors
-        </Button>
-        <Button
-          width="15%"
-          height={{ base: "40px", lg: "45px" }}
-          color={isASP ? "text.white" : "text.black"}
-          bgColor={isASP ? "primary.blue" : "background.white"}
-          borderRadius="0 6px 6px 0"
-          border="1px solid"
-          borderColor="text.black"
-          _hover={{
-            bgColor: isASP ? "secondary.blue" : "gray.gray83",
-          }}
-          onClick={() => {
-            setIsASP(true);
-          }}
-        >
-          After School Program
-        </Button>
+      <Flex width="100%" justifyContent="space-between">
+        <Menu>
+          <MenuButton
+            minWidth="150px"
+            height={{ base: "40px", lg: "45px" }}
+            padding="0 0 0 40px"
+            borderRadius="3px"
+            border="solid 1px #E2E8F0"
+            boxShadow="lg"
+            color="black"
+            backgroundColor="white"
+            _hover={{ backgroundColor: "gray.200" }}
+          >
+            <Flex gap="5px">
+              <FiFilter />
+              <Text>Filter</Text>
+            </Flex>
+          </MenuButton>
+          <MenuList zIndex="2">
+            <MenuOptionGroup
+              type="checkbox"
+              value={filter}
+              onChange={(value) =>
+                setFilter(value as Array<OnboardingRequestStatuses>)
+              }
+            >
+              <MenuItemOption value={OnboardingRequestStatuses.PENDING}>
+                Pending
+              </MenuItemOption>
+              <MenuItemOption value={OnboardingRequestStatuses.APPROVED}>
+                Approved
+              </MenuItemOption>
+              <MenuItemOption value={OnboardingRequestStatuses.REJECTED}>
+                Rejected
+              </MenuItemOption>
+            </MenuOptionGroup>
+          </MenuList>
+        </Menu>
+        <Flex width="100%" justify="flex-end">
+          <Button
+            width="15%"
+            height={{ base: "40px", lg: "45px" }}
+            color={isASP ? "text.black" : "text.white"}
+            bgColor={isASP ? "background.white" : "primary.blue"}
+            borderRadius="6px 0 0 6px"
+            border="1px solid"
+            borderColor="text.black"
+            _hover={{
+              bgColor: isASP ? "gray.gray83" : "secondary.blue",
+            }}
+            onClick={() => {
+              setIsASP(false);
+            }}
+          >
+            Meal Donors
+          </Button>
+          <Button
+            width="15%"
+            height={{ base: "40px", lg: "45px" }}
+            color={isASP ? "text.white" : "text.black"}
+            bgColor={isASP ? "primary.blue" : "background.white"}
+            borderRadius="0 6px 6px 0"
+            border="1px solid"
+            borderColor="text.black"
+            _hover={{
+              bgColor: isASP ? "secondary.blue" : "gray.gray83",
+            }}
+            onClick={() => {
+              setIsASP(true);
+            }}
+          >
+            ASPs
+          </Button>
+        </Flex>
       </Flex>
       <TitleSection
         title="Onboarding Requests"
@@ -403,6 +510,18 @@ const OnboardingRequestsPage = (): React.ReactElement => {
             : "These are Meal Donor onboarding requests"
         }
       />
+      <Text fontSize="xl" fontWeight="bold">
+        Filtering By:
+        <Badge ml="1" fontSize="0.8em" colorScheme="yellow">
+          Pending
+        </Badge>
+        <Badge ml="3" fontSize="0.8em" colorScheme="green">
+          Approved
+        </Badge>
+        <Badge ml="3" fontSize="0.8em" colorScheme="red">
+          Rejected
+        </Badge>
+      </Text>
     </Flex>
   );
 
@@ -418,12 +537,17 @@ const OnboardingRequestsPage = (): React.ReactElement => {
       alignItems="center"
     >
       {getTitleSection()}
-      {OnboardingData ? (
-        <ASPCardDisplay
-          onboardingRequests={OnboardingData.getAllOnboardingRequests}
-          isASP={isASP}
-        />
-      ) : null}
+      {OnboardingLoading ? (
+        <LoadingSpinner />
+      ) : (
+        OnboardingData && (
+          <ASPCardDisplay
+            onboardingRequests={OnboardingData.getAllOnboardingRequests}
+            isASP={isASP}
+            refetch={refetch}
+          />
+        )
+      )}
     </Flex>
   );
 };

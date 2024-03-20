@@ -1,24 +1,20 @@
 import { gql, useQuery } from "@apollo/client";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@chakra-ui/icons";
-import { Button as ChakraButton, HStack, Spinner, Text, VStack, Wrap } from "@chakra-ui/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { Button as ChakraButton, VStack } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-import BackgroundImage from "../assets/background.png";
-import RefreshCredentials from "../components/auth/RefreshCredentials";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-import NearbySchoolList from "../components/donor/NearbySchoolList";
-import * as Routes from "../constants/Routes";
+import NearbySchoolList, {
+  YOUR_MATCHES_PER_PAGE_LIMIT,
+} from "../components/donor/NearbySchoolList";
 import { LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
-import { ASPDistance } from "../types/UserTypes";
 import { ErrorMessage } from "../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
 type ButtonProps = { text: string; path: string };
+const MAX_DISTANCE = 50;
 
 const YourMatchesPage = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -33,7 +29,7 @@ const YourMatchesPage = (): React.ReactElement => {
     ) {
       getASPNearLocation(
         requestorId: "${userId}", 
-        maxDistance: 50, 
+        maxDistance: ${MAX_DISTANCE}, 
         offset: $offset
         limit: $limit) {
         id
@@ -72,7 +68,7 @@ const YourMatchesPage = (): React.ReactElement => {
       variables: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        limit: 3,
+        limit: YOUR_MATCHES_PER_PAGE_LIMIT,
         offset,
       },
     },
@@ -94,33 +90,12 @@ const YourMatchesPage = (): React.ReactElement => {
     <LoadingSpinner />
   ) : (
     <VStack>
-    <NearbySchoolList schools={aspsData.getASPNearLocation} />
-      <HStack alignSelf="center">
-        <ChakraButton
-          leftIcon={<ChevronLeftIcon />}
-          colorScheme="black"
-          variant="ghost"
-          onClick={() => {
-            if (offset > 0) {
-              setOffset(offset - 3);
-            }
-          }}
-        />
-        <Text>{offset / 3 + 1}</Text>
-        <ChakraButton
-          rightIcon={<ChevronRightIcon />}
-          colorScheme="black"
-          variant="ghost"
-          onClick={() => {
-            if (
-              aspsData.getASPNearLocation.length > offset 
-            ) {
-              setOffset(offset + 3);
-            }
-          }}
-        />
-      </HStack>
-      </VStack>
+      <NearbySchoolList
+        schools={aspsData.getASPNearLocation}
+        offset={offset}
+        setOffset={setOffset}
+      />
+    </VStack>
   );
 };
 

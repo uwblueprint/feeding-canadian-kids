@@ -275,11 +275,18 @@ const ASPCard = ({
   };
 
   return (
-    <Box as="section" p="8%" mb="3%" boxShadow="lg" borderRadius="md">
+    <Box
+      as="section"
+      p="8%"
+      mb="3%"
+      boxShadow="lg"
+      borderRadius="md"
+      wordBreak="break-all"
+    >
       <Grid templateColumns="auto 1fr" gap={6}>
         <Box gridColumn="span 2">
           <Text variant="desktop-heading" color="primary.blue" mb="2">
-            <Flex>
+            <Flex align="center">
               {onboardingRequest?.info?.organizationName}
               <Spacer />
               {getStatusBadge(
@@ -382,34 +389,37 @@ const ASPCardDisplay = ({
   onboardingRequests: OnboardingRequest[];
   isASP: boolean;
   refetch: () => void;
-}): React.ReactElement => (
-  <Flex
-    width="90%"
-    margin="0 5% 5%"
-    display="grid"
-    gridTemplateColumns="repeat(3, 1fr)" // Creates 3 columns
-    gridColumnGap="3%" // Adjust the gap as needed
-    gridRowGap="3%" // Adjust the gap as needed
-  >
-    {onboardingRequests
-      ? onboardingRequests.map((request: OnboardingRequest) => (
-          <ASPCard
-            key={request?.id}
-            onboardingRequest={request}
-            isASP={isASP}
-            refetch={refetch}
-          />
-        ))
-      : null}
-  </Flex>
-);
+}): React.ReactElement => {
+  const isWebView = useIsWebView();
+
+  return (
+    <Flex
+      width="90%"
+      margin="0 5% 5%"
+      display="grid"
+      gridTemplateColumns={isWebView ? "repeat(3, 1fr)" : "repeat(1, 1fr)"}
+      gridColumnGap="3%"
+      gridRowGap={isWebView ? "30px" : "50px"}
+    >
+      {onboardingRequests
+        ? onboardingRequests.map((request: OnboardingRequest) => (
+            <ASPCard
+              key={request?.id}
+              onboardingRequest={request}
+              isASP={isASP}
+              refetch={refetch}
+            />
+          ))
+        : null}
+    </Flex>
+  );
+};
 
 const OnboardingRequestsPage = (): React.ReactElement => {
   const [isASP, setIsASP] = React.useState(true);
   const [filter, setFilter] = React.useState<Array<OnboardingRequestStatuses>>([
     OnboardingRequestStatuses.PENDING,
   ]);
-  const isWebView = useIsWebView();
 
   const {
     data: OnboardingData,
@@ -424,6 +434,8 @@ const OnboardingRequestsPage = (): React.ReactElement => {
       },
     },
   );
+
+  const isWebView = useIsWebView();
 
   const getTitleSection = (): React.ReactElement => (
     <Flex flexDir="column" width="100%">
@@ -468,6 +480,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
         <Flex width="100%" justify="flex-end">
           <Button
             width="15%"
+            minWidth={{ base: "80px", lg: "150px" }}
             height={{ base: "40px", lg: "45px" }}
             color={isASP ? "text.black" : "text.white"}
             bgColor={isASP ? "background.white" : "primary.blue"}
@@ -481,10 +494,11 @@ const OnboardingRequestsPage = (): React.ReactElement => {
               setIsASP(false);
             }}
           >
-            Meal Donors
+            {isWebView ? "Meal Donors" : "Donors"}
           </Button>
           <Button
             width="15%"
+            minWidth={{ base: "80px", lg: "150px" }}
             height={{ base: "40px", lg: "45px" }}
             color={isASP ? "text.white" : "text.black"}
             bgColor={isASP ? "primary.blue" : "background.white"}
@@ -537,7 +551,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
     <Flex
       flexDir="column"
       w={{ base: "100%" }}
-      p={{ base: "24px", sm: "36px", lg: "48px" }}
+      p={{ base: "14px", sm: "36px", lg: "48px" }}
       gap={{ base: "32px", lg: "45px" }}
       borderRadius="8px"
       bgColor="background.white"

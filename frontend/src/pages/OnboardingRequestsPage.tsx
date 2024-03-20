@@ -528,17 +528,27 @@ const OnboardingRequestsPage = (): React.ReactElement => {
         <Text fontSize="sm" fontWeight="500">
           Filtering By:
           {filter.includes(OnboardingRequestStatuses.PENDING) && (
-            <Badge ml="1" fontSize="0.7em" colorScheme="yellow">
+            <Badge
+              ml="1"
+              fontSize="0.7em"
+              colorScheme="yellow"
+              borderRadius="8px"
+            >
               Pending
             </Badge>
           )}
           {filter.includes(OnboardingRequestStatuses.APPROVED) && (
-            <Badge ml="3" fontSize="0.7em" colorScheme="green">
+            <Badge
+              ml="3"
+              fontSize="0.7em"
+              colorScheme="green"
+              borderRadius="8px"
+            >
               Approved
             </Badge>
           )}
           {filter.includes(OnboardingRequestStatuses.REJECTED) && (
-            <Badge ml="3" fontSize="0.7em" colorScheme="red">
+            <Badge ml="3" fontSize="0.7em" colorScheme="red" borderRadius="8px">
               Rejected
             </Badge>
           )}

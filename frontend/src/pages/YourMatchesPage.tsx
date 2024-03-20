@@ -13,7 +13,6 @@ import AuthContext from "../contexts/AuthContext";
 import { ErrorMessage } from "../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
-type ButtonProps = { text: string; path: string };
 const MAX_DISTANCE = 50;
 
 const YourMatchesPage = (): React.ReactElement => {

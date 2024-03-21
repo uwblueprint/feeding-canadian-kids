@@ -149,6 +149,52 @@ def test_create_meal_request_fails_invalid_onsite_contact(
     counter_after = MealRequest.objects().count()
     assert counter_before == counter_after
 
+# If a meal request is created with a date that is the
+# same as a previous meal request, an error is thrown
+def test_create_meal_request_fails_repeat_date(meal_request_setup, onsite_contact_setup):
+    asp, donor, asp_onsite_contact, donor_onsite_contact = onsite_contact_setup
+    _, _, meal_request = meal_request_setup
+
+    counter_before = MealRequest.objects().count()
+    mutation = f"""
+    mutation testCreateMealRequest {{
+      createMealRequest(
+        deliveryInstructions: "Leave at front door",
+        dropOffLocation: "123 Main Street",
+        dropOffTime: "16:30:00Z",
+        mealInfo: {{
+          portions: 40,
+          dietaryRestrictions: "7 gluten free, 7 no beef",
+        }},
+        onsiteStaff: ["{asp_onsite_contact.id}"],
+        requestorId: "{str(asp.id)}",
+        requestDates: [
+            "2025-06-01",
+            "{meal_request.drop_off_datetime.strftime('%Y-%m-%d')}",
+        ],
+      )
+      {{
+        mealRequests {{
+          status
+          id
+          dropOffDatetime
+          mealInfo {{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteStaff{{
+            id
+          }}
+        }}
+      }}
+    }}
+  """
+
+    result = graphql_schema.execute(mutation)
+    assert result.errors is not None
+    counter_after = MealRequest.objects().count()
+    assert counter_before == counter_after
+
 
 # Happy path: A donor commits to fulfilling one meal request
 def test_commit_to_meal_request(meal_request_setup):

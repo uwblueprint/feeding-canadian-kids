@@ -149,9 +149,12 @@ def test_create_meal_request_fails_invalid_onsite_contact(
     counter_after = MealRequest.objects().count()
     assert counter_before == counter_after
 
+
 # If a meal request is created with a date that is the
 # same as a previous meal request, an error is thrown
-def test_create_meal_request_fails_repeat_date(meal_request_setup, onsite_contact_setup):
+def test_create_meal_request_fails_repeat_date(
+    meal_request_setup, onsite_contact_setup
+):
     asp, donor, asp_onsite_contact, donor_onsite_contact = onsite_contact_setup
     _, _, meal_request = meal_request_setup
 

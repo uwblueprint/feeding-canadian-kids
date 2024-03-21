@@ -47,11 +47,17 @@ class MealRequestService(IMealRequestService):
                 # Verify that no meal request exists for the same requestor and drop-off date
                 existing_request = MealRequest.objects(
                     requestor=requestor,
-                    drop_off_datetime__gte=datetime.combine(request_date, datetime.min.time()),
-                    drop_off_datetime__lte=datetime.combine(request_date, datetime.max.time()),
+                    drop_off_datetime__gte=datetime.combine(
+                        request_date, datetime.min.time()
+                    ),
+                    drop_off_datetime__lte=datetime.combine(
+                        request_date, datetime.max.time()
+                    ),
                 ).first()
                 if existing_request:
-                    raise Exception(f'Meal request already exists for this ASP on {request_date}')
+                    raise Exception(
+                        f"Meal request already exists for this ASP on {request_date}"
+                    )
 
                 new_meal_request = MealRequest(
                     requestor=requestor,

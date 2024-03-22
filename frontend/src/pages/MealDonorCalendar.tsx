@@ -257,7 +257,12 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
     calRef.current?.getApi().gotoDate(date);
   }, [aspId, date, getMealRequests, getMealRequestsError]);
 
-  const renderEventContent = (eventInfo: any) => (
+  const renderEventContent = (eventInfo: {
+    event: {
+      title: string;
+    };
+    timeText: string;
+  }) => (
     <>
       <Flex alignItems="center" gap="2px" fontSize="11px">
         <b>{eventInfo.event.title}</b>

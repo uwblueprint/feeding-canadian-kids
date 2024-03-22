@@ -23,13 +23,6 @@ export type Contact = {
   email: string;
 };
 
-export type OnsiteContact = {
-  id?: string;
-  name: string;
-  phone: string;
-  email: string;
-};
-
 type Donor = "Restaurant" | "Individual";
 
 type ASPInfo = {
@@ -56,14 +49,8 @@ export type UserInfo = {
   role: Role;
   roleInfo: RoleInfo;
   primaryContact: Contact;
-  initialOnsiteContacts: Array<Contact>;
+  onsiteContacts: Array<Contact>;
   active?: boolean;
-} | null;
-
-export type ASPDistance = {
-  id: string;
-  info: UserInfo;
-  distance: number;
 } | null;
 
 export type OnboardingRequest = {
@@ -72,14 +59,3 @@ export type OnboardingRequest = {
   dateSubmitted: string;
   status: string;
 } | null;
-
-export type GetUserData = {
-  getUserById: {
-    id: string;
-    info: UserInfo;
-  };
-};
-
-export type GetUserVariables = {
-  id: string;
-};

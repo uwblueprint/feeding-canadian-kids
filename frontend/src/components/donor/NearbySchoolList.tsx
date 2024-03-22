@@ -1,10 +1,13 @@
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Box,
   Card,
   CardBody,
   Center,
+  Button as ChakraButton,
   Flex,
   Grid,
+  HStack,
   Image,
   Text,
 } from "@chakra-ui/react";
@@ -15,13 +18,19 @@ import { useNavigate } from "react-router-dom";
 import { MEAL_DONOR_CALENDAR_PAGE } from "../../constants/Routes";
 import type { ASPDistance } from "../../types/UserTypes";
 
+export const YOUR_MATCHES_PER_PAGE_LIMIT = 3;
+
 // Props: we need a list of ASPDistance
 type NearbySchoolListProps = {
   schools: ASPDistance[];
+  offset: number;
+  setOffset: (offset: number) => void;
 };
 
 const NearbySchoolList = ({
   schools,
+  offset,
+  setOffset,
 }: NearbySchoolListProps): React.ReactElement => {
   const navigate = useNavigate();
 
@@ -47,7 +56,7 @@ const NearbySchoolList = ({
             donation preferences.
           </Text>
         </Flex>
-        <Flex flex="1" padding="0 7vw">
+        <Flex flex="1" padding="0 7vw" flexDirection="column">
           <Box
             display="flex"
             flexDirection="column"
@@ -118,6 +127,29 @@ const NearbySchoolList = ({
               </Card>
             ))}
           </Box>
+          <HStack alignSelf="center" justifyContent="center">
+            <ChakraButton
+              leftIcon={<ChevronLeftIcon />}
+              colorScheme="black"
+              variant="ghost"
+              onClick={() => {
+                if (offset > 0) {
+                  setOffset(offset - 3);
+                }
+              }}
+            />
+            <Text>{offset / 3 + 1}</Text>
+            <ChakraButton
+              rightIcon={<ChevronRightIcon />}
+              colorScheme="black"
+              variant="ghost"
+              onClick={() => {
+                if (schools.length >= YOUR_MATCHES_PER_PAGE_LIMIT) {
+                  setOffset(offset + 3);
+                }
+              }}
+            />
+          </HStack>
         </Flex>
       </Grid>
     </div>

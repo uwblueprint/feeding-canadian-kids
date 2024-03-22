@@ -77,6 +77,7 @@ def init_email_service(app):
             display_name="Feeding Canadian Kids",
         )
 
+
 def init_app(app):
     with app.app_context():
         init_email_service(app)

@@ -95,7 +95,7 @@ def create_app(config_name):
     scheduler = APScheduler()
     scheduler.init_app(app)
 
-    # checks every hour for meal requests that are one day away within one hour of the scheduled time
+    # checks every hour for meal requests that were either yesterday or today and sends an email to the donor and requestor
     @scheduler.task("interval", id="do_job_1", seconds=3600, misfire_grace_time=900)
     def job1():
         try:

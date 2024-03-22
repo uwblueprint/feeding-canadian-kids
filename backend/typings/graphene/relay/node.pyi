@@ -41,6 +41,7 @@ class NodeField(Field):
 class AbstractNode(Interface):
     class Meta:
         abstract: bool
+
     @classmethod
     def __init_subclass_with_meta__(cls, **options) -> None: ...
 

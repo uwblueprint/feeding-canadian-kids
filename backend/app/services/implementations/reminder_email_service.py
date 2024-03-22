@@ -11,107 +11,99 @@ class ReminderEmailService(IReminderEmailService):
         self.logger = logger
         self.email_service = email_service
 
-    def meal_request_one_day_away(self):
+    def get_meal_requests_one_day_away(self):
+        """
+        Helper function to get meal requests that are one day away.
+                Returns:
+                        list of meal requests
+        """
         try:
-            res = []
             tomorrow_time = datetime.now() + timedelta(days=1)
             meal_requests = MealRequest.objects(
-                drop_off_datetime__ge=tomorrow_time,
-                drop_off_datetime__le=tomorrow_time + timedelta(hours=1),
+                drop_off_datetime__gt=tomorrow_time,
+                drop_off_datetime__lt=tomorrow_time + timedelta(hours=1),
             )
-            for meal_request in meal_requests:
-                meal_requestor_email = meal_request.requestor.email
-                donor_id = meal_request.donation_info.donor.id
-                donor = User.objects.get(id=donor_id)[0]
-                donor_email = donor.email
-                self.send_donor_email(donor_email, meal_request)
-                self.send_requestor_email(meal_requestor_email, meal_request)
         except Exception as e:
-            self.logger.error(
-                f"Failed to send reminder email for meal request one meal away for user {meal_request.id if meal_request else ''} {meal_requestor_email}"
-            )
+            self.logger.error("Failed to get meal requests one day away")
             raise e
 
-    def meal_request_yesterday(self):
+        return meal_requests
+
+    def get_meal_requests_one_day_ago(self):
+        """
+        Helper function to get meal requests that are one day ago.
+                Returns:
+                        list of meal requests
+        """
         try:
-            res = []
             yesterday_time = datetime.now() - timedelta(days=1)
             meal_requests = MealRequest.objects(
-                drop_off_datetime__ge=yesterday_time - timedelta(hours=1),
-                drop_off_datetime__lt=datetime.now(),
+                drop_off_datetime__gt=yesterday_time,
+                drop_off_datetime__lt=datetime.now() - timedelta(hours=1),
             )
-            for meal_request in meal_requests:
-                meal_requestor_email = meal_request.requestor.email
-                donor_id = meal_request.donation_info.donor.id
-                donor = User.objects.get(id=donor_id)[0]
-                donor_email = donor.email
-                res.append({"donor_email": donor_email, "meal_info": meal_request})
         except Exception as e:
-            self.logger.error(
-                f"Failed to send reminder email for meal request one meal away for user {meal_request.id if meal_request else ''} {meal_requestor_email}"
-            )
+            self.logger.error("Failed to get meal requests one day ago")
             raise e
 
-    def send_requestor_email(self, email, meal_request):
+        return meal_requests
+
+    def send_email(self, email, meal_request, template_file_path, subject_line):
         try:
-            email_body = EmailService.read_email_template(
-                "email_templates/requestor_one_day_to_meal.html"
-            ).format(
+            email_body = EmailService.read_email_template(template_file_path).format(
                 dropoff_location=meal_request.drop_off_location,
                 dropoff_time=meal_request.drop_off_datetime,
                 num_meals=meal_request.meal_info.portions,
             )
             self.email_service.send_email(
-                email, "Your meal request is only one day away!", email_body
+                email, subject_line, email_body
             )
         except Exception as e:
             self.logger.error(
                 f"Failed to send reminder email for meal request one meal away for user {meal_request.id if meal_request else ''} {email}"
             )
             raise e
+        self.logger.info(
+            f"Sent reminder email for meal request to {email}"
+        )
 
-    def send_donor_email(self, email, meal_request):
-        try:
-            email_body = EmailService.read_email_template(
-                "email_templates/donor_one_day_to_meal.html"
-            ).format(
-                dropoff_location=meal_request.drop_off_location,
-                dropoff_time=meal_request.drop_off_datetime,
-                num_meals=meal_request.meal_info.portions,
+    def send_time_delayed_emails(self, meal_requests, template_file_paths, subject_lines):
+        """
+        Helper function to send emails to donors and requestors.
+        Args:
+            meal_requests: list of meal requests
+        """
+        for meal_request in meal_requests:
+            meal_requestor_email = meal_request.requestor.info.email
+            self.send_email(
+                meal_requestor_email, meal_request, template_file_paths["requestor"], subject_lines["requestor"]
             )
-            self.email_service.send_email(
-                email, "Your donated meal request is one day away!", email_body
-            )
-        except Exception as e:
-            self.logger.error(
-                f"Failed to send donor reminder email for meal request one meal away for user {meal_request.id if meal_request else ''} {email}"
-            )
-            raise e
-
-    def get_email_info(self, meal_request, function):
-        res = []
-        for meal_request in self.meal_request_one_day_away():
-            meal_requestor_email = meal_request.requestor.email
-            donor_id = meal_request.donation_info.donor.id
-            donor = User.objects.get(id=donor_id)[0]
-            donor_email = donor.email
-            res.append(
-                {
-                    "meal_requestor_email": meal_requestor_email,
-                    "donor_email": donor_email,
-                    "meal_info": meal_request,
-                }
-            )
-        return res
+            if hasattr(meal_request, "donation_info"):
+                donor_id = meal_request.donation_info.donor.id
+                donor = User.objects.get(id=donor_id)[0]
+                donor_email = donor.email
+                self.send_email(donor_email, meal_request, template_file_paths["donor"], subject_lines["donor"])
 
     def send_regularly_scheduled_emails(self):
-        # You should add a whole bunch of different helpers that are called from here which actually check the database and from there decide on what emails to send etc.
-        meal_one_day_away = self.meal_request_one_day_away()
-        for info in meal_one_day_away:
-            requestor_email = info.get("meal_requestor_email")
-            donor_email = info.get("donor_email")
-            meal_info = info.get("meal_info")
-            self.email_service.send_email(requestor_email, meal_info)
-            self.email_service.send_email(donor_email, meal_info)
+        self.send_time_delayed_emails(
+            self.get_meal_requests_one_day_away(),
+            {
+                "donor": "email_templates/donor_one_day_to_meal.html",
+                "requestor": "email_templates/requestor_one_day_to_meal.html",
+            },
+            {
+                "donor": "Your meal donation is only one day away!",
+                "requestor": "Your meal request is only one day away!",
+            },
+        )
 
-        meal_yesterday = self.meal_request_yesterday()
+        self.send_time_delayed_emails(
+            self.get_meal_requests_one_day_ago(),
+            {
+                "donor": "email_templates/donor_one_day_to_meal.html",
+                "requestor": "email_templates/requestor_one_day_to_meal.html",
+            },
+            {
+                "donor": "Thank you again for your meal donation!",
+                "requestor": "We hope you enjoyed your meal!",
+            },
+        )

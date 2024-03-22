@@ -389,6 +389,7 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
         float="right"
         margin="20px 0px"
         onClick={() => handleNext()}
+        disabled={selectedMealRequests.length === 0}
       >
         Next
       </ChakraButton>

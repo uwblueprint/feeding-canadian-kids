@@ -17,6 +17,7 @@ import {
 } from "react-icons/io5";
 import { PiForkKnifeFill } from "react-icons/pi";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { isCallSignatureDeclaration } from "typescript";
 
 import EditMealRequestForm from "./EditMealRequestForm";
 
@@ -226,42 +227,35 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
     return inputDate.toISOString().split("T")[0];
   }
 
-  function reloadMealRequests() {
-    const monthBefore = new Date(date);
-    monthBefore.setMonth(monthBefore.getMonth() - 1);
-    const monthAfter = new Date(date);
-    monthAfter.setMonth(monthAfter.getMonth() + 1);
-    getMealRequests({
-      variables: {
-        requestorId: aspId,
-        minDropOffDate: formatDate(monthBefore),
-        maxDropOffDate: formatDate(monthAfter),
-      },
-    });
-    // console.log(getMealRequestsError)
-    logPossibleGraphQLError(getMealRequestsError);
-  }
+  const calRef = useRef<FullCalendar>(null);
 
   function handleNext() {
     // Do something with selectedMealRequests
-    console.log(selectedMealRequests);
+    // navigate(
+    //   `${MEAL_}?aspId=${school?.id}&distance=${school?.distance}`,
+    // );
+    // console.log(selectedMealRequests);
   }
 
   useEffect(() => {
-    const prevButton = document.querySelectorAll(".fc-prev-button");
-    console.log(prevButton);
-    if (prevButton[0] !== undefined) {
-      console.log("got prev button", prevButton[0]);
-      console.log("setting prev button");
-      prevButton[0].addEventListener("click", () => {
-        alert("test");
-        const prevMonth = new Date(date);
-        prevMonth.setMonth(prevMonth.getMonth() - 1);
-        setDate(prevMonth);
+    function reloadMealRequests() {
+      const monthBefore = new Date(date);
+      monthBefore.setMonth(monthBefore.getMonth() - 1);
+      const monthAfter = new Date(date);
+      monthAfter.setMonth(monthAfter.getMonth() + 1);
+      getMealRequests({
+        variables: {
+          requestorId: aspId,
+          minDropOffDate: formatDate(monthBefore),
+          maxDropOffDate: formatDate(monthAfter),
+        },
       });
+      logPossibleGraphQLError(getMealRequestsError);
     }
     reloadMealRequests();
-  }, [date]);
+
+    calRef.current?.getApi().gotoDate(date);
+  }, [aspId, date, getMealRequests, getMealRequestsError]);
 
   const renderEventContent = (eventInfo: any) => (
     <>
@@ -333,10 +327,32 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
       <Box fontSize="10px">
         <FullCalendar
           headerToolbar={{
-            left: "prev",
+            left: "customPrevButton",
             center: "title",
-            right: "next",
+            right: "customNextButton",
           }}
+          ref={calRef}
+          customButtons={{
+            customPrevButton: {
+              icon: "fc-icon-chevron-left",
+              click() {
+                const prevMonth = new Date(date);
+                prevMonth.setMonth(prevMonth.getMonth() - 1);
+                setDate(prevMonth);
+              },
+            },
+            customNextButton: {
+              icon: "fc-icon-chevron-right",
+              click() {
+                const nextMonth = new Date(date);
+                nextMonth.setMonth(nextMonth.getMonth() + 1);
+                setDate(nextMonth);
+              },
+            },
+          }}
+          initialDate={date}
+          dayHeaderClassNames="custom-classname"
+          dayHeaderContent="test"
           themeSystem="Simplex"
           plugins={[dayGridPlugin]}
           initialView="dayGridMonth"
@@ -360,10 +376,6 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
             }
           }}
           eventContent={renderEventContent}
-          // datesSet={(dateInfo) => {
-          //   const newDate = new Date(dateInfo.startStr);
-          //   setDate(newDate);
-          // }}
         />
       </Box>
 

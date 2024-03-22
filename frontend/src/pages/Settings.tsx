@@ -16,6 +16,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  HStack,
   Input,
   Spinner,
   Text,
@@ -27,6 +28,7 @@ import { GraphQLError } from "graphql";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
+import Logout from "../components/auth/Logout";
 import OnsiteStaffSection from "../components/common/OnsiteStaffSection";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { LOGIN_PAGE } from "../constants/Routes";
@@ -40,6 +42,7 @@ import {
   trimWhiteSpace,
 } from "../utils/ValidationUtils";
 import useGetOnsiteContacts from "../utils/useGetOnsiteContacts";
+import useIsMealDonor from "../utils/useIsMealDonor";
 import useIsWebView from "../utils/useIsWebView";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -160,13 +163,13 @@ const DELETE_ONSITE_CONTACT = gql`
 `;
 
 const Settings = (): React.ReactElement => {
-  // Assumption: user has the roleInfo: ASPInfo
-
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const [userInfo, setUserInfo] = useState<UserInfo>(
     authenticatedUser?.info || null,
   );
+
+  const isMealDonor = useIsMealDonor();
 
   const [primaryContact, setPrimaryContact] = useState<Contact>(
     userInfo?.primaryContact || {
@@ -297,20 +300,23 @@ const Settings = (): React.ReactElement => {
           <Text variant="desktop-body-bold">Email Address</Text>
           <Text variant="desktop-body">{userInfo?.email}</Text>
         </Flex>
-        <Button
-          width="190px"
-          height="45px"
-          variant="desktop-button-bold"
-          color="primary.green"
-          bgColor="background.white"
-          border="1px solid"
-          borderColor="primary.green"
-          borderRadius="6px"
-          _hover={{ color: "text.white", bgColor: "primary.green" }}
-          onClick={onClickResetPassword}
-        >
-          Reset Password
-        </Button>
+        <HStack>
+          <Logout/>
+          <Button
+            width="190px"
+            height="45px"
+            variant="desktop-button-bold"
+            color="primary.green"
+            bgColor="background.white"
+            border="1px solid"
+            borderColor="primary.green"
+            borderRadius="6px"
+            _hover={{ color: "text.white", bgColor: "primary.green" }}
+            onClick={onClickResetPassword}
+          >
+            Reset Password
+          </Button>
+        </HStack>
       </Flex>
     </Flex>
   );
@@ -480,20 +486,22 @@ const Settings = (): React.ReactElement => {
             />
           </FormControl>
         </Flex>
-        <Flex flexDir="column" w="200px">
-          <FormControl
-            isRequired
-            isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
-          >
-            <FormLabel variant="form-label-bold">Number of kids</FormLabel>
-            <Input
-              type="number"
-              value={numKids}
-              placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
-              onChange={(e) => setNumKids(e.target.value)}
-            />
-          </FormControl>
-        </Flex>
+        {isMealDonor ? null : (
+          <Flex flexDir="column" w="200px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
+            >
+              <FormLabel variant="form-label-bold">Number of kids</FormLabel>
+              <Input
+                type="number"
+                value={numKids}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
+                onChange={(e) => setNumKids(e.target.value)}
+              />
+            </FormControl>
+          </Flex>
+        )}
         <Flex flexDir="column" w="350px">
           <FormControl
             isRequired
@@ -547,18 +555,20 @@ const Settings = (): React.ReactElement => {
               onChange={(e) => setOrganizationName(e.target.value)}
             />
           </FormControl>
-          <FormControl
-            isRequired
-            isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
-          >
-            <Input
-              variant="mobile-outline"
-              type="number"
-              value={numKids}
-              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_NUMBER_OF_KIDS}
-              onChange={(e) => setNumKids(e.target.value)}
-            />
-          </FormControl>
+          {isMealDonor ? null : (
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
+            >
+              <Input
+                variant="mobile-outline"
+                type="number"
+                value={numKids}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_NUMBER_OF_KIDS}
+                onChange={(e) => setNumKids(e.target.value)}
+              />
+            </FormControl>
+          )}
           <FormControl
             isRequired
             isInvalid={attemptedSubmit && organizationAddress === ""}

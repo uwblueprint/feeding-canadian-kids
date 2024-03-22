@@ -176,6 +176,24 @@ class MealRequestService(IMealRequestService):
             self.logger.error(str(error))
             raise error
 
+    def delete_meal_request(self, meal_request_id: str) -> MealRequestDTO:
+        try:
+            meal_request = MealRequest.objects(id=meal_request_id).first()
+            if not meal_request:
+                raise Exception(f'Meal request "{meal_request_id}" not found')
+
+            meal_request.delete()
+
+            meal_request_dto = self.convert_meal_request_to_dto(
+                meal_request, meal_request.requestor
+            )
+
+            return meal_request_dto
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error
+
     def convert_meal_request_to_dto(
         self, request: MealRequest, requestor: User
     ) -> MealRequestDTO:
@@ -298,3 +316,12 @@ class MealRequestService(IMealRequestService):
         )
 
         return meal_request_dto
+
+    def get_meal_requests_by_ids(self, ids: str) -> List[MealRequestDTO]:
+        meal_requests = MealRequest.objects(id__in=ids).all()
+        meal_request_dtos = [
+            self.convert_meal_request_to_dto(meal_request, meal_request.requestor)
+            for meal_request in meal_requests
+        ]
+
+        return meal_request_dtos

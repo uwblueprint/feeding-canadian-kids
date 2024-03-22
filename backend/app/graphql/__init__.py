@@ -14,6 +14,7 @@ from ..services.implementations.user_service import UserService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.auth_service import AuthService
 from ..services.implementations.onsite_contact_service import OnsiteContactService
+from ..services.implementations.mock_email_service import MockEmailService
 from .auth import AuthMutations
 from .meal_request import MealRequestMutations, MealRequestQueries
 from ..services.implementations.meal_request_service import MealRequestService
@@ -54,18 +55,26 @@ schema = graphene.Schema(
 
 def init_app(app):
     with app.app_context():
-        # Add your services here: services["service_name"] = ...
-        services["email_service"] = EmailService(
-            logger=current_app.logger,
-            credentials={
-                "refresh_token": os.getenv("MAILER_REFRESH_TOKEN"),
-                "token_uri": "https://oauth2.googleapis.com/token",
-                "client_id": os.getenv("MAILER_CLIENT_ID"),
-                "client_secret": os.getenv("MAILER_CLIENT_SECRET"),
-            },
-            sender_email=os.getenv("MAILER_USER"),
-            display_name="Feeding Canadian Kids",
-        )
+        if app.config["TESTING"]:
+            print("Using mock email service in testings!")
+            services["email_service"] = MockEmailService(
+                logger=current_app.logger,
+                credentials={},
+                sender_email=os.getenv("MAILER_USER"),
+                display_name="Feeding Canadian Kids",
+            )
+        else:
+            services["email_service"] = EmailService(
+                logger=current_app.logger,
+                credentials={
+                    "refresh_token": os.getenv("MAILER_REFRESH_TOKEN"),
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "client_id": os.getenv("MAILER_CLIENT_ID"),
+                    "client_secret": os.getenv("MAILER_CLIENT_SECRET"),
+                },
+                sender_email=os.getenv("MAILER_USER"),
+                display_name="Feeding Canadian Kids",
+            )
         services["onsite_contact_service"] = OnsiteContactService(
             logger=current_app.logger
         )

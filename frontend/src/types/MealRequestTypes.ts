@@ -47,4 +47,5 @@ export type MealRequestsVariables = {
 export type MealRequestsData = {
   getMealRequestsByRequestorId: Array<MealRequest>;
   getMealRequestById: MealRequest;
+  getMealRequestsByIds: Array<MealRequest>;
 };

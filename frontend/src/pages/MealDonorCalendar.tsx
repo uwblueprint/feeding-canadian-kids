@@ -31,6 +31,7 @@ import {
   MealStatus,
 } from "../types/MealRequestTypes";
 import { ASPDistance, GetUserData, GetUserVariables } from "../types/UserTypes";
+import { ErrorMessage } from "../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
 type ButtonProps = { text: string; path: string };
@@ -147,7 +148,12 @@ const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
       borderRight="2px solid #D9D9D9"
       padding="20px 40px"
     >
-      <IoArrowBackCircleOutline size="38px" color="#CFCECE" cursor="pointer" onClick={() => navigate(Routes.MEAL_DONOR_DASHBOARD_PAGE)}/>
+      <IoArrowBackCircleOutline
+        size="38px"
+        color="#CFCECE"
+        cursor="pointer"
+        onClick={() => navigate(Routes.MEAL_DONOR_DASHBOARD_PAGE)}
+      />
       <Flex marginBottom="30px">
         <Image
           src="https://images.squarespace-cdn.com/content/v1/5dc5d641498834108f7c46a5/6384d8a2-9c31-4ae6-a287-256643f2271e/responsiveclassroom.png?format=1500w"
@@ -160,7 +166,12 @@ const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
 
       <Flex gap="15px" flexDirection="column">
         <Text>{`${distance} km away`}</Text>
-        <Text fontSize="40px" fontFamily="Dimbo" fontWeight="400" color="#272D77">
+        <Text
+          fontSize="40px"
+          fontFamily="Dimbo"
+          fontWeight="400"
+          color="#272D77"
+        >
           {schoolInfo?.organizationName}
         </Text>
         <Flex alignItems="center" gap="5px">
@@ -201,16 +212,18 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
       data: mealRequests,
       error: getMealRequestsError,
       loading: getMealRequestsLoading,
-    }
+    },
   ] = useLazyQuery<MealRequestsData, MealRequestsVariables>(
-    GET_MEAL_REQUESTS_BY_ID
+    GET_MEAL_REQUESTS_BY_ID,
   );
 
-  const [selectedMealRequests, setSelectedMealRequests] = useState<string[]>([]);
+  const [selectedMealRequests, setSelectedMealRequests] = useState<string[]>(
+    [],
+  );
   const [date, setDate] = useState(new Date());
 
   function formatDate(inputDate: Date): string {
-    return inputDate.toISOString().split('T')[0];
+    return inputDate.toISOString().split("T")[0];
   }
 
   function reloadMealRequests() {
@@ -222,8 +235,8 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
       variables: {
         requestorId: aspId,
         minDropOffDate: formatDate(monthBefore),
-        maxDropOffDate: formatDate(monthAfter)
-      }
+        maxDropOffDate: formatDate(monthAfter),
+      },
     });
     // console.log(getMealRequestsError)
     logPossibleGraphQLError(getMealRequestsError);
@@ -231,49 +244,55 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
 
   function handleNext() {
     // Do something with selectedMealRequests
-    console.log(selectedMealRequests)
+    console.log(selectedMealRequests);
   }
 
   useEffect(() => {
     const prevButton = document.querySelectorAll(".fc-prev-button");
-    console.log(prevButton)
+    console.log(prevButton);
     if (prevButton[0] !== undefined) {
+      console.log("got prev button", prevButton[0]);
+      console.log("setting prev button");
       prevButton[0].addEventListener("click", () => {
-        alert("test")
+        alert("test");
         const prevMonth = new Date(date);
         prevMonth.setMonth(prevMonth.getMonth() - 1);
-        setDate(prevMonth)
-      })
+        setDate(prevMonth);
+      });
     }
     reloadMealRequests();
   }, [date]);
 
   const renderEventContent = (eventInfo: any) => (
-      <>
-        <Flex alignItems="center" gap="2px" fontSize="11px">
-          <b>{eventInfo.event.title}</b>
-          <PiForkKnifeFill />
-        </Flex>
-        <Box>{eventInfo.timeText.replace(/([ap])/g, "$1m")}</Box>
-      </>
-    )
+    <>
+      <Flex alignItems="center" gap="2px" fontSize="11px">
+        <b>{eventInfo.event.title}</b>
+        <PiForkKnifeFill />
+      </Flex>
+      <Box>{eventInfo.timeText.replace(/([ap])/g, "$1m")}</Box>
+    </>
+  );
 
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
       (mealRequest: MealRequest) => {
         const startDate = new Date(mealRequest.dropOffDatetime);
-        const endDate = new Date(startDate); 
+        const endDate = new Date(startDate);
         endDate.setHours(endDate.getHours() + 1);
 
         return {
           title: `${mealRequest.mealInfo.portions}`,
           start: startDate,
           end: endDate,
-          extendedProps: { 
+          extendedProps: {
             id: `${mealRequest.id}`,
-            icon: 'test'
+            icon: "test",
           },
-          backgroundColor: `${selectedMealRequests.includes(mealRequest.id) ? "#c4c4c4": "#FFFFFF" }`,
+          backgroundColor: `${
+            selectedMealRequests.includes(mealRequest.id)
+              ? "#c4c4c4"
+              : "#FFFFFF"
+          }`,
           display: "block",
         };
       },
@@ -307,8 +326,10 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
         *each date displays the meal delivery time slot & number of meals needed
         <PiForkKnifeFill />
       </Text>
-      <Text margin="20px 0px">Dates selected: {selectedMealRequests.length}</Text>
-      
+      <Text margin="20px 0px">
+        Dates selected: {selectedMealRequests.length}
+      </Text>
+
       <Box fontSize="10px">
         <FullCalendar
           headerToolbar={{
@@ -325,11 +346,18 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
           eventTextColor="#000000"
           eventBorderColor="#FFFFFF"
           eventClick={(info) => {
-              if (selectedMealRequests.includes(info.event.extendedProps.id)) {
-                  setSelectedMealRequests(selectedMealRequests.filter(id => id !== info.event.extendedProps.id));
-              } else {
-                  setSelectedMealRequests(prevSelected => [...prevSelected, info.event.extendedProps.id]);
-              }
+            if (selectedMealRequests.includes(info.event.extendedProps.id)) {
+              setSelectedMealRequests(
+                selectedMealRequests.filter(
+                  (id) => id !== info.event.extendedProps.id,
+                ),
+              );
+            } else {
+              setSelectedMealRequests((prevSelected) => [
+                ...prevSelected,
+                info.event.extendedProps.id,
+              ]);
+            }
           }}
           eventContent={renderEventContent}
           // datesSet={(dateInfo) => {
@@ -339,8 +367,11 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
         />
       </Box>
 
-
-      <ChakraButton float="right" margin="20px 0px" onClick={() => handleNext()}>
+      <ChakraButton
+        float="right"
+        margin="20px 0px"
+        onClick={() => handleNext()}
+      >
         Next
       </ChakraButton>
     </Box>
@@ -350,23 +381,26 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
 const MealDonorCalendar = (): React.ReactElement => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // const aspId = searchParams.get("aspId");
-  // const distance = searchParams.get("distance");
-  const aspId = "65b6fc756aacd51b15a859ce";
-  const distance = "4";
+  const aspId = searchParams.get("aspId");
+  const distance = searchParams.get("distance");
+  if (!aspId || !distance) {
+    return (
+      <ErrorMessage>
+        Invalid URL, please go back to home and try again!
+      </ErrorMessage>
+    );
+  }
 
   return (
-    <Flex
-      borderTop="2px solid #D9D9D9"
-    >
+    <Flex borderTop="2px solid #D9D9D9">
       <Flex width="400px" justifyContent="center">
-        <SchoolSidebar aspId={aspId} distance={distance}/>
+        <SchoolSidebar aspId={aspId} distance={distance} />
       </Flex>
       <Flex width="100%" justifyContent="center" margin="30px 10px">
-        <CalendarView aspId={aspId}/>
+        <CalendarView aspId={aspId} />
       </Flex>
     </Flex>
   );
-}
+};
 
 export default MealDonorCalendar;

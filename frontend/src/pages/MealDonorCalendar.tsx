@@ -228,13 +228,13 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
   }
 
   const calRef = useRef<FullCalendar>(null);
+  const navigate = useNavigate();
 
   function handleNext() {
     // Do something with selectedMealRequests
-    // navigate(
-    //   `${MEAL_}?aspId=${school?.id}&distance=${school?.distance}`,
-    // );
-    // console.log(selectedMealRequests);
+    navigate(
+      `${Routes.MEAL_DONOR_FORM_PAGE}?ids=${selectedMealRequests.join(",")}`,
+    );
   }
 
   useEffect(() => {
@@ -248,6 +248,7 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
           requestorId: aspId,
           minDropOffDate: formatDate(monthBefore),
           maxDropOffDate: formatDate(monthAfter),
+          status: [MealStatus.OPEN],
         },
       });
       logPossibleGraphQLError(getMealRequestsError);
@@ -388,6 +389,7 @@ const CalendarView = ({ aspId }: CalendarViewProps) => {
         float="right"
         margin="20px 0px"
         onClick={() => handleNext()}
+        disabled={selectedMealRequests.length === 0}
       >
         Next
       </ChakraButton>

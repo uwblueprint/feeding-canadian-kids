@@ -61,6 +61,13 @@ class IMealRequestService(ABC):
         pass
 
     @abstractmethod
+    def get_meal_requests_by_ids(
+        self,
+        ids: List[str],
+    ) -> List[MealRequestDTO]:
+        pass
+
+    @abstractmethod
     def get_meal_requests_by_requestor_id(
         self,
         requestor_id,

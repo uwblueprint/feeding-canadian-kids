@@ -3,7 +3,6 @@ import {
   Badge,
   Box,
   Button,
-  Card,
   Center,
   Flex,
   Grid,
@@ -35,7 +34,6 @@ import { LocationIcon } from "../assets/icons/LocationIcon";
 import { PersonIcon } from "../assets/icons/PersonIcon";
 import TitleSection from "../components/asp/requests/TitleSection";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-import { ONBOARDING_REQUESTS_PAGE } from "../constants/Routes";
 import { OnboardingRequest } from "../types/UserTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 import useIsWebView from "../utils/useIsWebView";
@@ -89,6 +87,26 @@ const GET_MEAL_DONOR_ONBOARDING_REQUESTS = gql`
   }
 `;
 
+const APPROVE_ONBOARDING_REQUEST = gql`
+  mutation ApproveOnboardingRequest($id: ID!) {
+    approveOnboardingRequest(id: $id) {
+      onboardingRequest {
+        id
+      }
+    }
+  }
+`;
+
+const REJECT_ONBOARDING_REQUEST = gql`
+  mutation RejectOnboardingRequest($id: ID!) {
+    rejectOnboardingRequest(id: $id) {
+      onboardingRequest {
+        id
+      }
+    }
+  }
+`;
+
 enum OnboardingRequestStatuses {
   PENDING = "Pending",
   APPROVED = "Approved",
@@ -108,26 +126,6 @@ const ApproveDenyModal = ({
   onboardingRequest: OnboardingRequest;
   refetch: () => void;
 }): React.ReactElement => {
-  const APPROVE_ONBOARDING_REQUEST = gql`
-    mutation ApproveOnboardingRequest($id: ID!) {
-      approveOnboardingRequest(id: $id) {
-        onboardingRequest {
-          id
-        }
-      }
-    }
-  `;
-
-  const REJECT_ONBOARDING_REQUEST = gql`
-    mutation RejectOnboardingRequest($id: ID!) {
-      rejectOnboardingRequest(id: $id) {
-        onboardingRequest {
-          id
-        }
-      }
-    }
-  `;
-
   const toast = useToast();
   const [isSubmitLoading, setIsSubmitLoading] = React.useState(false);
   const [approveOnboardingRequest] = useMutation<{
@@ -420,6 +418,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
   const [filter, setFilter] = React.useState<Array<OnboardingRequestStatuses>>([
     OnboardingRequestStatuses.PENDING,
   ]);
+  const isWebView = useIsWebView();
 
   const {
     data: OnboardingData,
@@ -434,8 +433,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
       },
     },
   );
-
-  const isWebView = useIsWebView();
+  logPossibleGraphQLError(OnboardingError);
 
   const getTitleSection = (): React.ReactElement => (
     <Flex flexDir="column" width="100%">

@@ -35,18 +35,15 @@ const Logout = (): React.ReactElement => {
 
   return (
     <Button
-      width={{ base: "90px", md: "120px" }}
-      height={{ base: "40px", md: "50px" }}
-      p="0"
-      variant="desktop-button-bold"
-      bgColor="background.grey"
-      border="2px solid"
-      borderColor="primary.green"
-      color="primary.green"
-      _hover={{
-        color: "background.grey",
-        bgColor: "primary.green",
-      }}
+    width="190px"
+    height="45px"
+    variant="desktop-button-bold"
+    color="primary.green"
+    bgColor="background.white"
+    border="1px solid"
+    borderColor="primary.green"
+    borderRadius="6px"
+    _hover={{ color: "text.white", bgColor: "primary.green" }}
       onClick={onLogOutClick}
     >
       Log Out

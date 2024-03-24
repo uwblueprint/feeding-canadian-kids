@@ -44,7 +44,9 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 import Logout from "../components/auth/Logout";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
+import ListView from "../components/common/ListView";
 import LoadingSpinner from "../components/common/LoadingSpinner";
+import MealDonorListView from "../components/mealrequest/MealDonorListView";
 import { CREATE_MEAL_REQUEST_PAGE, LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 import {
@@ -172,26 +174,6 @@ const UpcomingPage = (): React.ReactElement => {
 
   logPossibleGraphQLError(getUpdatedMealRequestsError);
 
-  const {
-    data: completedMealRequests,
-    error: getCompletedMealRequestsError,
-    loading: getCompletedMealRequestsLoading,
-  } = useQuery<MealRequestsData, MealRequestsVariables>(
-    GET_MEAL_REQUESTS_BY_ID,
-    {
-      variables: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        requestorId: authenticatedUser!.id,
-        limit: 3,
-        offset,
-        sortByDateDirection:
-          filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
-      },
-    },
-  );
-  logPossibleGraphQLError(getCompletedMealRequestsError);
-
   if (!authenticatedUser) {
     console.log("return");
     return <Navigate replace to={LOGIN_PAGE} />;
@@ -230,40 +212,7 @@ const UpcomingPage = (): React.ReactElement => {
       },
     ) ?? [];
 
-  const completedEvents =
-    completedMealRequests?.getMealRequestsByRequestorId.map(
-      (mealRequest: MealRequest) => {
-        const date = new Date(
-          mealRequest.dropOffDatetime.toString().split("T")[0],
-        );
-        const dateParts = date
-          .toLocaleString("en-US", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          .split(",")[0]
-          .split("/");
-        const realDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
-        return {
-          id: mealRequest.id,
-          title: `${new Date(
-            mealRequest.dropOffDatetime.toLocaleString(),
-          ).toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true,
-          })}`,
-          date: realDate,
-          extendedProps: { mealRequest },
-          backgroundColor: "#3BA948",
-          borderColor: "#3BA948",
-          borderRadius: "10%",
-        };
-      },
-    ) ?? [];
-
-  if (getUpdatedMealRequestsLoading || getCompletedMealRequestsLoading) {
+  if (getUpdatedMealRequestsLoading) {
     return <LoadingSpinner />;
   }
 
@@ -282,7 +231,7 @@ const UpcomingPage = (): React.ReactElement => {
         fontSize={["26px", "40px"]}
         pb={["8px", "10px"]}
       >
-        Upcoming Donations
+        {tabSelected === 0 ? "Upcoming" : "Completed"} Donations
       </Text>
 
       <Text
@@ -291,7 +240,7 @@ const UpcomingPage = (): React.ReactElement => {
         fontSize={["12px", "16px"]}
         pb="10px"
       >
-        My upcoming meal donations
+        My {tabSelected === 0 ? "upcoming" : "completed"} meal donations
       </Text>
 
       <Flex
@@ -350,44 +299,37 @@ const UpcomingPage = (): React.ReactElement => {
                 ))}
               </Stack>
             )}
+            <HStack>
+              <Button
+                leftIcon={<ChevronLeftIcon />}
+                colorScheme="black"
+                variant="ghost"
+                onClick={() => {
+                  if (offset > 0) {
+                    setOffset(offset - 3);
+                  }
+                }}
+              />
+              <Text>{offset / 3 + 1}</Text>
+              <Button
+                rightIcon={<ChevronRightIcon />}
+                colorScheme="black"
+                variant="ghost"
+                onClick={() => {
+                  if (
+                    upcomingEvents.length >= offset
+                  ) {
+                    setOffset(offset + 3);
+                  }
+                }}
+              />
+            </HStack>
           </TabPanel>
           <TabPanel>
-            {isWebView && (
-              <Stack direction="column">
-                {completedEvents.map((event) => (
-                  <UpcomingCard event={event} key={event.id} />
-                ))}
-              </Stack>
-            )}
+            <MealDonorListView authId={authenticatedUser.id} filter={filter}/>
           </TabPanel>
         </TabPanels>
       </Tabs>
-      <HStack>
-        <Button
-          leftIcon={<ChevronLeftIcon />}
-          colorScheme="black"
-          variant="ghost"
-          onClick={() => {
-            if (offset > 0) {
-              setOffset(offset - 3);
-            }
-          }}
-        />
-        <Text>{offset / 3 + 1}</Text>
-        <Button
-          rightIcon={<ChevronRightIcon />}
-          colorScheme="black"
-          variant="ghost"
-          onClick={() => {
-            if (
-              completedEvents.length >= offset ||
-              upcomingEvents.length >= offset
-            ) {
-              setOffset(offset + 3);
-            }
-          }}
-        />
-      </HStack>
     </Box>
   );
 };

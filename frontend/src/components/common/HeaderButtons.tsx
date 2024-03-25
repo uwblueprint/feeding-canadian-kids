@@ -20,7 +20,7 @@ const HeaderButtonsData: HeaderButtonDataType = {
     },
     {
       name: "Onboarding Requests",
-      url: Routes.HOME_PAGE,
+      url: Routes.ONBOARDING_REQUESTS_PAGE,
     },
     {
       name: "List of Users",
@@ -29,7 +29,7 @@ const HeaderButtonsData: HeaderButtonDataType = {
     {
       name: "Settings",
       url: Routes.SETTINGS_PAGE,
-    }
+    },
   ],
   Donor: [
     {

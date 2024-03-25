@@ -446,44 +446,106 @@ const OnboardingRequestsPage = (): React.ReactElement => {
         }
       />
       <Flex width="100%" justifyContent="space-between">
-        <Menu>
-          <MenuButton
-            minWidth="150px"
-            height={{ base: "40px", lg: "45px" }}
-            padding="0 0 0 40px"
-            borderRadius="3px"
-            border="solid 1px #E2E8F0"
-            boxShadow="lg"
-            color="black"
-            backgroundColor="white"
-            _hover={{ backgroundColor: "gray.200" }}
-          >
-            <Flex gap="5px">
-              <FiFilter />
-              <Text>Filter</Text>
-            </Flex>
-          </MenuButton>
-          <MenuList zIndex="2">
-            <MenuOptionGroup
-              type="checkbox"
-              value={filter}
-              onChange={(value) =>
-                setFilter(value as Array<OnboardingRequestStatuses>)
-              }
+        <Flex>
+          <Menu>
+            <MenuButton
+              minWidth="150px"
+              height={{ base: "40px", lg: "45px" }}
+              // padding="0 0 0 40px"
+              padding="2"
+              borderRadius="3px"
+              border="solid 1px #E2E8F0"
+              boxShadow="lg"
+              color="black"
+              backgroundColor="white"
+              _hover={{ backgroundColor: "gray.200" }}
             >
-              <MenuItemOption value={OnboardingRequestStatuses.PENDING}>
-                Pending
-              </MenuItemOption>
-              <MenuItemOption value={OnboardingRequestStatuses.APPROVED}>
-                Approved
-              </MenuItemOption>
-              <MenuItemOption value={OnboardingRequestStatuses.REJECTED}>
-                Rejected
-              </MenuItemOption>
-            </MenuOptionGroup>
-          </MenuList>
-        </Menu>
-        <Flex width="100%" justify="flex-end">
+              <Flex gap="2px" alignItems="center" justifyContent="space-around">
+                <FiFilter />
+                <Text>Filter:</Text>
+                {filter.includes(OnboardingRequestStatuses.PENDING) && (
+                  <Badge
+                    fontSize="0.7em"
+                    colorScheme="yellow"
+                    borderRadius="8px"
+                  >
+                    Pending
+                  </Badge>
+                )}
+                {filter.includes(OnboardingRequestStatuses.APPROVED) && (
+                  <Badge
+                    fontSize="0.7em"
+                    colorScheme="green"
+                    borderRadius="8px"
+                  >
+                    Approved
+                  </Badge>
+                )}
+                {filter.includes(OnboardingRequestStatuses.REJECTED) && (
+                  <Badge fontSize="0.7em" colorScheme="red" borderRadius="8px">
+                    Rejected
+                  </Badge>
+                )}
+              </Flex>
+            </MenuButton>
+            <MenuList zIndex="2">
+              <MenuOptionGroup
+                type="checkbox"
+                value={filter}
+                onChange={(value) =>
+                  setFilter(value as Array<OnboardingRequestStatuses>)
+                }
+              >
+                <MenuItemOption value={OnboardingRequestStatuses.PENDING}>
+                  Pending
+                </MenuItemOption>
+                <MenuItemOption value={OnboardingRequestStatuses.APPROVED}>
+                  Approved
+                </MenuItemOption>
+                <MenuItemOption value={OnboardingRequestStatuses.REJECTED}>
+                  Rejected
+                </MenuItemOption>
+              </MenuOptionGroup>
+            </MenuList>
+          </Menu>
+
+          {/* {filter.length !== 0 ? (
+            <Text fontSize="medium" fontWeight="500">
+              Filtering By:
+              {filter.includes(OnboardingRequestStatuses.PENDING) && (
+                <Badge
+                  ml="1"
+                  fontSize="0.7em"
+                  colorScheme="yellow"
+                  borderRadius="8px"
+                >
+                  Pending
+                </Badge>
+              )}
+              {filter.includes(OnboardingRequestStatuses.APPROVED) && (
+                <Badge
+                  ml="3"
+                  fontSize="0.7em"
+                  colorScheme="green"
+                  borderRadius="8px"
+                >
+                  Approved
+                </Badge>
+              )}
+              {filter.includes(OnboardingRequestStatuses.REJECTED) && (
+                <Badge
+                  ml="3"
+                  fontSize="0.7em"
+                  colorScheme="red"
+                  borderRadius="8px"
+                >
+                  Rejected
+                </Badge>
+              )}
+            </Text>
+          ) : null} */}
+        </Flex>
+        <Flex justify="flex-end">
           <Button
             width="15%"
             minWidth={{ base: "80px", lg: "150px" }}
@@ -522,43 +584,8 @@ const OnboardingRequestsPage = (): React.ReactElement => {
           </Button>
         </Flex>
       </Flex>
-      <Center>
-        {filter.length !== 0 ? (
-          <Text fontSize="medium" fontWeight="500">
-            Filtering By:
-            {filter.includes(OnboardingRequestStatuses.PENDING) && (
-              <Badge
-                ml="1"
-                fontSize="0.7em"
-                colorScheme="yellow"
-                borderRadius="8px"
-              >
-                Pending
-              </Badge>
-            )}
-            {filter.includes(OnboardingRequestStatuses.APPROVED) && (
-              <Badge
-                ml="3"
-                fontSize="0.7em"
-                colorScheme="green"
-                borderRadius="8px"
-              >
-                Approved
-              </Badge>
-            )}
-            {filter.includes(OnboardingRequestStatuses.REJECTED) && (
-              <Badge
-                ml="3"
-                fontSize="0.7em"
-                colorScheme="red"
-                borderRadius="8px"
-              >
-                Rejected
-              </Badge>
-            )}
-          </Text>
-        ) : null}
-      </Center>
+      {/* <Center> */}
+      {/* </Center> */}
     </Flex>
   );
 

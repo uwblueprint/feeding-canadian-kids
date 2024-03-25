@@ -508,42 +508,6 @@ const OnboardingRequestsPage = (): React.ReactElement => {
               </MenuOptionGroup>
             </MenuList>
           </Menu>
-
-          {/* {filter.length !== 0 ? (
-            <Text fontSize="medium" fontWeight="500">
-              Filtering By:
-              {filter.includes(OnboardingRequestStatuses.PENDING) && (
-                <Badge
-                  ml="1"
-                  fontSize="0.7em"
-                  colorScheme="yellow"
-                  borderRadius="8px"
-                >
-                  Pending
-                </Badge>
-              )}
-              {filter.includes(OnboardingRequestStatuses.APPROVED) && (
-                <Badge
-                  ml="3"
-                  fontSize="0.7em"
-                  colorScheme="green"
-                  borderRadius="8px"
-                >
-                  Approved
-                </Badge>
-              )}
-              {filter.includes(OnboardingRequestStatuses.REJECTED) && (
-                <Badge
-                  ml="3"
-                  fontSize="0.7em"
-                  colorScheme="red"
-                  borderRadius="8px"
-                >
-                  Rejected
-                </Badge>
-              )}
-            </Text>
-          ) : null} */}
         </Flex>
         <Flex justify="flex-end">
           <Button
@@ -584,8 +548,6 @@ const OnboardingRequestsPage = (): React.ReactElement => {
           </Button>
         </Flex>
       </Flex>
-      {/* <Center> */}
-      {/* </Center> */}
     </Flex>
   );
 

@@ -60,6 +60,13 @@ class MealRequestResponse(graphene.ObjectType):
     delivery_instructions = graphene.String()
     donation_info = graphene.Field(DonationInfo)
 
+    # meal_request_id = graphene.ID(required=True)
+    # requestor_id = graphene.ID(required=False)
+    # drop_off_datetime = graphene.DateTime(required=False)
+    # meal_info = MealTypeInput()
+    # drop_off_location = graphene.String()
+    # delivery_instructions = graphene.String()
+    # onsite_staff = graphene.List(graphene.String)
 
 # Mutations
 class CreateMealRequests(Mutation):
@@ -100,6 +107,30 @@ class CreateMealRequests(Mutation):
 
         return CreateMealRequests(meal_requests=result)
 
+class UpdateMealRequestDonation(Mutation):
+    class Arguments:
+        requestor_id = graphene.ID(required=False),
+        meal_request_id = graphene.ID(required=True),
+        meal_description = graphene.String(),
+        additional_info = graphene.String()
+    
+    meal_request = graphene.Field(MealRequestResponse)
+
+    def mutate(
+            self,
+            requestor_id: str,
+            meal_request_id,
+            meal_description: str,
+            additional_info: str
+    ):
+        result = services["meal_request_service"].update_meal_request_donation(
+            requestor_id=requestor_id,
+            meal_request_id=meal_request_id,
+            meal_description=meal_description,
+            additional_info=additional_info
+        )
+
+        return UpdateMealRequest(meal_request=result)
 
 class UpdateMealRequest(Mutation):
     class Arguments:
@@ -233,6 +264,7 @@ class DeleteMealRequest(Mutation):
 class MealRequestMutations(MutationList):
     create_meal_request = CreateMealRequests.Field()
     update_meal_request = UpdateMealRequest.Field()
+    update_meal_request_donation = UpdateMealRequestDonation.Field()
     commit_to_meal_request = CommitToMealRequest.Field()
     cancel_donation = CancelDonation.Field()
     delete_meal_request = DeleteMealRequest.Field()

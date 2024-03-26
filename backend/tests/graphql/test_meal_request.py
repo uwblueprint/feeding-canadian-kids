@@ -149,6 +149,52 @@ def test_create_meal_request_fails_invalid_onsite_contact(
     counter_after = MealRequest.objects().count()
     assert counter_before == counter_after
 
+def test_update_meal_request_donation(meal_request_setup):
+    # _, donor, meal_request = meal_request_setup
+    mutation = f"""
+    mutation testUpdateMealRequestDonation {{
+      updateMealRequestDonation(
+        requestor_id: 1,
+        meal_request_id: 2,
+        mealDescription: "Pizza",
+        additionalInfo: "No nuts"
+      )
+      {{
+        mealRequests {{
+          id
+          requestor {{
+            id
+          }}
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo {{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteStaff {{
+            name
+            email
+            phone
+          }}
+          dateCreated
+          dateUpdated
+          deliveryInstructions
+          donationInfo {{
+            donor {{
+              id
+            }}
+            commitmentDate
+            mealDescription
+            additionalInfo
+          }}
+        }}
+      }}
+    }}
+    """
+
+    result = graphql_schema.execute(mutation)
+    assert result.errors is None
 
 # Happy path: A donor commits to fulfilling one meal request
 def test_commit_to_meal_request(meal_request_setup):

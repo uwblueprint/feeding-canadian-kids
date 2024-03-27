@@ -1,4 +1,4 @@
-import { gql, useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -8,7 +8,14 @@ import {
   EditIcon,
 } from "@chakra-ui/icons";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
+  Button,
   Center,
   Button as ChakraButton,
   Collapse,
@@ -19,7 +26,15 @@ import {
   MenuItemOption,
   MenuList,
   MenuOptionGroup,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import {
   DEFAULT_OPTIONS,
@@ -28,7 +43,7 @@ import {
 import { CompactTable } from "@table-library/react-table-library/compact";
 import { useTheme } from "@table-library/react-table-library/theme";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { BsFilter } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 
@@ -101,6 +116,19 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
   }
 `;
 
+const DELETE_MEAL_REQUEST = gql`
+  mutation DeleteMealRequest($mealRequestId: ID!, $requestorId: String!) {
+    deleteMealRequest(
+      mealRequestId: $mealRequestId
+      requestorId: $requestorId
+    ) {
+      mealRequest {
+        id
+      }
+    }
+  }
+`;
+
 type ListViewProps = { authId: string; rowsPerPage?: number };
 
 const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
@@ -150,6 +178,28 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
     }
   };
 
+  const [
+    itemToDelete,
+    setItemToDelete,
+  ] = useState<TABLE_LIBRARY_TYPES.TableNode | null>(null);
+
+  const handleDelete = async (item: TABLE_LIBRARY_TYPES.TableNode) => {
+    try {
+      await deleteMealRequest({
+        variables: {
+          mealRequestId: item.meal_request_id,
+          requestorId: authId,
+        },
+      });
+      logPossibleGraphQLError(deleteMealRequestError);
+      reloadMealRequests();
+    } catch (error) {
+      console.error("Error deleting meal request:", error);
+      logPossibleGraphQLError(error);
+    }
+    console.log("delete clicked for item", { item });
+  };
+
   const [data, setData] = useState<{
     nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
   }>();
@@ -173,6 +223,8 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
   ] = useLazyQuery<MealRequestsData, MealRequestsVariables>(
     GET_MEAL_REQUESTS_BY_ID,
     {
+      fetchPolicy: "network-only",
+      nextFetchPolicy: "network-only",
       onCompleted: (results) => {
         setData({
           nodes: results.getMealRequestsByRequestorId?.map(
@@ -201,6 +253,11 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
     },
   );
 
+  const [
+    deleteMealRequest,
+    { loading: deleteMealRequestLoading, error: deleteMealRequestError },
+  ] = useMutation(DELETE_MEAL_REQUEST);
+
   function reloadMealRequests() {
     getMealRequests({
       variables: {
@@ -226,10 +283,8 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
     setCurrentlyEditingMealRequestId(item.meal_request_id);
   };
 
-  const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
-    // eslint-disable-next-line no-console
-    console.log("delete clicked for item", item.id);
-  };
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef<HTMLButtonElement>(null);
 
   const COLUMNS = [
     {
@@ -296,10 +351,48 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
               _hover={{ color: "primary.blue" }}
             />
             <DeleteIcon
-              onClick={handleDelete(item)}
+              onClick={() => {
+                setItemToDelete(item);
+                onOpen();
+              }}
               cursor="pointer"
               _hover={{ color: "primary.blue" }}
             />
+            <>
+              <AlertDialog
+                isOpen={isOpen}
+                leastDestructiveRef={cancelRef}
+                onClose={onClose}
+              >
+                <AlertDialogOverlay>
+                  <AlertDialogContent>
+                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                      Delete Meal Request
+                    </AlertDialogHeader>
+
+                    <AlertDialogBody>
+                      Are you sure? You can't undo this action afterwards.
+                    </AlertDialogBody>
+
+                    <AlertDialogFooter>
+                      <Button ref={cancelRef} onClick={onClose}>
+                        Cancel
+                      </Button>
+                      <Button
+                        colorScheme="red"
+                        onClick={() => {
+                          if (itemToDelete) handleDelete(itemToDelete);
+                          onClose();
+                        }}
+                        ml={3}
+                      >
+                        Delete
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialogOverlay>
+              </AlertDialog>
+            </>
           </HStack>
         );
       },

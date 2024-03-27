@@ -10,9 +10,13 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Text,
 } from "@chakra-ui/react";
-import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { IoSettingsOutline, IoSettingsSharp } from "react-icons/io5";
+import { useLocation, useNavigate } from "react-router-dom";
+
+import { HeaderButtonsData } from "./HeaderButtons";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import greenGear from "../../assets/greenGear.svg";
@@ -25,8 +29,8 @@ import {
   SETTINGS_PAGE,
 } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
+import { UserInfo } from "../../types/UserTypes";
 import useIsWebView from "../../utils/useIsWebView";
-import Logout from "../auth/Logout";
 
 const LOGOUT = gql`
   mutation Logout($userId: String!) {
@@ -43,6 +47,15 @@ const Header = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   const [logout] = useMutation<{ logout: { success: boolean } }>(LOGOUT);
+  const location = useLocation();
+  const [userInfo, setUserInfo] = useState<UserInfo>(
+    authenticatedUser?.info || null,
+  );
+  const [role, setRole] = useState(userInfo?.role || "Donor");
+
+  const [buttons, setButtons] = useState(HeaderButtonsData[role] || []);
+
+  const isButtonActive = (path: string) => location.pathname === path;
 
   const onLogOutClick = async () => {
     const success = await authAPIClient.logout(
@@ -55,19 +68,25 @@ const Header = () => {
     navigate(LOGIN_PAGE);
   };
 
+  useEffect(() => {
+    if (authenticatedUser?.info) {
+      setButtons(HeaderButtonsData[authenticatedUser?.info?.role] || []);
+    }
+  }, [authenticatedUser]);
+
   const headerDesktop = (): React.ReactElement => (
     <Flex
       justifyContent="space-between"
       alignItems="center"
-      padding="12px 24px"
-      bgColor="background.grey"
+      padding="12px 50px"
+      borderBottom="1px solid #D9D9D9"
     >
-      <Flex flexDir="row" height="70px" gap="24px" alignItems="center">
+      <Flex flexDir="row" height="50px" gap="24px" alignItems="center">
         <Image
           src={Logo}
           alt="Logo"
-          width="70px"
-          height="70px"
+          width="50px"
+          height="50px"
           onClick={() => {
             navigate(HOME_PAGE);
           }}
@@ -75,58 +94,54 @@ const Header = () => {
             cursor: "pointer",
           }}
         />
-        <Divider
-          orientation="vertical"
-          borderColor="gray.gray83"
-          borderWidth="1.5px"
-        />
-        <Flex flexDir="column">
-          <Button
-            width="60px"
-            height="40px"
-            p="0"
-            color="gray.gray600"
-            bgColor="background.grey"
-            variant="desktop-button-bold"
-            _hover={{
-              color: "gray.gray83",
-            }}
-            onClick={() => {
-              navigate(ASP_DASHBOARD_PAGE);
-            }}
-          >
-            Home
-          </Button>
-          <Divider borderColor="gray.gray600" borderWidth="1.5px" />
-        </Flex>
       </Flex>
 
       {authenticatedUser && (
-        <Flex flexDir="row" gap="24px">
-          <Button
-            width="60px"
-            height="50px"
-            p="0"
-            bgColor="background.grey"
-            border="2px solid"
-            borderColor="primary.green"
-            _hover={{
-              color: "background.grey",
-              bgColor: "primary.green",
-            }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onClick={() => {
-              navigate(SETTINGS_PAGE);
-            }}
-          >
-            <Image
-              width="24px"
-              src={isHovered ? whiteGear : greenGear}
-              alt="User Settings Button"
-            />
-          </Button>
-          <Logout />
+        <Flex flexDir="row" gap="50px">
+          {buttons.map((button, index) => (
+            <div key={index}>
+              {button?.name === "Settings" ? (
+                <Button
+                  color="gray.gray600"
+                  variant="desktop-button-bold"
+                  onClick={() => {
+                    navigate(button.url);
+                  }}
+                  key={index}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  {isHovered || isButtonActive(button.url) ? (
+                    <IoSettingsSharp />
+                  ) : (
+                    <IoSettingsOutline />
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  mx="25px"
+                  color="gray.gray600"
+                  variant="desktop-button-bold"
+                  width="100px"
+                  onClick={() => {
+                    navigate(button.url);
+                  }}
+                  key={index}
+                  _hover={{ transform: "scale(1.05)" }}
+                >
+                  <Text
+                    fontSize="14px"
+                    fontWeight={
+                      isButtonActive(button.url) ? "semibold" : "medium"
+                    }
+                    _hover={{ fontWeight: "semibold" }}
+                  >
+                    {button.name}
+                  </Text>
+                </Button>
+              )}
+            </div>
+          ))}
         </Flex>
       )}
     </Flex>
@@ -137,7 +152,7 @@ const Header = () => {
       justifyContent="space-between"
       alignItems="center"
       padding="12px 24px"
-      bgColor="background.grey"
+      borderBottom="1px solid #D9D9D9"
     >
       <Flex flexDir="row" height="50px" gap="24px" alignItems="center">
         <Image
@@ -157,24 +172,6 @@ const Header = () => {
           borderColor="gray.gray83"
           borderWidth="1.5px"
         />
-        <Flex flexDir="column">
-          <Button
-            width="60px"
-            height="40px"
-            p="0"
-            color="gray.gray600"
-            bgColor="background.grey"
-            _hover={{
-              color: "gray.gray83",
-            }}
-            onClick={() => {
-              navigate(ASP_DASHBOARD_PAGE);
-            }}
-          >
-            Home
-          </Button>
-          <Divider borderColor="gray.gray600" borderWidth="1.5px" />
-        </Flex>
       </Flex>
 
       {authenticatedUser && (
@@ -185,18 +182,33 @@ const Header = () => {
               aria-label="Options"
               icon={<HamburgerIcon boxSize={9} />}
               color="gray.gray600"
-              bgColor="background.grey"
               variant="desktop-button-bold"
             />
             <MenuList>
-              <MenuItem
-                icon={<SettingsIcon />}
-                onClick={() => {
-                  navigate(SETTINGS_PAGE);
-                }}
-              >
-                Settings
-              </MenuItem>
+              {buttons.map((button, index) => (
+                <div key={index}>
+                  {button?.name === "Settings" ? (
+                    <MenuItem
+                      icon={<SettingsIcon />}
+                      onClick={() => {
+                        navigate(button.url);
+                      }}
+                      key={index}
+                    >
+                      Settings
+                    </MenuItem>
+                  ) : (
+                    <MenuItem
+                      onClick={() => {
+                        navigate(button.url);
+                      }}
+                      key={index}
+                    >
+                      {button.name}
+                    </MenuItem>
+                  )}
+                </div>
+              ))}
               <MenuItem icon={<ArrowBackIcon />} onClick={onLogOutClick}>
                 Log Out
               </MenuItem>

@@ -1,4 +1,6 @@
 import pytest
+import random
+import string
 from app.models.user import User
 from app.models.onboarding_request import OnboardingRequest
 from app.models.meal_request import MealRequest
@@ -8,8 +10,11 @@ from app.services.implementations.reminder_email_service import ReminderEmailSer
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_SNAKE,
     MOCK_INFO2_SNAKE,
+    MOCK_USER1_CAMEL,
     MOCK_USER1_SNAKE,
+    MOCK_USER2_CAMEL,
     MOCK_USER2_SNAKE,
+    MOCK_USER3_CAMEL,
     MOCK_USER3_SNAKE,
     MOCK_MEALREQUEST1_SNAKE,
 )
@@ -30,6 +35,8 @@ def graphql_schema():
 
 @pytest.fixture(scope="function", autouse=True)
 def onboarding_request_setup():
+    OnboardingRequest.objects().delete()
+
     onboarding_request_1 = OnboardingRequest(
         info=MOCK_INFO1_SNAKE, status="Pending"
     ).save()
@@ -46,8 +53,12 @@ def onboarding_request_setup():
 @pytest.fixture(scope="function", autouse=True)
 def user_setup():
     users = []
-    for MOCK_USER in [MOCK_USER1_SNAKE, MOCK_USER2_SNAKE, MOCK_USER3_SNAKE]:
-        user = User(**MOCK_USER)
+    for MOCK_USER_SNAKE, MOCK_USER_CAMEL in zip([MOCK_USER1_SNAKE, MOCK_USER2_SNAKE, MOCK_USER3_SNAKE], [MOCK_USER1_CAMEL, MOCK_USER2_CAMEL, MOCK_USER3_CAMEL]):
+        email = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10)) + "@test.com"
+        MOCK_USER_SNAKE["info"]["email"] = email
+        MOCK_USER_CAMEL["info"]["email"] = email
+
+        user = User(**MOCK_USER_SNAKE)
         user.save()
         users.append(user)
 

@@ -139,6 +139,7 @@ def test_update_user_by_id(user_setup, mocker):
 
     user_result1 = update_to_user_1_info.data["updateUserByID"]["user"]
     assert user_result1["id"] == str(user_1.id)
+    MOCK_INFO1_CAMEL["email"] = "test1@organization.com"
     assert user_result1["info"] == MOCK_INFO1_CAMEL
 
 

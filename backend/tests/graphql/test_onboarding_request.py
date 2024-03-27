@@ -9,7 +9,7 @@ from tests.graphql.mock_test_data import (
 )
 
 
-def test_create_onboarding_request():
+def test_create_onboarding_request(should_delete=True):
     mutation_string = """mutation testCreateOnboardingRequest {
                         createOnboardingRequest (
                             userInfo: {
@@ -68,17 +68,20 @@ def test_create_onboarding_request():
     ]
     assert onboarding_request_result["id"] == str(onboarding_request_result["id"])
     assert onboarding_request_result["status"] == "Pending"
+    MOCK_INFO3_CAMEL["email"] = "test3@organization.com"
     assert onboarding_request_result["info"] == MOCK_INFO3_CAMEL
-    OnboardingRequest.objects(id=onboarding_request_result["id"]).delete()
+    if should_delete:
+        OnboardingRequest.objects(id=onboarding_request_result["id"]).delete()
 
 
 def test_create_onboarding_request_with_existing_email_errors():
     num_of_kids = 50
+    test_create_onboarding_request(should_delete=False)
     result = graphql_schema.execute(
         f"""mutation testCreateOnboardingRequest {{
             createOnboardingRequest (
                 userInfo: {{
-                    email: "test1@organization.com",
+                    email: "test3@organization.com",
                     organizationAddress: "255 King St N",
                     organizationName: "Test1 Org",
                     organizationDesc: "Testing 123",

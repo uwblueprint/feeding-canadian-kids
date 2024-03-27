@@ -188,10 +188,5 @@ MOCK_MEALREQUEST1_SNAKE = {
     "date_created": "2023-03-31T00:00:00",
     "date_updated": "2023-03-31T00:00:00",
     "delivery_instructions": "Test instructions",
-    "donation_info": {
-        "donor":  MOCK_INFO2_SNAKE,
-        "commitment_date": "2023-03-31T00:00:00",
-        "meal_description": "Test description",
-
-    },
+    "donation_info": None,
 }

@@ -44,6 +44,7 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
       id
       requestor {
         info {
+          organizationName,
           primaryContact {
             name
             email
@@ -63,8 +64,6 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
         email
         phone
       }
-      dateCreated
-      dateUpdated
       deliveryInstructions
       donationInfo {
         donor {
@@ -72,9 +71,7 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
             organizationName
           }
         }
-        commitmentDate
         mealDescription
-        additionalInfo
       }
     }
   }
@@ -127,7 +124,7 @@ const MealDonorListView = ({ authId, filter, rowsPerPage = 10 }: MealDonorListVi
                   num_meals: mealRequest.mealInfo?.portions,
                   donation_address: mealRequest.dropOffLocation,
                   dietary_restrictions: mealRequest.mealInfo.dietaryRestrictions,
-                  contact_info: mealRequest.donationInfo.donor.info?.primaryContact,
+                  contact_info: "TODO: donor primaryContact", // mealRequest.donationInfo.primaryContact
                   onsite_staff: mealRequest.onsiteStaff,
                   meal_description: mealRequest.donationInfo?.mealDescription,
                   _hasContent: false,
@@ -142,16 +139,19 @@ const MealDonorListView = ({ authId, filter, rowsPerPage = 10 }: MealDonorListVi
     logPossibleGraphQLError(getMealRequestsError);
 
     function reloadMealRequests() {
-        getMealRequests({
-            variables: {
-                requestorId: authId,
-                sortByDateDirection:
-                    filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
-                limit: rowsPerPage,
-                offset: (currentPage - 1) * rowsPerPage,
-                status: [MealStatus.FULFILLED]
-            },
-        });
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      getMealRequests({
+          variables: {
+              requestorId: authId,
+              sortByDateDirection:
+                  filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
+              limit: rowsPerPage,
+              offset: (currentPage - 1) * rowsPerPage,
+              status: [MealStatus.UPCOMING, MealStatus.FULFILLED],
+              maxDropOffDate: yesterday.toISOString().split('T')[0]
+          },
+      });
     }
 
     useEffect(() => {
@@ -226,7 +226,7 @@ const MealDonorListView = ({ authId, filter, rowsPerPage = 10 }: MealDonorListVi
                 >
                     <Flex flexDir="column" flex={1} p="8px">
                         <Text variant="mobile-caption-bold">Donation Address</Text>
-                        <Text variant="mobile-caption-2">{item.donation_address}</Text>
+                        <Text variant="mobile-caption-2" mb="8px">{item.donation_address}</Text>
                         <Text variant="mobile-caption-bold">Dietary Restrictions</Text>
                         <Text variant="mobile-caption-2">{item.dietary_restrictions}</Text>
                     </Flex>
@@ -242,7 +242,7 @@ const MealDonorListView = ({ authId, filter, rowsPerPage = 10 }: MealDonorListVi
                     </Flex>
                     <Flex flexDir="column" flex={1} p="8px">
                         <Text variant="mobile-caption-bold">My Contact Info</Text>
-                        <Text variant="mobile-caption-2">{item.contact_info}</Text>
+                        <Text variant="mobile-caption-2" mb="8px">{item.contact_info}</Text>
                         <Text variant="mobile-caption-bold">Meal Description:</Text>
                         <Text variant="mobile-caption-2">{item.meal_description}</Text>
                     </Flex>

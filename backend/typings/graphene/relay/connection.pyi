@@ -21,6 +21,7 @@ from _typeshed import Incomplete
 class PageInfo(ObjectType):
     class Meta:
         description: str
+
     has_next_page: Incomplete
     has_previous_page: Incomplete
     start_cursor: Incomplete
@@ -34,6 +35,7 @@ class ConnectionOptions(ObjectTypeOptions):
 class Connection(ObjectType):
     class Meta:
         abstract: bool
+
     @classmethod
     def __init_subclass_with_meta__(
         cls, node: Incomplete | None = None, name: Incomplete | None = None, **options

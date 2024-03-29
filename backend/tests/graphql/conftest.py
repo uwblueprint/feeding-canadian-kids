@@ -53,8 +53,14 @@ def onboarding_request_setup():
 @pytest.fixture(scope="function", autouse=True)
 def user_setup():
     users = []
-    for MOCK_USER_SNAKE, MOCK_USER_CAMEL in zip([MOCK_USER1_SNAKE, MOCK_USER2_SNAKE, MOCK_USER3_SNAKE], [MOCK_USER1_CAMEL, MOCK_USER2_CAMEL, MOCK_USER3_CAMEL]):
-        email = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10)) + "@test.com"
+    for MOCK_USER_SNAKE, MOCK_USER_CAMEL in zip(
+        [MOCK_USER1_SNAKE, MOCK_USER2_SNAKE, MOCK_USER3_SNAKE],
+        [MOCK_USER1_CAMEL, MOCK_USER2_CAMEL, MOCK_USER3_CAMEL],
+    ):
+        email = (
+            "".join(random.choices(string.ascii_lowercase + string.digits, k=10))
+            + "@test.com"
+        )
         MOCK_USER_SNAKE["info"]["email"] = email
         MOCK_USER_CAMEL["info"]["email"] = email
 

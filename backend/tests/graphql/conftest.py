@@ -19,8 +19,6 @@ from tests.graphql.mock_test_data import (
     MOCK_MEALREQUEST1_SNAKE,
 )
 from flask import current_app
-import string
-import random
 
 
 @pytest.fixture(scope="session", autouse=True)

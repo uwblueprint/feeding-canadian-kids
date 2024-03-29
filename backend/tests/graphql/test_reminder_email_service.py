@@ -1,6 +1,4 @@
 from app.graphql import schema as graphql_schema
-from app.models.meal_request import MealRequest, MealStatus
-from app.models.user_info import UserInfoRole
 from app.services.implementations.mock_email_service import MockEmailService
 from app.services.interfaces.reminder_email_service import IReminderEmailService
 from datetime import datetime, timedelta

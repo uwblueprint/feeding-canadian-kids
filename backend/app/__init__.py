@@ -1,7 +1,6 @@
 import os
 import re
 import firebase_admin
-from app.models.meal_request import MealRequest
 
 from flask import Flask
 from flask.cli import ScriptInfo
@@ -14,7 +13,6 @@ from .graphql import schema as graphql_schema
 
 
 from flask_apscheduler import APScheduler
-from flask import g
 
 
 def create_app(config_name):

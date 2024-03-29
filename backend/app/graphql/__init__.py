@@ -2,7 +2,7 @@ import graphene
 import os
 from app.services.implementations.reminder_email_service import ReminderEmailService
 
-from flask import current_app, g
+from flask import current_app
 
 
 from .onsite_contact_mutations import OnsiteContactMutations

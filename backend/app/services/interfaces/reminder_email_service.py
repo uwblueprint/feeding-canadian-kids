@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from app.services.interfaces.email_service import IEmailService
 

@@ -17,14 +17,14 @@ import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/t
 
 import React, { useEffect, useState } from "react";
 
-import { MealRequest, MealRequestsData, MealRequestsVariables, MealStatus } from "../../types/MealRequestTypes";
+import { MealRequest, MealRequestsData, MealRequestsDonorVariables, MealRequestsVariables, MealStatus } from "../../types/MealRequestTypes";
 import { Contact } from "../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import ListView from "../common/ListView";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
-  query GetMealRequestsByRequestorId(
-    $requestorId: ID!
+  query GetMealRequestsByDonorId(
+    $donorId: ID!
     $minDropOffDate: Date
     $maxDropOffDate: Date
     $status: [MealStatus]
@@ -32,8 +32,8 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
     $limit: Int
     $sortByDateDirection: SortDirection
   ) {
-    getMealRequestsByRequestorId(
-      requestorId: $requestorId
+    getMealRequestsByDonorId(
+      donorId: $donorId
       minDropOffDate: $minDropOffDate
       maxDropOffDate: $maxDropOffDate
       status: $status
@@ -77,9 +77,16 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
   }
 `;
 
-type MealDonorListViewProps = { authId: string; filter: string; rowsPerPage?: number }
+type MealDonorListViewProps = { 
+  completedMealRequests: {
+    nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
+  } | undefined; 
+  completedMealRequestsLoading: boolean;
+  currentPage: number; 
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+}
 
-const MealDonorListView = ({ authId, filter, rowsPerPage = 10 }: MealDonorListViewProps) => {
+const MealDonorListView = ({ completedMealRequests, completedMealRequestsLoading, currentPage, setCurrentPage }: MealDonorListViewProps) => {
     const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
         [],
     );
@@ -93,71 +100,6 @@ const MealDonorListView = ({ authId, filter, rowsPerPage = 10 }: MealDonorListVi
             setIds(ids.concat(item.id));
         }
     };
-
-    const [data, setData] = useState<{
-    nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
-    }>();
-    const [currentPage, setCurrentPage] = useState<number>(1);
-
-    const [
-        getMealRequests,
-        {
-          loading: getMealRequestsLoading,
-          error: getMealRequestsError,
-          data: getMealRequestsData,
-        },
-      ] = useLazyQuery<MealRequestsData, MealRequestsVariables>(
-        GET_MEAL_REQUESTS_BY_ID,
-        {
-          onCompleted: (results) => {
-            setData({
-              nodes: results.getMealRequestsByRequestorId?.map(
-                (
-                  mealRequest: MealRequest,
-                  index: number,
-                ): TABLE_LIBRARY_TYPES.TableNode => ({
-                  id: index,
-                  meal_request_id: mealRequest.id,
-                  date_requested: new Date(mealRequest.dropOffDatetime),
-                  time_requested: new Date(mealRequest.dropOffDatetime),
-                  asp_name: mealRequest.requestor.info?.organizationName,
-                  num_meals: mealRequest.mealInfo?.portions,
-                  donation_address: mealRequest.dropOffLocation,
-                  dietary_restrictions: mealRequest.mealInfo.dietaryRestrictions,
-                  contact_info: "TODO: donor primaryContact", // mealRequest.donationInfo.primaryContact
-                  onsite_staff: mealRequest.onsiteStaff,
-                  meal_description: mealRequest.donationInfo?.mealDescription,
-                  _hasContent: false,
-                  nodes: null,
-                }),
-              ),
-            });
-          },
-        },
-      );
-
-    logPossibleGraphQLError(getMealRequestsError);
-
-    function reloadMealRequests() {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      getMealRequests({
-          variables: {
-              requestorId: authId,
-              sortByDateDirection:
-                  filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
-              limit: rowsPerPage,
-              offset: (currentPage - 1) * rowsPerPage,
-              status: [MealStatus.UPCOMING, MealStatus.FULFILLED],
-              maxDropOffDate: yesterday.toISOString().split('T')[0]
-          },
-      });
-    }
-
-    useEffect(() => {
-        reloadMealRequests();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filter, currentPage]);
 
     const COLUMNS = [
     {
@@ -226,14 +168,14 @@ const MealDonorListView = ({ authId, filter, rowsPerPage = 10 }: MealDonorListVi
                 >
                     <Flex flexDir="column" flex={1} p="8px">
                         <Text variant="mobile-caption-bold">Donation Address</Text>
-                        <Text variant="mobile-caption-2" mb="8px">{item.donation_address}</Text>
+                        <Text variant="mobile-caption-2" mb="12px">{item.donation_address}</Text>
                         <Text variant="mobile-caption-bold">Dietary Restrictions</Text>
                         <Text variant="mobile-caption-2">{item.dietary_restrictions}</Text>
                     </Flex>
                     <Flex flexDir="column" flex={1} p="8px">
                         <Text variant="mobile-caption-bold">ASP Onsite Staff</Text>
                             {item.onsite_staff.map((staff: Contact) => (
-                                <Box key={staff.email} mb="4px">
+                                <Box key={staff.email} mb="8px">
                                     <Text variant="mobile-caption-2">{staff.name}</Text>
                                     <Text variant="mobile-caption-2">{staff.email}</Text>
                                     <Text variant="mobile-caption-2">{staff.phone}</Text>
@@ -242,7 +184,7 @@ const MealDonorListView = ({ authId, filter, rowsPerPage = 10 }: MealDonorListVi
                     </Flex>
                     <Flex flexDir="column" flex={1} p="8px">
                         <Text variant="mobile-caption-bold">My Contact Info</Text>
-                        <Text variant="mobile-caption-2" mb="8px">{item.contact_info}</Text>
+                        <Text variant="mobile-caption-2" mb="12px">{item.contact_info}</Text>
                         <Text variant="mobile-caption-bold">Meal Description:</Text>
                         <Text variant="mobile-caption-2">{item.meal_description}</Text>
                     </Flex>
@@ -255,8 +197,8 @@ const MealDonorListView = ({ authId, filter, rowsPerPage = 10 }: MealDonorListVi
         <ListView 
             columns={COLUMNS}
             rowOptions={ROW_OPTIONS}
-            data={data}
-            loading={getMealRequestsLoading}
+            data={completedMealRequests}
+            loading={completedMealRequestsLoading}
             requestType="Meal Requests"
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}

@@ -58,7 +58,7 @@ const Routes = (): React.ReactElement => (
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
       <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />
       <Route path={Paths.DISPLAY_ENTITY_PAGE} element={<DisplayPage />} />
-      <Route path={Paths.UPCOMING_PAGE} element={<UpcomingPage />} />
+      <Route path={Paths.MEAL_DONOR_UPCOMING_PAGE} element={<UpcomingPage />} />
       <Route
         path={Paths.CREATE_SIMPLE_ENTITY_PAGE}
         element={<SimpleEntityCreatePage />}

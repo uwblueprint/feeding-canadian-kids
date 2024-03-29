@@ -24,6 +24,8 @@ export const MEAL_DONOR_CALENDAR_PAGE = "/meal_donor/calendar";
 
 export const MEAL_DONOR_FORM_PAGE = "/meal_donor/donate/";
 
+export const MEAL_DONOR_UPCOMING_PAGE = "/meal_donor/upcoming";
+
 export const YOUR_MATCHES_PAGE = "/meal_donor/matches";
 
 export const SETTINGS_PAGE = "/settings";
@@ -41,5 +43,3 @@ export const CREATE_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity/create";
 export const UPDATE_SIMPLE_ENTITY_PAGE = "/dashboard/simpleEntity/update";
 
 export const HOOKS_PAGE = "/dashboard/hooks";
-
-export const UPCOMING_PAGE = "/upcoming";

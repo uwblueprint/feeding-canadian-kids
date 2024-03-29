@@ -38,8 +38,8 @@ class ReminderEmailService(IReminderEmailService):
         try:
             yesterday_time = datetime.now() - timedelta(days=1)
             meal_requests = MealRequest.objects(
-                drop_off_datetime__gt=yesterday_time,
-                drop_off_datetime__lt=yesterday_time - timedelta(hours=1),
+                drop_off_datetime__gt=yesterday_time - timedelta(hours=1),
+                drop_off_datetime__lt=yesterday_time,
             )
         except Exception as e:
             self.logger.error("Failed to get meal requests one day ago")
@@ -49,7 +49,6 @@ class ReminderEmailService(IReminderEmailService):
 
     def send_email(self, email, meal_request, template_file_path, subject_line):
         try:
-            print(meal_request.drop_off_datetime)
             email_body = EmailService.read_email_template(template_file_path).format(
                 dropoff_location=meal_request.drop_off_location,
                 dropoff_time=meal_request.drop_off_datetime,
@@ -81,8 +80,8 @@ class ReminderEmailService(IReminderEmailService):
             )
             if hasattr(meal_request, "donation_info") and meal_request.donation_info:
                 donor_id = meal_request.donation_info.donor.id
-                donor = User.objects.get(id=donor_id)[0]
-                donor_email = donor.email
+                donor = User.objects.get(id=donor_id)
+                donor_email = donor.info.email
                 self.send_email(
                     donor_email,
                     meal_request,
@@ -91,6 +90,8 @@ class ReminderEmailService(IReminderEmailService):
                 )
 
     def send_regularly_scheduled_emails(self):
+        """Sends scheduled emails to donors and requestors."""
+        # Send emails for meal requests that are one day away
         self.send_time_delayed_emails(
             self.get_meal_requests_one_day_away(),
             {
@@ -103,6 +104,7 @@ class ReminderEmailService(IReminderEmailService):
             },
         )
 
+        # Send emails for meal requests that are one day ago
         self.send_time_delayed_emails(
             self.get_meal_requests_one_day_ago(),
             {

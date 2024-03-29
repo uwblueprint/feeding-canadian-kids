@@ -56,8 +56,7 @@ schema = graphene.Schema(
 
 def init_email_service(app):
     print("Initializing email service")
-    # TODO: revert this back to regular
-    if True:
+    if app.config["TESTING"]:
         print("Using mock email service in testings!")
         services["email_service"] = MockEmailService(
             logger=current_app.logger,

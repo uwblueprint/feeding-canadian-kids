@@ -178,28 +178,6 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
     }
   };
 
-  const [
-    itemToDelete,
-    setItemToDelete,
-  ] = useState<TABLE_LIBRARY_TYPES.TableNode | null>(null);
-
-  const handleDelete = async (item: TABLE_LIBRARY_TYPES.TableNode) => {
-    try {
-      await deleteMealRequest({
-        variables: {
-          mealRequestId: item.meal_request_id,
-          requestorId: authId,
-        },
-      });
-      logPossibleGraphQLError(deleteMealRequestError);
-      reloadMealRequests();
-    } catch (error) {
-      console.error("Error deleting meal request:", error);
-      logPossibleGraphQLError(error);
-    }
-    console.log("delete clicked for item", { item });
-  };
-
   const [data, setData] = useState<{
     nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
   }>();
@@ -254,9 +232,9 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
   );
 
   const [
-    deleteMealRequest,
-    { loading: deleteMealRequestLoading, error: deleteMealRequestError },
-  ] = useMutation(DELETE_MEAL_REQUEST);
+    itemToDelete,
+    setItemToDelete,
+  ] = useState<TABLE_LIBRARY_TYPES.TableNode | null>(null);
 
   function reloadMealRequests() {
     getMealRequests({
@@ -269,6 +247,28 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
       },
     });
   }
+
+  const [
+    deleteMealRequest,
+    { loading: deleteMealRequestLoading, error: deleteMealRequestError },
+  ] = useMutation(DELETE_MEAL_REQUEST);
+
+  const handleDelete = async (item: TABLE_LIBRARY_TYPES.TableNode) => {
+    try {
+      await deleteMealRequest({
+        variables: {
+          mealRequestId: item.meal_request_id,
+          requestorId: authId,
+        },
+      });
+      logPossibleGraphQLError(deleteMealRequestError);
+      reloadMealRequests();
+    } catch (error) {
+      console.error("Error deleting meal request:", error);
+      logPossibleGraphQLError(error);
+    }
+    console.log("delete clicked for item", { item });
+  };
 
   useEffect(() => {
     reloadMealRequests();
@@ -358,7 +358,6 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
               cursor="pointer"
               _hover={{ color: "primary.blue" }}
             />
-            <>
               <AlertDialog
                 isOpen={isOpen}
                 leastDestructiveRef={cancelRef}
@@ -371,7 +370,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
                     </AlertDialogHeader>
 
                     <AlertDialogBody>
-                      Are you sure? You can't undo this action afterwards.
+                      Are you sure? You cannot undo this action afterwards.
                     </AlertDialogBody>
 
                     <AlertDialogFooter>
@@ -392,7 +391,6 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
                   </AlertDialogContent>
                 </AlertDialogOverlay>
               </AlertDialog>
-            </>
           </HStack>
         );
       },

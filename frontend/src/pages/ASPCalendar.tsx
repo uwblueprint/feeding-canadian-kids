@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   AtSignIcon,
   CalendarIcon,
@@ -32,7 +32,7 @@ import { b2 } from "@fullcalendar/core/internal-common";
 import dayGridPlugin from "@fullcalendar/daygrid";
 // eslint-disable-next-line import/order
 import FullCalendar from "@fullcalendar/react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
   IoInformationCircleOutline,
@@ -42,6 +42,7 @@ import {
 import { Navigate, useNavigate } from "react-router-dom";
 
 import LoadingSpinner from "../components/common/LoadingSpinner";
+import { MealRequestCalendarView } from "../components/common/MealRequestCalendarView";
 import { CREATE_MEAL_REQUEST_PAGE, LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 import {
@@ -50,6 +51,7 @@ import {
   MealRequestsVariables,
   MealStatus,
 } from "../types/MealRequestTypes";
+import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
@@ -133,50 +135,82 @@ const ASPCalandar = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const calandarRef = React.createRef<FullCalendar>();
 
-  const {
-    data: mealRequests,
-    error: getMealRequestsError,
-    loading: getMealRequestsLoading,
-  } = useQuery<MealRequestsData, MealRequestsVariables>(
-    GET_MEAL_REQUESTS_BY_ID,
+  // const {
+  //   data: mealRequests,
+  //   error: getMealRequestsError,
+  //   loading: getMealRequestsLoading,
+  // } = useQuery<MealRequestsData, MealRequestsVariables>(
+  //   GET_MEAL_REQUESTS_BY_ID,
+  //   {
+  //     variables: {
+  //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //       // @ts-ignore
+  //       requestorId: authenticatedUser!.id,
+  //     },
+  //     fetchPolicy: "network-only",
+  //     nextFetchPolicy: "network-only",
+  //   },
+  // );
+
+  function formatDate(inputDate: Date): string {
+    return inputDate.toISOString().split("T")[0];
+  }
+
+  const [
+    getMealRequests,
     {
-      variables: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        requestorId: authenticatedUser!.id,
-      },
+      data: mealRequests,
+      error: getMealRequestsError,
+      loading: getMealRequestsLoading,
     },
+  ] = useLazyQuery<MealRequestsData, MealRequestsVariables>(
+    GET_MEAL_REQUESTS_BY_ID,
   );
+
+  const calRef = useRef<FullCalendar>(null);
+  const [date, setDate] = useState(new Date());
+
+  useEffect(() => {
+    function reloadMealRequests() {
+      const monthBefore = new Date(date);
+      monthBefore.setMonth(monthBefore.getMonth() - 1);
+      const monthAfter = new Date(date);
+      monthAfter.setMonth(monthAfter.getMonth() + 1);
+      getMealRequests({
+        variables: {
+          requestorId: authenticatedUser?.id ?? "",
+          minDropOffDate: formatDate(monthBefore),
+          maxDropOffDate: formatDate(monthAfter),
+          status: [MealStatus.OPEN],
+        },
+      });
+      logPossibleGraphQLError(getMealRequestsError);
+    }
+    reloadMealRequests();
+
+    calRef.current?.getApi().gotoDate(date);
+  }, [authenticatedUser?.id, date, getMealRequests, getMealRequestsError]);
 
   if (!authenticatedUser) {
     return <Navigate replace to={LOGIN_PAGE} />;
   }
 
-  function formatDate(inputDate: string): string {
-    const date = new Date(inputDate);
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
-  }
+  // function formatDate(inputDate: string): string {
+  //   const date = new Date(inputDate);
+  //   const options: Intl.DateTimeFormatOptions = {
+  //     day: "numeric",
+  //     month: "long",
+  //     year: "numeric",
+  //   };
+  //   return date.toLocaleDateString("en-US", options);
+  // // }
 
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
       (mealRequest: MealRequest) => {
-        const date = new Date(
-          mealRequest.dropOffDatetime.toString().split("T")[0],
-        );
-        const dateParts = date
-          .toLocaleString("en-US", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          .split(",")[0]
-          .split("/");
-        const realDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
+        const startDate = new Date(mealRequest.dropOffDatetime);
+        const endDate = new Date(startDate);
+        endDate.setHours(endDate.getHours() + 1);
         return {
           title: `${new Date(
             mealRequest.dropOffDatetime.toLocaleString(),
@@ -185,7 +219,9 @@ const ASPCalandar = (): React.ReactElement => {
             minute: "numeric",
             hour12: true,
           })}`,
-          date: realDate,
+
+          start: startDate,
+          end: endDate,
           extendedProps: { mealRequest },
           backgroundColor: "#3BA948",
           borderColor: "#3BA948",
@@ -195,21 +231,23 @@ const ASPCalandar = (): React.ReactElement => {
     ) ?? [];
 
   if (getMealRequestsLoading) {
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      w="100%"
-      h="200px"
-    >
-      <LoadingSpinner />
-    </Box>;
+    return (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        w="100%"
+        h="200px"
+      >
+        <LoadingSpinner />
+      </Box>
+    );
   }
 
   return (
     <Stack direction="row">
       <div style={{ width: "100%" }}>
-        <FullCalendar
+        {/* <FullCalendar
           headerToolbar={{
             left: "prev",
             center: "title",
@@ -218,6 +256,7 @@ const ASPCalandar = (): React.ReactElement => {
           themeSystem="Simplex"
           plugins={[dayGridPlugin]}
           initialView="dayGridMonth"
+          displayEventEnd
           events={realEvents}
           eventClick={(info) => {
             if (selectedMealRequest === info.event.extendedProps.mealRequest) {
@@ -227,7 +266,9 @@ const ASPCalandar = (): React.ReactElement => {
             }
           }}
           ref={calandarRef}
-        />
+        /> */}
+
+        <MealRequestCalendarView aspId={authenticatedUser.id} />
       </div>
       <div
         style={{
@@ -245,13 +286,14 @@ const ASPCalandar = (): React.ReactElement => {
             <Card padding={3} width={80} variant="outline">
               <HStack padding={3} style={{ justifyContent: "space-between" }}>
                 <Text>
-                  {formatDate(
+                  {/* {formatDate(
                     selectedMealRequest.dropOffDatetime
                       .toLocaleString()
                       .split("T")[0],
-                  )}
+                  )} */}
+                  hello
                 </Text>
-                <Text>
+                {/* <Text>
                   {new Date(
                     selectedMealRequest.dropOffDatetime.toLocaleString(),
                   ).toLocaleTimeString("en-US", {
@@ -259,7 +301,7 @@ const ASPCalandar = (): React.ReactElement => {
                     minute: "numeric",
                     hour12: true,
                   })}
-                </Text>
+                </Text> */}
               </HStack>
               <Table
                 variant="unstyled"
@@ -296,6 +338,7 @@ const ASPCalandar = (): React.ReactElement => {
                         <Text>{staffMember.phone}</Text>
                       </>
                     ))}
+                    <Text>TODO: Add donor onsite contacts here</Text>
                   </Td>
                 </Tr>
 

@@ -48,10 +48,8 @@ class IMealRequestService(ABC):
         self,
         requestor_id: str,
         meal_request_id,
-        donor: str,
-        commitment_date: str,
         meal_description: str,
-        additional_info: str
+        additional_info: str,
     ):
         pass
 

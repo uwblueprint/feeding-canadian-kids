@@ -149,6 +149,7 @@ def test_create_meal_request_fails_invalid_onsite_contact(
     counter_after = MealRequest.objects().count()
     assert counter_before == counter_after
 
+
 def test_update_meal_request_donation(meal_request_setup):
     _, donor, meal_request = meal_request_setup
 
@@ -159,8 +160,6 @@ def test_update_meal_request_donation(meal_request_setup):
       updateMealRequestDonation(
         requestor: "{str(donor.id)}",
         mealRequestId: "{str(meal_request.id)}",
-        donor: "{str(donor.id)}",
-        commitmentDate: "2024-03-27T12:00:00Z",
         mealDescription: "potato chicken nugget",
         additionalInfo: "kimchi fried rice"
       )
@@ -206,9 +205,12 @@ def test_update_meal_request_donation(meal_request_setup):
         MealRequest.objects(id=meal_request.id).first().to_serializable_dict()
     )
 
-    assert meal_request_in_db["donation_info"]["meal_description"] == "potato chicken nugget"
+    assert (
+        meal_request_in_db["donation_info"]["meal_description"]
+        == "potato chicken nugget"
+    )
     assert meal_request_in_db["donation_info"]["additional_info"] == "kimchi fried rice"
-    assert meal_request_in_db["donation_info"]["donor"] == donor.id
+
 
 # Happy path: A donor commits to fulfilling one meal request
 def test_commit_to_meal_request(meal_request_setup):

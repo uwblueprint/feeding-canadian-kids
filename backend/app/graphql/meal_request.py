@@ -60,6 +60,7 @@ class MealRequestResponse(graphene.ObjectType):
     delivery_instructions = graphene.String()
     donation_info = graphene.Field(DonationInfo)
 
+
 # Mutations
 class CreateMealRequests(Mutation):
     class Arguments:
@@ -99,28 +100,19 @@ class CreateMealRequests(Mutation):
 
         return CreateMealRequests(meal_requests=result)
 
+
 class UpdateMealRequestDonation(Mutation):
     class Arguments:
         requestor = graphene.ID(required=True)
         meal_request_id = graphene.ID(required=True)
-        donor = graphene.String()
-        commitmentDate = graphene.String()
         mealDescription = graphene.String()
         additionalInfo = graphene.String()
 
     meal_request = graphene.Field(MealRequestResponse)
 
     def mutate(
-            self,
-            info,
-            requestor: str,
-            meal_request_id,
-            donor,
-            commitmentDate,
-            mealDescription,
-            additionalInfo
+        self, info, requestor: str, meal_request_id, mealDescription, additionalInfo
     ):
-
         user = services["user_service"]
         requestor_auth_id = user.get_auth_id_by_user_id(requestor)
         requestor_role = user.get_user_role_by_auth_id(requestor_auth_id)
@@ -132,22 +124,26 @@ class UpdateMealRequestDonation(Mutation):
 
             if not meal_request:
                 raise Exception("Meal request not found")
-            
-            if (requestor_role != "Admin" and meal_request.donation_info["donor"]["id"] != requestor) :
-                raise Exception(f'Requestor is not an admin or the donor of the meal request.')
+
+            if (
+                requestor_role != "Admin"
+                and meal_request.donation_info["donor"]["id"] != requestor
+            ):
+                raise Exception(
+                    "Requestor is not an admin or the donor of the meal request."
+                )
 
             result = services["meal_request_service"].update_meal_request_donation(
                 requestor_id=requestor,
                 meal_request_id=meal_request_id,
-                donor=donor,
-                commitment_date=commitmentDate,
                 meal_description=mealDescription,
-                additional_info=additionalInfo
+                additional_info=additionalInfo,
             )
         except Exception as e:
-                    raise GraphQLError(str(e))
-        
+            raise GraphQLError(str(e))
+
         return UpdateMealRequest(meal_request=result)
+
 
 class UpdateMealRequest(Mutation):
     class Arguments:

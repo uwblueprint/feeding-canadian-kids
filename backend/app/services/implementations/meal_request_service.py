@@ -112,25 +112,13 @@ class MealRequestService(IMealRequestService):
         if not donor:
             raise Exception(f'user "{donor}" not found')
     
-        # original_meal_request: MealRequest = MealRequest.objects(
-        #     requestor=requestor_id, id=meal_request_id
-        # ).first()
 
         original_meal_request = MealRequest.objects(id=meal_request_id).first()
         if not original_meal_request:
             raise Exception(f'Meal request "{meal_request_id}" not found')
-
-        # if not original_meal_request:
-        #     raise Exception(
-        #         f"meal request with id {meal_request_id} by {requestor_id} not found {MealRequest.objects(requestor=requestor_id, id=meal_request_id)}"
-        #     )
         
-        original_meal_request_donation: DonationInfo = original_meal_request.donation_info
-
-        if not original_meal_request_donation:
-            raise Exception(
-                f"Donation info for meal request with id {meal_request_id} by {requestor_id} not found"
-            )
+        if not original_meal_request.donation_info:
+            raise Exception(f'No donation info found')
 
         original_meal_request.donation_info = DonationInfo(
             donor=donor,
@@ -145,7 +133,7 @@ class MealRequestService(IMealRequestService):
         meal_request_dto = self.convert_meal_request_to_dto(
             original_meal_request, requestor
         )
-        
+
         original_meal_request.validate_onsite_contacts()
 
         original_meal_request.save()

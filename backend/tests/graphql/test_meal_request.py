@@ -150,16 +150,9 @@ def test_create_meal_request_fails_invalid_onsite_contact(
     assert counter_before == counter_after
 
 def test_update_meal_request_donation(meal_request_setup):
-    assert(True)
     _, donor, meal_request = meal_request_setup
 
     test_commit_to_meal_request(meal_request_setup)
-
-
-    # requestor: "{str(donor.id)}",
-    # mealRequestIds: ["{str(meal_request.id)}"],
-    # mealDescription: "Pizza",
-    # additionalInfo: "No nuts"
 
     mutation = f"""
     mutation testUpdateMealRequestDonation {{
@@ -168,8 +161,8 @@ def test_update_meal_request_donation(meal_request_setup):
         mealRequestId: "{str(meal_request.id)}",
         donor: "{str(donor.id)}",
         commitmentDate: "2024-03-27T12:00:00Z",
-        mealDescription: "Meal description",
-        additionalInfo: "Additional information"
+        mealDescription: "potato chicken nugget",
+        additionalInfo: "kimchi fried rice"
       )
       {{
         mealRequest {{
@@ -206,8 +199,16 @@ def test_update_meal_request_donation(meal_request_setup):
     """
 
     result = graphql_schema.execute(mutation)
-    # print(result)
+
     assert result.errors is None
+
+    meal_request_in_db = (
+        MealRequest.objects(id=meal_request.id).first().to_serializable_dict()
+    )
+
+    assert meal_request_in_db["donation_info"]["meal_description"] == "potato chicken nugget"
+    assert meal_request_in_db["donation_info"]["additional_info"] == "kimchi fried rice"
+    assert meal_request_in_db["donation_info"]["donor"] == donor.id
 
 # Happy path: A donor commits to fulfilling one meal request
 def test_commit_to_meal_request(meal_request_setup):

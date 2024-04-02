@@ -150,17 +150,29 @@ def test_create_meal_request_fails_invalid_onsite_contact(
     assert counter_before == counter_after
 
 def test_update_meal_request_donation(meal_request_setup):
-    # _, donor, meal_request = meal_request_setup
+    assert(True)
+    _, donor, meal_request = meal_request_setup
+
+    test_commit_to_meal_request(meal_request_setup)
+
+
+    # requestor: "{str(donor.id)}",
+    # mealRequestIds: ["{str(meal_request.id)}"],
+    # mealDescription: "Pizza",
+    # additionalInfo: "No nuts"
+
     mutation = f"""
     mutation testUpdateMealRequestDonation {{
       updateMealRequestDonation(
-        requestor_id: 1,
-        meal_request_id: 2,
-        mealDescription: "Pizza",
-        additionalInfo: "No nuts"
+        requestor: "{str(donor.id)}",
+        mealRequestId: "{str(meal_request.id)}",
+        donor: "{str(donor.id)}",
+        commitmentDate: "2024-03-27T12:00:00Z",
+        mealDescription: "Meal description",
+        additionalInfo: "Additional information"
       )
       {{
-        mealRequests {{
+        mealRequest {{
           id
           requestor {{
             id
@@ -194,6 +206,7 @@ def test_update_meal_request_donation(meal_request_setup):
     """
 
     result = graphql_schema.execute(mutation)
+    # print(result)
     assert result.errors is None
 
 # Happy path: A donor commits to fulfilling one meal request
@@ -240,7 +253,7 @@ def test_commit_to_meal_request(meal_request_setup):
         }}
       }}
     }}
-  """
+    """
 
     result = graphql_schema.execute(mutation)
 

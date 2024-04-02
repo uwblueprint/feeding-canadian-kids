@@ -109,25 +109,33 @@ class CreateMealRequests(Mutation):
 
 class UpdateMealRequestDonation(Mutation):
     class Arguments:
-        requestor_id = graphene.ID(required=False),
-        meal_request_id = graphene.ID(required=True),
-        meal_description = graphene.String(),
-        additional_info = graphene.String()
-    
+        requestor = graphene.ID(required=True)
+        meal_request_id = graphene.ID(required=True)
+        donor = graphene.String()
+        commitmentDate = graphene.String()
+        mealDescription = graphene.String()
+        additionalInfo = graphene.String()
+
     meal_request = graphene.Field(MealRequestResponse)
 
     def mutate(
             self,
-            requestor_id: str,
+            info,
+            requestor: str,
             meal_request_id,
-            meal_description: str,
-            additional_info: str
+            donor,
+            commitmentDate,
+            mealDescription,
+            additionalInfo
     ):
+
         result = services["meal_request_service"].update_meal_request_donation(
-            requestor_id=requestor_id,
+            requestor_id=requestor,
             meal_request_id=meal_request_id,
-            meal_description=meal_description,
-            additional_info=additional_info
+            donor=donor,
+            commitment_date=commitmentDate,
+            meal_description=mealDescription,
+            additional_info=additionalInfo
         )
 
         return UpdateMealRequest(meal_request=result)

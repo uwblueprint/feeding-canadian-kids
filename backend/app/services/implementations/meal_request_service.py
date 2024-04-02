@@ -98,22 +98,32 @@ class MealRequestService(IMealRequestService):
 
         return meal_request_dto
     
-    def update_meal_request_donation (
+    def update_meal_request_donation(
         self,
         requestor_id: str,
         meal_request_id,
+        donor: str,
+        commitment_date: str,
         meal_description: str,
         additional_info: str
     ):
+        
+        donor = User.objects(id=donor).first()
+        if not donor:
+            raise Exception(f'user "{donor}" not found')
+    
+        # original_meal_request: MealRequest = MealRequest.objects(
+        #     requestor=requestor_id, id=meal_request_id
+        # ).first()
 
-        original_meal_request: MealRequest = MealRequest.objects(
-            id=meal_request_id, requestor=requestor_id
-        ).first()
-
+        original_meal_request = MealRequest.objects(id=meal_request_id).first()
         if not original_meal_request:
-            raise Exception(
-                f"meal request with id {meal_request_id} by {requestor_id} not found"
-            )
+            raise Exception(f'Meal request "{meal_request_id}" not found')
+
+        # if not original_meal_request:
+        #     raise Exception(
+        #         f"meal request with id {meal_request_id} by {requestor_id} not found {MealRequest.objects(requestor=requestor_id, id=meal_request_id)}"
+        #     )
         
         original_meal_request_donation: DonationInfo = original_meal_request.donation_info
 
@@ -123,8 +133,8 @@ class MealRequestService(IMealRequestService):
             )
 
         original_meal_request.donation_info = DonationInfo(
-            donor = original_meal_request.donation_info.donor,
-            commitment_date=original_meal_request.donation_info.commitment_date,
+            donor=donor,
+            commitment_date=commitment_date,
             meal_description=meal_description,
             additional_info=additional_info
         )
@@ -135,6 +145,7 @@ class MealRequestService(IMealRequestService):
         meal_request_dto = self.convert_meal_request_to_dto(
             original_meal_request, requestor
         )
+        
         original_meal_request.validate_onsite_contacts()
 
         original_meal_request.save()

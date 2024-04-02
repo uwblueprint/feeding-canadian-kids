@@ -32,7 +32,6 @@ class MealRequestService(IMealRequestService):
 
             meal_requests = []
             for request_date in request_dates:
-                # print("creaing!")
                 new_meal_request = MealRequest(
                     requestor=requestor,
                     meal_info=meal_info,

@@ -28,7 +28,10 @@ class OnboardingRequestQueries(QueryList):
         number=graphene.Int(default_value=5),
         offset=graphene.Int(default_value=0),
         role=graphene.String(default_value=""),
-        status=graphene.String(default_value=""),
+        status=graphene.List(
+            graphene.String,
+            default_value=["Pending", "Approved", "Rejected"],
+        ),
     )
     getOnboardingRequestById = graphene.Field(
         OnboardingRequest, id=graphene.String(required=True)

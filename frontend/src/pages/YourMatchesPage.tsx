@@ -1,20 +1,19 @@
 import { gql, useQuery } from "@apollo/client";
-import { Button as ChakraButton, Spinner, Text, Wrap } from "@chakra-ui/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { Button as ChakraButton, VStack } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-import BackgroundImage from "../assets/background.png";
-import RefreshCredentials from "../components/auth/RefreshCredentials";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-import NearbySchoolList from "../components/donor/NearbySchoolList";
-import * as Routes from "../constants/Routes";
+import NearbySchoolList, {
+  YOUR_MATCHES_PER_PAGE_LIMIT,
+} from "../components/donor/NearbySchoolList";
 import { LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
-import { ASPDistance } from "../types/UserTypes";
 import { ErrorMessage } from "../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
-type ButtonProps = { text: string; path: string };
+const MAX_DISTANCE = 50;
 
 const YourMatchesPage = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -23,8 +22,15 @@ const YourMatchesPage = (): React.ReactElement => {
 
   // Query to get all ASPs near the donor
   const GET_ASPS = gql`
-    query GetASPNearLocation {
-      getASPNearLocation(requestorId: "${userId}", maxDistance: 50) {
+    query GetASPNearLocation(
+      $offset: Int
+      $limit: Int
+    ) {
+      getASPNearLocation(
+        requestorId: "${userId}", 
+        maxDistance: ${MAX_DISTANCE}, 
+        offset: $offset
+        limit: $limit) {
         id
         distance
         info {
@@ -53,8 +59,18 @@ const YourMatchesPage = (): React.ReactElement => {
     }
   `;
 
+  const [offset, setOffset] = useState(0);
+
   const { data: aspsData, error: aspsError, loading: aspsLoading } = useQuery(
     GET_ASPS,
+    {
+      variables: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        limit: YOUR_MATCHES_PER_PAGE_LIMIT,
+        offset,
+      },
+    },
   );
 
   // If user is not authenticated, redirect to login page
@@ -72,7 +88,13 @@ const YourMatchesPage = (): React.ReactElement => {
   return aspsLoading ? (
     <LoadingSpinner />
   ) : (
-    <NearbySchoolList schools={aspsData.getASPNearLocation} />
+    <VStack>
+      <NearbySchoolList
+        schools={aspsData.getASPNearLocation}
+        offset={offset}
+        setOffset={setOffset}
+      />
+    </VStack>
   );
 };
 

@@ -16,8 +16,10 @@ import CreatePage from "./pages/CreatePage";
 import Default from "./pages/Default";
 import DisplayPage from "./pages/DisplayPage";
 import HooksDemo from "./pages/HooksDemo";
+import MealDonorCalendar from "./pages/MealDonorCalendar";
 import MealDonorDashboard from "./pages/MealDonorDashboard";
 import NotFound from "./pages/NotFound";
+import OnboardingRequestsPage from "./pages/OnboardingRequestsPage";
 import Settings from "./pages/Settings";
 import SimpleEntityCreatePage from "./pages/SimpleEntityCreatePage";
 import SimpleEntityDisplayPage from "./pages/SimpleEntityDisplayPage";
@@ -47,6 +49,10 @@ const Routes = (): React.ReactElement => (
         path={Paths.MEAL_DONOR_DASHBOARD_PAGE}
         element={<MealDonorDashboard />}
       />
+      <Route
+        path={Paths.MEAL_DONOR_CALENDAR_PAGE}
+        element={<MealDonorCalendar />}
+      />
       <Route path={Paths.YOUR_MATCHES_PAGE} element={<YourMatchesPage />} />
       <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
       <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />
@@ -62,6 +68,10 @@ const Routes = (): React.ReactElement => (
       <Route
         path={Paths.DISPLAY_SIMPLE_ENTITY_PAGE}
         element={<SimpleEntityDisplayPage />}
+      />
+      <Route
+        path={Paths.ONBOARDING_REQUESTS_PAGE}
+        element={<OnboardingRequestsPage />}
       />
       <Route path={Paths.HOOKS_PAGE} element={<HooksDemo />} />
       <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />

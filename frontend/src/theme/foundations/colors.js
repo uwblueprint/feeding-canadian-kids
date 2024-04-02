@@ -7,15 +7,19 @@ export default {
   },
   secondary: {
     critical: "#E53E3E",
+    blue: "#13174F",
   },
   text: {
     default: "#1A1A1A",
     subtitle: "#69696B",
     white: "#FFFFFF",
+    black: "#000000",
+    red: "#E53E3E",
   },
   background: {
     white: "#FFFFFF",
     grey: "#F8F8F9",
+    darkred: "#CC3333",
     interactive: "#EBF6ED",
   },
   gray: {

@@ -5,6 +5,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
 import MealDonationFormContactInfo from "./MealDonationFormContactInfo";
+import MealDonationFormMealDetails from "./MealDonationFormMealDetails";
+import MealDonationFormReviewAndSubmit from "./MealDonationFormReviewAndSubmit";
 
 import { LOGIN_PAGE } from "../../../constants/Routes";
 import AuthContext from "../../../contexts/AuthContext";
@@ -27,6 +29,10 @@ const MealDonationForm = (): React.ReactElement => {
     },
   ]);
 
+  // Step 2: Meal details
+  const [mealDescription, setMealDescription] = useState<string>("");
+  const [additionalInfo, setAdditionalInfo] = useState<string>("");
+
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const toast = useToast();
   const [onsiteContactsLoading, setOnsiteContactsLoading] = useState(true);
@@ -35,6 +41,10 @@ const MealDonationForm = (): React.ReactElement => {
     authenticatedUser?.info || null,
   );
 
+  const [userId, setUserId] = useState<string>(authenticatedUser?.id || "");
+
+  const [loading, setLoading] = useState(true);
+  // This is the list of available onsite staff
   const [availableOnsiteContacts, setAvailableOnsiteContacts] = useState<
     Array<Contact>
   >([]);
@@ -44,7 +54,14 @@ const MealDonationForm = (): React.ReactElement => {
     setOnsiteContactsLoading,
   );
 
-  const requestorId = authenticatedUser?.id;
+  // Get the primary contact
+  const primaryContact = userInfo?.primaryContact || {
+    name: "",
+    email: "",
+    phone: "",
+  };
+
+  const requestorId = authenticatedUser?.id || "";
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const idsParam = searchParams.get("ids");
@@ -137,21 +154,44 @@ const MealDonationForm = (): React.ReactElement => {
         <ThreeStepForm
           header1="Contact Information"
           header2="Meal Details"
-          header3="Review & submit"
+          header3="Review & Submit"
           panel1={
             <MealDonationFormContactInfo
               onsiteStaff={onsiteStaff}
               setOnsiteStaff={setOnsiteStaff}
               availableStaff={availableOnsiteContacts}
-              authenticatedUser={authenticatedUser}
-              handleNext={() => {}}
+              handleNext={() => {}} // Leave like this, gets updated by three-step form
               mealRequestsInformation={
                 mealRequestData?.getMealRequestsByIds ?? []
               }
             />
           }
-          panel2={<div />}
-          panel3={<div />}
+          panel2={
+            <MealDonationFormMealDetails
+              mealDescription={mealDescription}
+              setMealDescription={setMealDescription}
+              additionalInfo={additionalInfo}
+              setAdditionalInfo={setAdditionalInfo}
+              handleBack={() => {}} // Leave like this, gets updated by three-step form
+              handleNext={() => {}} // Leave like this, gets updated by three-step form
+              mealRequestsInformation={
+                mealRequestData?.getMealRequestsByIds ?? []
+              }
+            />
+          }
+          panel3={
+            <MealDonationFormReviewAndSubmit
+              mealRequestsInformation={
+                mealRequestData?.getMealRequestsByIds ?? []
+              }
+              mealDescription={mealDescription}
+              additionalInfo={additionalInfo}
+              onsiteStaff={onsiteStaff}
+              requestorId={requestorId}
+              primaryContact={primaryContact}
+              handleBack={() => {}} // Leave like this, gets updated by three-step form
+            />
+          }
         />
       )}
     </div>

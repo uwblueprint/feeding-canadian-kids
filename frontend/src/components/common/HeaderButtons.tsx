@@ -38,7 +38,7 @@ const HeaderButtonsData: HeaderButtonDataType = {
     },
     {
       name: "My Donations",
-      url: Routes.HOME_PAGE,
+      url: Routes.MEAL_DONOR_UPCOMING_PAGE,
     },
     {
       name: "Settings",

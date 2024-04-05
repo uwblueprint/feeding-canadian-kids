@@ -22,7 +22,7 @@ class MealRequestService(IMealRequestService):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff: List[str],
+        onsite_contacts: List[str],
     ):
         try:
             # Create MealRequests
@@ -39,7 +39,7 @@ class MealRequestService(IMealRequestService):
                     drop_off_datetime=datetime.combine(request_date, drop_off_time),
                     drop_off_location=drop_off_location,
                     delivery_instructions=delivery_instructions,
-                    onsite_staff=onsite_staff,
+                    onsite_contacts=onsite_contacts,
                 )
                 new_meal_request.validate_onsite_contacts()
                 new_meal_request.save()
@@ -56,7 +56,7 @@ class MealRequestService(IMealRequestService):
         drop_off_datetime,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_contacts,
         meal_request_id,
     ):
         original_meal_request: MealRequest = MealRequest.objects(
@@ -83,8 +83,8 @@ class MealRequestService(IMealRequestService):
         if delivery_instructions is not None:
             original_meal_request.delivery_instructions = delivery_instructions
 
-        if onsite_staff is not None:
-            original_meal_request.onsite_staff = onsite_staff
+        if onsite_contacts is not None:
+            original_meal_request.onsite_contacts = onsite_contacts
 
         requestor = original_meal_request.requestor
 
@@ -104,6 +104,7 @@ class MealRequestService(IMealRequestService):
         meal_request_ids: [str],
         meal_description: str,
         additional_info: str,
+        donor_onsite_contacts: List[str]
     ) -> List[MealRequestDTO]:
         try:
             donor = User.objects(id=donor_id).first()
@@ -132,6 +133,7 @@ class MealRequestService(IMealRequestService):
                     commitment_date=datetime.utcnow(),
                     meal_description=meal_description,
                     additional_info=additional_info,
+                    donor_onsite_contacts=donor_onsite_contacts
                 )
 
                 # Change the meal request's status to "Upcoming"

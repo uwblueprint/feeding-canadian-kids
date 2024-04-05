@@ -79,7 +79,7 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
         portions
         dietaryRestrictions
       }
-      onsiteStaff {
+      onsiteContacts {
         name
         email
         phone
@@ -188,7 +188,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
                 mealRequest.donationInfo?.donor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
               primary_contact: mealRequest.requestor.info?.primaryContact,
-              onsite_staff: mealRequest.onsiteStaff,
+              onsite_contacts: mealRequest.onsiteContacts,
               meal_description: mealRequest.donationInfo?.mealDescription,
               delivery_instructions: mealRequest.deliveryInstructions,
               pending: mealRequest.status === MealStatus.OPEN,
@@ -332,7 +332,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
               </Text>
             </Box>
             <Text variant="mobile-caption-bold">Onsite:</Text>
-            {item.onsite_staff.map((staff: Contact) => (
+            {item.onsite_contacts.map((staff: Contact) => (
               <Box key={staff.email} mb="4px">
                 <Text variant="mobile-caption-2">{staff.name}</Text>
                 <Text variant="mobile-caption-2">{staff.email}</Text>

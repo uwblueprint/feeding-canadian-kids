@@ -47,7 +47,7 @@ const CREATE_MEAL_REQUEST = gql`
     createMealRequest(
       dropOffLocation: $address
       deliveryInstructions: $deliveryInstructions
-      onsiteStaff: $onsiteStaff
+      onsiteContacts: $onsiteStaff
       mealInfo: {
         portions: $numMeals
         dietaryRestrictions: $dietaryRestrictions

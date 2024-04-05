@@ -162,6 +162,7 @@ def validate_donation_info(donation_info, error_list):
         "commitment_date",
         "meal_description",
         "additional_info",
+        "donor_onsite_contacts"
     ]
 
     if not isinstance(donation_info, dict):
@@ -188,3 +189,9 @@ def validate_donation_info(donation_info, error_list):
             error_list.append("The meal_description supplied is not a string.")
         elif key == "additional_info" and type(val) is not str:
             error_list.append("The additional_info supplied is not a string.")
+        elif key == "donor_onsite_contacts" and type(val) is not list:
+            error_list.append("The donor_onsite_contacts supplied is not list.")
+            for s in val:
+                if type(s) is not str:
+                    error_list.append("The donor_onsite_contacts supplied is not list of strings.")
+

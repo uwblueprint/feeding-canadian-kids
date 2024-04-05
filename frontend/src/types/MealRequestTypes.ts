@@ -1,4 +1,4 @@
-import { Contact, Requestor } from "./UserTypes";
+import { Contact, OnsiteContact, Requestor } from "./UserTypes";
 
 type MealInfo = {
   portions: number;
@@ -27,7 +27,7 @@ export type MealRequest = {
   dropOffDatetime: Date;
   dropOffLocation: string;
   mealInfo: MealInfo;
-  onsiteStaff: Array<Contact>;
+  onsiteContacts: Array<OnsiteContact>;
   dateCreated: Date;
   dateUpdated: Date;
   deliveryInstructions: string;

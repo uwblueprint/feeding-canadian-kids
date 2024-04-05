@@ -55,7 +55,7 @@ const GET_MEAL_REQUEST_BY_ID = gql`
         portions
         dietaryRestrictions
       }
-      onsiteStaff {
+      onsiteContacts {
         id
         name
         email
@@ -85,7 +85,7 @@ const UPDATE_MEAL_REQUEST = gql`
         portions: $updatedMealInfoPortions
         dietaryRestrictions: $updatedMealInfoDietaryRestrictions
       }
-      onsiteStaff: $updatedOnsiteContacts
+      onsiteContacts: $updatedOnsiteContacts
     ) {
       mealRequest {
         id
@@ -96,7 +96,7 @@ const UPDATE_MEAL_REQUEST = gql`
           portions
           dietaryRestrictions
         }
-        onsiteStaff {
+        onsiteContacts {
           id
           name
           email
@@ -180,7 +180,7 @@ const EditMealRequestForm = ({
         setDeliveryInstructions(mealRequest.deliveryInstructions);
 
         // Parse/stringify is to make a deep copy of the onsite staff
-        setOnsiteStaff(JSON.parse(JSON.stringify(mealRequest.onsiteStaff)));
+        setOnsiteStaff(JSON.parse(JSON.stringify(mealRequest.onsiteContacts)));
         setLoading(false);
       } catch (error) {
         logPossibleGraphQLError(error as ApolloError);

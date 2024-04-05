@@ -30,6 +30,11 @@ class DonationInfo(mg.EmbeddedDocument):
     commitment_date = mg.DateTimeField(required=True)
     meal_description = mg.StringField(required=True)
     additional_info = mg.StringField(default=None)
+    # https://docs.mongoengine.org/apireference.html#mongoengine.fields.ReferenceField
+    donor_onsite_contacts = mg.ListField(
+        mg.ReferenceField(OnsiteContact, required=True)
+    )  # 4 = PULL
+
 
 
 class MealRequest(mg.Document):
@@ -44,7 +49,7 @@ class MealRequest(mg.Document):
     meal_info = mg.EmbeddedDocumentField(MealInfo, required=True)
 
     # https://docs.mongoengine.org/apireference.html#mongoengine.fields.ReferenceField
-    onsite_staff = mg.ListField(
+    onsite_contacts = mg.ListField(
         mg.ReferenceField(OnsiteContact, required=True, reverse_delete_rule=4)
     )  # 4 = PULL
     date_created = mg.DateTimeField(required=True, default=datetime.utcnow)
@@ -53,14 +58,22 @@ class MealRequest(mg.Document):
     donation_info = mg.EmbeddedDocumentField(DonationInfo, default=None)
 
     def validate_onsite_contacts(self):
-        if self.onsite_staff:
+        if self.onsite_contacts:
             # Try to fetch the referenced document to ensure it exists, will throw an error if it doesn't
-            for contact in self.onsite_staff:
+            for contact in self.onsite_contacts:
                 contact = OnsiteContact.objects(id=contact.id).first()
                 if not contact or contact.organization_id != self.requestor.id:
                     raise Exception(
                         f"onsite contact {contact.id} not found or not associated with the requestor's organization"
                     )
+
+            if self.donation_info:
+                for contact in self.donation_info.donor_onsite_contacts:
+                    contact = OnsiteContact.objects(id=contact.id).first()
+                    if not contact or contact.organization_id != self.donation_info.donor:
+                        raise Exception(
+                            f"onsite contact {contact.id} not found or not associated with the donor organization"
+                        )
 
     def to_serializable_dict(self):
         """
@@ -71,11 +84,11 @@ class MealRequest(mg.Document):
         meal_request_dict = self.to_mongo().to_dict()
         id = meal_request_dict.pop("_id", None)
         meal_request_dict["id"] = str(id)
-        contacts = [contact.to_mongo().to_dict() for contact in self.onsite_staff]
+        contacts = [contact.to_mongo().to_dict() for contact in self.onsite_contacts]
         for contact in contacts:
             id = contact.pop("_id")
             contact["id"] = id
-        meal_request_dict["onsite_staff"] = contacts
+        meal_request_dict["onsite_contacts"] = contacts
         return meal_request_dict
 
     meta = {"collection": "meal_requests"}

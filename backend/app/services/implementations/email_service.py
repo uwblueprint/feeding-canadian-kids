@@ -60,8 +60,3 @@ class EmailService(IEmailService):
                 )
             )
             raise e
-
-    def send_regularly_scheduled_emails(self):
-        # feel free to rename this as needed
-        self.send_email("")
-        print("sending regularly scheduled emails")

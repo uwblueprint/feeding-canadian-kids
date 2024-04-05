@@ -3,7 +3,6 @@ import {
   Badge,
   Box,
   Button,
-  Center,
   Flex,
   Grid,
   Menu,
@@ -18,6 +17,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
   Spacer,
   Spinner,
   Text,
@@ -39,8 +39,13 @@ import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 import useIsWebView from "../utils/useIsWebView";
 
 const GET_ASP_ONBOARDING_REQUESTS = gql`
-  query GetASPOnboardingRequests($status: [String!]) {
-    getAllOnboardingRequests(status: $status, role: "ASP", number: 100) {
+  query GetASPOnboardingRequests($status: [String!], $sortByDateDirection: SortDirection!) {
+    getAllOnboardingRequests(
+      status: $status
+      role: "ASP"
+      number: 100
+      sortByDateDirection: $sortByDateDirection
+    ) {
       id
       info {
         email
@@ -66,8 +71,13 @@ const GET_ASP_ONBOARDING_REQUESTS = gql`
 `;
 
 const GET_MEAL_DONOR_ONBOARDING_REQUESTS = gql`
-  query GetMealDonorOnboardingRequests($status: [String!]) {
-    getAllOnboardingRequests(status: $status, role: "Donor", number: 100) {
+  query GetMealDonorOnboardingRequests($status: [String!], $sortByDateDirection: SortDirection!) {
+    getAllOnboardingRequests(
+      status: $status
+      role: "Donor"
+      number: 100
+      sortByDateDirection: $sortByDateDirection
+    ) {
       id
       info {
         email
@@ -415,9 +425,12 @@ const ASPCardDisplay = ({
 
 const OnboardingRequestsPage = (): React.ReactElement => {
   const [isASP, setIsASP] = React.useState(true);
-  const [filter, setFilter] = React.useState<Array<OnboardingRequestStatuses>>([
-    OnboardingRequestStatuses.PENDING,
-  ]);
+  const [statusFilter, setStatusFilter] = React.useState<
+    Array<OnboardingRequestStatuses>
+  >([OnboardingRequestStatuses.PENDING]);
+  const [dateDirectionFilter, setDateDirectionFilter] = React.useState(
+    "DESCENDING",
+  );
   const isWebView = useIsWebView();
 
   const {
@@ -429,7 +442,8 @@ const OnboardingRequestsPage = (): React.ReactElement => {
     isASP ? GET_ASP_ONBOARDING_REQUESTS : GET_MEAL_DONOR_ONBOARDING_REQUESTS,
     {
       variables: {
-        status: filter,
+        status: statusFilter,
+        sortByDateDirection: dateDirectionFilter,
       },
     },
   );
@@ -455,7 +469,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
               padding="2"
               borderRadius="3px"
               border="solid 1px #E2E8F0"
-              boxShadow="lg"
+              boxShadow="md"
               color="black"
               backgroundColor="white"
               _hover={{ backgroundColor: "gray.200" }}
@@ -463,7 +477,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
               <Flex gap="2px" alignItems="center" justifyContent="space-around">
                 <FiFilter />
                 <Text>Filter:</Text>
-                {filter.includes(OnboardingRequestStatuses.PENDING) && (
+                {statusFilter.includes(OnboardingRequestStatuses.PENDING) && (
                   <Badge
                     fontSize="0.7em"
                     colorScheme="yellow"
@@ -472,7 +486,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
                     Pending
                   </Badge>
                 )}
-                {filter.includes(OnboardingRequestStatuses.APPROVED) && (
+                {statusFilter.includes(OnboardingRequestStatuses.APPROVED) && (
                   <Badge
                     fontSize="0.7em"
                     colorScheme="green"
@@ -481,7 +495,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
                     Approved
                   </Badge>
                 )}
-                {filter.includes(OnboardingRequestStatuses.REJECTED) && (
+                {statusFilter.includes(OnboardingRequestStatuses.REJECTED) && (
                   <Badge fontSize="0.7em" colorScheme="red" borderRadius="8px">
                     Rejected
                   </Badge>
@@ -491,9 +505,9 @@ const OnboardingRequestsPage = (): React.ReactElement => {
             <MenuList zIndex="2">
               <MenuOptionGroup
                 type="checkbox"
-                value={filter}
+                value={statusFilter}
                 onChange={(value) =>
-                  setFilter(value as Array<OnboardingRequestStatuses>)
+                  setStatusFilter(value as Array<OnboardingRequestStatuses>)
                 }
               >
                 <MenuItemOption value={OnboardingRequestStatuses.PENDING}>
@@ -548,6 +562,26 @@ const OnboardingRequestsPage = (): React.ReactElement => {
           </Button>
         </Flex>
       </Flex>
+      <Select
+        width="180px"
+        height={{ base: "40px", lg: "45px" }}
+        pt="3"
+        fontSize="xs"
+        boxShadow="md"
+        placeholder="Select option"
+        value={dateDirectionFilter}
+        onChange={(e) => {
+          const { target } = e;
+          if (target.type === "select-one") {
+            const selectValue = target.selectedOptions[0].value;
+            setDateDirectionFilter(selectValue);
+          }
+          console.log(dateDirectionFilter);
+        }}
+      >
+        <option value="DESCENDING">Newest to Oldest</option>
+        <option value="ASCENDING">Oldest to Newest</option>
+      </Select>
     </Flex>
   );
 

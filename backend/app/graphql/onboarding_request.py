@@ -4,7 +4,7 @@ from mongoengine.errors import NotUniqueError
 
 from ..graphql.services import services
 
-from .types import Mutation, MutationList, QueryList, UserInfo, UserInfoInput
+from .types import Mutation, MutationList, QueryList, SortDirection, UserInfo, UserInfoInput
 
 ONBOARDING_REQUEST_EMAIL_ALREADY_EXISTS_ERROR = (
     "Failed to create onboarding request. Reason = Email already exists"
@@ -32,12 +32,13 @@ class OnboardingRequestQueries(QueryList):
             graphene.String,
             default_value=["Pending", "Approved", "Rejected"],
         ),
+        sort_by_date_direction=SortDirection(default_value=SortDirection.ASCENDING),
     )
     getOnboardingRequestById = graphene.Field(
         OnboardingRequest, id=graphene.String(required=True)
     )
 
-    def resolve_getAllOnboardingRequests(self, info, number, offset, role, status):
+    def resolve_getAllOnboardingRequests(self, info, number, offset, role, status, sort_by_date_direction):
         onboarding_request_dtos = services[
             "onboarding_request_service"
         ].get_all_onboarding_requests(
@@ -45,6 +46,7 @@ class OnboardingRequestQueries(QueryList):
             offset,
             role,
             status,
+            sort_by_date_direction,
         )
         return [
             OnboardingRequest(

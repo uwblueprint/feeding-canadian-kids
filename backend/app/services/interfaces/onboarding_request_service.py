@@ -20,7 +20,7 @@ class IOnboardingRequestService(ABC):
         pass
 
     @abstractmethod
-    def get_all_onboarding_requests(self, number, offset, role, status):
+    def get_all_onboarding_requests(self, number, offset, role, status, sort_by_date_direction):
         """
         Gets all OnboardingRequest objects
 
@@ -32,6 +32,8 @@ class IOnboardingRequestService(ABC):
         :type role: string
         :param status: optional filter for status of onboarding requests
         :type status: string
+        :param sort_by_date_direction: the direction to sort by (ASC or DESC)
+        :type sort_by_date_direction: string
         :return: list of OnboardingRequest object dicts
         :rtype: [OnboardingRequestDTO]
         :raises Exception: if OnboardingRequests could not be retrieved

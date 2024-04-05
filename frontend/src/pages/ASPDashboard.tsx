@@ -15,7 +15,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 import BackgroundImage from "../assets/background.png"
 import RefreshCredentials from "../components/auth/RefreshCredentials";
-import ListView from "../components/mealrequest/ListView";
+import ASPListView from "../components/mealrequest/ASPListView";
 import * as Routes from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 
@@ -105,7 +105,7 @@ const Dashboard = (): React.ReactElement => {
             <p>Insert Calendar Here</p>
           </TabPanel>
           <TabPanel p="0">
-            <ListView authId={authenticatedUser.id} />
+            <ASPListView authId={authenticatedUser.id} />
           </TabPanel>
           <TabPanel>
             <OldDashboard />

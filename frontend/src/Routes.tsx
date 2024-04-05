@@ -12,6 +12,7 @@ import SetPassword from "./components/auth/SetPassword";
 import MealDonationForm from "./components/meal_donor/donation_form/MealDonationForm";
 import * as Paths from "./constants/Routes";
 import Dashboard from "./pages/ASPDashboard";
+import AdminMealRequestsPage from "./pages/AdminMealRequestsPage";
 import CreatePage from "./pages/CreatePage";
 import Default from "./pages/Default";
 import DisplayPage from "./pages/DisplayPage";
@@ -75,6 +76,7 @@ const Routes = (): React.ReactElement => (
         path={Paths.ONBOARDING_REQUESTS_PAGE}
         element={<OnboardingRequestsPage />}
       />
+      <Route path={Paths.ADMIN_MEAL_REQUESTS_PAGE} element={<AdminMealRequestsPage />}/>
       <Route path={Paths.HOOKS_PAGE} element={<HooksDemo />} />
       <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
     </Route>

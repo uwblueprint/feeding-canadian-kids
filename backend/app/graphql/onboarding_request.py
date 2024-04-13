@@ -25,7 +25,7 @@ class OnboardingRequest(graphene.ObjectType):
 class OnboardingRequestQueries(QueryList):
     getAllOnboardingRequests = graphene.List(
         OnboardingRequest,
-        number=graphene.Int(default_value=5),
+        number=graphene.Int(default_value=9),
         offset=graphene.Int(default_value=0),
         role=graphene.String(default_value=""),
         status=graphene.List(

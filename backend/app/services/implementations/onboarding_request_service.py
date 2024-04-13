@@ -57,7 +57,7 @@ class OnboardingRequestService(IOnboardingRequestService):
             )
             raise e
 
-    def get_all_onboarding_requests(self, number=5, offset=0, role="", status=[], sort_by_date_direction=SortDirection.ASCENDING):
+    def get_all_onboarding_requests(self, number=9, offset=0, role="", status=[], sort_by_date_direction=SortDirection.ASCENDING):
         onboarding_request_dtos = []
 
         try:

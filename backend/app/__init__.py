@@ -94,8 +94,8 @@ def create_app(config_name):
     scheduler.init_app(app)
 
     # checks every hour for meal requests that were either yesterday or today and sends an email to the donor and requestor
-    @scheduler.task("interval", id="do_job_1", seconds=3600, misfire_grace_time=900)
-    def job1():
+    @scheduler.task("interval", id="daily_job", seconds=60*60*24, misfire_grace_time=900)
+    def dailyJob():
         try:
             with scheduler.app.app_context():
                 services["reminder_email_service"].send_regularly_scheduled_emails()

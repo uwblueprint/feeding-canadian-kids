@@ -1,3 +1,4 @@
+from app.services.implementations.email_service import EmailService
 import firebase_admin.auth
 
 from ..interfaces.auth_service import IAuthService
@@ -115,18 +116,9 @@ class AuthService(IAuthService):
             set_password_link = "{url}/{ObjectID}/reset-password".format(
                 url=url, ObjectID=user.id
             )
-
-            email_body = """
-            Hello,
-            <br><br>
-            We have received your reset password request.
-            Please reset your password using the following link.
-            <br><br>
-            <a href="{reset_link}">Reset Password</a>
-            """.format(
-                reset_link=set_password_link
-            )
-
+            email_body = EmailService.read_email_template(
+                "email_templates/reset_password.html"
+            ).format(reset_link=set_password_link)
             self.email_service.send_email(email, "FCK Reset Password Link", email_body)
 
         except Exception as e:
@@ -175,17 +167,9 @@ class AuthService(IAuthService):
             verification_link = firebase_admin.auth.generate_email_verification_link(
                 email
             )
-            email_body = """
-                Hello,
-                <br><br>
-                Please click the following link to verify your email and
-                activate your account.
-                <strong>This link is only valid for 1 hour.</strong>
-                <br><br>
-                <a href={verification_link}>Verify email</a>
-                """.format(
-                verification_link=verification_link
-            )
+            email_body = EmailService.read_email_template(
+                "email_templates/verification_email.html"
+            ).format(verification_link=verification_link)
             self.email_service.send_email(email, "Verify your email", email_body)
         except Exception as e:
             self.logger.error(
@@ -209,16 +193,9 @@ class AuthService(IAuthService):
                 url=url, ObjectID=objectID
             )
 
-            email_body = """
-            Hello,
-            <br><br>
-            We have received your onboarding request and it has been approved.
-            Please set your password using the following link.
-            <br><br>
-            <a href="{reset_link}">Reset Password</a>
-            """.format(
-                reset_link=set_password_link
-            )
+            email_body = EmailService.read_email_template(
+                "email_templates/onboarding_request_approved.html"
+            ).format(set_password_link=set_password_link)
 
             self.email_service.send_email(
                 email, "Onboarding request approved. Set Password", email_body
@@ -240,12 +217,9 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            email_body = """
-            Hello,
-            <br><br>
-            This is a notification that your onboarding request has been rejected.
-            <br><br>
-            """
+            email_body = EmailService.EmailService.read_email_template(
+                "email_templates/onboarding_request_rejected.html"
+            )
             self.email_service.send_email(
                 email, "Onboarding request rejected", email_body
             )

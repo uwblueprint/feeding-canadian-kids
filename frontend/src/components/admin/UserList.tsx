@@ -9,25 +9,12 @@ import {
   Collapse,
   Flex,
   HStack,
-  Menu,
-  MenuButton,
-  MenuItemOption,
-  MenuList,
-  MenuOptionGroup,
   Tag,
   Text,
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
 import React, { useEffect, useState } from "react";
-import { BsFilter } from "react-icons/bs";
-import { FiFilter } from "react-icons/fi";
 
-import {
-  MealRequest,
-  MealRequestsData,
-  MealRequestsVariables,
-  MealStatus,
-} from "../../types/MealRequestTypes";
 import { Contact, GetAllUserVariables, GetAllUsersData, UserData } from "../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import ListView from "../common/ListView";

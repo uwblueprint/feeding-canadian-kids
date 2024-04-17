@@ -15,6 +15,7 @@ import {
   MenuItemOption,
   MenuList,
   MenuOptionGroup,
+  Tag,
   Text,
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
@@ -91,6 +92,19 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
     }
   }
 `;
+
+const Status = ({ status }: { status: string}) => {
+  switch(status) {
+    case MealStatus.UPCOMING:
+      return <Tag size="sm" borderRadius="full" colorScheme="purple">Upcoming</Tag>
+    case MealStatus.FULFILLED:
+      return <Tag size="sm" borderRadius="full" colorScheme="green">Completed</Tag>
+    case MealStatus.CANCELLED:
+      return <Tag size="sm" borderRadius="full" colorScheme="red">Cancelled</Tag>
+    default:
+      return <Tag size="sm" borderRadius="full" colorScheme="gray">Pending</Tag> 
+  }
+}
 
 type AdminListViewProps = { authId: string; rowsPerPage?: number };
 
@@ -227,7 +241,7 @@ const AdminListView = ({ authId, rowsPerPage = 10 }: AdminListViewProps) => {
     {
         label: "Status",
         renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => (
-            <Text variant="desktop-xs">{item.status}</Text>
+          <Status status={item.status} />
         ),
     },
     {

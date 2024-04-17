@@ -7,6 +7,7 @@ from app.models.meal_request import MealRequest
 from app.models.onsite_contact import OnsiteContact
 from app.services.implementations.mock_email_service import MockEmailService
 from app.services.implementations.reminder_email_service import ReminderEmailService
+from app.services.implementations.meal_request_service import MealRequestService
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_SNAKE,
     MOCK_INFO2_SNAKE,
@@ -117,3 +118,11 @@ def reminder_email_setup():
     logger = current_app.logger
     reminder_email_service = ReminderEmailService(logger, mock_email_service)  # type: ignore
     yield reminder_email_service
+
+
+@pytest.fixture(scope="function", autouse=True)
+def meal_request_service():
+    logger = current_app.logger
+    email_service = MockEmailService.instance
+    meal_request_service = MealRequestService(logger, email_service)  # type:ignore
+    yield meal_request_service

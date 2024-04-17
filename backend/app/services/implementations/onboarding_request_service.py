@@ -57,14 +57,23 @@ class OnboardingRequestService(IOnboardingRequestService):
             )
             raise e
 
-    def get_all_onboarding_requests(self, number=9, offset=0, role="", status=[], sort_by_date_direction=SortDirection.ASCENDING):
+    def get_all_onboarding_requests(
+        self,
+        number=9,
+        offset=0,
+        role="",
+        status=[],
+        sort_by_date_direction=SortDirection.ASCENDING,
+    ):
         onboarding_request_dtos = []
 
         try:
             sort_prefix = "+"
             if sort_by_date_direction == SortDirection.DESCENDING:
                 sort_prefix = "-"
-            filteredRequests = OnboardingRequest.objects().order_by(f"{sort_prefix}date_submitted")
+            filteredRequests = OnboardingRequest.objects().order_by(
+                f"{sort_prefix}date_submitted"
+            )
             if role:
                 filteredRequests = filteredRequests.filter(info__role=role)
             if status:

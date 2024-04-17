@@ -20,7 +20,9 @@ class IOnboardingRequestService(ABC):
         pass
 
     @abstractmethod
-    def get_all_onboarding_requests(self, number, offset, role, status, sort_by_date_direction):
+    def get_all_onboarding_requests(
+        self, number, offset, role, status, sort_by_date_direction
+    ):
         """
         Gets all OnboardingRequest objects
 

@@ -4,6 +4,7 @@ import {
   } from "@chakra-ui/react";
 import React, { useState } from "react";
 
+import UserList from "../components/admin/UserList";
 import TitleSection from "../components/asp/requests/TitleSection";
 import useIsWebView from "../utils/useIsWebView";
 
@@ -85,6 +86,7 @@ const AdminUsersPage = (): React.ReactElement => {
             <Flex flexDir="column" width="100%">
                 <GetTitleSection isASP={isASP} setIsASP={setIsASP} isWebView={isWebView} />
             </Flex>
+            <UserList isASP={isASP}/>
         </Flex>
     )
 }

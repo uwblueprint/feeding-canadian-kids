@@ -24,7 +24,7 @@ const HeaderButtonsData: HeaderButtonDataType = {
     },
     {
       name: "List of Users",
-      url: Routes.HOME_PAGE,
+      url: Routes.ADMIN_USERS_PAGE,
     },
     {
       name: "Settings",

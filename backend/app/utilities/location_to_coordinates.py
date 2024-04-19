@@ -1,21 +1,21 @@
 import os
-
 import requests
 
-GEOCODE_API_URL = "https://geocode.maps.co/search"
-GEOCODE_API_KEY = os.getenv("GEOCODING_API_KEY")
+BASE_URL = "https://maps.googleapis.com/maps/api/geocode/"
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 
 def getGeocodeFromAddress(organization_address):
-    if "PYTEST_CURRENT_TEST" in os.environ:
+    if os.getenv("TESTING"):
         print("MOCKING LATITUDE IN TESTING")
         return [-11.1, 11.1]
 
     response = requests.get(
-        '{base_url}?q="{address}"&api_key={api_key}'.format(
-            base_url=GEOCODE_API_URL,
+        '{base_url}{output_format}?address={address}"&key={api_key}'.format(
+            output_format="json",
+            base_url=BASE_URL,
             address=organization_address,
-            api_key=GEOCODE_API_KEY,
+            api_key=GOOGLE_API_KEY,
         )
     )
     try:
@@ -25,7 +25,10 @@ def getGeocodeFromAddress(organization_address):
         response_json = response.json()
         if len(response_json) == 0:
             raise Exception("Failed to get coordinates from Geocode API")
-        return [float(response_json[0]["lon"]), float(response_json[0]["lat"])]
+        return [
+            float(response_json["results"][0]["geometry"]["location"]["lng"]),
+            float(response_json["results"][0]["geometry"]["location"]["lat"]),
+        ]
     except Exception as e:
         print("Failed when getting geoencoding from address!")
         print(f"Status code is: {response.status_code}")

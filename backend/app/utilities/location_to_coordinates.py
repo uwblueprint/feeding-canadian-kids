@@ -6,7 +6,7 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 
 def getGeocodeFromAddress(organization_address):
-    if os.getenv("TESTING"):
+    if os.getenv("ENV") == "testing":
         print("MOCKING LATITUDE IN TESTING")
         return [-11.1, 11.1]
 

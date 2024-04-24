@@ -51,6 +51,9 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 import EditMealRequestForm from "./EditMealRequestForm";
 
+import Logout from "../components/auth/Logout";
+import RefreshCredentials from "../components/auth/RefreshCredentials";
+import ListView from "../components/common/ListView";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import MealDonorListView from "../components/mealrequest/MealDonorListView";
 import { CREATE_MEAL_REQUEST_PAGE, LOGIN_PAGE } from "../constants/Routes";
@@ -194,6 +197,7 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
             setCurrentlyEditingMealRequestId(undefined);
           }}
           mealRequestId={currentlyEditingMealRequestId}
+          isEditDonation 
         />
       ) : (
         ""

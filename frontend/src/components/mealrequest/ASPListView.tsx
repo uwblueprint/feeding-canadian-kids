@@ -338,6 +338,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
             reloadMealRequests();
           }}
           mealRequestId={currentlyEditingMealRequestId}
+          isEditDonation = {false}
         />
       ) : (
         ""

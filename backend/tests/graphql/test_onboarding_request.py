@@ -427,15 +427,9 @@ def test_approve_onboarding_request():
     assert last_email is not None
     assert last_email["subject"] == "Onboarding request approved. Set Password"
     assert last_email["to"] == "test@test.com"
-    # TODO: BEN Please change this to load from your new email management framework.
-    assert last_email["body"].startswith(
-        """
-            Hello,
-            <br><br>
-            We have received your onboarding request and it has been approved.
-            Please set your password using the following link.
-            <br><br>
-            """
+    assert (
+        "We have received your onboarding request and it has been approved"
+        in last_email["body"]
     )
     assert (
         last_email["from_"]

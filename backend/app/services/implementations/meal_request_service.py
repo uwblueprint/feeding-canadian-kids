@@ -1,4 +1,6 @@
 from typing import List
+from app.services.interfaces.email_service import IEmailService
+from app.services.implementations.email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
 from datetime import datetime
@@ -11,8 +13,9 @@ from ...resources.meal_request_dto import MealRequestDTO
 
 
 class MealRequestService(IMealRequestService):
-    def __init__(self, logger):
+    def __init__(self, logger, email_service: IEmailService):
         self.logger = logger
+        self.email_service = email_service
 
     def create_meal_request(
         self,
@@ -159,6 +162,13 @@ class MealRequestService(IMealRequestService):
                     raise Exception(
                         f'meal request "{meal_request_id}" is not open for commitment'
                     )
+                meal_requestor_id = meal_request.requestor.id
+                meal_requestor = User.objects(id=meal_requestor_id).first()
+
+                self.send_donor_commit_email(meal_request, donor.info.email)
+                self.send_requestor_commit_email(
+                    meal_request, meal_requestor.info.email
+                )
 
                 meal_request.donation_info = DonationInfo(
                     donor=donor,
@@ -312,7 +322,7 @@ class MealRequestService(IMealRequestService):
             requests = MealRequest.objects(
                 donation_info__donor=donor,
                 status__in=status_value_list,
-            ).order_by(f"{sort_prefix}date_created")
+            ).order_by(f"{sort_prefix}drop_off_datetime")
 
             # Filter results by optional parameters.
             # Since we want to filter these optionally (i.e. filter only if specified),
@@ -358,3 +368,56 @@ class MealRequestService(IMealRequestService):
         ]
 
         return meal_request_dtos
+
+    def send_donor_commit_email(self, meal_request, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call committed_to_meal_request but this
+                instance of AuthService does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            email_body = EmailService.read_email_template(
+                "email_templates/committed_to_meal_request.html"
+            ).format(
+                dropoff_location=meal_request.drop_off_location,
+                dropoff_time=meal_request.drop_off_datetime,
+                num_meals=meal_request.meal_info.portions,
+            )
+            self.email_service.send_email(
+                email, "Thank you for committing to a meal request!", email_body
+            )
+
+        except Exception as e:
+            self.logger.error(
+                f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}"
+            )
+            raise e
+
+    def send_requestor_commit_email(self, meal_request, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call meal_request_success but this
+                instance of AuthService does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            email_body = EmailService.read_email_template(
+                "email_templates/meal_request_success.html"
+            ).format(
+                dropoff_location=meal_request.drop_off_location,
+                dropoff_time=meal_request.drop_off_datetime,
+                num_meals=meal_request.meal_info.portions,
+            )
+            self.email_service.send_email(
+                email, "Your meal request has been fulfilled!", email_body
+            )
+        except Exception as e:
+            self.logger.error(
+                f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}"
+            )
+            raise e

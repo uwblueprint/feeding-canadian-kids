@@ -1,4 +1,10 @@
-import { InMemoryCache, gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import {
+  InMemoryCache,
+  gql,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import {
   AtSignIcon,
   CalendarIcon,
@@ -43,9 +49,8 @@ import {
 } from "react-icons/io5";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import Logout from "../components/auth/Logout";
-import RefreshCredentials from "../components/auth/RefreshCredentials";
-import ListView from "../components/common/ListView";
+import EditMealRequestForm from "./EditMealRequestForm";
+
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import MealDonorListView from "../components/mealrequest/MealDonorListView";
 import { CREATE_MEAL_REQUEST_PAGE, LOGIN_PAGE } from "../constants/Routes";
@@ -81,7 +86,7 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
       id
       requestor {
         info {
-          organizationName,
+          organizationName
           primaryContact {
             name
             email
@@ -135,12 +140,12 @@ type UpcomingEvent = {
   title: string;
   date: string;
   extendedProps: {
-      mealRequest: MealRequest | undefined;
+    mealRequest: MealRequest | undefined;
   };
   backgroundColor: string;
   borderColor: string;
   borderRadius: string;
-}
+};
 
 type UpcomingEvents = UpcomingEvent[];
 
@@ -159,14 +164,40 @@ function formatDate(inputDate: string): string {
   return date.toLocaleDateString("en-US", options);
 }
 
-export const UpcomingCard = ({ event }: { event: UpcomingEvent}) => {
+
+export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
   const { mealRequest } = event.extendedProps;
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [
+    currentlyEditingMealRequestId,
+    setCurrentlyEditingMealRequestId,
+  ] = useState<string | undefined>(undefined);
+
+
+  const handleEditDonation = (meal: MealRequest | undefined) => () => {
+    setIsEditModalOpen(true);
+    setCurrentlyEditingMealRequestId(meal?.id);
+  };
+
+
   return (
     <div
       style={{
         width: "55%",
       }}
     >
+       {currentlyEditingMealRequestId ? (
+        <EditMealRequestForm
+          open={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setCurrentlyEditingMealRequestId(undefined);
+          }}
+          mealRequestId={currentlyEditingMealRequestId}
+        />
+      ) : (
+        ""
+      )}
       <Card padding={3} variant="outline">
         <HStack dir="row">
           <VStack padding={10}>
@@ -192,7 +223,9 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent}) => {
               </Text>
             </HStack>
             {"\n"}
-            <ChakraButton>Edit My Donation</ChakraButton>
+            <ChakraButton onClick={handleEditDonation(mealRequest)}>
+              Edit My Donation
+            </ChakraButton>
           </VStack>
           <VStack alignItems="left" padding={6}>
             <HStack alignItems="top">
@@ -257,14 +290,17 @@ const UpcomingPage = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const currentTime = new Date();
-  const formattedTime = currentTime.toISOString().split('T')[0];
+  const formattedTime = currentTime.toISOString().split("T")[0];
 
   const [tabSelected, setTabSelected] = useState(0);
   const [filter, setFilter] = useState("DESCENDING");
   const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const [upcomingMealRequests, setUpcomingMealRequests] = useState<UpcomingEvents>([]);
+  const [
+    upcomingMealRequests,
+    setUpcomingMealRequests,
+  ] = useState<UpcomingEvents>([]);
   const [completedMealRequests, setCompletedMealRequests] = useState<{
     nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
   }>();
@@ -277,46 +313,44 @@ const UpcomingPage = (): React.ReactElement => {
       data: getUpcomingMealRequestsData,
       error: getUpcomingMealRequestsError,
       loading: getUpcomingMealRequestsLoading,
-    }
+    },
   ] = useLazyQuery<MealRequestsData, MealRequestsDonorVariables>(
     GET_MEAL_REQUESTS_BY_ID,
     {
       onCompleted: (results) => {
         setUpcomingMealRequests(
-          results?.getMealRequestsByDonorId.map(
-            (mealRequest: MealRequest) => {
-              const date = new Date(
-                mealRequest.dropOffDatetime.toString().split("T")[0],
-              );
-              const dateParts = date
-                .toLocaleString("en-US", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })
-                .split(",")[0]
-                .split("/");
-              const realDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
-              return {
-                id: mealRequest.id,
-                title: `${new Date(
-                  mealRequest.dropOffDatetime.toLocaleString(),
-                ).toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                })}`,
-                date: realDate,
-                extendedProps: { mealRequest },
-                backgroundColor: "#3BA948",
-                borderColor: "#3BA948",
-                borderRadius: "10%",
-              };
-            },
-          ) ?? []
+          results?.getMealRequestsByDonorId.map((mealRequest: MealRequest) => {
+            const date = new Date(
+              mealRequest.dropOffDatetime.toString().split("T")[0],
+            );
+            const dateParts = date
+              .toLocaleString("en-US", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })
+              .split(",")[0]
+              .split("/");
+            const realDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
+            return {
+              id: mealRequest.id,
+              title: `${new Date(
+                mealRequest.dropOffDatetime.toLocaleString(),
+              ).toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}`,
+              date: realDate,
+              extendedProps: { mealRequest },
+              backgroundColor: "#3BA948",
+              borderColor: "#3BA948",
+              borderRadius: "10%",
+            };
+          }) ?? [],
         );
-      }
-    }
+      },
+    },
   );
 
   const [
@@ -358,14 +392,14 @@ const UpcomingPage = (): React.ReactElement => {
 
   function reloadUpcomingMealRequests() {
     getUpcomingMealRequests({
-        variables: {
-          donorId: authenticatedUser!.id,
-          limit: 3,
-          offset,
-          sortByDateDirection:
-            filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
-          minDropOffDate: formattedTime
-        },
+      variables: {
+        donorId: authenticatedUser!.id,
+        limit: 3,
+        offset,
+        sortByDateDirection:
+          filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
+        minDropOffDate: formattedTime,
+      },
     });
     logPossibleGraphQLError(getUpcomingMealRequestsError);
   }
@@ -374,15 +408,15 @@ const UpcomingPage = (): React.ReactElement => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     getCompletedMealRequests({
-        variables: {
-          donorId: authenticatedUser!.id,
-          sortByDateDirection:
-            filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
-          limit: rowsPerPage,
-          offset: (currentPage - 1) * rowsPerPage,
-          status: [MealStatus.UPCOMING, MealStatus.FULFILLED],
-          maxDropOffDate: yesterday.toISOString().split('T')[0]
-        },
+      variables: {
+        donorId: authenticatedUser!.id,
+        sortByDateDirection:
+          filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
+        limit: rowsPerPage,
+        offset: (currentPage - 1) * rowsPerPage,
+        status: [MealStatus.UPCOMING, MealStatus.FULFILLED],
+        maxDropOffDate: yesterday.toISOString().split("T")[0],
+      },
     });
     logPossibleGraphQLError(getCompletedMealRequestsError);
   }
@@ -441,25 +475,29 @@ const UpcomingPage = (): React.ReactElement => {
         My {tabSelected === 0 ? "upcoming" : "completed"} meal donations
       </Text>
 
-      
-      {// Not entirely sure why this was here...
-      /* <Flex
+      {
+        // Not entirely sure why this was here...
+        /* <Flex
         justifyContent={["center", "flex-end"]}
         flexDirection={["column", "row"]}
         alignItems={["center", "flex-start"]}
       >
         <NavButton text="+ Create Request" path={CREATE_MEAL_REQUEST_PAGE} />
-      </Flex> */}
+      </Flex> */
+      }
 
-      <Tabs variant="unstyled" onChange={() => {
-        setOffset(0);
-        if (tabSelected === 0) {
-          setTabSelected(1);
-        }
-        else {
-          setTabSelected(0);
-        }
-        }} defaultIndex={tabSelected}>
+      <Tabs
+        variant="unstyled"
+        onChange={() => {
+          setOffset(0);
+          if (tabSelected === 0) {
+            setTabSelected(1);
+          } else {
+            setTabSelected(0);
+          }
+        }}
+        defaultIndex={tabSelected}
+      >
         <TabList>
           <Tab>
             <Text fontFamily="Inter" fontSize={["14px", "18px"]}>
@@ -499,7 +537,7 @@ const UpcomingPage = (): React.ReactElement => {
         />
         <TabPanels>
           <TabPanel>
-            {getUpcomingMealRequestsLoading && 
+            {getUpcomingMealRequestsLoading && (
               <Box
                 display="flex"
                 alignItems="center"
@@ -509,8 +547,9 @@ const UpcomingPage = (): React.ReactElement => {
               >
                 <LoadingSpinner />
               </Box>
-            }
-            {!getUpcomingMealRequestsLoading && <>
+            )}
+            {!getUpcomingMealRequestsLoading && (
+              <>
                 {isWebView && (
                   <Stack direction="column">
                     {upcomingMealRequests?.map((event) => (
@@ -536,7 +575,8 @@ const UpcomingPage = (): React.ReactElement => {
                     variant="ghost"
                     onClick={() => {
                       if (
-                        upcomingMealRequests && upcomingMealRequests.length >= offset
+                        upcomingMealRequests &&
+                        upcomingMealRequests.length >= offset
                       ) {
                         setOffset(offset + 3);
                       }
@@ -544,11 +584,11 @@ const UpcomingPage = (): React.ReactElement => {
                   />
                 </HStack>
               </>
-            }
+            )}
           </TabPanel>
           <TabPanel>
-            <MealDonorListView 
-              completedMealRequests={completedMealRequests} 
+            <MealDonorListView
+              completedMealRequests={completedMealRequests}
               completedMealRequestsLoading={getCompletedMealRequestsLoading}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}

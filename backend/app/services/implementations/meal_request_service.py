@@ -10,6 +10,7 @@ from ...models.user import User
 from ...models.user_info import UserInfoRole
 from ...graphql.types import SortDirection
 from ...resources.meal_request_dto import MealRequestDTO
+from datetime import datetime, timedelta
 
 
 class MealRequestService(IMealRequestService):
@@ -387,3 +388,21 @@ class MealRequestService(IMealRequestService):
                 f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}"
             )
             raise e
+        
+    def update_meal_request_statuses_to_fulfilled(self, time):
+        try:
+            six_hours_before = time - timedelta(hours=6)
+            print(six_hours_before)
+            meal_requests = MealRequest.objects(
+                status=MealStatus.UPCOMING.value,
+                drop_off_datetime__lte=six_hours_before,
+            ).all()
+            print(meal_requests)
+
+            for meal_request in meal_requests:
+                meal_request.status = MealStatus.FULFILLED.value
+                meal_request.save()
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error

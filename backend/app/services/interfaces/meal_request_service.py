@@ -152,3 +152,7 @@ class IMealRequestService(ABC):
         :type email: str
         :raises Exception: if unable to send email
         """
+
+    @abstractmethod
+    def update_meal_request_statuses_to_fulfilled(self):
+        pass

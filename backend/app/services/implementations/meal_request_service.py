@@ -307,7 +307,57 @@ class MealRequestService(IMealRequestService):
         except Exception as error:
             self.logger.error(str(error))
             raise error
+    
+    def get_meal_requests(
+        self,
+        requestor_id,
+        min_drop_off_date,
+        max_drop_off_date,
+        status: List[MealStatus],
+        offset,
+        limit,
+        sort_by_date_direction,
+    ):
+        status_value_list = list(map(lambda stat: stat.value, status))
+        try:
+            sort_prefix = "+"
+            if sort_by_date_direction == SortDirection.DESCENDING:
+                sort_prefix = "-"
 
+            requestor = User.objects(requestor_id=id).first()
+            requests = MealRequest.objects(
+                status__in=status_value_list,
+            ).order_by(f"{sort_prefix}drop_off_datetime")
+
+            # Filter results by optional parameters.
+            # Since we want to filter these optionally (i.e. filter only if specified),
+            # we cannot include them in the query above.
+            if min_drop_off_date is not None:
+                requests = requests.filter(
+                    drop_off_datetime__gte=min_drop_off_date,
+                )
+            if max_drop_off_date is not None:
+                requests = requests.filter(
+                    drop_off_datetime__lte=max_drop_off_date,
+                )
+            if limit is not None:
+                requests = requests[offset : offset + limit]
+            else:
+                requests = requests[offset:]
+
+            meal_request_dtos = []
+            for request in requests:
+                meal_request_dtos.append(
+                    self.convert_meal_request_to_dto(request, requestor)
+                )
+
+            return meal_request_dtos
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error
+        
+    
     def get_meal_request_by_id(self, id: str) -> MealRequestDTO:
         meal_request = MealRequest.objects(id=id).first()
         meal_request_dto = self.convert_meal_request_to_dto(

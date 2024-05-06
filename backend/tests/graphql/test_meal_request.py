@@ -2,6 +2,8 @@ from app.graphql import schema as graphql_schema
 from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
 
+from datetime import datetime
+
 """
 Tests for MealRequestchema and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
@@ -37,8 +39,8 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
         onsiteStaff: ["{asp_onsite_contact.id}", "{asp_onsite_contact2.id}"],
         requestorId: "{str(asp.id)}",
         requestDates: [
-            "2023-06-01",
-            "2023-06-02",
+            "2024-06-01",
+            "2024-06-02",
         ],
       )
       {{
@@ -77,11 +79,11 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
     )
     assert (
         result.data["createMealRequest"]["mealRequests"][0]["dropOffDatetime"]
-        == "2023-06-01T16:30:00+00:00"
+        == "2024-06-01T16:30:00+00:00"
     )
     assert (
         result.data["createMealRequest"]["mealRequests"][1]["dropOffDatetime"]
-        == "2023-06-02T16:30:00+00:00"
+        == "2024-06-02T16:30:00+00:00"
     )
 
     created_onsite_contacts = result.data["createMealRequest"]["mealRequests"][0][
@@ -155,8 +157,21 @@ def test_create_meal_request_fails_invalid_onsite_contact(
 def test_create_meal_request_fails_repeat_date(
     meal_request_setup, onsite_contact_setup
 ):
-    asp, donor, asp_onsite_contact, donor_onsite_contact = onsite_contact_setup
+    (
+        asp,
+        donor,
+        [asp_onsite_contact, asp_onsite_contact2],
+        donor_onsite_contact,
+    ) = onsite_contact_setup
     _, _, meal_request = meal_request_setup
+    print("-------------------------")
+    print(f"The meal request is {meal_request.drop_off_datetime}")
+
+    # drop_off_datetime is currently a string, so we need to convert it to a datetime object
+
+    existing_date = datetime.strptime(
+        meal_request.drop_off_datetime, "%Y-%m-%dT%H:%M:%S"
+    )
 
     counter_before = MealRequest.objects().count()
     mutation = f"""
@@ -173,7 +188,7 @@ def test_create_meal_request_fails_repeat_date(
         requestorId: "{str(asp.id)}",
         requestDates: [
             "2025-06-01",
-            "{meal_request.drop_off_datetime.strftime('%Y-%m-%d')}",
+            "{existing_date.strftime('%Y-%m-%d')}",
         ],
       )
       {{
@@ -194,7 +209,10 @@ def test_create_meal_request_fails_repeat_date(
   """
 
     result = graphql_schema.execute(mutation)
-    assert result.errors is not None
+    assert result.errors[0].message == "Unexpected error: Meal request already exists for this ASP on 2025-03-31"
+    # This exact error message is searched for in the front end,
+    # if it changes, the front end will need to be updated to 
+    # detect the new error message
     counter_after = MealRequest.objects().count()
     assert counter_before == counter_after
 
@@ -445,8 +463,8 @@ def test_create_meal_request_failure(meal_request_setup):
         ],
         requestorId: "{str(requestor.id)}",
         requestDates: [
-            "2023-06-01",
-            "2023-06-02",
+            "2024-06-01",
+            "2024-06-02",
         ],
       )
       {{
@@ -869,8 +887,8 @@ def test_get_meal_requests_by_ids(meal_request_setup):
         onsiteStaff: [],
         requestorId: "{str(asp.id)}",
         requestDates: [
-            "2023-06-01",
-            "2023-06-02",
+            "2025-06-01",
+            "2025-06-02",
         ],
       )
       {{

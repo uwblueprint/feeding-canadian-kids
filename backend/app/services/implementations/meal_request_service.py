@@ -74,11 +74,12 @@ class MealRequestService(IMealRequestService):
             for meal_request in meal_requests:
                 meal_request.save()
 
+            return list(map(lambda request: request.to_serializable_dict(), meal_requests))
+
         except Exception as error:
             self.logger.error(str(error))
             raise error
 
-        return list(map(meal_requests, lambda request: request.to_serializable_dict()))
 
     def update_meal_request(
         self,

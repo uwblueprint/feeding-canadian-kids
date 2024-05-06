@@ -10,6 +10,11 @@ class EmailService(IEmailService):
     EmailService implementation for handling email related functionality
     """
 
+    @staticmethod
+    def read_email_template(file_path: str):
+        with open(file_path, "r") as file:
+            return file.read()
+
     def __init__(self, logger, credentials, sender_email, display_name=None):
         """
         Create an instance of EmailService
@@ -24,6 +29,7 @@ class EmailService(IEmailService):
         :param display_name: the sender's display name, defaults to None
         :type display_name: str, optional
         """
+
         self.logger = logger
         creds = Credentials(None, **credentials)
         self.service = build("gmail", "v1", credentials=creds)

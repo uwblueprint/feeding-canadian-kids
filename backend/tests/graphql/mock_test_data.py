@@ -176,6 +176,21 @@ MOCK_USER3_SNAKE = {
     "auth_id": "3",
     "info": MOCK_INFO3_SNAKE,
 }
+MOCK_USER1_CAMEL = {
+    "auth_id": "1",
+    "info": MOCK_INFO1_CAMEL,
+}
+
+MOCK_USER2_CAMEL = {
+    "auth_id": "2",
+    "info": MOCK_INFO2_CAMEL,
+}
+
+MOCK_USER3_CAMEL = {
+    "auth_id": "3",
+    "info": MOCK_INFO3_CAMEL,
+}
+
 
 MOCK_MEALREQUEST1_SNAKE = {
     "status": "Open",

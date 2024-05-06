@@ -71,7 +71,20 @@ const removeTypenameLink = removeTypenameFromVariables();
 
 const apolloClient = new ApolloClient({
   link: removeTypenameLink.concat(authLink).concat(link),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      MealRequestResponse: {
+        fields: {
+          donationInfo: {
+            merge(existing, incoming) {
+              // Custom merge logic
+              return incoming;
+            }
+          }
+        }
+      }
+    }
+  }),
 });
 
 const root = document.getElementById("root");

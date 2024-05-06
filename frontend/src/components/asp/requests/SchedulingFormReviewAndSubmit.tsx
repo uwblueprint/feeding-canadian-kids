@@ -133,8 +133,24 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
       }
     } catch (e: unknown) {
       logPossibleGraphQLError(e);
+      let errorMessage;
+      if (
+        (e as Error).message.includes(
+          "Meal request already exists for this ASP",
+        )
+      ) {
+        // The last word is the date
+        const date = (e as Error).message.split(" ").pop();
+        // Construct a date object from the string
+        const dateObj = new Date(date!);
+
+        errorMessage = `You have already created a meal request on ${dateObj.toDateString()}. Please choose another date, or edit your existing meal request.`;
+      } else {
+        errorMessage = "Failed to create meal request. Please try again.";
+      }
+
       toast({
-        title: "Failed to create meal request. Please try again.",
+        title: errorMessage,
         status: "error",
         isClosable: true,
       });

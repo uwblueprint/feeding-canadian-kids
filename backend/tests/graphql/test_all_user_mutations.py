@@ -69,10 +69,13 @@ def test_update_user_by_id(user_setup, mocker):
         }}"""
     )
 
+    assert update_to_user_4_info.errors is None
+
     user_result4 = update_to_user_4_info.data["updateUserByID"]["user"]
     assert user_result4["id"] == str(user_1.id)
     MOCK_INFO4_CAMEL = deepcopy(MOCK_INFO3_CAMEL)
     MOCK_INFO4_CAMEL["email"] = "test4@organization.com"
+    MOCK_INFO4_CAMEL["active"] = False
     assert user_result4["info"] == MOCK_INFO4_CAMEL
 
     update_to_user_1_info = graphql_schema.execute(

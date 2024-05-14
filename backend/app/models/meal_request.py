@@ -3,6 +3,7 @@ from datetime import datetime
 from enum import Enum
 
 from app.models.onsite_contact import OnsiteContact
+from backend.app.resources.meal_request_dto import MealRequestDTO
 
 from .user import User
 
@@ -90,5 +91,9 @@ class MealRequest(mg.Document):
             contact["id"] = id
         meal_request_dict["onsite_contacts"] = contacts
         return meal_request_dict
+
+    def to_dto(self):
+        return MealRequestDTO(**self.to_serializable_dict())
+
 
     meta = {"collection": "meal_requests"}

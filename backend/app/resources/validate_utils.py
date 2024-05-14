@@ -34,6 +34,12 @@ def validate_role_info(role, role_info, role_info_str, error_list):
     if role == UserInfoRole.ASP.value:
         for field in asp_info_fields:
             role_info = role_info["asp_info"]
+            if not role_info:
+                error_list.append(
+                    f'The {role_info_str} supplied does not have asp_info even though user is an ASP!.'
+                )
+                return
+                
             if field not in role_info:
                 error_list.append(
                     f'The {role_info_str} supplied does not have field "{field}".'

@@ -1,6 +1,8 @@
 import datetime
 
-from ..models.meal_request import MEAL_STATUSES_STRINGS
+
+# import app.models.meal_request 
+
 from .validate_utils import (
     validate_contact,
     validate_donation_info,
@@ -42,6 +44,7 @@ class MealRequestDTO:
             raise Exception(error_message)
 
     def validate(self):
+        from app.models.meal_request import MEAL_STATUSES_STRINGS
         error_list = []
 
         if type(self.id) is not str:

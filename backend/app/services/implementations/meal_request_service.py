@@ -32,7 +32,6 @@ class MealRequestService(IMealRequestService):
 
             meal_requests = []
             for request_date in request_dates:
-                # print("creaing!")
                 new_meal_request = MealRequest(
                     requestor=requestor,
                     meal_info=meal_info,
@@ -42,6 +41,7 @@ class MealRequestService(IMealRequestService):
                     onsite_contacts=onsite_contacts,
                 )
                 new_meal_request.validate_onsite_contacts()
+
                 new_meal_request.save()
                 meal_requests.append(new_meal_request.to_serializable_dict())
         except Exception as error:
@@ -89,9 +89,13 @@ class MealRequestService(IMealRequestService):
         requestor = original_meal_request.requestor
 
         # Does validation,
-        meal_request_dto = self.convert_meal_request_to_dto(
-            original_meal_request, requestor
-        )
+        # meal_request_dto = self.convert_meal_request_to_dto(
+        #     original_meal_request, requestor
+        # )
+        meal_request_dto = original_meal_request.to_dto() 
+        # (
+        #     original_meal_request, requestor
+        # )
         original_meal_request.validate_onsite_contacts()
 
         original_meal_request.save()
@@ -140,9 +144,7 @@ class MealRequestService(IMealRequestService):
                 meal_request.status = MealStatus.UPCOMING.value
 
                 meal_request_dtos.append(
-                    self.convert_meal_request_to_dto(
-                        meal_request, meal_request.requestor
-                    )
+                    meal_request.to_dto()
                 )
 
                 meal_request.save()
@@ -166,9 +168,7 @@ class MealRequestService(IMealRequestService):
 
             meal_request.donation_info = None
 
-            meal_request_dto = self.convert_meal_request_to_dto(
-                meal_request, meal_request.requestor
-            )
+            meal_request_dto = meal_request.to_dto() # does validation
 
             meal_request.save()
 
@@ -178,20 +178,22 @@ class MealRequestService(IMealRequestService):
             self.logger.error(str(error))
             raise error
 
-    def convert_meal_request_to_dto(
-        self, request: MealRequest, requestor: User
-    ) -> MealRequestDTO:
-        request_dict = request.to_serializable_dict()
-        request_dict["requestor"] = requestor.to_serializable_dict()
+    def delete_meal_request(self, meal_request_id: str) -> MealRequestDTO:
+        try:
+            meal_request: MealRequest = MealRequest.objects(id=meal_request_id).first()
+            if not meal_request:
+                raise Exception(f'Meal request "{meal_request_id}" not found')
 
-        if "donation_info" in request_dict:
-            donor_id = request_dict["donation_info"]["donor"]
-            donor = User.objects(id=donor_id).first()
-            if not donor:
-                raise Exception(f'donor "{donor_id}" not found')
-            request_dict["donation_info"]["donor"] = donor.to_serializable_dict()
+            meal_request.delete()
 
-        return MealRequestDTO(**request_dict)
+            meal_request_dto = meal_request.to_dto()
+
+            return meal_request_dto
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error
+
 
     def get_meal_requests_by_requestor_id(
         self,
@@ -234,7 +236,7 @@ class MealRequestService(IMealRequestService):
             meal_request_dtos = []
             for request in requests:
                 meal_request_dtos.append(
-                    self.convert_meal_request_to_dto(request, requestor)
+                    request.to_dto()
                 )
 
             return meal_request_dtos
@@ -284,7 +286,7 @@ class MealRequestService(IMealRequestService):
             meal_request_dtos = []
             for request in requests:
                 meal_request_dtos.append(
-                    self.convert_meal_request_to_dto(request, donor)
+                    request.to_dto()
                 )
 
             return meal_request_dtos
@@ -295,16 +297,13 @@ class MealRequestService(IMealRequestService):
 
     def get_meal_request_by_id(self, id: str) -> MealRequestDTO:
         meal_request = MealRequest.objects(id=id).first()
-        meal_request_dto = self.convert_meal_request_to_dto(
-            meal_request, meal_request.requestor
-        )
 
-        return meal_request_dto
+        return meal_request.to_dto()
 
     def get_meal_requests_by_ids(self, ids: str) -> List[MealRequestDTO]:
         meal_requests = MealRequest.objects(id__in=ids).all()
         meal_request_dtos = [
-            self.convert_meal_request_to_dto(meal_request, meal_request.requestor)
+            meal_request.to_dto()
             for meal_request in meal_requests
         ]
 

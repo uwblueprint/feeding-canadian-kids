@@ -71,9 +71,10 @@ class OnsiteContactService(IOnsiteContactService):
                 email=email,
                 phone=phone,
             )
-            dto = new_contact.to_dto() # does validation
 
             new_contact.save()
+            # does validation
+            dto = new_contact.to_dto() 
 
             return dto
 

@@ -261,7 +261,7 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup, onsite_c
 
         result = graphql_schema.execute(mutation)
         assert result.errors is not None
-        assert result.errors[0] == "hello"
+        assert result.errors[0].message == f'Unexpected error: user "{donor.id}" is not a donor'
 
 
 # A donor can only commit to a meal request if the meal request's

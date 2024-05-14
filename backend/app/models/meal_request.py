@@ -3,7 +3,7 @@ from datetime import datetime
 from enum import Enum
 
 from app.models.onsite_contact import OnsiteContact
-from backend.app.resources.meal_request_dto import MealRequestDTO
+from app.resources.meal_request_dto import MealRequestDTO
 
 from .user import User
 
@@ -93,7 +93,26 @@ class MealRequest(mg.Document):
         return meal_request_dict
 
     def to_dto(self):
-        return MealRequestDTO(**self.to_serializable_dict())
+        dict = self.to_serializable_dict()
+        requestor = User.objects(id=dict["requestor"]).first()
+
+        if not requestor:
+            raise Exception(f'requestor "{self.requestor.id}" not found')
+
+        requestor_dict = requestor.to_serializable_dict()
+        dict["requestor"] = requestor_dict
+
+        if "donation_info" in dict:
+            donor_id = dict["donation_info"]["donor"]
+            donor = User.objects(id=donor_id).first()
+            if not donor:
+                print("#### ABIUT TO FAIL NOT FOUND DONOR")
+                raise Exception(f'donor "{donor_id}" not found')
+            dict["donation_info"]["donor"] = donor.to_serializable_dict()
+
+        print("INSIDE TO DTO #####")
+        print("AFTER DICT: ", dict)
+        return MealRequestDTO(**dict)
 
 
     meta = {"collection": "meal_requests"}

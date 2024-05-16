@@ -60,4 +60,5 @@ jobs:
         env:
           FIREBASE_SVC_ACCOUNT_PRIVATE_KEY: ${{ secrets.FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_STAGING }}
           FIREBASE_STORAGE_DEFAULT_BUCKET: ${{ secrets.FIREBASE_STORAGE_DEFAULT_BUCKET_STAGING }}
+          MAILER_USER: ${{ secrets.DEV_MAILER_USER }}
         run: python -m pytest

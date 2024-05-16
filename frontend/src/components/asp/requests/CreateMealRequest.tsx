@@ -7,13 +7,13 @@ import SchedulingFormCalendar from "./SchedulingFormCalendar";
 import SchedulingFormMealInfo from "./SchedulingFormMealInfo";
 import SchedulingFormReviewAndSubmit from "./SchedulingFormReviewAndSubmit";
 import SchedulingFormWeekly from "./SchedulingFormWeekly";
-import TitleSection from "./TitleSection";
 
 import { LOGIN_PAGE } from "../../../constants/Routes";
 import AuthContext from "../../../contexts/AuthContext";
 import { Contact, UserInfo } from "../../../types/UserTypes";
 import useGetOnsiteContacts from "../../../utils/useGetOnsiteContacts";
 import ThreeStepForm from "../../common/ThreeStepForm";
+import TitleSection from "../../common/ThreeStepFormTitleSection";
 
 const CreateMealRequest = (): React.ReactElement => {
   // Part 1: Scheduling
@@ -31,7 +31,7 @@ const CreateMealRequest = (): React.ReactElement => {
   const [deliveryInstructions, setDeliveryInstructions] = useState<string>("");
 
   // This is the selected onsite staff
-  const [onsiteStaff, setOnsiteStaff] = useState<Contact[]>([
+  const [onsiteContact, setOnsiteContact] = useState<Contact[]>([
     {
       name: "",
       email: "",
@@ -94,7 +94,11 @@ const CreateMealRequest = (): React.ReactElement => {
   if (loading) {
     return (
       <div>
-        <TitleSection />
+        <TitleSection
+          title="Create a meal request"
+          description="Tell us a little bit about your requirements and we'll connect
+          you with a meal donor. This program aims to support kids age 6 to 12."
+        />
         <Center>
           <Spinner />
         </Center>
@@ -103,7 +107,12 @@ const CreateMealRequest = (): React.ReactElement => {
   }
   return (
     <div>
-      <TitleSection />
+      <TitleSection
+        title="Create Meal Request"
+        description="
+          Tell us a little bit about your requirements and we'll connect
+          you with a meal donor. This program aims to support kids age 6 to 12."
+      />
 
       <ThreeStepForm
         header1="Scheduling"
@@ -145,8 +154,8 @@ const CreateMealRequest = (): React.ReactElement => {
             setDietaryRestrictions={setDietaryRestrictions}
             deliveryInstructions={deliveryInstructions}
             setDeliveryInstructions={setDeliveryInstructions}
-            onsiteStaff={onsiteStaff}
-            setOnsiteStaff={setOnsiteStaff}
+            onsiteContact={onsiteContact}
+            setOnsiteContact={setOnsiteContact}
             availableStaff={availableOnsiteContacts}
             handleBack={() => {}} // Will be assigned by three step form
             handleNext={() => {}} // Will be assigned by three step form
@@ -159,7 +168,7 @@ const CreateMealRequest = (): React.ReactElement => {
             numMeals={numMeals}
             dietaryRestrictions={dietaryRestrictions}
             deliveryInstructions={deliveryInstructions}
-            onsiteStaff={onsiteStaff}
+            onsiteContact={onsiteContact}
             address={address}
             userId={userId}
             handleBack={() => {}} // Will be assigned by three step form

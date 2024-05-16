@@ -27,7 +27,7 @@ import { GraphQLError } from "graphql";
 import React, { useContext, useEffect, useState } from "react";
 
 import LoadingSpinner from "../components/common/LoadingSpinner";
-import OnsiteStaffSection from "../components/common/OnsiteStaffSection";
+import OnsiteContactSection from "../components/common/OnsiteContactSection";
 import AuthContext from "../contexts/AuthContext";
 import { MealRequestsData } from "../types/MealRequestTypes";
 import { Contact, OnsiteContact } from "../types/UserTypes";
@@ -155,7 +155,7 @@ const EditMealRequestForm = ({
   const [loading, setLoading] = useState(true);
 
   const toast = useToast();
-  const [onsiteStaff, setOnsiteStaff] = useState<OnsiteContact[]>([]);
+  const [onsiteContact, setOnsiteContact] = useState<OnsiteContact[]>([]);
   // This is the list of available onsite staff
   const [availableOnsiteContacts, setAvailableOnsiteContacts] = useState<
     Array<Contact>
@@ -180,7 +180,9 @@ const EditMealRequestForm = ({
         setDeliveryInstructions(mealRequest.deliveryInstructions);
 
         // Parse/stringify is to make a deep copy of the onsite staff
-        setOnsiteStaff(JSON.parse(JSON.stringify(mealRequest.onsiteContacts)));
+        setOnsiteContact(
+          JSON.parse(JSON.stringify(mealRequest.onsiteContacts)),
+        );
         setLoading(false);
       } catch (error) {
         logPossibleGraphQLError(error as ApolloError);
@@ -201,7 +203,7 @@ const EditMealRequestForm = ({
           updatedDeliveryInstructions: deliveryInstructions,
           updatedMealInfoPortions: numberOfMeals,
           updatedMealInfoDietaryRestrictions: dietaryRestrictions,
-          updatedOnsiteContacts: onsiteStaff.map((contact) => contact.id),
+          updatedOnsiteContacts: onsiteContact.map((contact) => contact.id),
         },
       });
       const data = response.data;
@@ -468,9 +470,9 @@ const EditMealRequestForm = ({
                   <br />
                 </FormControl>
                 {isWebView && <Divider />}
-                <OnsiteStaffSection
-                  onsiteInfo={onsiteStaff}
-                  setOnsiteInfo={setOnsiteStaff}
+                <OnsiteContactSection
+                  onsiteInfo={onsiteContact}
+                  setOnsiteInfo={setOnsiteContact}
                   attemptedSubmit={false /* todo change */}
                   availableStaff={availableOnsiteContacts}
                   dropdown

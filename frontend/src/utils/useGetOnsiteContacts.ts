@@ -20,7 +20,7 @@ const GET_ONSITE_CONTACTS = gql`
 
 const useGetOnsiteContacts = (
   toast: (options: UseToastOptions | undefined) => void,
-  setOnsiteContacts: React.Dispatch<React.SetStateAction<OnsiteContact[]>>,
+  setOnsiteContacts: (contacts: OnsiteContact[]) => void,
   setLoading?: (status: boolean) => void,
 ) => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -35,10 +35,6 @@ const useGetOnsiteContacts = (
           JSON.parse(JSON.stringify(data.getOnsiteContactForUserById)),
         );
       }
-      //   setServerOnsiteContacts(
-      //     JSON.parse(JSON.stringify(data.getOnsiteContactForUserById)),
-      //   );
-      // }
       if (setLoading) {
         setLoading(false);
       }
@@ -52,6 +48,9 @@ const useGetOnsiteContacts = (
           isClosable: true,
         });
       }
+    },
+    defaultOptions: {
+      fetchPolicy: "network-only",
     },
   });
 };

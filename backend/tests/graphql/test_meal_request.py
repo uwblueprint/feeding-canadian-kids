@@ -1,6 +1,7 @@
 from app.graphql import schema as graphql_schema
 from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
+from app.services.implementations.mock_email_service import MockEmailService
 
 """
 Tests for MealRequestchema and query/mutation logic
@@ -227,6 +228,49 @@ def test_commit_to_meal_request(meal_request_setup):
     assert meal_request_in_db["donation_info"]["donor"] == donor.id
     assert meal_request_in_db["donation_info"]["meal_description"] == "Pizza"
     assert meal_request_in_db["donation_info"]["additional_info"] == "No nuts"
+
+    email_service = MockEmailService.instance
+    assert email_service is not None
+    all_emails_sent = email_service.get_all_emails_sent()
+    donor_email = all_emails_sent[-2]
+    requestor_email = all_emails_sent[-1]
+
+    assert donor_email is not None
+    assert requestor_email is not None
+
+    assert donor_email["subject"] == "Thank you for committing to a meal request!"
+    assert donor_email["to"] == donor.info.email
+    assert "Thank you for committing to a meal request!" in donor_email["body"]
+    assert (
+        f"Number of Meals: {str(meal_request.meal_info.portions)}"
+        in donor_email["body"]
+    )
+    assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
+    assert (
+        f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}"
+        in donor_email["body"]
+    )
+
+    assert requestor_email["subject"] == "Your meal request has been fulfilled!"
+    assert requestor_email["to"] == meal_request.requestor.info.email
+    assert "Your meal request has been fulfilled!" in requestor_email["body"]
+    assert (
+        f"Number of Meals: {str(meal_request.meal_info.portions)}"
+        in donor_email["body"]
+    )
+    assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
+    assert (
+        f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}"
+        in donor_email["body"]
+    )
+    assert (
+        donor_email["from_"]
+        == "Feeding Canadian Kids <feedingcanadiankids@uwblueprint.org>"
+    )
+    assert (
+        requestor_email["from_"]
+        == "Feeding Canadian Kids <feedingcanadiankids@uwblueprint.org>"
+    )
 
 
 # Only user's with role "Donor" should be able to commit
@@ -470,7 +514,7 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
 
 def test_cancel_donation_as_admin(meal_request_setup, user_setup):
     _, _, meal_request = meal_request_setup
-    _, _, admin = user_setup
+    requestor, donor, admin = user_setup
 
     test_commit_to_meal_request(meal_request_setup)
 
@@ -607,6 +651,139 @@ def test_cancel_donation_as_non_admin(meal_request_setup):
     assert executed.errors is not None
     assert executed.errors[0].message == "Only admins can cancel donations"
     assert executed.data["cancelDonation"] is None
+
+
+def test_delete_meal_request_as_admin(meal_request_setup, user_setup):
+    _, _, meal_request = meal_request_setup
+    _, _, admin = user_setup
+    mutation = f"""
+    mutation testDeleteMealRequest {{
+      deleteMealRequest(
+        mealRequestId: "{str(meal_request.id)}",
+        requestorId: "{str(admin.id)}"
+      )
+      {{
+        mealRequest{{
+          id
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo{{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteContacts{{
+            name
+            email
+            phone
+          }}
+          donationInfo{{
+            donor{{
+              id
+              info{{
+                email
+              }}
+            }}
+          }}
+          deliveryInstructions
+        }}
+      }}
+    }}
+    """
+    executed = graphql_schema.execute(mutation)
+    assert executed.errors is None
+    result = executed.data["deleteMealRequest"]["mealRequest"]
+    assert result["id"] == str(meal_request.id)
+    assert MealRequest.objects(id=meal_request.id).first() is None
+
+
+def test_delete_meal_request_as_asp(meal_request_setup):
+    asp, non_admin, meal_request = meal_request_setup
+    mutation = f"""
+    mutation testDeleteMealRequest {{
+      deleteMealRequest(
+        mealRequestId: "{str(meal_request.id)}",
+        requestorId: "{str(asp.id)}"
+      )
+      {{
+        mealRequest{{
+          id
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo{{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteContacts{{
+            name
+            email
+            phone
+          }}
+          donationInfo{{
+            donor{{
+              id
+              info{{
+                email
+              }}
+            }}
+          }}
+          deliveryInstructions
+        }}
+      }}
+    }}
+    """
+    executed = graphql_schema.execute(mutation)
+    assert executed.errors is None
+    result = executed.data["deleteMealRequest"]["mealRequest"]
+    assert result["id"] == str(meal_request.id)
+    assert MealRequest.objects(id=meal_request.id).first() is None
+
+
+def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
+    asp, meal_donor, meal_request = meal_request_setup
+    test_commit_to_meal_request(meal_request_setup)
+
+    mutation = f"""
+    mutation testDeleteMealRequest {{
+      deleteMealRequest(
+        mealRequestId: "{str(meal_request.id)}",
+        requestorId: "{str(asp.id)}"
+      )
+      {{
+        mealRequest{{
+          id
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo{{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteContacts{{
+            name
+            email
+            phone
+          }}
+          donationInfo{{
+            donor{{
+              id
+              info{{
+                email
+              }}
+            }}
+          }}
+          deliveryInstructions
+        }}
+      }}
+    }}
+    """
+    executed = graphql_schema.execute(mutation)
+    assert (
+        executed.errors[0].message
+        == "Only admins or requestors who have not found a donor can delete meal requests."
+    )
+    assert MealRequest.objects(id=meal_request.id).first() is not None
 
 
 def test_get_meal_request_by_donor_id(meal_request_setup, onsite_contact_setup):

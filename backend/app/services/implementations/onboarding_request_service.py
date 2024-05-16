@@ -67,7 +67,7 @@ class OnboardingRequestService(IOnboardingRequestService):
             )
             raise e
 
-    def get_all_onboarding_requests(self, number=5, offset=0, role="", status=""):
+    def get_all_onboarding_requests(self, number=5, offset=0, role="", status=[]):
         onboarding_request_dtos = []
 
         try:
@@ -75,7 +75,7 @@ class OnboardingRequestService(IOnboardingRequestService):
             if role:
                 filteredRequests = filteredRequests.filter(info__role=role)
             if status:
-                filteredRequests = filteredRequests.filter(status=status)
+                filteredRequests = filteredRequests.filter(status__in=status)
             for request in filteredRequests.skip(offset).limit(number):
                 request_dict = request.to_serializable_dict()
                 onboarding_request_dtos.append(OnboardingRequestDTO(**request_dict))

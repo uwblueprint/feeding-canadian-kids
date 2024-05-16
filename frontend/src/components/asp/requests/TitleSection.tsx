@@ -1,7 +1,15 @@
 import { Text, VStack } from "@chakra-ui/react";
 import React from "react";
 
-const TitleSection = (): React.ReactElement => (
+interface TitleSectionProps {
+  title: string;
+  description: string;
+}
+
+const TitleSection = ({
+  title,
+  description,
+}: TitleSectionProps): React.ReactElement => (
     <div>
       <VStack
         spacing={4}
@@ -18,7 +26,7 @@ const TitleSection = (): React.ReactElement => (
           color="primary.blue"
           as="b"
         >
-          Create a meal request
+          {title}
         </Text>
 
         <Text
@@ -27,8 +35,7 @@ const TitleSection = (): React.ReactElement => (
           textAlign="center"
           maxWidth="100%"
         >
-          Tell us a little bit about your requirements and we&apos;ll connect
-          you with a meal donor. This program aims to support kids age 6 to 12.
+          {description}
         </Text>
       </VStack>
     </div>

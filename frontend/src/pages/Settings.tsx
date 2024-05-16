@@ -16,6 +16,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  HStack,
   Input,
   Spinner,
   Text,
@@ -27,7 +28,8 @@ import { GraphQLError } from "graphql";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import OnsiteStaffSection from "../components/common/OnsiteStaffSection";
+import Logout from "../components/auth/Logout";
+import OnsiteContactSection from "../components/common/OnsiteContactSection";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
@@ -40,6 +42,7 @@ import {
   trimWhiteSpace,
 } from "../utils/ValidationUtils";
 import useGetOnsiteContacts from "../utils/useGetOnsiteContacts";
+import useIsMealDonor from "../utils/useIsMealDonor";
 import useIsWebView from "../utils/useIsWebView";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
@@ -160,13 +163,13 @@ const DELETE_ONSITE_CONTACT = gql`
 `;
 
 const Settings = (): React.ReactElement => {
-  // Assumption: user has the roleInfo: ASPInfo
-
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const [userInfo, setUserInfo] = useState<UserInfo>(
     authenticatedUser?.info || null,
   );
+
+  const isMealDonor = useIsMealDonor();
 
   const [primaryContact, setPrimaryContact] = useState<Contact>(
     userInfo?.primaryContact || {
@@ -210,9 +213,17 @@ const Settings = (): React.ReactElement => {
 
   useGetOnsiteContacts(
     toast,
-    (contacts) => {
-      setOnsiteContacts(contacts);
-      setServerOnsiteContacts(contacts);
+    (contacts: OnsiteContact[]) => {
+      console.log("contacts are ", contacts);
+      const set1 = contacts.map((contact: OnsiteContact) =>
+        JSON.parse(JSON.stringify(contact)),
+      );
+      const set2 = contacts.map((contact: OnsiteContact) =>
+        JSON.parse(JSON.stringify(contact)),
+      );
+      // const set2
+      setOnsiteContacts(set1);
+      setServerOnsiteContacts(set2);
     },
     setIsLoading,
   );
@@ -250,10 +261,12 @@ const Settings = (): React.ReactElement => {
       }
     }
 
+    // console.log("server onsite contacts are ", serverOnsiteContacts);
     const defaultContactValues: Array<Contact> = [
       userInfo.primaryContact,
       ...(serverOnsiteContacts ?? []),
     ];
+    // console.log("current onsite contacts", onsiteContacts);
     const currentContactValues: Array<Contact> = [
       primaryContact,
       ...onsiteContacts,
@@ -263,14 +276,18 @@ const Settings = (): React.ReactElement => {
       return true;
 
     for (let i = 0; i < defaultContactValues.length; i += 1) {
+      // console.log("default ", defaultContactValues[i]);
+      // console.log("current ", currentContactValues[i]);
       if (
         defaultContactValues[i].name !== currentContactValues[i].name ||
         defaultContactValues[i].email !== currentContactValues[i].email ||
         defaultContactValues[i].phone !== currentContactValues[i].phone
       ) {
+        console.log("one contact changed!");
         return true;
       }
     }
+    console.log("settings have not changed!");
 
     return false;
   };
@@ -297,20 +314,23 @@ const Settings = (): React.ReactElement => {
           <Text variant="desktop-body-bold">Email Address</Text>
           <Text variant="desktop-body">{userInfo?.email}</Text>
         </Flex>
-        <Button
-          width="190px"
-          height="45px"
-          variant="desktop-button-bold"
-          color="primary.green"
-          bgColor="background.white"
-          border="1px solid"
-          borderColor="primary.green"
-          borderRadius="6px"
-          _hover={{ color: "text.white", bgColor: "primary.green" }}
-          onClick={onClickResetPassword}
-        >
-          Reset Password
-        </Button>
+        <HStack>
+          <Logout />
+          <Button
+            width="190px"
+            height="45px"
+            variant="desktop-button-bold"
+            color="primary.green"
+            bgColor="background.white"
+            border="1px solid"
+            borderColor="primary.green"
+            borderRadius="6px"
+            _hover={{ color: "text.white", bgColor: "primary.green" }}
+            onClick={onClickResetPassword}
+          >
+            Reset Password
+          </Button>
+        </HStack>
       </Flex>
     </Flex>
   );
@@ -480,20 +500,22 @@ const Settings = (): React.ReactElement => {
             />
           </FormControl>
         </Flex>
-        <Flex flexDir="column" w="200px">
-          <FormControl
-            isRequired
-            isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
-          >
-            <FormLabel variant="form-label-bold">Number of kids</FormLabel>
-            <Input
-              type="number"
-              value={numKids}
-              placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
-              onChange={(e) => setNumKids(e.target.value)}
-            />
-          </FormControl>
-        </Flex>
+        {isMealDonor ? null : (
+          <Flex flexDir="column" w="200px">
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
+            >
+              <FormLabel variant="form-label-bold">Number of kids</FormLabel>
+              <Input
+                type="number"
+                value={numKids}
+                placeholder={PLACEHOLDER_WEB_EXAMPLE_NUMBER_OF_KIDS}
+                onChange={(e) => setNumKids(e.target.value)}
+              />
+            </FormControl>
+          </Flex>
+        )}
         <Flex flexDir="column" w="350px">
           <FormControl
             isRequired
@@ -547,18 +569,20 @@ const Settings = (): React.ReactElement => {
               onChange={(e) => setOrganizationName(e.target.value)}
             />
           </FormControl>
-          <FormControl
-            isRequired
-            isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
-          >
-            <Input
-              variant="mobile-outline"
-              type="number"
-              value={numKids}
-              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_NUMBER_OF_KIDS}
-              onChange={(e) => setNumKids(e.target.value)}
-            />
-          </FormControl>
+          {isMealDonor ? null : (
+            <FormControl
+              isRequired
+              isInvalid={attemptedSubmit && !isNonNegativeInt(numKids)}
+            >
+              <Input
+                variant="mobile-outline"
+                type="number"
+                value={numKids}
+                placeholder={PLACEHOLDER_MOBILE_EXAMPLE_NUMBER_OF_KIDS}
+                onChange={(e) => setNumKids(e.target.value)}
+              />
+            </FormControl>
+          )}
           <FormControl
             isRequired
             isInvalid={attemptedSubmit && organizationAddress === ""}
@@ -593,8 +617,11 @@ const Settings = (): React.ReactElement => {
       organizationAddress,
       organizationDesc,
     ];
+    console.log("1");
     const phoneNumsToValidate = [primaryContact.phone];
+    console.log("2");
     const emailsToValidate = [primaryContact.email];
+    console.log("3");
 
     for (let i = 0; i < onsiteContacts.length; i += 1) {
       stringsToValidate.push(onsiteContacts[i].name);
@@ -605,16 +632,19 @@ const Settings = (): React.ReactElement => {
     for (let i = 0; i < stringsToValidate.length; i += 1) {
       if (stringsToValidate[i] === "") return false;
     }
+    console.log("4");
 
     for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
       if (phoneNumsToValidate[i] === "") return false;
     }
+    console.log("5");
 
     for (let i = 0; i < emailsToValidate.length; i += 1) {
       if (!isValidEmail(emailsToValidate[i])) return false;
     }
+    console.log("6");
 
-    if (!isNonNegativeInt(numKids)) return false;
+    if (userInfo?.role === "ASP" && !isNonNegativeInt(numKids)) return false;
 
     return true;
   };
@@ -625,7 +655,9 @@ const Settings = (): React.ReactElement => {
     requestOnsiteContacts: Array<OnsiteContact>,
   ) => {
     setIsLoading(true);
+    console.log("Got handle save settings!");
     try {
+      console.log("request user info is", requestUserInfo);
       const response = await updateUserByID({
         variables: {
           requestorId,
@@ -652,7 +684,9 @@ const Settings = (): React.ReactElement => {
         requestOnsiteContacts.map(async (contact: OnsiteContact) => {
           // If the contact already exists, we have an id for it
           const isNewContact = contact.id === undefined || contact.id === "";
+          console.log("is new contact: ", isNewContact);
           if (isNewContact) {
+            console.log("creating new onsite contact!");
             await createOnsiteContact({
               variables: {
                 requestorId,
@@ -663,6 +697,7 @@ const Settings = (): React.ReactElement => {
               },
             });
           } else {
+            console.log("updating existing onsite contact!");
             await updateOnsiteContact({
               variables: {
                 id: contact.id,
@@ -702,7 +737,9 @@ const Settings = (): React.ReactElement => {
         status: "success",
         isClosable: true,
       });
-      setServerOnsiteContacts(requestOnsiteContacts);
+      setServerOnsiteContacts(
+        requestOnsiteContacts.map((obj) => JSON.parse(JSON.stringify(obj))),
+      );
       setIsLoading(false);
     } catch (e: unknown) {
       logPossibleGraphQLError(e as ApolloError);
@@ -718,7 +755,19 @@ const Settings = (): React.ReactElement => {
 
   const handleSubmit = () => {
     setAttemptedSave(true);
+    console.log("Got handle submit!!");
     if (!isRequestValid()) return;
+
+    console.log("After request is valid!");
+    const roleInfo =
+      userInfo?.role === "ASP"
+        ? {
+            aspInfo: {
+              numKids: parseInt(trimWhiteSpace(numKids), 10),
+            },
+            donorInfo: null,
+          }
+        : { aspInfo: null, donorInfo: null };
 
     const requestUserInfo: UserInfo = {
       email: userInfo?.email || "",
@@ -726,12 +775,7 @@ const Settings = (): React.ReactElement => {
       organizationName: trimWhiteSpace(organizationName),
       organizationDesc,
       role: userInfo?.role || "ASP",
-      roleInfo: {
-        aspInfo: {
-          numKids: parseInt(trimWhiteSpace(numKids), 10),
-        },
-        donorInfo: null,
-      },
+      roleInfo,
       primaryContact: {
         name: trimWhiteSpace(primaryContact.name),
         email: trimWhiteSpace(primaryContact.email),
@@ -806,7 +850,7 @@ const Settings = (): React.ReactElement => {
             ? getWebOrganizationSection()
             : getMobileOrganizationSection()}
           {isWebView && <Divider />}
-          <OnsiteStaffSection
+          <OnsiteContactSection
             onsiteInfo={onsiteContacts}
             setOnsiteInfo={setOnsiteContacts}
             attemptedSubmit={attemptedSubmit}

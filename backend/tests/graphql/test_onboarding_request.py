@@ -1,6 +1,7 @@
 from app.graphql.onboarding_request import ONBOARDING_REQUEST_EMAIL_ALREADY_EXISTS_ERROR
 from app.models.onboarding_request import OnboardingRequest
 from app.graphql import schema as graphql_schema
+from app.services.implementations.mock_email_service import MockEmailService
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_CAMEL,
     MOCK_INFO2_CAMEL,
@@ -8,7 +9,7 @@ from tests.graphql.mock_test_data import (
 )
 
 
-def test_create_onboarding_request():
+def test_create_onboarding_request(should_delete=True):
     mutation_string = """mutation testCreateOnboardingRequest {
                         createOnboardingRequest (
                             userInfo: {
@@ -67,17 +68,20 @@ def test_create_onboarding_request():
     ]
     assert onboarding_request_result["id"] == str(onboarding_request_result["id"])
     assert onboarding_request_result["status"] == "Pending"
+    MOCK_INFO3_CAMEL["email"] = "test3@organization.com"
     assert onboarding_request_result["info"] == MOCK_INFO3_CAMEL
-    OnboardingRequest.objects(id=onboarding_request_result["id"]).delete()
+    if should_delete:
+        OnboardingRequest.objects(id=onboarding_request_result["id"]).delete()
 
 
 def test_create_onboarding_request_with_existing_email_errors():
     num_of_kids = 50
+    test_create_onboarding_request(should_delete=False)
     result = graphql_schema.execute(
         f"""mutation testCreateOnboardingRequest {{
             createOnboardingRequest (
                 userInfo: {{
-                    email: "test1@organization.com",
+                    email: "test3@organization.com",
                     organizationAddress: "255 King St N",
                     organizationName: "Test1 Org",
                     organizationDesc: "Testing 123",
@@ -330,76 +334,104 @@ def test_get_requests_by_id(onboarding_request_setup):
     assert onboarding_request_result["info"] == MOCK_INFO2_CAMEL
 
 
-# def test_approve_onboarding_request():
-#     query_string = """mutation testCreateOnboardingRequest {
-#         createOnboardingRequest(
-#             userInfo:
-#                 {contactName: "Jane Doe",
-#                 contactEmail: "abubakarbello@uwblueprint.org",
-#                 contactPhone: "12345",
-#                 role: "ASP"
-#                 }
-#         ) {
-#             onboardingRequest {
-#             id
-#             info {
-#                 contactName,
-#                 contactEmail,
-#                 contactPhone,
-#                 role
-#             }
-#             dateSubmitted
-#             status
-#             }
-#         }
-#     }"""
-#     result = graphql_schema.execute(query_string)
-#     result_id = result.data["createOnboardingRequest"]["onboardingRequest"]["id"]
+def test_approve_onboarding_request():
+    query_string = """
+    mutation testCreateOnboardingRequest {
+        createOnboardingRequest(userInfo:
+                    {
+                        email: "test@test.com",
+                        organizationAddress: "123 Test St",
+                        organizationName: "Test Org",
+                        organizationDesc: "TestDescp",
+                        role: "ASP",
+                        roleInfo: {
+                            aspInfo:
+                            {
+                                    numKids: 10,
+                            }
+                        },
+                        primaryContact: {
+                            name: "Bob Joe",
+                            email: "bob@joe.com",
+                            phone: "123-123-1234",
+                        },
+                        initialOnsiteContacts: [
+                            {
+                                name: "Bob Joe",
+                                email: "bob@joe.com",
+                                phone: "123-123-1234",
+                            },
+                            {
+                                name: "Bob Joe 2",
+                                email: "bob2@joe.com",
+                                phone: "222-123-1234",
+                            },
+                        ],
+                    }
+        ) {
+        onboardingRequest {
+            id
+        }
+    }
+}
+    """
+    result = graphql_schema.execute(query_string)
+    assert result.errors is None
 
-#     executed = graphql_schema.execute(
-#         """ mutation OnboardRequest($id: ID!){
-#                 approveOnboardingRequest(id: $id) {
-#                     onboardingRequest {
-#                     id
-#                     status
-#                     info {
-#                         contactName,
-#                         contactEmail,
-#                         contactPhone,
-#                     }
-#                     dateSubmitted
-#                     status
-#                 }
-#             }
-#         }""",
-#         variables={"id": result_id},
-#     )
+    result_id = result.data["createOnboardingRequest"]["onboardingRequest"]["id"]
 
-#     expected_result = {
-#         "id": result_id,
-#         "status": "Approved",
-#         "info": {
-#             "contactName": "Jane Doe",
-#             "contactEmail": "abubakarbello@uwblueprint.org",
-#             "contactPhone": "12345",
-#         },
-#     }
+    result = graphql_schema.execute(
+        """ mutation OnboardRequest($id: ID!){
+                approveOnboardingRequest(id: $id) {
+                    onboardingRequest {
+                        id
+                        info{
+                            email,
+                            organizationAddress,
+                            organizationName,
+                            organizationDesc,
+                            role,
+                            roleInfo {
+                                aspInfo {
+                                    numKids
+                                }
+                                donorInfo {
+                                    type
+                                    tags
+                                }
+                            }
+                        }
+                    }
+            }
+        }""",
+        variables={"id": result_id},
+    )
 
-#     approve_request_result = executed.data["approveOnboardingRequest"][
-#         "onboardingRequest"
-#     ]
+    assert result.errors is None
+    approve_request_result = result.data["approveOnboardingRequest"][
+        "onboardingRequest"
+    ]
 
-#     assert approve_request_result["id"] == expected_result["id"]
-#     assert (
-#         approve_request_result["info"]["contactName"]
-#         == expected_result["info"]["contactName"]
-#     )
-#     assert (
-#         approve_request_result["info"]["contactEmail"]
-#         == expected_result["info"]["contactEmail"]
-#     )
-#     assert (
-#         approve_request_result["info"]["contactPhone"]
-#         == expected_result["info"]["contactPhone"]
-#     )
-#     assert approve_request_result["status"] == expected_result["status"]
+    assert approve_request_result["id"] == result_id
+    assert approve_request_result["info"]["email"] == "test@test.com"
+    assert approve_request_result["info"]["organizationAddress"] == "123 Test St"
+    assert approve_request_result["info"]["organizationName"] == "Test Org"
+    assert approve_request_result["info"]["organizationDesc"] == "TestDescp"
+    assert approve_request_result["info"]["role"] == "ASP"
+    assert approve_request_result["info"]["roleInfo"]["aspInfo"]["numKids"] == 10
+
+    email_service = MockEmailService.instance
+    assert email_service is not None
+
+    last_email = email_service.get_last_email_sent()
+    assert last_email is not None
+    assert last_email["subject"] == "Onboarding request approved. Set Password"
+    assert last_email["to"] == "test@test.com"
+    assert (
+        "We have received your onboarding request and it has been approved"
+        in last_email["body"]
+    )
+    assert (
+        last_email["from_"]
+        == "Feeding Canadian Kids <feedingcanadiankids@uwblueprint.org>"
+    )

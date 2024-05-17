@@ -1,7 +1,7 @@
 import datetime
 
 
-# import app.models.meal_request 
+# import app.models.meal_request
 
 from .validate_utils import (
     validate_contact,
@@ -45,6 +45,7 @@ class MealRequestDTO:
 
     def validate(self):
         from app.models.meal_request import MEAL_STATUSES_STRINGS
+
         error_list = []
 
         if type(self.id) is not str:

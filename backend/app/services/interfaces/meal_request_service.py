@@ -50,7 +50,7 @@ class IMealRequestService(ABC):
         meal_request_ids: List[str],
         meal_description: str,
         additional_info: Union[str, None],
-        donor_onsite_contacts: List[str]
+        donor_onsite_contacts: List[str],
     ) -> List[MealRequestDTO]:
         pass
 

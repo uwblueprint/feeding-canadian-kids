@@ -156,14 +156,14 @@ class CommitToMealRequest(Mutation):
         meal_request_ids,
         meal_description,
         additional_info=None,
-        donor_onsite_contacts=[]
+        donor_onsite_contacts=[],
     ):
         result = services["meal_request_service"].commit_to_meal_request(
             donor_id=requestor,
             meal_request_ids=meal_request_ids,
             meal_description=meal_description,
             additional_info=additional_info,
-            donor_onsite_contacts=donor_onsite_contacts
+            donor_onsite_contacts=donor_onsite_contacts,
         )
 
         return CommitToMealRequest(meal_requests=result)

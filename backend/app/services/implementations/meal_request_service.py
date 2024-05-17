@@ -89,13 +89,11 @@ class MealRequestService(IMealRequestService):
         if onsite_contacts is not None:
             original_meal_request.onsite_contacts = onsite_contacts
 
-        requestor = original_meal_request.requestor
-
         # Does validation,
         # meal_request_dto = self.convert_meal_request_to_dto(
         #     original_meal_request, requestor
         # )
-        meal_request_dto = original_meal_request.to_dto() 
+        meal_request_dto = original_meal_request.to_dto()
         # (
         #     original_meal_request, requestor
         # )
@@ -111,7 +109,7 @@ class MealRequestService(IMealRequestService):
         meal_request_ids: [str],
         meal_description: str,
         additional_info: str,
-        donor_onsite_contacts: List[str]
+        donor_onsite_contacts: List[str],
     ) -> List[MealRequestDTO]:
         try:
             donor = User.objects(id=donor_id).first()
@@ -147,15 +145,13 @@ class MealRequestService(IMealRequestService):
                     commitment_date=datetime.utcnow(),
                     meal_description=meal_description,
                     additional_info=additional_info,
-                    donor_onsite_contacts=donor_onsite_contacts
+                    donor_onsite_contacts=donor_onsite_contacts,
                 )
 
                 # Change the meal request's status to "Upcoming"
                 meal_request.status = MealStatus.UPCOMING.value
 
-                meal_request_dtos.append(
-                    meal_request.to_dto()
-                )
+                meal_request_dtos.append(meal_request.to_dto())
 
                 meal_request.save()
 
@@ -178,7 +174,7 @@ class MealRequestService(IMealRequestService):
 
             meal_request.donation_info = None
 
-            meal_request_dto = meal_request.to_dto() # does validation
+            meal_request_dto = meal_request.to_dto()  # does validation
 
             meal_request.save()
 
@@ -203,7 +199,6 @@ class MealRequestService(IMealRequestService):
         except Exception as error:
             self.logger.error(str(error))
             raise error
-
 
     def get_meal_requests_by_requestor_id(
         self,
@@ -245,9 +240,7 @@ class MealRequestService(IMealRequestService):
 
             meal_request_dtos = []
             for request in requests:
-                meal_request_dtos.append(
-                    request.to_dto()
-                )
+                meal_request_dtos.append(request.to_dto())
             print("returning meal request: ", request.to_dto())
 
             return meal_request_dtos
@@ -296,9 +289,7 @@ class MealRequestService(IMealRequestService):
 
             meal_request_dtos = []
             for request in requests:
-                meal_request_dtos.append(
-                    request.to_dto()
-                )
+                meal_request_dtos.append(request.to_dto())
 
             return meal_request_dtos
 
@@ -313,10 +304,7 @@ class MealRequestService(IMealRequestService):
 
     def get_meal_requests_by_ids(self, ids: str) -> List[MealRequestDTO]:
         meal_requests = MealRequest.objects(id__in=ids).all()
-        meal_request_dtos = [
-            meal_request.to_dto()
-            for meal_request in meal_requests
-        ]
+        meal_request_dtos = [meal_request.to_dto() for meal_request in meal_requests]
 
         return meal_request_dtos
 

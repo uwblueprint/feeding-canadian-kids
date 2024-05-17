@@ -142,7 +142,6 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     GET_MEAL_REQUESTS_BY_ID,
     {
       onCompleted: (results) => {
-        console.log("result from getMealRequests", results);
         setData({
           nodes: results.getMealRequestsByRequestorId?.map(
             (

@@ -36,10 +36,10 @@ def validate_role_info(role, role_info, role_info_str, error_list):
             role_info = role_info["asp_info"]
             if not role_info:
                 error_list.append(
-                    f'The {role_info_str} supplied does not have asp_info even though user is an ASP!.'
+                    f"The {role_info_str} supplied does not have asp_info even though user is an ASP!."
                 )
                 return
-                
+
             if field not in role_info:
                 error_list.append(
                     f'The {role_info_str} supplied does not have field "{field}".'
@@ -168,7 +168,7 @@ def validate_donation_info(donation_info, error_list):
         "commitment_date",
         "meal_description",
         "additional_info",
-        "donor_onsite_contacts"
+        "donor_onsite_contacts",
     ]
 
     if not isinstance(donation_info, dict):
@@ -200,5 +200,6 @@ def validate_donation_info(donation_info, error_list):
             error_list.append("The donor_onsite_contacts supplied is not list.")
             for s in val:
                 if type(s) is not str:
-                    error_list.append("The donor_onsite_contacts supplied is not list of strings.")
-
+                    error_list.append(
+                        "The donor_onsite_contacts supplied is not list of strings."
+                    )

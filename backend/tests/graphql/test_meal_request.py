@@ -275,7 +275,9 @@ def test_commit_to_meal_request(meal_request_setup):
 
 # Only user's with role "Donor" should be able to commit
 # to meal requests, otherwise an error is thrown
-def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup, onsite_contact_setup):
+def test_commit_to_meal_request_fails_for_non_donor(
+    meal_request_setup, onsite_contact_setup
+):
     _, donor, meal_request = meal_request_setup
     requestor, _, asp_onsite_contacts, donor_onsite_contact = onsite_contact_setup
 
@@ -305,7 +307,10 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup, onsite_c
 
         result = graphql_schema.execute(mutation)
         assert result.errors is not None
-        assert result.errors[0].message == f'Unexpected error: user "{donor.id}" is not a donor'
+        assert (
+            result.errors[0].message
+            == f'Unexpected error: user "{donor.id}" is not a donor'
+        )
 
 
 # A donor can only commit to a meal request if the meal request's
@@ -790,7 +795,6 @@ def test_get_meal_request_by_donor_id(meal_request_setup, onsite_contact_setup):
     _, donor, meal_request = meal_request_setup
 
     asp, donor, asp_onsite_contact, donor_onsite_contact = onsite_contact_setup
-    
 
     commit = graphql_schema.execute(
         f"""mutation testCommitToMealRequest {{

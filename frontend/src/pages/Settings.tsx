@@ -214,7 +214,6 @@ const Settings = (): React.ReactElement => {
   useGetOnsiteContacts(
     toast,
     (contacts: OnsiteContact[]) => {
-      console.log("contacts are ", contacts);
       const set1 = contacts.map((contact: OnsiteContact) =>
         JSON.parse(JSON.stringify(contact)),
       );
@@ -261,12 +260,10 @@ const Settings = (): React.ReactElement => {
       }
     }
 
-    // console.log("server onsite contacts are ", serverOnsiteContacts);
     const defaultContactValues: Array<Contact> = [
       userInfo.primaryContact,
       ...(serverOnsiteContacts ?? []),
     ];
-    // console.log("current onsite contacts", onsiteContacts);
     const currentContactValues: Array<Contact> = [
       primaryContact,
       ...onsiteContacts,
@@ -276,18 +273,14 @@ const Settings = (): React.ReactElement => {
       return true;
 
     for (let i = 0; i < defaultContactValues.length; i += 1) {
-      // console.log("default ", defaultContactValues[i]);
-      // console.log("current ", currentContactValues[i]);
       if (
         defaultContactValues[i].name !== currentContactValues[i].name ||
         defaultContactValues[i].email !== currentContactValues[i].email ||
         defaultContactValues[i].phone !== currentContactValues[i].phone
       ) {
-        console.log("one contact changed!");
         return true;
       }
     }
-    console.log("settings have not changed!");
 
     return false;
   };
@@ -617,11 +610,8 @@ const Settings = (): React.ReactElement => {
       organizationAddress,
       organizationDesc,
     ];
-    console.log("1");
     const phoneNumsToValidate = [primaryContact.phone];
-    console.log("2");
     const emailsToValidate = [primaryContact.email];
-    console.log("3");
 
     for (let i = 0; i < onsiteContacts.length; i += 1) {
       stringsToValidate.push(onsiteContacts[i].name);
@@ -632,17 +622,14 @@ const Settings = (): React.ReactElement => {
     for (let i = 0; i < stringsToValidate.length; i += 1) {
       if (stringsToValidate[i] === "") return false;
     }
-    console.log("4");
 
     for (let i = 0; i < phoneNumsToValidate.length; i += 1) {
       if (phoneNumsToValidate[i] === "") return false;
     }
-    console.log("5");
 
     for (let i = 0; i < emailsToValidate.length; i += 1) {
       if (!isValidEmail(emailsToValidate[i])) return false;
     }
-    console.log("6");
 
     if (userInfo?.role === "ASP" && !isNonNegativeInt(numKids)) return false;
 
@@ -655,9 +642,7 @@ const Settings = (): React.ReactElement => {
     requestOnsiteContacts: Array<OnsiteContact>,
   ) => {
     setIsLoading(true);
-    console.log("Got handle save settings!");
     try {
-      console.log("request user info is", requestUserInfo);
       const response = await updateUserByID({
         variables: {
           requestorId,
@@ -684,9 +669,7 @@ const Settings = (): React.ReactElement => {
         requestOnsiteContacts.map(async (contact: OnsiteContact) => {
           // If the contact already exists, we have an id for it
           const isNewContact = contact.id === undefined || contact.id === "";
-          console.log("is new contact: ", isNewContact);
           if (isNewContact) {
-            console.log("creating new onsite contact!");
             await createOnsiteContact({
               variables: {
                 requestorId,
@@ -697,7 +680,6 @@ const Settings = (): React.ReactElement => {
               },
             });
           } else {
-            console.log("updating existing onsite contact!");
             await updateOnsiteContact({
               variables: {
                 id: contact.id,
@@ -755,10 +737,8 @@ const Settings = (): React.ReactElement => {
 
   const handleSubmit = () => {
     setAttemptedSave(true);
-    console.log("Got handle submit!!");
     if (!isRequestValid()) return;
 
-    console.log("After request is valid!");
     const roleInfo =
       userInfo?.role === "ASP"
         ? {

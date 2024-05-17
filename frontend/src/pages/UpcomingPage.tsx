@@ -178,17 +178,17 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
           <VStack padding={10}>
             <Text fontSize="md">
               {formatDate(
-                mealRequest!.dropOffDatetime.toLocaleString().split("T")[0],
-              )}
+                mealRequest?.dropOffDatetime?.toLocaleString().split("T")[0],
+              ) ?? ""}
             </Text>
             <Text fontSize="20px">
               {new Date(
-                mealRequest!.dropOffDatetime.toLocaleString(),
+                mealRequest?.dropOffDatetime.toLocaleString(),
               ).toLocaleTimeString("en-US", {
                 hour: "numeric",
                 minute: "numeric",
                 hour12: true,
-              })}
+              }) ?? ""}
             </Text>
             <HStack>
               <IoRestaurant height={20} width={20} />
@@ -220,7 +220,7 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
                 <Text fontSize="xs">
                   <strong>ASP Onsite Staff:</strong>
                 </Text>
-                {mealRequest?.onsiteContacts.map((staffMember: any) => (
+                {mealRequest?.onsiteContacts.map((staffMember) => (
                   <>
                     <Text fontSize="xs">{staffMember.name}</Text>
                     <Text fontSize="xs">{staffMember.email}</Text>
@@ -366,7 +366,7 @@ const UpcomingPage = (): React.ReactElement => {
   function reloadUpcomingMealRequests() {
     getUpcomingMealRequests({
       variables: {
-        donorId: authenticatedUser!.id,
+        donorId: authenticatedUser?.id,
         limit: 3,
         offset,
         sortByDateDirection:
@@ -382,7 +382,7 @@ const UpcomingPage = (): React.ReactElement => {
     yesterday.setDate(yesterday.getDate() - 1);
     getCompletedMealRequests({
       variables: {
-        donorId: authenticatedUser!.id,
+        donorId: authenticatedUser?.id,
         sortByDateDirection:
           filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
         limit: rowsPerPage,
@@ -401,6 +401,7 @@ const UpcomingPage = (): React.ReactElement => {
     } else {
       reloadCompletedMealRequests();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabSelected, filter]);
 
   // Card pagination
@@ -408,6 +409,7 @@ const UpcomingPage = (): React.ReactElement => {
     if (upcomingMealRequests) {
       reloadUpcomingMealRequests();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset]);
 
   // List pagination
@@ -415,6 +417,7 @@ const UpcomingPage = (): React.ReactElement => {
     if (completedMealRequests) {
       reloadCompletedMealRequests();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   if (!authenticatedUser) {

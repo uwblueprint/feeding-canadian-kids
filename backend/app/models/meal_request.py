@@ -37,7 +37,6 @@ class DonationInfo(mg.EmbeddedDocument):
     )  # 4 = PULL
 
 
-
 class MealRequest(mg.Document):
     requestor = mg.ReferenceField(User, required=True)
     # status = mg.EnumField(MealStatus, default=MealStatus.OPEN)
@@ -71,7 +70,10 @@ class MealRequest(mg.Document):
             if self.donation_info:
                 for contact in self.donation_info.donor_onsite_contacts:
                     contact = OnsiteContact.objects(id=contact.id).first()
-                    if not contact or contact.organization_id != self.donation_info.donor.id:
+                    if (
+                        not contact
+                        or contact.organization_id != self.donation_info.donor.id
+                    ):
                         raise Exception(
                             f"onsite contact {contact.id} not found or not associated with the donor organization"
                         )
@@ -93,12 +95,14 @@ class MealRequest(mg.Document):
         meal_request_dict["onsite_contacts"] = contacts
 
         if self.donation_info and self.donation_info.donor_onsite_contacts:
-            contacts = [contact.to_mongo().to_dict() for contact in self.donation_info.donor_onsite_contacts]
+            contacts = [
+                contact.to_mongo().to_dict()
+                for contact in self.donation_info.donor_onsite_contacts
+            ]
             for contact in contacts:
                 id = contact.pop("_id")
                 contact["id"] = id
             meal_request_dict["donation_info"]["donor_onsite_contacts"] = contacts
-
 
         return meal_request_dict
 
@@ -123,6 +127,5 @@ class MealRequest(mg.Document):
         print("INSIDE TO DTO #####")
         print("AFTER DICT: ", dict)
         return MealRequestDTO(**dict)
-
 
     meta = {"collection": "meal_requests"}

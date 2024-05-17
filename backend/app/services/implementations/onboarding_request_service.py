@@ -30,9 +30,11 @@ class OnboardingRequestService(IOnboardingRequestService):
             userInfo.active = True
 
             validation_errors = []
-            validate_userinfo(userInfo, validation_errors);
+            validate_userinfo(userInfo, validation_errors)
             if validation_errors:
-                raise Exception(f"Error validating user info. Reason = {validation_errors}")
+                raise Exception(
+                    f"Error validating user info. Reason = {validation_errors}"
+                )
 
             # Create initial UserInfo object
             user_info = UserInfo(

@@ -89,14 +89,7 @@ class MealRequestService(IMealRequestService):
         if onsite_contacts is not None:
             original_meal_request.onsite_contacts = onsite_contacts
 
-        # Does validation,
-        # meal_request_dto = self.convert_meal_request_to_dto(
-        #     original_meal_request, requestor
-        # )
         meal_request_dto = original_meal_request.to_dto()
-        # (
-        #     original_meal_request, requestor
-        # )
         original_meal_request.validate_onsite_contacts()
 
         original_meal_request.save()

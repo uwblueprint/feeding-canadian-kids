@@ -1,8 +1,6 @@
 import datetime
 
 
-# import app.models.meal_request
-
 from .validate_utils import (
     validate_contact,
     validate_donation_info,

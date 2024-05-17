@@ -40,9 +40,6 @@ def test_create_onsite_contact(onsite_contact_setup):
     result = graphql_schema.execute(mutation)
     assert result.errors is None
     return_result_contact = result.data["createOnsiteContact"]["onsiteContact"]
-    print("###")
-    print("donor is #", donor.id)
-    print("id is", return_result_contact["id"])
     db_result = OnsiteContact.objects(
         organization_id=donor.id, id=return_result_contact["id"]
     ).first()

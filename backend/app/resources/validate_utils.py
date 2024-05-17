@@ -181,7 +181,6 @@ def validate_donation_info(donation_info, error_list):
                 f'The donation_info info supplied has invalid field "{key}".'
             )
         elif key == "donor":
-            print("VAL IS ", val)
             validate_user(val, "donation_info.donor", error_list)
             if val["info"]["role"] != UserInfoRole.DONOR.value:
                 error_list.append(

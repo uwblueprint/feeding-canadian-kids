@@ -120,12 +120,9 @@ class MealRequest(mg.Document):
             donor_id = dict["donation_info"]["donor"]
             donor = User.objects(id=donor_id).first()
             if not donor:
-                print("#### ABIUT TO FAIL NOT FOUND DONOR")
                 raise Exception(f'donor "{donor_id}" not found')
             dict["donation_info"]["donor"] = donor.to_serializable_dict()
 
-        print("INSIDE TO DTO #####")
-        print("AFTER DICT: ", dict)
         return MealRequestDTO(**dict)
 
     meta = {"collection": "meal_requests"}

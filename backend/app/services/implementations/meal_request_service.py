@@ -241,7 +241,6 @@ class MealRequestService(IMealRequestService):
             meal_request_dtos = []
             for request in requests:
                 meal_request_dtos.append(request.to_dto())
-            print("returning meal request: ", request.to_dto())
 
             return meal_request_dtos
 

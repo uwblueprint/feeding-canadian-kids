@@ -233,16 +233,13 @@ class UserService(IUserService):
         return UserDTO(**kwargs)
 
     def update_user_by_id(self, user_id, update_user_dto):
-        print("in update user by id!", update_user_dto.info)
         try:
             update_user_dto = self.update_user_coordinates(update_user_dto)
-            print("in update user by id!", update_user_dto.info)
             old_user = User.objects(id=user_id).modify(
                 new=False,
                 auth_id=update_user_dto.auth_id,
                 info=update_user_dto.info,
             )
-            print("in update user by id!", update_user_dto.info)
 
             if not old_user:
                 raise Exception("user_id {user_id} not found".format(user_id=user_id))
@@ -254,7 +251,6 @@ class UserService(IUserService):
             except Exception as firebase_error:
                 try:
                     # rollback MongoDB user update
-                    print("this user info is: ", old_user.info)
                     User.objects(id=user_id).modify(
                         auth_id=old_user.auth_id,
                         info=old_user.info,

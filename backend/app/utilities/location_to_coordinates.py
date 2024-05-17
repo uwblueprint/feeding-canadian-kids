@@ -8,6 +8,7 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 USE_GOOGLE_API = os.getenv("USE_GOOGLE_API", "1") == "1"
 
+
 # NOTE: It's important all the errors in this file have the "GEOCODING" string in them since the frontend uses that to determine if the error is a geocoding error
 def getGeocodeFromAddress(organization_address):
     if os.getenv("ENV") == "testing":
@@ -18,8 +19,8 @@ def getGeocodeFromAddress(organization_address):
         return getGeocodeFromAddressGoogle(organization_address)
     else:
         return getGeocodeFromAddressGeocode(organization_address)
-        
-    
+
+
 def getGeocodeFromAddressGoogle(organization_address):
     response = requests.get(
         '{base_url}{output_format}?address={address}"&key={api_key}'.format(
@@ -34,7 +35,11 @@ def getGeocodeFromAddressGoogle(organization_address):
             raise Exception("GEOCODING: Failed to get coordinates from Geocode API")
 
         response_json = response.json()
-        if len(response_json) == 0 or "results" not in response_json or not response_json["results"]:
+        if (
+            len(response_json) == 0
+            or "results" not in response_json
+            or not response_json["results"]
+        ):
             raise Exception("GEOCODING: Failed to get coordinates from Geocode API")
 
         return [
@@ -68,4 +73,5 @@ def getGeocodeFromAddressGeocode(organization_address):
     except Exception as e:
         print("Failed when getting geoencoding from address!")
         print(f"Status code is: {response.status_code}")
+        print("e:", e)
         raise Exception("GEOCODING: Failed to get coordinates from Geocode API")

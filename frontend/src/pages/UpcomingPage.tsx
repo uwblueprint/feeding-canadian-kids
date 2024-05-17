@@ -178,12 +178,14 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
           <VStack padding={10}>
             <Text fontSize="md">
               {formatDate(
-                mealRequest?.dropOffDatetime?.toLocaleString().split("T")[0],
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                mealRequest!.dropOffDatetime?.toLocaleString().split("T")[0],
               ) ?? ""}
             </Text>
             <Text fontSize="20px">
               {new Date(
-                mealRequest?.dropOffDatetime.toLocaleString(),
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                mealRequest!.dropOffDatetime.toLocaleString(),
               ).toLocaleTimeString("en-US", {
                 hour: "numeric",
                 minute: "numeric",
@@ -366,7 +368,8 @@ const UpcomingPage = (): React.ReactElement => {
   function reloadUpcomingMealRequests() {
     getUpcomingMealRequests({
       variables: {
-        donorId: authenticatedUser?.id,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        donorId: authenticatedUser!.id,
         limit: 3,
         offset,
         sortByDateDirection:
@@ -382,7 +385,8 @@ const UpcomingPage = (): React.ReactElement => {
     yesterday.setDate(yesterday.getDate() - 1);
     getCompletedMealRequests({
       variables: {
-        donorId: authenticatedUser?.id,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        donorId: authenticatedUser!.id,
         sortByDateDirection:
           filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
         limit: rowsPerPage,

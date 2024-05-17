@@ -39,7 +39,7 @@ import {
   trimWhiteSpace,
 } from "../../utils/ValidationUtils";
 import useIsWebView from "../../utils/useIsWebView";
-import OnsiteStaffSection from "../common/OnsiteStaffSection";
+import OnsiteContactSection from "../common/OnsiteContactSection";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
@@ -639,7 +639,7 @@ const Join = (): React.ReactElement => {
           : getMobileOrganizationSection()}
         {isWebView && <Divider />}
         {isWebView ? getWebContactSection() : getMobileContactSection()}
-        <OnsiteStaffSection
+        <OnsiteContactSection
           onsiteInfo={onsiteInfo}
           setOnsiteInfo={setOnsiteInfo}
           attemptedSubmit={attemptedSubmit}

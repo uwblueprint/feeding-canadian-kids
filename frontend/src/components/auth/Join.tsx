@@ -471,11 +471,27 @@ const Join = (): React.ReactElement => {
       console.log(response);
       navigate(JOIN_SUCCESS_PAGE);
     } catch (e: unknown) {
-      toast({
-        title: "Failed to create account. Please try again.",
-        status: "error",
-        isClosable: true,
-      });
+      if (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        e?.graphQLErrors &&
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        String(e.graphQLErrors[0]?.message).includes("GEOCODING")
+      ) {
+        toast({
+          title:
+            "Failed to located address, please try entering more information or a different address!",
+          status: "error",
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Failed to create account. Please try again.",
+          status: "error",
+          isClosable: true,
+        });
+      }
       // eslint-disable-next-line no-console
       console.log(e);
       logPossibleGraphQLError(e as ApolloError);
@@ -607,7 +623,8 @@ const Join = (): React.ReactElement => {
         borderRadius="8px"
         boxShadow={{
           base: "",
-          lg: "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
+          lg:
+            "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
         }}
         style={{
           backgroundColor: "white",

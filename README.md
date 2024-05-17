@@ -151,6 +151,17 @@ cd frontend
 make test
 ```
 
+### VSCode Python Test runner and debugger
+
+Use VSCode's python test runner, which makes life MUCH Better.
+
+- 1. Make sure you have the docker extension, and the `Dev Containers` extension installed.
+- 2. Run `docker compose up backend --build` to start up backend container.
+- 3. Use the docker extension, right click on the backend container, and click `Attach Visual Studio Code`.
+- 4. Inside the container, make sure the Python Extension and the Python Debugger extension is installed.
+- 5. Click the tests tab. Use the buttons to run or debug tests.
+- 6. If you get a "Test not found" or similar error, the problem could be the wrong python binary is being used. In the bottom right, click on the python version, and try switching to different python binaries.
+
 ## Version Control Guide
 
 ### Branching

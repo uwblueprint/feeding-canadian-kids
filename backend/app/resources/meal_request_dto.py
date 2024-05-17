@@ -1,6 +1,6 @@
 import datetime
 
-from ..models.meal_request import MEAL_STATUSES_STRINGS
+
 from .validate_utils import (
     validate_contact,
     validate_donation_info,
@@ -18,7 +18,7 @@ class MealRequestDTO:
         drop_off_datetime,
         drop_off_location,
         meal_info,
-        onsite_staff,
+        onsite_contacts,
         date_created,
         date_updated,
         delivery_instructions=None,
@@ -30,7 +30,7 @@ class MealRequestDTO:
         self.drop_off_datetime = drop_off_datetime
         self.drop_off_location = drop_off_location
         self.meal_info = meal_info
-        self.onsite_staff = onsite_staff
+        self.onsite_contacts = onsite_contacts
         self.date_created = date_created
         self.date_updated = date_updated
         self.delivery_instructions = delivery_instructions
@@ -42,6 +42,8 @@ class MealRequestDTO:
             raise Exception(error_message)
 
     def validate(self):
+        from app.models.meal_request import MEAL_STATUSES_STRINGS
+
         error_list = []
 
         if type(self.id) is not str:
@@ -71,8 +73,8 @@ class MealRequestDTO:
 
         validate_meal_info(self.meal_info, error_list)
 
-        for i, staff in enumerate(self.onsite_staff):
-            validate_contact(staff, f"index {i} of onsite_staff", error_list)
+        for i, staff in enumerate(self.onsite_contacts):
+            validate_contact(staff, f"index {i} of onsite_contacts", error_list)
 
         if type(self.date_created) is not datetime.datetime:
             error_list.append("The date_created supplied is not a datetime object.")

@@ -35,7 +35,7 @@ import { MEAL_DONOR_DASHBOARD_PAGE } from "../../../constants/Routes";
 import { MealRequest } from "../../../types/MealRequestTypes";
 import { Contact, OnsiteContact } from "../../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
-import OnsiteStaffSection from "../../common/OnsiteStaffSection";
+import OnsiteContactSection from "../../common/OnsiteContactSection";
 
 // Create the GraphQL mutation
 const COMMIT_TO_MEAL_REQUEST = gql`
@@ -44,12 +44,14 @@ const COMMIT_TO_MEAL_REQUEST = gql`
     $mealRequestIds: [ID!]!
     $mealDescription: String!
     $additionalInfo: String!
+    $donorOnsiteContacts: [ID!]!
   ) {
     commitToMealRequest(
       requestor: $requestor
       mealRequestIds: $mealRequestIds
       mealDescription: $mealDescription
       additionalInfo: $additionalInfo
+      donorOnsiteContacts: $donorOnsiteContacts
     ) {
       mealRequests {
         id
@@ -62,7 +64,7 @@ type MealDonationFormReviewAndSubmitProps = {
   mealRequestsInformation: Array<MealRequest>;
 
   // From part 1
-  onsiteStaff: OnsiteContact[];
+  onsiteContact: OnsiteContact[];
 
   // From part 2
   mealDescription: string;
@@ -78,7 +80,7 @@ type MealDonationFormReviewAndSubmitProps = {
 
 const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormReviewAndSubmitProps> = ({
   mealRequestsInformation,
-  onsiteStaff,
+  onsiteContact,
   mealDescription,
   additionalInfo,
   requestorId,
@@ -106,6 +108,7 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
           ),
           mealDescription,
           additionalInfo,
+          donorOnsiteContacts: onsiteContact.map((contact) => contact.id),
         },
       });
 
@@ -222,7 +225,7 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
                         </Thead>
 
                         <Tbody>
-                          {onsiteStaff.map((staff, index) =>
+                          {onsiteContact.map((staff, index) =>
                             staff ? (
                               <Tr key={index}>
                                 <Td /* padding="0 12px 0 24px" */ w="256px">

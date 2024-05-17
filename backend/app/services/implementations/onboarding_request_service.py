@@ -1,3 +1,4 @@
+from app.resources.validate_utils import validate_userinfo
 from ...utilities.location_to_coordinates import getGeocodeFromAddress
 from ...services.implementations.auth_service import AuthService
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
@@ -24,6 +25,17 @@ class OnboardingRequestService(IOnboardingRequestService):
 
     def create_onboarding_request(self, userInfo: UserInfo):
         try:
+            # Users will start out as active
+            userInfo["active"] = True
+            userInfo.active = True
+
+            validation_errors = []
+            validate_userinfo(userInfo, validation_errors)
+            if validation_errors:
+                raise Exception(
+                    f"Error validating user info. Reason = {validation_errors}"
+                )
+
             # Create initial UserInfo object
             user_info = UserInfo(
                 email=userInfo.email,

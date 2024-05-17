@@ -153,6 +153,8 @@ const EditMealRequestForm = ({
   const [dietaryRestrictions, setDietaryRestrictions] = useState<string>("");
   const [deliveryInstructions, setDeliveryInstructions] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [onsiteContactsLoading, setOnsiteContactsLoading] = useState(true);
+  const [isUpcoming, setIsUpcoming] = useState(false);
 
   const toast = useToast();
   const [onsiteContact, setOnsiteContact] = useState<OnsiteContact[]>([]);
@@ -160,7 +162,11 @@ const EditMealRequestForm = ({
   const [availableOnsiteContacts, setAvailableOnsiteContacts] = useState<
     Array<Contact>
   >([]);
-  useGetOnsiteContacts(toast, setAvailableOnsiteContacts, setLoading);
+  useGetOnsiteContacts(
+    toast,
+    setAvailableOnsiteContacts,
+    setOnsiteContactsLoading,
+  );
 
   const apolloClient = useApolloClient();
 
@@ -178,6 +184,7 @@ const EditMealRequestForm = ({
         setNumberOfMeals(mealRequest.mealInfo.portions);
         setDietaryRestrictions(mealRequest.mealInfo.dietaryRestrictions);
         setDeliveryInstructions(mealRequest.deliveryInstructions);
+        setIsUpcoming(mealRequest.status === "UPCOMING");
 
         // Parse/stringify is to make a deep copy of the onsite staff
         setOnsiteContact(
@@ -378,40 +385,39 @@ const EditMealRequestForm = ({
   );
 
   return (
-    <>
-      {/* <Button onClick={onOpen}>Edit Meal Request</Button> */}
-      <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent
-          maxWidth={{ base: "100%", md: "900px" }}
-          padding={{ base: "10px", md: "40px" }}
-        >
-          {loading ? (
-            <LoadingSpinner />
-          ) : (
-            <>
+    <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent
+        maxWidth={{ base: "100%", md: "900px" }}
+        padding={{ base: "10px", md: "40px" }}
+      >
+        {loading || onsiteContactsLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <>
+            <Text
+              pb={{ base: 1, md: 5 }}
+              pl={{ base: 6, md: 6 }}
+              pt={{ base: 5, md: 8 }}
+              variant={{
+                base: "mobile-display-xl",
+                md: "desktop-display-xl",
+              }}
+            >
+              Edit Meal Request
+            </Text>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
               <Text
-                pb={{ base: 1, md: 5 }}
-                pl={{ base: 6, md: 6 }}
-                pt={{ base: 5, md: 8 }}
                 variant={{
-                  base: "mobile-display-xl",
-                  md: "desktop-display-xl",
+                  base: "mobile-heading",
+                  md: "desktop-heading",
                 }}
               >
-                Edit Meal Request
+                Meal Information
               </Text>
-              <ModalCloseButton />
-              <ModalBody pb={6}>
-                <Text
-                  variant={{
-                    base: "mobile-heading",
-                    md: "desktop-heading",
-                  }}
-                >
-                  Meal Information
-                </Text>
 
+              {!isUpcoming ? (
                 <FormControl mt={3} mb={6} isRequired>
                   <FormLabel
                     variant={{
@@ -434,7 +440,9 @@ const EditMealRequestForm = ({
                     w="200px"
                   />
                 </FormControl>
+              ) : null}
 
+              {!isUpcoming ? (
                 <FormControl mt={3} mb={6} isRequired>
                   <FormLabel
                     variant={{
@@ -450,54 +458,54 @@ const EditMealRequestForm = ({
                     onChange={(e) => setDietaryRestrictions(e.target.value)}
                   />
                 </FormControl>
+              ) : null}
 
-                <FormControl mt={3} mb={6} isRequired>
-                  <FormLabel
-                    variant={{
-                      base: "mobile-form-label-bold",
-                      md: "form-label-bold",
-                    }}
-                    // TODO: Setup correct validation for this
-                    // isInvalid={attemptedSubmit && }
-                  >
-                    Delivery Notes
-                  </FormLabel>
-                  <Input
-                    placeholder="Ex. Please knock on the door."
-                    value={deliveryInstructions}
-                    onChange={(e) => setDeliveryInstructions(e.target.value)}
-                  />
-                  <br />
-                </FormControl>
-                {isWebView && <Divider />}
-                <OnsiteContactSection
-                  onsiteInfo={onsiteContact}
-                  setOnsiteInfo={setOnsiteContact}
-                  attemptedSubmit={false /* todo change */}
-                  availableStaff={availableOnsiteContacts}
-                  dropdown
-                />
-              </ModalBody>
-
-              <ModalFooter>
-                <Button onClick={onClose} mr={3} variant="outline">
-                  Cancel
-                </Button>
-                <Button
-                  colorScheme="blue"
-                  onClick={() => {
-                    setAttemptedSubmit(true);
-                    submitEditMealRequest();
+              <FormControl mt={3} mb={6} isRequired>
+                <FormLabel
+                  variant={{
+                    base: "mobile-form-label-bold",
+                    md: "form-label-bold",
                   }}
+                  // TODO: Setup correct validation for this
+                  // isInvalid={attemptedSubmit && }
                 >
-                  Save
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+                  Delivery Notes
+                </FormLabel>
+                <Input
+                  placeholder="Ex. Please knock on the door."
+                  value={deliveryInstructions}
+                  onChange={(e) => setDeliveryInstructions(e.target.value)}
+                />
+                <br />
+              </FormControl>
+              {isWebView && <Divider />}
+              <OnsiteContactSection
+                onsiteInfo={onsiteContact}
+                setOnsiteInfo={setOnsiteContact}
+                attemptedSubmit={false /* todo change */}
+                availableStaff={availableOnsiteContacts}
+                dropdown
+              />
+            </ModalBody>
+
+            <ModalFooter>
+              <Button onClick={onClose} mr={3} variant="outline">
+                Cancel
+              </Button>
+              <Button
+                colorScheme="blue"
+                onClick={() => {
+                  setAttemptedSubmit(true);
+                  submitEditMealRequest();
+                }}
+              >
+                Save
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
   );
 };
 

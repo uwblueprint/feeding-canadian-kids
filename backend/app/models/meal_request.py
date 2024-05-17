@@ -71,7 +71,7 @@ class MealRequest(mg.Document):
             if self.donation_info:
                 for contact in self.donation_info.donor_onsite_contacts:
                     contact = OnsiteContact.objects(id=contact.id).first()
-                    if not contact or contact.organization_id != self.donation_info.donor:
+                    if not contact or contact.organization_id != self.donation_info.donor.id:
                         raise Exception(
                             f"onsite contact {contact.id} not found or not associated with the donor organization"
                         )

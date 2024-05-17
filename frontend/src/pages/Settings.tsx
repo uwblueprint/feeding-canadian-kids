@@ -301,7 +301,7 @@ const Settings = (): React.ReactElement => {
           <Text variant="desktop-body">{userInfo?.email}</Text>
         </Flex>
         <HStack>
-          <Logout/>
+          <Logout />
           <Button
             width="190px"
             height="45px"
@@ -718,11 +718,27 @@ const Settings = (): React.ReactElement => {
       logPossibleGraphQLError(e as ApolloError);
       setIsLoading(false);
 
-      toast({
-        title: "Failed to save settings",
-        status: "error",
-        isClosable: true,
-      });
+      if (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        e?.graphQLErrors &&
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        String(e.graphQLErrors[0]?.message).includes("GEOCODING")
+      ) {
+        toast({
+          title:
+            "Failed to located address, please try entering more information or a different address!",
+          status: "error",
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Failed to create account. Please try again.",
+          status: "error",
+          isClosable: true,
+        });
+      }
     }
   };
 

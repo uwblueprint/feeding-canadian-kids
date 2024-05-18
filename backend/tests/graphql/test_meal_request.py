@@ -821,6 +821,7 @@ def test_delete_meal_request_as_asp(meal_request_setup):
     assert result["id"] == str(meal_request.id)
     assert MealRequest.objects(id=meal_request.id).first() is None
 
+
 @freeze_time("2023-01-01")
 def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
     asp, meal_donor, meal_request = meal_request_setup

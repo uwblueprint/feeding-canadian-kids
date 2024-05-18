@@ -20,7 +20,6 @@ import {
   AlertDialogOverlay,
   Box,
   Button,
-  Center,
   Button as ChakraButton,
   Collapse,
   Flex,
@@ -30,13 +29,6 @@ import {
   MenuItemOption,
   MenuList,
   MenuOptionGroup,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -265,9 +257,6 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     const urlParams = new URLSearchParams(window.location.search);
     const refetch = urlParams.get("refetch");
     if (refetch === "true") {
-      // reloadMealRequests("network-only");
-      // eslint-disable-next-line no-restricted-globals
-      // location.reload();
       apolloClient.cache.evict({ fieldName: "getMealRequestsByRequestorId" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

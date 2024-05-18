@@ -5,82 +5,13 @@ import {
   Button as ChakraButton,
   Collapse,
   Flex,
-  HStack,
-  Menu,
-  MenuButton,
-  MenuItemOption,
-  MenuList,
-  MenuOptionGroup,
   Text,
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
 import React, { useEffect, useState } from "react";
 
-import {
-  MealRequest,
-  MealRequestsData,
-  MealRequestsDonorVariables,
-  MealRequestsVariables,
-  MealStatus,
-} from "../../types/MealRequestTypes";
 import { Contact } from "../../types/UserTypes";
-import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import ListView from "../common/ListView";
-
-const GET_MEAL_REQUESTS_BY_ID = gql`
-  query GetMealRequestsByDonorId(
-    $donorId: ID!
-    $minDropOffDate: Date
-    $maxDropOffDate: Date
-    $status: [MealStatus]
-    $offset: Int
-    $limit: Int
-    $sortByDateDirection: SortDirection
-  ) {
-    getMealRequestsByDonorId(
-      donorId: $donorId
-      minDropOffDate: $minDropOffDate
-      maxDropOffDate: $maxDropOffDate
-      status: $status
-      offset: $offset
-      limit: $limit
-      sortByDateDirection: $sortByDateDirection
-    ) {
-      id
-      requestor {
-        info {
-          organizationName
-          primaryContact {
-            name
-            email
-            phone
-          }
-        }
-      }
-      status
-      dropOffDatetime
-      dropOffLocation
-      mealInfo {
-        portions
-        dietaryRestrictions
-      }
-      onsiteContacts {
-        name
-        email
-        phone
-      }
-      deliveryInstructions
-      donationInfo {
-        donor {
-          info {
-            organizationName
-          }
-        }
-        mealDescription
-      }
-    }
-  }
-`;
 
 type MealDonorListViewProps = {
   completedMealRequests:

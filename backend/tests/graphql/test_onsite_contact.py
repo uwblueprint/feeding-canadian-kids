@@ -54,13 +54,13 @@ def test_create_onsite_contact(onsite_contact_setup):
 
 
 def test_update_onsite_contact(onsite_contact_setup):
-    asp, donor, asp_onsite_contacts, donor_onsite_contact = onsite_contact_setup
+    asp, donor, asp_onsite_contacts, donor_onsite_contacts = onsite_contact_setup
 
     # Test for the update mutation
     mutation = f"""
     mutation u{{
       updateOnsiteContact(
-        id: "{donor_onsite_contact.id}",
+        id: "{donor_onsite_contacts[0].id}",
         name: "Updated Bob Cat",
         email: "updated_bob@test.com",
         phone: "604-433-2222",
@@ -78,7 +78,7 @@ def test_update_onsite_contact(onsite_contact_setup):
     result = graphql_schema.execute(mutation)
     assert result.errors is None
     updated_result_contact = result.data["updateOnsiteContact"]["onsiteContact"]
-    updated_db_result = OnsiteContact.objects(id=donor_onsite_contact["id"]).first()
+    updated_db_result = OnsiteContact.objects(id=donor_onsite_contacts[0]["id"]).first()
 
     for contact in [updated_result_contact, updated_db_result]:
         assert contact["name"] == "Updated Bob Cat"

@@ -36,6 +36,7 @@ import { LocationIcon } from "../assets/icons/LocationIcon";
 import { PersonIcon } from "../assets/icons/PersonIcon";
 import TitleSection from "../components/asp/requests/TitleSection";
 import LoadingSpinner from "../components/common/LoadingSpinner";
+import { SortByDateDirection } from "../types/MealRequestTypes";
 import { OnboardingRequest } from "../types/UserTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 import useIsWebView from "../utils/useIsWebView";
@@ -449,9 +450,10 @@ const OnboardingRequestsPage = (): React.ReactElement => {
   const [statusFilter, setStatusFilter] = React.useState<
     Array<OnboardingRequestStatuses>
   >([OnboardingRequestStatuses.PENDING]);
-  const [dateDirectionFilter, setDateDirectionFilter] = React.useState(
-    "DESCENDING",
-  );
+  const [
+    dateDirectionFilter,
+    setDateDirectionFilter,
+  ] = React.useState<SortByDateDirection>("DESCENDING");
   const isWebView = useIsWebView();
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const requestsPerPage = 9;
@@ -647,6 +649,8 @@ const OnboardingRequestsPage = (): React.ReactElement => {
           const { target } = e;
           if (target.type === "select-one") {
             const selectValue = target.selectedOptions[0].value;
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             setDateDirectionFilter(selectValue);
           }
         }}

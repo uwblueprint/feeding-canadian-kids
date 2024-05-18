@@ -89,25 +89,34 @@ def meal_request_setup(user_setup):
 def onsite_contact_setup(user_setup):
     asp, donor, _ = user_setup
     asp_onsite_contact = OnsiteContact(
-        name="Sample Contact",
+        name="Sample ASP Contact",
         email="sample@test.com",
         phone="123-456-7890",
         organization_id=asp.id,
     ).save()
     asp_onsite_contact2 = OnsiteContact(
-        name="Sample Contact 2",
+        name="Sample ASP Contact 2",
         email="sample2@test.com",
         phone="123-456-7890",
         organization_id=asp.id,
     ).save()
     donor_onsite_contact = OnsiteContact(
-        name="Sample Contact 2",
+        name="Sample Donor Contact 1",
+        email="sample2@test.com",
+        phone="123-333-7890",
+        organization_id=donor.id,
+    ).save()
+    donor_onsite_contact2 = OnsiteContact(
+        name="Sample Donor 2",
         email="sample2@test.com",
         phone="123-333-7890",
         organization_id=donor.id,
     ).save()
 
-    yield asp, donor, [asp_onsite_contact, asp_onsite_contact2], donor_onsite_contact
+    yield asp, donor, [asp_onsite_contact, asp_onsite_contact2], [
+        donor_onsite_contact,
+        donor_onsite_contact2,
+    ]
     asp_onsite_contact.delete()
     donor_onsite_contact.delete()
 

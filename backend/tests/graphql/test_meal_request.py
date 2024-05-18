@@ -4,8 +4,6 @@ from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
 from app.services.implementations.mock_email_service import MockEmailService
 
-from datetime import datetime
-
 """
 Tests for MealRequestchema and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
@@ -1013,9 +1011,11 @@ def test_get_meal_requests_by_ids(meal_request_setup):
             == expected.meal_info.dietary_restrictions
         )
 
-def test_update_meal_request_statuses_to_fulfilled(meal_request_service, meal_request_setup):
-    asp, donor, _ = meal_request_setup
 
+def test_update_meal_request_statuses_to_fulfilled(
+    meal_request_service, meal_request_setup
+):
+    asp, donor, _ = meal_request_setup
 
     create = graphql_schema.execute(
         f"""
@@ -1075,7 +1075,9 @@ def test_update_meal_request_statuses_to_fulfilled(meal_request_service, meal_re
     assert meal_request.status == MealStatus.FULFILLED.value
 
 
-def test_dont_update_meal_request_statuses_to_fulfilled_if_future(meal_request_service, meal_request_setup):
+def test_dont_update_meal_request_statuses_to_fulfilled_if_future(
+    meal_request_service, meal_request_setup
+):
     asp, donor, _ = meal_request_setup
 
     create = graphql_schema.execute(

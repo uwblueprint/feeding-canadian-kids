@@ -102,7 +102,9 @@ def create_app(config_name):
         try:
             with scheduler.app.app_context():
                 services["reminder_email_service"].send_regularly_scheduled_emails()
-                services["meal_request_service"].update_meal_request_statuses_to_fulfilled(datetime.now(timezone.utc))
+                services[
+                    "meal_request_service"
+                ].update_meal_request_statuses_to_fulfilled(datetime.now(timezone.utc))
         except Exception as e:
             print("Error in Scheduled Task!", e)
 

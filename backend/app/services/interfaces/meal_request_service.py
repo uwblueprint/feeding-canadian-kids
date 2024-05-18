@@ -164,3 +164,10 @@ class IMealRequestService(ABC):
         :type email: str
         :raises Exception: if unable to send email
         """
+
+    @abstractmethod
+    def update_meal_request_statuses_to_fulfilled(self, current_time):
+        """
+        This method is called regularly (every 24 hours) to update the meal statues.
+        """
+        pass

@@ -3,7 +3,9 @@ from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
 from app.services.implementations.mock_email_service import MockEmailService
 
-from datetime import datetime
+from datetime import datetime, timezone
+from freezegun import freeze_time
+
 
 """
 Tests for MealRequestchema and query/mutation logic
@@ -19,6 +21,7 @@ def compare_returned_onsite_contact(result, onsite_contact):
     assert result["organizationId"] == str(onsite_contact.organization_id)
 
 
+@freeze_time("2023-01-01")
 def test_create_meal_request(meal_request_setup, onsite_contact_setup):
     (
         asp,
@@ -107,6 +110,7 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
         MealRequest.objects(id=meal_request["id"]).delete()
 
 
+@freeze_time("2023-01-01")
 def test_create_meal_request_fails_invalid_onsite_contact(
     meal_request_setup, onsite_contact_setup
 ):
@@ -244,6 +248,7 @@ def test_update_meal_request_donation(meal_request_setup, onsite_contact_setup):
 
 # If a meal request is created with a date that is the
 # same as a previous meal request, an error is thrown
+@freeze_time("2023-01-01")
 def test_create_meal_request_fails_repeat_date(
     meal_request_setup, onsite_contact_setup
 ):
@@ -579,6 +584,7 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
     assert updatedMealRequest["dropOffDatetime"] == updatedDateTime
 
 
+@freeze_time("2023-01-01")
 def test_create_meal_request_failure(meal_request_setup):
     requestor, _, _ = meal_request_setup
 
@@ -1021,6 +1027,7 @@ def test_get_meal_request_by_donor_id(meal_request_setup, onsite_contact_setup):
     assert result["donationInfo"]["additionalInfo"] == "No nuts"
 
 
+@freeze_time("2023-01-01")
 def test_get_meal_requests_by_ids(meal_request_setup):
     asp, donor, meal_request = meal_request_setup
 
@@ -1105,3 +1112,127 @@ def test_get_meal_requests_by_ids(meal_request_setup):
             returned_meal_request["mealInfo"]["dietaryRestrictions"]
             == expected.meal_info.dietary_restrictions
         )
+
+
+@freeze_time("2023-01-01")
+def test_update_meal_request_statuses_to_fulfilled(
+    meal_request_service, meal_request_setup
+):
+    asp, donor, _ = meal_request_setup
+
+    create = graphql_schema.execute(
+        f"""
+    mutation m{{
+      createMealRequest(
+        deliveryInstructions: "Leave at front door",
+        dropOffLocation: "123 Main Street",
+        dropOffTime: "16:30:00Z",
+        mealInfo: {{
+          portions: 40,
+          dietaryRestrictions: "7 gluten free, 7 no beef",
+        }},
+        onsiteContacts: [],
+        requestorId: "{str(asp.id)}",
+        requestDates: [
+            "2023-06-01",
+        ],
+      )
+      {{
+        mealRequests {{
+          id
+        }}
+      }}
+    }}
+    """
+    )
+    assert create.errors is None
+    created_ml_id = create.data["createMealRequest"]["mealRequests"][0]["id"]
+
+    curr_time = datetime.now(timezone.utc)
+    meal_request_service.update_meal_request_statuses_to_fulfilled(curr_time)
+    meal_request = MealRequest.objects(id=created_ml_id).first()
+    # Because meal request does not have a donor it should not be changed to fulfilled
+    assert meal_request.status == MealStatus.OPEN.value
+
+    commit = graphql_schema.execute(
+        f"""mutation testCommitToMealRequest {{
+      commitToMealRequest(
+        requestor: "{str(donor.id)}",
+        mealRequestIds: ["{str(created_ml_id)}"],
+        mealDescription: "Pizza",
+        additionalInfo: "No nuts",
+        donorOnsiteContacts: []
+      )
+      {{
+        mealRequests {{
+          id
+        }}
+      }}
+    }}
+    """
+    )
+    assert commit.errors is None
+    # Check that meal request is fulfilled 7 hours afterwards
+    curr_time = datetime(2023, 6, 1, 23, 30, 0, 0, timezone.utc)
+    meal_request_service.update_meal_request_statuses_to_fulfilled(curr_time)
+    meal_request = MealRequest.objects(id=created_ml_id).first()
+    assert meal_request.status == MealStatus.FULFILLED.value
+
+
+@freeze_time("2023-01-01")
+def test_dont_update_meal_request_statuses_to_fulfilled_if_future(
+    meal_request_service, meal_request_setup
+):
+    asp, donor, _ = meal_request_setup
+
+    create = graphql_schema.execute(
+        f"""
+    mutation m{{
+      createMealRequest(
+        deliveryInstructions: "Leave at front door",
+        dropOffLocation: "123 Main Street",
+        dropOffTime: "16:30:00Z",
+        mealInfo: {{
+          portions: 40,
+          dietaryRestrictions: "7 gluten free, 7 no beef",
+        }},
+        onsiteContacts: [],
+        requestorId: "{str(asp.id)}",
+        requestDates: [
+            "2023-06-25",
+        ],
+      )
+      {{
+        mealRequests {{
+          id
+        }}
+      }}
+    }}
+    """
+    )
+    assert create.errors is None
+    created_ml_id = create.data["createMealRequest"]["mealRequests"][0]["id"]
+
+    commit = graphql_schema.execute(
+        f"""mutation testCommitToMealRequest {{
+      commitToMealRequest(
+        requestor: "{str(donor.id)}",
+        mealRequestIds: ["{str(created_ml_id)}"],
+        mealDescription: "Pizza",
+        additionalInfo: "No nuts",
+        donorOnsiteContacts: []
+      )
+      {{
+        mealRequests {{
+          id
+        }}
+      }}
+    }}
+    """
+    )
+    assert commit.errors is None
+
+    curr_time = datetime(2023, 6, 25, 17, 0, 0, 0, timezone.utc)
+    meal_request_service.update_meal_request_statuses_to_fulfilled(curr_time)
+    meal_request = MealRequest.objects(id=created_ml_id).first()
+    assert meal_request.status == MealStatus.UPCOMING.value

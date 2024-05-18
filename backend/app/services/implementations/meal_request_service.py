@@ -3,7 +3,7 @@ from app.services.interfaces.email_service import IEmailService
 from app.services.implementations.email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from ...models.meal_request import DonationInfo, MealStatus
 from ...models.user import User
@@ -416,3 +416,22 @@ class MealRequestService(IMealRequestService):
                 f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}"
             )
             raise e
+
+    def update_meal_request_statuses_to_fulfilled(self, current_time):
+        """
+        This method is called regularly (every 24 hours) to update the meal statues.
+        """
+        try:
+            six_hours_before = current_time - timedelta(hours=6)
+            meal_requests = MealRequest.objects(
+                status=MealStatus.UPCOMING.value,
+                drop_off_datetime__lte=six_hours_before,
+            ).all()
+
+            for meal_request in meal_requests:
+                meal_request.status = MealStatus.FULFILLED.value
+                meal_request.save()
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error

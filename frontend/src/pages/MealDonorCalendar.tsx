@@ -75,7 +75,7 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
         portions
         dietaryRestrictions
       }
-      onsiteStaff {
+      onsiteContacts {
         name
         email
         phone

@@ -1,4 +1,4 @@
-import { Contact, Requestor } from "./UserTypes";
+import { Contact, OnsiteContact, Requestor } from "./UserTypes";
 
 type MealInfo = {
   portions: number;
@@ -11,13 +11,14 @@ type DonationInfo = {
   commitmentDate: Date;
   mealDescription: string;
   additionalInfo: string;
+  donorOnsiteContacts: Array<OnsiteContact>;
 };
 
 export enum MealStatus {
   OPEN = "OPEN",
   UPCOMING = "UPCOMING",
   FULFILLED = "FULFILLED",
-  CANCELLED = "CANCELLED"
+  CANCELLED = "CANCELLED",
 }
 
 export type MealRequest = {
@@ -28,7 +29,7 @@ export type MealRequest = {
   dropOffDatetime: Date;
   dropOffLocation: string;
   mealInfo: MealInfo;
-  onsiteStaff: Array<Contact>;
+  onsiteContacts: Array<OnsiteContact>;
   dateCreated: Date;
   dateUpdated: Date;
   deliveryInstructions: string;
@@ -53,7 +54,7 @@ export type MealRequestsDonorVariables = {
   offset?: number;
   limit?: number;
   sortByDateDirection?: "ASCENDING" | "DESCENDING";
-}
+};
 
 export type MealRequestsData = {
   getMealRequestsByRequestorId: Array<MealRequest>;

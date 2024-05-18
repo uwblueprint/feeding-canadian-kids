@@ -4,6 +4,8 @@ from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
 from app.services.implementations.mock_email_service import MockEmailService
 
+from datetime import datetime
+
 """
 Tests for MealRequestchema and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
@@ -36,11 +38,11 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: ["{asp_onsite_contact.id}", "{asp_onsite_contact2.id}"],
+        onsiteContacts: ["{asp_onsite_contact.id}", "{asp_onsite_contact2.id}"],
         requestorId: "{str(asp.id)}",
         requestDates: [
-            "2023-06-01",
-            "2023-06-02",
+            "2024-06-01",
+            "2024-06-02",
         ],
       )
       {{
@@ -52,7 +54,7 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             id
             name
             email
@@ -79,15 +81,15 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
     )
     assert (
         result.data["createMealRequest"]["mealRequests"][0]["dropOffDatetime"]
-        == "2023-06-01T16:30:00+00:00"
+        == "2024-06-01T16:30:00+00:00"
     )
     assert (
         result.data["createMealRequest"]["mealRequests"][1]["dropOffDatetime"]
-        == "2023-06-02T16:30:00+00:00"
+        == "2024-06-02T16:30:00+00:00"
     )
 
     created_onsite_contacts = result.data["createMealRequest"]["mealRequests"][0][
-        "onsiteStaff"
+        "onsiteContacts"
     ]
     expected_onsite_contacts = (
         [asp_onsite_contact, asp_onsite_contact2]
@@ -122,7 +124,7 @@ def test_create_meal_request_fails_invalid_onsite_contact(
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: ["{asp_onsite_contact}, fdsfdja"],
+        onsiteContacts: ["{asp_onsite_contact}, fdsfdja"],
         requestorId: "{str(asp.id)}",
         requestDates: [
             "2023-06-01",
@@ -138,7 +140,7 @@ def test_create_meal_request_fails_invalid_onsite_contact(
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             id
           }}
         }}
@@ -148,6 +150,72 @@ def test_create_meal_request_fails_invalid_onsite_contact(
 
     result = graphql_schema.execute(mutation)
     assert result.errors is not None
+    counter_after = MealRequest.objects().count()
+    assert counter_before == counter_after
+
+
+# If a meal request is created with a date that is the
+# same as a previous meal request, an error is thrown
+def test_create_meal_request_fails_repeat_date(
+    meal_request_setup, onsite_contact_setup
+):
+    (
+        asp,
+        donor,
+        [asp_onsite_contact, asp_onsite_contact2],
+        donor_onsite_contact,
+    ) = onsite_contact_setup
+    _, _, meal_request = meal_request_setup
+
+    # drop_off_datetime is currently a string, so we need to convert it to a datetime object
+
+    existing_date = datetime.strptime(
+        meal_request.drop_off_datetime, "%Y-%m-%dT%H:%M:%S"
+    )
+
+    counter_before = MealRequest.objects().count()
+    mutation = f"""
+    mutation testCreateMealRequest {{
+      createMealRequest(
+        deliveryInstructions: "Leave at front door",
+        dropOffLocation: "123 Main Street",
+        dropOffTime: "16:30:00Z",
+        mealInfo: {{
+          portions: 40,
+          dietaryRestrictions: "7 gluten free, 7 no beef",
+        }},
+        onsiteContacts: ["{asp_onsite_contact.id}"],
+        requestorId: "{str(asp.id)}",
+        requestDates: [
+            "2025-06-01",
+            "{existing_date.strftime('%Y-%m-%d')}",
+        ],
+      )
+      {{
+        mealRequests {{
+          status
+          id
+          dropOffDatetime
+          mealInfo {{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteContacts{{
+            id
+          }}
+        }}
+      }}
+    }}
+  """
+
+    result = graphql_schema.execute(mutation)
+    assert (
+        result.errors[0].message
+        == "Unexpected error: Meal request already exists for this ASP on 2025-03-31"
+    )
+    # This exact error message is searched for in the front end,
+    # if it changes, the front end will need to be updated to
+    # detect the new error message
     counter_after = MealRequest.objects().count()
     assert counter_before == counter_after
 
@@ -162,7 +230,8 @@ def test_commit_to_meal_request(meal_request_setup):
         requestor: "{str(donor.id)}",
         mealRequestIds: ["{str(meal_request.id)}"],
         mealDescription: "Pizza",
-        additionalInfo: "No nuts"
+        additionalInfo: "No nuts",
+        donorOnsiteContacts: []
       )
       {{
         mealRequests {{
@@ -177,7 +246,7 @@ def test_commit_to_meal_request(meal_request_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff {{
+          onsiteContacts {{
             name
             email
             phone
@@ -275,8 +344,11 @@ def test_commit_to_meal_request(meal_request_setup):
 
 # Only user's with role "Donor" should be able to commit
 # to meal requests, otherwise an error is thrown
-def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
+def test_commit_to_meal_request_fails_for_non_donor(
+    meal_request_setup, onsite_contact_setup
+):
     _, donor, meal_request = meal_request_setup
+    requestor, _, asp_onsite_contacts, donor_onsite_contact = onsite_contact_setup
 
     # All user info roles except for "Donor"
     INVALID_USERINFO_ROLES = [UserInfoRole.ADMIN.value, UserInfoRole.ASP.value]
@@ -292,6 +364,7 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
           mealRequestIds: ["{str(meal_request.id)}"],
           mealDescription: "Pizza",
           additionalInfo: "No nuts"
+          donorOnsiteContacts: []
         )
         {{
           mealRequests {{
@@ -303,6 +376,10 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
 
         result = graphql_schema.execute(mutation)
         assert result.errors is not None
+        assert (
+            result.errors[0].message
+            == f'Unexpected error: user "{donor.id}" is not a donor'
+        )
 
 
 # A donor can only commit to a meal request if the meal request's
@@ -368,7 +445,7 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
           portions: {updatedMealInfo["portions"]},
           dietaryRestrictions: "{updatedMealInfo["dietaryRestrictions"]}",
         }},
-        onsiteStaff: ["{onsite_contact1.id}","{onsite_contact2.id}"]
+        onsiteContacts: ["{onsite_contact1.id}","{onsite_contact2.id}"]
       )
       {{
         mealRequest{{
@@ -380,7 +457,7 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             id
             name
             email
@@ -407,7 +484,7 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
     assert updatedMealRequest["dropOffLocation"] == updatedDropOffLocation
     assert updatedMealRequest["deliveryInstructions"] == updatedDeliveryInstructions
     assert updatedMealRequest["mealInfo"] == updatedMealInfo
-    returned_onsite_contacts = updatedMealRequest["onsiteStaff"]
+    returned_onsite_contacts = updatedMealRequest["onsiteContacts"]
     compare_returned_onsite_contact(returned_onsite_contacts[0], onsite_contact1)
     compare_returned_onsite_contact(returned_onsite_contacts[1], onsite_contact2)
 
@@ -427,7 +504,7 @@ def test_create_meal_request_failure(meal_request_setup):
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: [
+        onsiteContacts: [
           {{
             name: "John Doe",
             email: "john.doe@example.com",
@@ -441,8 +518,8 @@ def test_create_meal_request_failure(meal_request_setup):
         ],
         requestorId: "{str(requestor.id)}",
         requestDates: [
-            "2023-06-01",
-            "2023-06-02",
+            "2024-06-01",
+            "2024-06-02",
         ],
       )
       {{
@@ -483,7 +560,7 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
               portions
               dietaryRestrictions
             }},
-            onsiteStaff {{
+            onsiteContacts {{
               name
               email
               phone
@@ -531,7 +608,7 @@ def test_cancel_donation_as_admin(meal_request_setup, user_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -580,7 +657,7 @@ def test_cancel_donation_fails_if_no_donation(meal_request_setup, user_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -625,7 +702,7 @@ def test_cancel_donation_as_non_admin(meal_request_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -669,7 +746,7 @@ def test_delete_meal_request_as_admin(meal_request_setup, user_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -712,7 +789,7 @@ def test_delete_meal_request_as_asp(meal_request_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -757,7 +834,7 @@ def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -783,8 +860,10 @@ def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
     assert MealRequest.objects(id=meal_request.id).first() is not None
 
 
-def test_get_meal_request_by_donor_id(meal_request_setup):
+def test_get_meal_request_by_donor_id(meal_request_setup, onsite_contact_setup):
     _, donor, meal_request = meal_request_setup
+
+    asp, donor, asp_onsite_contact, donor_onsite_contact = onsite_contact_setup
 
     commit = graphql_schema.execute(
         f"""mutation testCommitToMealRequest {{
@@ -792,7 +871,8 @@ def test_get_meal_request_by_donor_id(meal_request_setup):
         requestor: "{str(donor.id)}",
         mealRequestIds: ["{str(meal_request.id)}"],
         mealDescription: "Pizza",
-        additionalInfo: "No nuts"
+        additionalInfo: "No nuts",
+        donorOnsiteContacts: ["{str(donor_onsite_contact.id)}"],
       )
       {{
         mealRequests {{
@@ -818,7 +898,7 @@ def test_get_meal_request_by_donor_id(meal_request_setup):
               portions
               dietaryRestrictions
             }},
-            onsiteStaff {{
+            onsiteContacts {{
               name
               email
               phone
@@ -862,11 +942,11 @@ def test_get_meal_requests_by_ids(meal_request_setup):
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: [],
+        onsiteContacts: [],
         requestorId: "{str(asp.id)}",
         requestDates: [
-            "2023-06-01",
-            "2023-06-02",
+            "2025-06-01",
+            "2025-06-02",
         ],
       )
       {{
@@ -899,7 +979,7 @@ def test_get_meal_requests_by_ids(meal_request_setup):
               portions
               dietaryRestrictions
             }},
-            onsiteStaff {{
+            onsiteContacts {{
               name
               email
               phone

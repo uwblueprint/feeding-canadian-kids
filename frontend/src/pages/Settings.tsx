@@ -29,7 +29,7 @@ import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import Logout from "../components/auth/Logout";
-import OnsiteStaffSection from "../components/common/OnsiteStaffSection";
+import OnsiteContactSection from "../components/common/OnsiteContactSection";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
@@ -213,9 +213,16 @@ const Settings = (): React.ReactElement => {
 
   useGetOnsiteContacts(
     toast,
-    (contacts) => {
-      setOnsiteContacts(contacts);
-      setServerOnsiteContacts(contacts);
+    (contacts: OnsiteContact[]) => {
+      const set1 = contacts.map((contact: OnsiteContact) =>
+        JSON.parse(JSON.stringify(contact)),
+      );
+      const set2 = contacts.map((contact: OnsiteContact) =>
+        JSON.parse(JSON.stringify(contact)),
+      );
+      // const set2
+      setOnsiteContacts(set1);
+      setServerOnsiteContacts(set2);
     },
     setIsLoading,
   );
@@ -301,7 +308,7 @@ const Settings = (): React.ReactElement => {
           <Text variant="desktop-body">{userInfo?.email}</Text>
         </Flex>
         <HStack>
-          <Logout/>
+          <Logout />
           <Button
             width="190px"
             height="45px"
@@ -624,7 +631,7 @@ const Settings = (): React.ReactElement => {
       if (!isValidEmail(emailsToValidate[i])) return false;
     }
 
-    if (!isNonNegativeInt(numKids)) return false;
+    if (userInfo?.role === "ASP" && !isNonNegativeInt(numKids)) return false;
 
     return true;
   };
@@ -712,17 +719,35 @@ const Settings = (): React.ReactElement => {
         status: "success",
         isClosable: true,
       });
-      setServerOnsiteContacts(requestOnsiteContacts);
+      setServerOnsiteContacts(
+        requestOnsiteContacts.map((obj) => JSON.parse(JSON.stringify(obj))),
+      );
       setIsLoading(false);
     } catch (e: unknown) {
       logPossibleGraphQLError(e as ApolloError);
       setIsLoading(false);
 
-      toast({
-        title: "Failed to save settings",
-        status: "error",
-        isClosable: true,
-      });
+      if (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        e?.graphQLErrors &&
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        String(e.graphQLErrors[0]?.message).includes("GEOCODING")
+      ) {
+        toast({
+          title:
+            "Failed to located address, please try entering more information or a different address!",
+          status: "error",
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Failed to create account. Please try again.",
+          status: "error",
+          isClosable: true,
+        });
+      }
     }
   };
 
@@ -730,18 +755,23 @@ const Settings = (): React.ReactElement => {
     setAttemptedSave(true);
     if (!isRequestValid()) return;
 
+    const roleInfo =
+      userInfo?.role === "ASP"
+        ? {
+            aspInfo: {
+              numKids: parseInt(trimWhiteSpace(numKids), 10),
+            },
+            donorInfo: null,
+          }
+        : { aspInfo: null, donorInfo: null };
+
     const requestUserInfo: UserInfo = {
       email: userInfo?.email || "",
       organizationAddress: trimWhiteSpace(organizationAddress),
       organizationName: trimWhiteSpace(organizationName),
       organizationDesc,
       role: userInfo?.role || "ASP",
-      roleInfo: {
-        aspInfo: {
-          numKids: parseInt(trimWhiteSpace(numKids), 10),
-        },
-        donorInfo: null,
-      },
+      roleInfo,
       primaryContact: {
         name: trimWhiteSpace(primaryContact.name),
         email: trimWhiteSpace(primaryContact.email),
@@ -816,7 +846,7 @@ const Settings = (): React.ReactElement => {
             ? getWebOrganizationSection()
             : getMobileOrganizationSection()}
           {isWebView && <Divider />}
-          <OnsiteStaffSection
+          <OnsiteContactSection
             onsiteInfo={onsiteContacts}
             setOnsiteInfo={setOnsiteContacts}
             attemptedSubmit={attemptedSubmit}

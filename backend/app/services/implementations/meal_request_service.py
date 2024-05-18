@@ -389,15 +389,16 @@ class MealRequestService(IMealRequestService):
             )
             raise e
         
-    def update_meal_request_statuses_to_fulfilled(self, time):
+    def update_meal_request_statuses_to_fulfilled(self, current_time):
+        """
+        This method is called regularly (every 24 hours) to update the meal statues.
+        """
         try:
-            six_hours_before = time - timedelta(hours=6)
-            print(six_hours_before)
+            six_hours_before = current_time - timedelta(hours=6)
             meal_requests = MealRequest.objects(
                 status=MealStatus.UPCOMING.value,
                 drop_off_datetime__lte=six_hours_before,
             ).all()
-            print(meal_requests)
 
             for meal_request in meal_requests:
                 meal_request.status = MealStatus.FULFILLED.value

@@ -154,5 +154,8 @@ class IMealRequestService(ABC):
         """
 
     @abstractmethod
-    def update_meal_request_statuses_to_fulfilled(self):
+    def update_meal_request_statuses_to_fulfilled(self, current_time):
+        """
+        This method is called regularly (every 24 hours) to update the meal statues.
+        """
         pass

@@ -21,7 +21,7 @@ import {
 import React, { useState } from "react";
 
 import { Contact } from "../../../types/UserTypes";
-import OnsiteStaffSection from "../../common/OnsiteStaffSection";
+import OnsiteContactSection from "../../common/OnsiteContactSection";
 
 type SchedulingFormMealInfoProps = {
   address: string;
@@ -31,16 +31,14 @@ type SchedulingFormMealInfoProps = {
   setDietaryRestrictions: (dietaryRestrictions: string) => void;
   deliveryInstructions: string;
   setDeliveryInstructions: (deliveryInstructions: string) => void;
-  onsiteStaff: Contact[];
-  setOnsiteStaff: React.Dispatch<React.SetStateAction<Contact[]>>;
+  onsiteContact: Contact[];
+  setOnsiteContact: React.Dispatch<React.SetStateAction<Contact[]>>;
   availableStaff: Contact[];
   handleBack: () => void;
   handleNext: () => void;
 };
 
-const SchedulingFormMealInfo: React.FunctionComponent<
-  SchedulingFormMealInfoProps
-> = ({
+const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProps> = ({
   address,
   numMeals,
   setNumMeals,
@@ -48,8 +46,8 @@ const SchedulingFormMealInfo: React.FunctionComponent<
   setDietaryRestrictions,
   deliveryInstructions,
   setDeliveryInstructions,
-  onsiteStaff,
-  setOnsiteStaff,
+  onsiteContact,
+  setOnsiteContact,
   availableStaff,
   handleBack,
   handleNext,
@@ -59,8 +57,8 @@ const SchedulingFormMealInfo: React.FunctionComponent<
   const validateData = () => {
     if (
       numMeals <= 0 ||
-      onsiteStaff.length === 0 ||
-      onsiteStaff.some(
+      onsiteContact.length === 0 ||
+      onsiteContact.some(
         (contact) =>
           !contact ||
           contact.name === "" ||
@@ -185,9 +183,9 @@ const SchedulingFormMealInfo: React.FunctionComponent<
       <GridItem colSpan={{ base: 1, md: 2 }}>
         <Flex flexDir="column" gap="24px">
           <Flex flexDir="column">
-            <OnsiteStaffSection
-              onsiteInfo={onsiteStaff}
-              setOnsiteInfo={setOnsiteStaff}
+            <OnsiteContactSection
+              onsiteInfo={onsiteContact}
+              setOnsiteInfo={setOnsiteContact}
               attemptedSubmit={false /* todo change */}
               availableStaff={availableStaff}
               dropdown

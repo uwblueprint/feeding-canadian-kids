@@ -113,7 +113,7 @@ const OnsiteTextInputRow = ({
   </Tr>
 );
 
-type OnsiteStaffDropdownProps = {
+type onsiteContactDropdownProps = {
   onsiteInfo: Array<Contact>;
   setOnsiteInfo: React.Dispatch<React.SetStateAction<Contact[]>>;
   availableStaff: Array<Contact>;
@@ -127,7 +127,7 @@ const OnsiteDropdownInputRow = ({
   availableStaff,
   index,
   attemptedSubmit,
-}: OnsiteStaffDropdownProps): React.ReactElement => (
+}: onsiteContactDropdownProps): React.ReactElement => (
   // Choose the name from a dropdown of available staff, and then fill in the rest of the info based on that
 
   <Tr h="58px">
@@ -194,7 +194,7 @@ const OnsiteDropdownInputRow = ({
     )}
   </Tr>
 );
-type OnsiteStaffSectionProps = {
+type OnsiteContactSectionProps = {
   onsiteInfo: Array<OnsiteContact>;
   setOnsiteInfo: React.Dispatch<React.SetStateAction<OnsiteContact[]>>;
   attemptedSubmit: boolean;
@@ -202,13 +202,13 @@ type OnsiteStaffSectionProps = {
   dropdown?: boolean;
 };
 
-const OnsiteStaffSection = ({
+const OnsiteContactSection = ({
   onsiteInfo,
   setOnsiteInfo,
   attemptedSubmit,
   availableStaff = [],
   dropdown = false,
-}: OnsiteStaffSectionProps): React.ReactElement => {
+}: OnsiteContactSectionProps): React.ReactElement => {
   const isWebView = useIsWebView();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -431,4 +431,4 @@ const OnsiteStaffSection = ({
   );
 };
 
-export default OnsiteStaffSection;
+export default OnsiteContactSection;

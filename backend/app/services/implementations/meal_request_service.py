@@ -1,4 +1,6 @@
 from typing import List
+from app.services.interfaces.email_service import IEmailService
+from app.services.implementations.email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
 from datetime import datetime
@@ -11,8 +13,9 @@ from ...resources.meal_request_dto import MealRequestDTO
 
 
 class MealRequestService(IMealRequestService):
-    def __init__(self, logger):
+    def __init__(self, logger, email_service: IEmailService):
         self.logger = logger
+        self.email_service = email_service
 
     def create_meal_request(
         self,
@@ -22,32 +25,65 @@ class MealRequestService(IMealRequestService):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff: List[str],
+        onsite_contacts: List[str],
     ):
         try:
-            # Create MealRequests
+            # Verify that the requestor exists
             requestor = User.objects(id=requestor_id).first()
             if not requestor:
-                raise Exception(f'requestor "{requestor_id}" not found')
+                raise Exception(f'Requestor "{requestor_id}" not found')
 
+            if requestor.info.role != UserInfoRole.ASP.value:
+                raise Exception(f'Requestor "{requestor_id}" is not an ASP')
+
+            # Make sure the request dates do not contain duplicates
+            if len(request_dates) != len(set(request_dates)):
+                raise Exception("Cannot make multiple requests for the same date")
+
+            # Verify and create MealRequests
             meal_requests = []
             for request_date in request_dates:
-                # print("creaing!")
+                # Make sure the request date is in the future
+                if request_date < datetime.now().date():
+                    raise Exception("Request date must be in the future")
+
+                # Verify that no meal request exists for the same requestor and drop-off date
+                existing_request = MealRequest.objects(
+                    requestor=requestor,
+                    drop_off_datetime__gte=datetime.combine(
+                        request_date, datetime.min.time()
+                    ),
+                    drop_off_datetime__lte=datetime.combine(
+                        request_date, datetime.max.time()
+                    ),
+                ).first()
+                if existing_request:
+                    raise Exception(
+                        f"Meal request already exists for this ASP on {request_date}"
+                    )
+
                 new_meal_request = MealRequest(
                     requestor=requestor,
                     meal_info=meal_info,
                     drop_off_datetime=datetime.combine(request_date, drop_off_time),
                     drop_off_location=drop_off_location,
                     delivery_instructions=delivery_instructions,
-                    onsite_staff=onsite_staff,
+                    onsite_contacts=onsite_contacts,
                 )
                 new_meal_request.validate_onsite_contacts()
-                new_meal_request.save()
-                meal_requests.append(new_meal_request.to_serializable_dict())
+                meal_requests.append(new_meal_request)
+
+            # Save the meal requests
+            for meal_request in meal_requests:
+                meal_request.save()
+
+            return list(
+                map(lambda request: request.to_serializable_dict(), meal_requests)
+            )
+
         except Exception as error:
             self.logger.error(str(error))
             raise error
-        return meal_requests
 
     def update_meal_request(
         self,
@@ -56,7 +92,7 @@ class MealRequestService(IMealRequestService):
         drop_off_datetime,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_contacts,
         meal_request_id,
     ):
         original_meal_request: MealRequest = MealRequest.objects(
@@ -83,15 +119,10 @@ class MealRequestService(IMealRequestService):
         if delivery_instructions is not None:
             original_meal_request.delivery_instructions = delivery_instructions
 
-        if onsite_staff is not None:
-            original_meal_request.onsite_staff = onsite_staff
+        if onsite_contacts is not None:
+            original_meal_request.onsite_contacts = onsite_contacts
 
-        requestor = original_meal_request.requestor
-
-        # Does validation,
-        meal_request_dto = self.convert_meal_request_to_dto(
-            original_meal_request, requestor
-        )
+        meal_request_dto = original_meal_request.to_dto()
         original_meal_request.validate_onsite_contacts()
 
         original_meal_request.save()
@@ -104,6 +135,7 @@ class MealRequestService(IMealRequestService):
         meal_request_ids: [str],
         meal_description: str,
         additional_info: str,
+        donor_onsite_contacts: List[str],
     ) -> List[MealRequestDTO]:
         try:
             donor = User.objects(id=donor_id).first()
@@ -126,22 +158,26 @@ class MealRequestService(IMealRequestService):
                     raise Exception(
                         f'meal request "{meal_request_id}" is not open for commitment'
                     )
+                meal_requestor_id = meal_request.requestor.id
+                meal_requestor = User.objects(id=meal_requestor_id).first()
+
+                self.send_donor_commit_email(meal_request, donor.info.email)
+                self.send_requestor_commit_email(
+                    meal_request, meal_requestor.info.email
+                )
 
                 meal_request.donation_info = DonationInfo(
                     donor=donor,
                     commitment_date=datetime.utcnow(),
                     meal_description=meal_description,
                     additional_info=additional_info,
+                    donor_onsite_contacts=donor_onsite_contacts,
                 )
 
                 # Change the meal request's status to "Upcoming"
                 meal_request.status = MealStatus.UPCOMING.value
 
-                meal_request_dtos.append(
-                    self.convert_meal_request_to_dto(
-                        meal_request, meal_request.requestor
-                    )
-                )
+                meal_request_dtos.append(meal_request.to_dto())
 
                 meal_request.save()
 
@@ -164,9 +200,7 @@ class MealRequestService(IMealRequestService):
 
             meal_request.donation_info = None
 
-            meal_request_dto = self.convert_meal_request_to_dto(
-                meal_request, meal_request.requestor
-            )
+            meal_request_dto = meal_request.to_dto()  # does validation
 
             meal_request.save()
 
@@ -178,36 +212,19 @@ class MealRequestService(IMealRequestService):
 
     def delete_meal_request(self, meal_request_id: str) -> MealRequestDTO:
         try:
-            meal_request = MealRequest.objects(id=meal_request_id).first()
+            meal_request: MealRequest = MealRequest.objects(id=meal_request_id).first()
             if not meal_request:
                 raise Exception(f'Meal request "{meal_request_id}" not found')
 
             meal_request.delete()
 
-            meal_request_dto = self.convert_meal_request_to_dto(
-                meal_request, meal_request.requestor
-            )
+            meal_request_dto = meal_request.to_dto()
 
             return meal_request_dto
 
         except Exception as error:
             self.logger.error(str(error))
             raise error
-
-    def convert_meal_request_to_dto(
-        self, request: MealRequest, requestor: User
-    ) -> MealRequestDTO:
-        request_dict = request.to_serializable_dict()
-        request_dict["requestor"] = requestor.to_serializable_dict()
-
-        if "donation_info" in request_dict:
-            donor_id = request_dict["donation_info"]["donor"]
-            donor = User.objects(id=donor_id).first()
-            if not donor:
-                raise Exception(f'donor "{donor_id}" not found')
-            request_dict["donation_info"]["donor"] = donor.to_serializable_dict()
-
-        return MealRequestDTO(**request_dict)
 
     def get_meal_requests_by_requestor_id(
         self,
@@ -249,9 +266,7 @@ class MealRequestService(IMealRequestService):
 
             meal_request_dtos = []
             for request in requests:
-                meal_request_dtos.append(
-                    self.convert_meal_request_to_dto(request, requestor)
-                )
+                meal_request_dtos.append(request.to_dto())
 
             return meal_request_dtos
 
@@ -279,7 +294,7 @@ class MealRequestService(IMealRequestService):
             requests = MealRequest.objects(
                 donation_info__donor=donor,
                 status__in=status_value_list,
-            ).order_by(f"{sort_prefix}date_created")
+            ).order_by(f"{sort_prefix}drop_off_datetime")
 
             # Filter results by optional parameters.
             # Since we want to filter these optionally (i.e. filter only if specified),
@@ -299,9 +314,7 @@ class MealRequestService(IMealRequestService):
 
             meal_request_dtos = []
             for request in requests:
-                meal_request_dtos.append(
-                    self.convert_meal_request_to_dto(request, donor)
-                )
+                meal_request_dtos.append(request.to_dto())
 
             return meal_request_dtos
 
@@ -311,17 +324,64 @@ class MealRequestService(IMealRequestService):
 
     def get_meal_request_by_id(self, id: str) -> MealRequestDTO:
         meal_request = MealRequest.objects(id=id).first()
-        meal_request_dto = self.convert_meal_request_to_dto(
-            meal_request, meal_request.requestor
-        )
 
-        return meal_request_dto
+        return meal_request.to_dto()
 
     def get_meal_requests_by_ids(self, ids: str) -> List[MealRequestDTO]:
         meal_requests = MealRequest.objects(id__in=ids).all()
-        meal_request_dtos = [
-            self.convert_meal_request_to_dto(meal_request, meal_request.requestor)
-            for meal_request in meal_requests
-        ]
+        meal_request_dtos = [meal_request.to_dto() for meal_request in meal_requests]
 
         return meal_request_dtos
+
+    def send_donor_commit_email(self, meal_request, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call committed_to_meal_request but this
+                instance of AuthService does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            email_body = EmailService.read_email_template(
+                "email_templates/committed_to_meal_request.html"
+            ).format(
+                dropoff_location=meal_request.drop_off_location,
+                dropoff_time=meal_request.drop_off_datetime,
+                num_meals=meal_request.meal_info.portions,
+            )
+            self.email_service.send_email(
+                email, "Thank you for committing to a meal request!", email_body
+            )
+
+        except Exception as e:
+            self.logger.error(
+                f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}"
+            )
+            raise e
+
+    def send_requestor_commit_email(self, meal_request, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call meal_request_success but this
+                instance of AuthService does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            email_body = EmailService.read_email_template(
+                "email_templates/meal_request_success.html"
+            ).format(
+                dropoff_location=meal_request.drop_off_location,
+                dropoff_time=meal_request.drop_off_datetime,
+                num_meals=meal_request.meal_info.portions,
+            )
+            self.email_service.send_email(
+                email, "Your meal request has been fulfilled!", email_body
+            )
+        except Exception as e:
+            self.logger.error(
+                f"Failed to send committed to meal request email for user {meal_request.id if meal_request else ''} {email}"
+            )
+            raise e

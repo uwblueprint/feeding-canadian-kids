@@ -72,3 +72,14 @@ export type OnboardingRequest = {
   dateSubmitted: string;
   status: string;
 } | null;
+
+export type GetUserData = {
+  getUserById: {
+    id: string;
+    info: UserInfo;
+  };
+};
+
+export type GetUserVariables = {
+  id: string;
+};

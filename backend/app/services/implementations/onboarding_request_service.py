@@ -1,3 +1,4 @@
+from app.resources.validate_utils import validate_userinfo
 from ...utilities.location_to_coordinates import getGeocodeFromAddress
 from ...services.implementations.auth_service import AuthService
 from ..interfaces.onboarding_request_service import IOnboardingRequestService
@@ -8,6 +9,7 @@ from ...models.onboarding_request import (
     ONBOARDING_REQUEST_STATUS_REJECTED,
 )
 from ...models.user_info import UserInfo
+from ...graphql.types import SortDirection
 from ...resources.onboarding_request_dto import OnboardingRequestDTO
 
 
@@ -24,6 +26,17 @@ class OnboardingRequestService(IOnboardingRequestService):
 
     def create_onboarding_request(self, userInfo: UserInfo):
         try:
+            # Users will start out as active
+            userInfo["active"] = True
+            userInfo.active = True
+
+            validation_errors = []
+            validate_userinfo(userInfo, validation_errors)
+            if validation_errors:
+                raise Exception(
+                    f"Error validating user info. Reason = {validation_errors}"
+                )
+
             # Create initial UserInfo object
             user_info = UserInfo(
                 email=userInfo.email,
@@ -56,15 +69,27 @@ class OnboardingRequestService(IOnboardingRequestService):
             )
             raise e
 
-    def get_all_onboarding_requests(self, number=5, offset=0, role="", status=""):
+    def get_all_onboarding_requests(
+        self,
+        number=9,
+        offset=0,
+        role="",
+        status=[],
+        sort_by_date_direction=SortDirection.ASCENDING,
+    ):
         onboarding_request_dtos = []
 
         try:
-            filteredRequests = OnboardingRequest.objects()
+            sort_prefix = "+"
+            if sort_by_date_direction == SortDirection.DESCENDING:
+                sort_prefix = "-"
+            filteredRequests = OnboardingRequest.objects().order_by(
+                f"{sort_prefix}date_submitted"
+            )
             if role:
                 filteredRequests = filteredRequests.filter(info__role=role)
             if status:
-                filteredRequests = filteredRequests.filter(status=status)
+                filteredRequests = filteredRequests.filter(status__in=status)
             for request in filteredRequests.skip(offset).limit(number):
                 request_dict = request.to_serializable_dict()
                 onboarding_request_dtos.append(OnboardingRequestDTO(**request_dict))

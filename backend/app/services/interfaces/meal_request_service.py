@@ -18,7 +18,7 @@ class IMealRequestService(ABC):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff: List[str],
+        onsite_contacts: List[str],
     ):
         """Create a new MealRequest object and corresponding MealRequests
 
@@ -38,7 +38,7 @@ class IMealRequestService(ABC):
         drop_off_datetime,
         drop_off_location,
         delivery_instructions,
-        onsite_staff: List[str],
+        onsite_contacts: List[str],
         meal_request_id,
     ):
         pass
@@ -50,6 +50,7 @@ class IMealRequestService(ABC):
         meal_request_ids: List[str],
         meal_description: str,
         additional_info: Union[str, None],
+        donor_onsite_contacts: List[str],
     ) -> List[MealRequestDTO]:
         pass
 
@@ -134,3 +135,21 @@ class IMealRequestService(ABC):
         :raises Exception: if MealRequest could not be retrieved
         """
         pass
+
+    @abstractmethod
+    def send_donor_commit_email(self, meal_request_id, email):
+        """
+        Sends an email to the user with the given email, notifying them that they have committed to a meal request
+        :param meal_request_id: the id of the meal request
+        :type email: str
+        :raises Exception: if unable to send email
+        """
+
+    @abstractmethod
+    def send_requestor_commit_email(self, meal_request_id, email):
+        """
+        Sends an email to the user with the given email, notifying them that their meal request was successful
+        :param meal_request_id: the id of the meal request
+        :type email: str
+        :raises Exception: if unable to send email
+        """

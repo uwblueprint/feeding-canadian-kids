@@ -113,7 +113,10 @@ def onsite_contact_setup(user_setup):
         organization_id=donor.id,
     ).save()
 
-    yield asp, donor, [asp_onsite_contact, asp_onsite_contact2], [donor_onsite_contact, donor_onsite_contact2]
+    yield asp, donor, [asp_onsite_contact, asp_onsite_contact2], [
+        donor_onsite_contact,
+        donor_onsite_contact2,
+    ]
     asp_onsite_contact.delete()
     donor_onsite_contact.delete()
 

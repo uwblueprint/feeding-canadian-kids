@@ -113,7 +113,13 @@ class UpdateMealRequestDonation(Mutation):
     meal_request = graphene.Field(MealRequestResponse)
 
     def mutate(
-        self, info, requestor_id: str, meal_request_id, meal_description, additional_info, donor_onsite_contacts
+        self,
+        info,
+        requestor_id: str,
+        meal_request_id,
+        meal_description,
+        additional_info,
+        donor_onsite_contacts,
     ):
         user = services["user_service"]
         requestor_auth_id = user.get_auth_id_by_user_id(requestor_id)
@@ -140,7 +146,7 @@ class UpdateMealRequestDonation(Mutation):
                 meal_request_id=meal_request_id,
                 meal_description=meal_description,
                 additional_info=additional_info,
-                donor_onsite_contacts=donor_onsite_contacts
+                donor_onsite_contacts=donor_onsite_contacts,
             )
         except Exception as e:
             raise GraphQLError(str(e))
@@ -157,7 +163,6 @@ class UpdateMealRequest(Mutation):
         drop_off_location = graphene.String()
         delivery_instructions = graphene.String()
         onsite_contacts = graphene.List(graphene.String)
-
 
     # return values
     meal_request = graphene.Field(MealRequestResponse)

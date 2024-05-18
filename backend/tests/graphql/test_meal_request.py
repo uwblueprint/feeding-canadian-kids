@@ -109,7 +109,6 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
 
 def test_create_meal_request_fails_invalid_onsite_contact(
     meal_request_setup, onsite_contact_setup
-
 ):
     (
         asp,
@@ -157,6 +156,7 @@ def test_create_meal_request_fails_invalid_onsite_contact(
     assert result.errors is not None
     counter_after = MealRequest.objects().count()
     assert counter_before == counter_after
+
 
 def test_update_meal_request_donation(meal_request_setup, onsite_contact_setup):
     _, donor, meal_request = meal_request_setup
@@ -226,9 +226,19 @@ def test_update_meal_request_donation(meal_request_setup, onsite_contact_setup):
     )
     assert meal_request_in_db["donation_info"]["additional_info"] == "kimchi fried rice"
     assert meal_request_in_db["donation_info"]["donor"] == donor.id
-    meal_request_donor_onsite_contacts = meal_request_in_db["donation_info"]["donor_onsite_contacts"]
-    in_db_contacts_sorted_by_id = sorted(meal_request_donor_onsite_contacts, key=lambda x: x["id"])
-    expected_contacts_sorted_by_id = sorted([donor_onsite_contact.to_serializable_dict(), donor_onsite_contact2.to_serializable_dict()], key=lambda x: x["id"])
+    meal_request_donor_onsite_contacts = meal_request_in_db["donation_info"][
+        "donor_onsite_contacts"
+    ]
+    in_db_contacts_sorted_by_id = sorted(
+        meal_request_donor_onsite_contacts, key=lambda x: x["id"]
+    )
+    expected_contacts_sorted_by_id = sorted(
+        [
+            donor_onsite_contact.to_serializable_dict(),
+            donor_onsite_contact2.to_serializable_dict(),
+        ],
+        key=lambda x: x["id"],
+    )
     assert in_db_contacts_sorted_by_id == expected_contacts_sorted_by_id
 
 

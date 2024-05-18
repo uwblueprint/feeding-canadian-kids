@@ -167,10 +167,6 @@ function formatDate(inputDate: string): string {
   return date.toLocaleDateString("en-US", options);
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
 export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
   const { mealRequest } = event.extendedProps;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -179,12 +175,10 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
     setCurrentlyEditingMealRequestId,
   ] = useState<string | undefined>(undefined);
 
-
   const handleEditDonation = (meal: MealRequest | undefined) => () => {
     setIsEditModalOpen(true);
     setCurrentlyEditingMealRequestId(meal?.id);
   };
-
 
   return (
     <div
@@ -192,7 +186,7 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
         width: "55%",
       }}
     >
-       {currentlyEditingMealRequestId ? (
+      {currentlyEditingMealRequestId ? (
         <EditMealRequestForm
           open={isEditModalOpen}
           onClose={() => {
@@ -200,7 +194,7 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
             setCurrentlyEditingMealRequestId(undefined);
           }}
           mealRequestId={currentlyEditingMealRequestId}
-          isEditDonation 
+          isEditDonation
         />
       ) : (
         ""
@@ -402,10 +396,7 @@ const UpcomingPage = (): React.ReactElement => {
   function reloadUpcomingMealRequests() {
     getUpcomingMealRequests({
       variables: {
-<<<<<<< HEAD
-=======
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
->>>>>>> origin/main
         donorId: authenticatedUser!.id,
         limit: 3,
         offset,
@@ -422,10 +413,7 @@ const UpcomingPage = (): React.ReactElement => {
     yesterday.setDate(yesterday.getDate() - 1);
     getCompletedMealRequests({
       variables: {
-<<<<<<< HEAD
-=======
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
->>>>>>> origin/main
         donorId: authenticatedUser!.id,
         sortByDateDirection:
           filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",

@@ -104,18 +104,19 @@ class CreateMealRequests(Mutation):
 
 class UpdateMealRequestDonation(Mutation):
     class Arguments:
-        requestor = graphene.ID(required=True)
+        requestor_id = graphene.ID(required=True)
         meal_request_id = graphene.ID(required=True)
-        mealDescription = graphene.String()
-        additionalInfo = graphene.String()
+        meal_description = graphene.String()
+        additional_info = graphene.String()
+        donor_onsite_contacts = graphene.List(graphene.String)
 
     meal_request = graphene.Field(MealRequestResponse)
 
     def mutate(
-        self, info, requestor: str, meal_request_id, mealDescription, additionalInfo
+        self, info, requestor_id: str, meal_request_id, meal_description, additional_info, donor_onsite_contacts
     ):
         user = services["user_service"]
-        requestor_auth_id = user.get_auth_id_by_user_id(requestor)
+        requestor_auth_id = user.get_auth_id_by_user_id(requestor_id)
         requestor_role = user.get_user_role_by_auth_id(requestor_auth_id)
 
         try:
@@ -128,17 +129,18 @@ class UpdateMealRequestDonation(Mutation):
 
             if (
                 requestor_role != "Admin"
-                and meal_request.donation_info["donor"]["id"] != requestor
+                and meal_request.donation_info["donor"]["id"] != requestor_id
             ):
                 raise Exception(
                     "Requestor is not an admin or the donor of the meal request."
                 )
 
             result = services["meal_request_service"].update_meal_request_donation(
-                requestor_id=requestor,
+                requestor_id=requestor_id,
                 meal_request_id=meal_request_id,
-                meal_description=mealDescription,
-                additional_info=additionalInfo,
+                meal_description=meal_description,
+                additional_info=additional_info,
+                donor_onsite_contacts=donor_onsite_contacts
             )
         except Exception as e:
             raise GraphQLError(str(e))
@@ -155,6 +157,7 @@ class UpdateMealRequest(Mutation):
         drop_off_location = graphene.String()
         delivery_instructions = graphene.String()
         onsite_contacts = graphene.List(graphene.String)
+
 
     # return values
     meal_request = graphene.Field(MealRequestResponse)

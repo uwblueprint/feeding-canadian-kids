@@ -135,6 +135,7 @@ class MealRequestService(IMealRequestService):
         meal_request_id,
         meal_description: str,
         additional_info: str,
+        donor_onsite_contacts: List[str],
     ):
         original_meal_request = MealRequest.objects(id=meal_request_id).first()
         if not original_meal_request:
@@ -148,17 +149,13 @@ class MealRequestService(IMealRequestService):
             commitment_date=original_meal_request.donation_info.commitment_date,
             meal_description=meal_description,
             additional_info=additional_info,
+            donor_onsite_contacts=donor_onsite_contacts,
         )
-
-        requestor = original_meal_request.requestor
 
         # Does validation,
-        meal_request_dto = self.convert_meal_request_to_dto(
-            original_meal_request, requestor
-        )
+        meal_request_dto = original_meal_request.to_dto()
 
         original_meal_request.validate_onsite_contacts()
-
         original_meal_request.save()
 
         return meal_request_dto

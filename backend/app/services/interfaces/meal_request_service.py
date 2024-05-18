@@ -50,6 +50,7 @@ class IMealRequestService(ABC):
         meal_request_id,
         meal_description: str,
         additional_info: str,
+        donor_onsite_contacts: List[str],
     ):
         pass
 

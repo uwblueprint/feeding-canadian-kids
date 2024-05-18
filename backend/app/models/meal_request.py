@@ -88,20 +88,14 @@ class MealRequest(mg.Document):
         id = meal_request_dict.pop("_id", None)
         meal_request_dict["id"] = str(id)
 
-        contacts = [contact.to_mongo().to_dict() for contact in self.onsite_contacts]
-        for contact in contacts:
-            id = contact.pop("_id")
-            contact["id"] = id
+        contacts = [contact.to_serializable_dict() for contact in self.onsite_contacts]
         meal_request_dict["onsite_contacts"] = contacts
 
         if self.donation_info and self.donation_info.donor_onsite_contacts:
             contacts = [
-                contact.to_mongo().to_dict()
+                contact.to_serializable_dict()
                 for contact in self.donation_info.donor_onsite_contacts
             ]
-            for contact in contacts:
-                id = contact.pop("_id")
-                contact["id"] = id
             meal_request_dict["donation_info"]["donor_onsite_contacts"] = contacts
 
         return meal_request_dict

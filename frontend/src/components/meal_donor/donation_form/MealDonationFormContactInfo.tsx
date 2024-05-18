@@ -22,19 +22,19 @@ import MealDeliveryDetails from "./MealDeliveryDetails";
 
 import { MealRequest } from "../../../types/MealRequestTypes";
 import { AuthenticatedUser, Contact } from "../../../types/UserTypes";
-import OnsiteStaffSection from "../../common/OnsiteStaffSection";
+import OnsiteContactSection from "../../common/OnsiteContactSection";
 
 type MealDonationFormContactInfoProps = {
-  onsiteStaff: Contact[];
-  setOnsiteStaff: React.Dispatch<React.SetStateAction<Contact[]>>;
+  onsiteContact: Contact[];
+  setOnsiteContact: React.Dispatch<React.SetStateAction<Contact[]>>;
   availableStaff: Contact[];
   handleNext: () => void;
   mealRequestsInformation: Array<MealRequest>;
 };
 
 const MealDonationFormContactInfo: React.FunctionComponent<MealDonationFormContactInfoProps> = ({
-  onsiteStaff,
-  setOnsiteStaff,
+  onsiteContact,
+  setOnsiteContact,
   availableStaff,
   handleNext,
   mealRequestsInformation,
@@ -43,8 +43,8 @@ const MealDonationFormContactInfo: React.FunctionComponent<MealDonationFormConta
 
   const validateData = () => {
     if (
-      onsiteStaff.length === 0 ||
-      onsiteStaff.some(
+      onsiteContact.length === 0 ||
+      onsiteContact.some(
         (contact) =>
           !contact ||
           contact.name === "" ||
@@ -80,9 +80,9 @@ const MealDonationFormContactInfo: React.FunctionComponent<MealDonationFormConta
               </Text>
               <Text>Contact Information</Text>
               <Flex maxWidth="550px" flexDir="column">
-                <OnsiteStaffSection
-                  onsiteInfo={onsiteStaff}
-                  setOnsiteInfo={setOnsiteStaff}
+                <OnsiteContactSection
+                  onsiteInfo={onsiteContact}
+                  setOnsiteInfo={setOnsiteContact}
                   attemptedSubmit={false}
                   availableStaff={availableStaff}
                   dropdown

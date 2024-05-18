@@ -94,6 +94,7 @@ def commit_to_meal_request(donor, meal_request):
             mealRequestIds: ["{str(meal_request.id)}"],
             mealDescription: "Pizza",
             additionalInfo: "No nuts"
+            donorOnsiteContacts: []
         )
         {{
             mealRequests {{
@@ -108,7 +109,7 @@ def commit_to_meal_request(donor, meal_request):
                 portions
                 dietaryRestrictions
             }}
-            onsiteStaff {{
+            onsiteContacts {{
                 name
                 email
                 phone

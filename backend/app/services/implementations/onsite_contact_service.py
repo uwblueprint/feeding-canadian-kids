@@ -16,9 +16,9 @@ class OnsiteContactService(IOnsiteContactService):
         self,
         id: str,
     ):
-        onsite_staff = OnsiteContact.objects(id=id).first()
-        if onsite_staff:
-            return onsite_staff.to_dto()
+        onsite_contacts = OnsiteContact.objects(id=id).first()
+        if onsite_contacts:
+            return onsite_contacts.to_dto()
         else:
             return None
 
@@ -26,8 +26,8 @@ class OnsiteContactService(IOnsiteContactService):
         self,
         user_id: str,
     ) -> List[OnsiteContactDTO]:
-        onsite_staff = OnsiteContact.objects(organization_id=user_id).all()
-        return [staff.to_dto() for staff in onsite_staff]
+        onsite_contacts = OnsiteContact.objects(organization_id=user_id).all()
+        return [staff.to_dto() for staff in onsite_contacts]
 
     def delete_onsite_contact_by_id(
         self,
@@ -71,9 +71,12 @@ class OnsiteContactService(IOnsiteContactService):
                 email=email,
                 phone=phone,
             )
-            new_contact.save()
 
-            return new_contact.to_dto()
+            new_contact.save()
+            # does validation
+            dto = new_contact.to_dto()
+
+            return dto
 
         except Exception as error:
             self.logger.error(str(error))

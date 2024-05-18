@@ -1,4 +1,10 @@
-import { gql, useLazyQuery } from "@apollo/client";
+import {
+  WatchQueryFetchPolicy,
+  gql,
+  useApolloClient,
+  useLazyQuery,
+  useMutation,
+} from "@apollo/client";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -6,7 +12,14 @@ import {
   EditIcon,
 } from "@chakra-ui/icons";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
+  Button,
   Button as ChakraButton,
   Collapse,
   Flex,
@@ -17,9 +30,10 @@ import {
   MenuList,
   MenuOptionGroup,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { BsFilter } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 
@@ -102,8 +116,20 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
   }
 `;
 
-type ASPListViewProps = { authId: string; rowsPerPage?: number };
+const DELETE_MEAL_REQUEST = gql`
+  mutation DeleteMealRequest($mealRequestId: ID!, $requestorId: String!) {
+    deleteMealRequest(
+      mealRequestId: $mealRequestId
+      requestorId: $requestorId
+    ) {
+      mealRequest {
+        id
+      }
+    }
+  }
+`;
 
+type ASPListViewProps = { authId: string; rowsPerPage?: number };
 const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
     [],
@@ -130,6 +156,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     currentlyEditingMealRequestId,
     setCurrentlyEditingMealRequestId,
   ] = useState<string | undefined>(undefined);
+  const apolloClient = useApolloClient();
 
   const [
     getMealRequests,
@@ -177,7 +204,14 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     },
   );
 
-  function reloadMealRequests() {
+  const [
+    itemToDelete,
+    setItemToDelete,
+  ] = useState<TABLE_LIBRARY_TYPES.TableNode | null>(null);
+
+  function reloadMealRequests(
+    fetchPolicy: WatchQueryFetchPolicy = "cache-first",
+  ) {
     getMealRequests({
       variables: {
         requestorId: authId,
@@ -186,13 +220,47 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
         limit: rowsPerPage,
         offset: (currentPage - 1) * rowsPerPage,
       },
+      fetchPolicy,
     });
   }
+
+  const [
+    deleteMealRequest,
+    { loading: deleteMealRequestLoading, error: deleteMealRequestError },
+  ] = useMutation(DELETE_MEAL_REQUEST, {
+    awaitRefetchQueries: true,
+  });
+
+  const handleDelete = async (item: TABLE_LIBRARY_TYPES.TableNode) => {
+    try {
+      await deleteMealRequest({
+        variables: {
+          mealRequestId: item.meal_request_id,
+          requestorId: authId,
+        },
+      });
+      reloadMealRequests("network-only");
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Error deleting meal request:", error);
+      logPossibleGraphQLError(error);
+    }
+  };
 
   useEffect(() => {
     reloadMealRequests();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, sort, currentPage]);
+
+  useEffect(() => {
+    // check if the query parameter refetch is set to true
+    const urlParams = new URLSearchParams(window.location.search);
+    const refetch = urlParams.get("refetch");
+    if (refetch === "true") {
+      apolloClient.cache.evict({ fieldName: "getMealRequestsByRequestorId" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleEdit = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
@@ -202,10 +270,12 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     setCurrentlyEditingMealRequestId(item.meal_request_id);
   };
 
-  const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
-    // eslint-disable-next-line no-console
-    console.log("delete clicked for item", item.id);
-  };
+  const {
+    isOpen: deleteAlertIsOpen,
+    onOpen: setDeleteAlertOpen,
+    onClose: setDeleteAlertClosed,
+  } = useDisclosure();
+  const cancelRef = React.useRef<HTMLButtonElement>(null);
 
   const COLUMNS = [
     {
@@ -284,7 +354,10 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
               _hover={{ color: "primary.blue" }}
             />
             <DeleteIcon
-              onClick={handleDelete(item)}
+              onClick={() => {
+                setItemToDelete(item);
+                setDeleteAlertOpen();
+              }}
               cursor="pointer"
               _hover={{ color: "primary.blue" }}
             />
@@ -394,6 +467,40 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
 
   return (
     <>
+      <AlertDialog
+        isOpen={deleteAlertIsOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={setDeleteAlertClosed}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Meal Request
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You cannot undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={setDeleteAlertClosed}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={() => {
+                  if (itemToDelete) handleDelete(itemToDelete);
+                  setDeleteAlertClosed();
+                }}
+                ml={3}
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
       {currentlyEditingMealRequestId ? (
         <EditMealRequestForm
           open={isEditModalOpen}

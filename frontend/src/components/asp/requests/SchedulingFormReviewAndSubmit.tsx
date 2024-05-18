@@ -128,7 +128,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
           status: "success",
           isClosable: true,
         });
-        navigate(ASP_DASHBOARD_PAGE);
+        navigate(`${ASP_DASHBOARD_PAGE}?refetch=true`);
       }
     } catch (e: unknown) {
       logPossibleGraphQLError(e);

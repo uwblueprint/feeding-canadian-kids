@@ -9,6 +9,7 @@ from ...models.onboarding_request import (
     ONBOARDING_REQUEST_STATUS_REJECTED,
 )
 from ...models.user_info import UserInfo
+from ...graphql.types import SortDirection
 from ...resources.onboarding_request_dto import OnboardingRequestDTO
 
 
@@ -68,11 +69,23 @@ class OnboardingRequestService(IOnboardingRequestService):
             )
             raise e
 
-    def get_all_onboarding_requests(self, number=5, offset=0, role="", status=[]):
+    def get_all_onboarding_requests(
+        self,
+        number=9,
+        offset=0,
+        role="",
+        status=[],
+        sort_by_date_direction=SortDirection.ASCENDING,
+    ):
         onboarding_request_dtos = []
 
         try:
-            filteredRequests = OnboardingRequest.objects()
+            sort_prefix = "+"
+            if sort_by_date_direction == SortDirection.DESCENDING:
+                sort_prefix = "-"
+            filteredRequests = OnboardingRequest.objects().order_by(
+                f"{sort_prefix}date_submitted"
+            )
             if role:
                 filteredRequests = filteredRequests.filter(info__role=role)
             if status:

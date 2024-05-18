@@ -21,7 +21,7 @@ import TitleSection from "../../common/ThreeStepFormTitleSection";
 
 const MealDonationForm = (): React.ReactElement => {
   // This is the selected onsite staff
-  const [onsiteStaff, setOnsiteStaff] = useState<Contact[]>([
+  const [onsiteContacts, setOnsiteContact] = useState<Contact[]>([
     {
       name: "",
       email: "",
@@ -85,7 +85,7 @@ const MealDonationForm = (): React.ReactElement => {
         portions
         dietaryRestrictions
       }
-      onsiteStaff {
+      onsiteContacts {
         name
         email
         phone
@@ -157,8 +157,8 @@ const MealDonationForm = (): React.ReactElement => {
           header3="Review & Submit"
           panel1={
             <MealDonationFormContactInfo
-              onsiteStaff={onsiteStaff}
-              setOnsiteStaff={setOnsiteStaff}
+              onsiteContact={onsiteContacts}
+              setOnsiteContact={setOnsiteContact}
               availableStaff={availableOnsiteContacts}
               handleNext={() => {}} // Leave like this, gets updated by three-step form
               mealRequestsInformation={
@@ -186,7 +186,7 @@ const MealDonationForm = (): React.ReactElement => {
               }
               mealDescription={mealDescription}
               additionalInfo={additionalInfo}
-              onsiteStaff={onsiteStaff}
+              onsiteContact={onsiteContacts}
               requestorId={requestorId}
               primaryContact={primaryContact}
               handleBack={() => {}} // Leave like this, gets updated by three-step form

@@ -18,7 +18,7 @@ class IMealRequestService(ABC):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff: List[str],
+        onsite_contacts: List[str],
     ):
         """Create a new MealRequest object and corresponding MealRequests
 
@@ -38,7 +38,7 @@ class IMealRequestService(ABC):
         drop_off_datetime,
         drop_off_location,
         delivery_instructions,
-        onsite_staff: List[str],
+        onsite_contacts: List[str],
         meal_request_id,
     ):
         pass
@@ -60,6 +60,7 @@ class IMealRequestService(ABC):
         meal_request_ids: List[str],
         meal_description: str,
         additional_info: Union[str, None],
+        donor_onsite_contacts: List[str],
     ) -> List[MealRequestDTO]:
         pass
 

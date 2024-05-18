@@ -104,7 +104,7 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
         portions
         dietaryRestrictions
       }
-      onsiteStaff {
+      onsiteContacts {
         name
         email
         phone
@@ -132,7 +132,7 @@ type Staff = {
 
 type MealRequest1 = {
   date: Date;
-  onsiteStaff: Staff[];
+  onsiteContact: Staff[];
   dropOffTime: Date;
   dropOffLocation: string;
   deliveryInstructions: string;
@@ -167,7 +167,10 @@ function formatDate(inputDate: string): string {
   return date.toLocaleDateString("en-US", options);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
 export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
   const { mealRequest } = event.extendedProps;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -207,17 +210,19 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
           <VStack padding={10}>
             <Text fontSize="md">
               {formatDate(
-                mealRequest!.dropOffDatetime.toLocaleString().split("T")[0],
-              )}
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                mealRequest!.dropOffDatetime?.toLocaleString().split("T")[0],
+              ) ?? ""}
             </Text>
             <Text fontSize="20px">
               {new Date(
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 mealRequest!.dropOffDatetime.toLocaleString(),
               ).toLocaleTimeString("en-US", {
                 hour: "numeric",
                 minute: "numeric",
                 hour12: true,
-              })}
+              }) ?? ""}
             </Text>
             <HStack>
               <IoRestaurant height={20} width={20} />
@@ -251,7 +256,7 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
                 <Text fontSize="xs">
                   <strong>ASP Onsite Staff:</strong>
                 </Text>
-                {mealRequest?.onsiteStaff.map((staffMember: any) => (
+                {mealRequest?.onsiteContacts.map((staffMember) => (
                   <>
                     <Text fontSize="xs">{staffMember.name}</Text>
                     <Text fontSize="xs">{staffMember.email}</Text>
@@ -383,7 +388,7 @@ const UpcomingPage = (): React.ReactElement => {
               donation_address: mealRequest.dropOffLocation,
               dietary_restrictions: mealRequest.mealInfo.dietaryRestrictions,
               contact_info: "TODO: donor primaryContact", // mealRequest.donationInfo.primaryContact
-              onsite_staff: mealRequest.onsiteStaff,
+              onsite_contact: mealRequest.onsiteContacts,
               meal_description: mealRequest.donationInfo?.mealDescription,
               _hasContent: false,
               nodes: null,
@@ -397,6 +402,10 @@ const UpcomingPage = (): React.ReactElement => {
   function reloadUpcomingMealRequests() {
     getUpcomingMealRequests({
       variables: {
+<<<<<<< HEAD
+=======
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+>>>>>>> origin/main
         donorId: authenticatedUser!.id,
         limit: 3,
         offset,
@@ -413,6 +422,10 @@ const UpcomingPage = (): React.ReactElement => {
     yesterday.setDate(yesterday.getDate() - 1);
     getCompletedMealRequests({
       variables: {
+<<<<<<< HEAD
+=======
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+>>>>>>> origin/main
         donorId: authenticatedUser!.id,
         sortByDateDirection:
           filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
@@ -432,6 +445,7 @@ const UpcomingPage = (): React.ReactElement => {
     } else {
       reloadCompletedMealRequests();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabSelected, filter]);
 
   // Card pagination
@@ -439,6 +453,7 @@ const UpcomingPage = (): React.ReactElement => {
     if (upcomingMealRequests) {
       reloadUpcomingMealRequests();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset]);
 
   // List pagination
@@ -446,6 +461,7 @@ const UpcomingPage = (): React.ReactElement => {
     if (completedMealRequests) {
       reloadCompletedMealRequests();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   if (!authenticatedUser) {

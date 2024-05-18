@@ -30,7 +30,6 @@ import { useNavigate } from "react-router-dom";
 import { ASP_DASHBOARD_PAGE } from "../../../constants/Routes";
 import { Contact, OnsiteContact } from "../../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
-import OnsiteStaffSection from "../../common/OnsiteStaffSection";
 
 // Create the GraphQL mutation
 const CREATE_MEAL_REQUEST = gql`
@@ -39,7 +38,7 @@ const CREATE_MEAL_REQUEST = gql`
     $numMeals: Int!
     $dietaryRestrictions: String
     $deliveryInstructions: String
-    $onsiteStaff: [String!]!
+    $onsiteContact: [String!]!
     $scheduledDropOffTime: Time!
     $mealRequestDates: [Date!]!
     $userId: ID!
@@ -47,7 +46,7 @@ const CREATE_MEAL_REQUEST = gql`
     createMealRequest(
       dropOffLocation: $address
       deliveryInstructions: $deliveryInstructions
-      onsiteStaff: $onsiteStaff
+      onsiteContacts: $onsiteContact
       mealInfo: {
         portions: $numMeals
         dietaryRestrictions: $dietaryRestrictions
@@ -73,7 +72,7 @@ type SchedulingFormReviewAndSubmitProps = {
   numMeals: number;
   dietaryRestrictions: string;
   deliveryInstructions: string;
-  onsiteStaff: OnsiteContact[];
+  onsiteContact: OnsiteContact[];
 
   // User ID
   userId: string;
@@ -89,7 +88,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
   numMeals,
   dietaryRestrictions,
   deliveryInstructions,
-  onsiteStaff,
+  onsiteContact,
   userId,
   handleBack,
 }) => {
@@ -112,7 +111,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
           numMeals,
           dietaryRestrictions,
           deliveryInstructions,
-          onsiteStaff: onsiteStaff.map((staff: OnsiteContact) => staff.id),
+          onsiteContact: onsiteContact.map((staff: OnsiteContact) => staff.id),
           // Format the scheduled drop off time with the current time zone
           scheduledDropOffTime,
           userId,
@@ -129,12 +128,37 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
           status: "success",
           isClosable: true,
         });
-        navigate(ASP_DASHBOARD_PAGE);
+        navigate(`${ASP_DASHBOARD_PAGE}?refetch=true`);
       }
     } catch (e: unknown) {
       logPossibleGraphQLError(e);
+      let errorMessage;
+      if (
+        (e as Error).message.includes(
+          "Meal request already exists for this ASP",
+        )
+      ) {
+        // The last word is the date
+        const date = (e as Error).message.split(" ").pop();
+        if (!date) {
+          errorMessage = "Failed to create meal request. Please try again.";
+          toast({
+            title: errorMessage,
+            status: "error",
+            isClosable: true,
+          });
+          return;
+        }
+        // Construct a date object from the string
+        const dateObj = new Date(date);
+
+        errorMessage = `You have already created a meal request on ${dateObj.toDateString()}. Please choose another date, or edit your existing meal request.`;
+      } else {
+        errorMessage = "Failed to create meal request. Please try again.";
+      }
+
       toast({
-        title: "Failed to create meal request. Please try again.",
+        title: errorMessage,
         status: "error",
         isClosable: true,
       });
@@ -232,7 +256,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
                 </Thead>
 
                 <Tbody>
-                  {onsiteStaff.map((staff, index) =>
+                  {onsiteContact.map((staff, index) =>
                     staff ? (
                       <Tr key={index}>
                         <Td /* padding="0 12px 0 24px" */ w="256px">

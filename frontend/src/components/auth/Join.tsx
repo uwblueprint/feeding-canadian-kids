@@ -39,7 +39,7 @@ import {
   trimWhiteSpace,
 } from "../../utils/ValidationUtils";
 import useIsWebView from "../../utils/useIsWebView";
-import OnsiteStaffSection from "../common/OnsiteStaffSection";
+import OnsiteContactSection from "../common/OnsiteContactSection";
 
 const PLACEHOLDER_WEB_EXAMPLE_FULL_NAME = "Jane Doe";
 const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
@@ -471,11 +471,27 @@ const Join = (): React.ReactElement => {
       console.log(response);
       navigate(JOIN_SUCCESS_PAGE);
     } catch (e: unknown) {
-      toast({
-        title: "Failed to create account. Please try again.",
-        status: "error",
-        isClosable: true,
-      });
+      if (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        e?.graphQLErrors &&
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        String(e.graphQLErrors[0]?.message).includes("GEOCODING")
+      ) {
+        toast({
+          title:
+            "Failed to located address, please try entering more information or a different address!",
+          status: "error",
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Failed to create account. Please try again.",
+          status: "error",
+          isClosable: true,
+        });
+      }
       // eslint-disable-next-line no-console
       console.log(e);
       logPossibleGraphQLError(e as ApolloError);
@@ -607,7 +623,8 @@ const Join = (): React.ReactElement => {
         borderRadius="8px"
         boxShadow={{
           base: "",
-          lg: "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
+          lg:
+            "0px 0px 3px rgba(0, 0, 0, 0.1), 0px 4px 20px rgba(0, 0, 0, 0.15)",
         }}
         style={{
           backgroundColor: "white",
@@ -622,7 +639,7 @@ const Join = (): React.ReactElement => {
           : getMobileOrganizationSection()}
         {isWebView && <Divider />}
         {isWebView ? getWebContactSection() : getMobileContactSection()}
-        <OnsiteStaffSection
+        <OnsiteContactSection
           onsiteInfo={onsiteInfo}
           setOnsiteInfo={setOnsiteInfo}
           attemptedSubmit={attemptedSubmit}

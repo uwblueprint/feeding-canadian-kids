@@ -1,6 +1,7 @@
 import {
   WatchQueryFetchPolicy,
   gql,
+  useApolloClient,
   useLazyQuery,
   useMutation,
 } from "@apollo/client";
@@ -163,7 +164,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     currentlyEditingMealRequestId,
     setCurrentlyEditingMealRequestId,
   ] = useState<string | undefined>(undefined);
-  const [shouldFetch, setShouldFetch] = useState(false);
+  const apolloClient = useApolloClient();
 
   const [
     getMealRequests,
@@ -264,7 +265,10 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     const urlParams = new URLSearchParams(window.location.search);
     const refetch = urlParams.get("refetch");
     if (refetch === "true") {
-      reloadMealRequests("network-only");
+      // reloadMealRequests("network-only");
+      // eslint-disable-next-line no-restricted-globals
+      // location.reload();
+      apolloClient.cache.evict({ fieldName: "getMealRequestsByRequestorId" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

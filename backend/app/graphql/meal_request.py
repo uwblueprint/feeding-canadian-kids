@@ -121,9 +121,9 @@ class UpdateMealRequestDonation(Mutation):
         additional_info,
         donor_onsite_contacts,
     ):
-        user = services["user_service"]
-        requestor_auth_id = user.get_auth_id_by_user_id(requestor_id)
-        requestor_role = user.get_user_role_by_auth_id(requestor_auth_id)
+        user_service = services["user_service"]
+        requestor_auth_id = user_service.get_auth_id_by_user_id(requestor_id)
+        requestor_role = user_service.get_user_role_by_auth_id(requestor_auth_id)
 
         try:
             meal_request = services["meal_request_service"].get_meal_request_by_id(

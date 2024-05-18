@@ -208,9 +208,12 @@ def test_create_meal_request_fails_repeat_date(
   """
 
     result = graphql_schema.execute(mutation)
-    assert result.errors[0].message == "Unexpected error: Meal request already exists for this ASP on 2025-03-31"
+    assert (
+        result.errors[0].message
+        == "Unexpected error: Meal request already exists for this ASP on 2025-03-31"
+    )
     # This exact error message is searched for in the front end,
-    # if it changes, the front end will need to be updated to 
+    # if it changes, the front end will need to be updated to
     # detect the new error message
     counter_after = MealRequest.objects().count()
     assert counter_before == counter_after

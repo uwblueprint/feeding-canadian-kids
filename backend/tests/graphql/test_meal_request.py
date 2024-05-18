@@ -25,7 +25,7 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
         asp,
         donor,
         [asp_onsite_contact, asp_onsite_contact2],
-        donor_onsite_contact,
+        [donor_onsite_contact, donor_onsite_contact2],
     ) = onsite_contact_setup
 
     mutation = f"""
@@ -112,7 +112,12 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
 def test_create_meal_request_fails_invalid_onsite_contact(
     meal_request_setup, onsite_contact_setup
 ):
-    asp, donor, asp_onsite_contact, donor_onsite_contact = onsite_contact_setup
+    (
+        asp,
+        donor,
+        [asp_onsite_contact, asp_onsite_contact2],
+        [donor_onsite_contact, donor_onsite_contact2],
+    ) = onsite_contact_setup
 
     counter_before = MealRequest.objects().count()
     mutation = f"""
@@ -155,6 +160,90 @@ def test_create_meal_request_fails_invalid_onsite_contact(
     assert counter_before == counter_after
 
 
+def test_update_meal_request_donation(meal_request_setup, onsite_contact_setup):
+    _, donor, meal_request = meal_request_setup
+
+    test_commit_to_meal_request(meal_request_setup)
+    (
+        _,
+        donor,
+        [asp_onsite_contact, asp_onsite_contact2],
+        [donor_onsite_contact, donor_onsite_contact2],
+    ) = onsite_contact_setup
+
+    mutation = f"""
+    mutation testUpdateMealRequestDonation {{
+      updateMealRequestDonation(
+        requestorId: "{str(donor.id)}",
+        mealRequestId: "{str(meal_request.id)}",
+        mealDescription: "potato chicken nugget",
+        additionalInfo: "kimchi fried rice"
+        donorOnsiteContacts: ["{str(donor_onsite_contact.id)}", "{str(donor_onsite_contact2.id)}"]
+      )
+      {{
+        mealRequest {{
+          id
+          requestor {{
+            id
+          }}
+          status
+          dropOffDatetime
+          dropOffLocation
+          mealInfo {{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteContacts {{
+            name
+            email
+            phone
+          }}
+          dateCreated
+          dateUpdated
+          deliveryInstructions
+          donationInfo {{
+            donor {{
+              id
+            }}
+            commitmentDate
+            mealDescription
+            additionalInfo
+          }}
+        }}
+      }}
+    }}
+    """
+
+    result = graphql_schema.execute(mutation)
+
+    assert result.errors is None
+
+    meal_request_in_db = (
+        MealRequest.objects(id=meal_request.id).first().to_serializable_dict()
+    )
+
+    assert (
+        meal_request_in_db["donation_info"]["meal_description"]
+        == "potato chicken nugget"
+    )
+    assert meal_request_in_db["donation_info"]["additional_info"] == "kimchi fried rice"
+    assert meal_request_in_db["donation_info"]["donor"] == donor.id
+    meal_request_donor_onsite_contacts = meal_request_in_db["donation_info"][
+        "donor_onsite_contacts"
+    ]
+    in_db_contacts_sorted_by_id = sorted(
+        meal_request_donor_onsite_contacts, key=lambda x: x["id"]
+    )
+    expected_contacts_sorted_by_id = sorted(
+        [
+            donor_onsite_contact.to_serializable_dict(),
+            donor_onsite_contact2.to_serializable_dict(),
+        ],
+        key=lambda x: x["id"],
+    )
+    assert in_db_contacts_sorted_by_id == expected_contacts_sorted_by_id
+
+
 # If a meal request is created with a date that is the
 # same as a previous meal request, an error is thrown
 @freeze_time("2023-01-01")
@@ -165,7 +254,7 @@ def test_create_meal_request_fails_repeat_date(
         asp,
         donor,
         [asp_onsite_contact, asp_onsite_contact2],
-        donor_onsite_contact,
+        [donor_onsite_contact, donor_onsite_contact2],
     ) = onsite_contact_setup
     _, _, meal_request = meal_request_setup
 
@@ -352,7 +441,7 @@ def test_commit_to_meal_request_fails_for_non_donor(
     meal_request_setup, onsite_contact_setup
 ):
     _, donor, meal_request = meal_request_setup
-    requestor, _, asp_onsite_contacts, donor_onsite_contact = onsite_contact_setup
+    requestor, _, asp_onsite_contacts, donor_onsite_contacts = onsite_contact_setup
 
     # All user info roles except for "Donor"
     INVALID_USERINFO_ROLES = [UserInfoRole.ADMIN.value, UserInfoRole.ASP.value]
@@ -424,7 +513,7 @@ def test_commit_to_meal_request_fails_if_not_open(meal_request_setup):
 
 @freeze_time("2023-01-01")
 def test_update_meal_request(onsite_contact_setup, meal_request_setup):
-    requestor, _, asp_onsite_contacts, donor_onsite_contact = onsite_contact_setup
+    requestor, _, asp_onsite_contacts, donor_onsite_contacts = onsite_contact_setup
     _, _, meal_request = meal_request_setup
 
     onsite_contact1 = asp_onsite_contacts[0]
@@ -872,7 +961,12 @@ def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
 def test_get_meal_request_by_donor_id(meal_request_setup, onsite_contact_setup):
     _, donor, meal_request = meal_request_setup
 
-    asp, donor, asp_onsite_contact, donor_onsite_contact = onsite_contact_setup
+    (
+        asp,
+        donor,
+        [asp_onsite_contact, asp_onsite_contact2],
+        [donor_onsite_contact, donor_onsite_contact2],
+    ) = onsite_contact_setup
 
     commit = graphql_schema.execute(
         f"""mutation testCommitToMealRequest {{

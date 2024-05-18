@@ -3,6 +3,8 @@ from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
 from app.services.implementations.mock_email_service import MockEmailService
 
+from datetime import datetime
+
 """
 Tests for MealRequestchema and query/mutation logic
 Running graphql_schema.execute(...) also tests the service logic
@@ -38,8 +40,8 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
         onsiteContacts: ["{asp_onsite_contact.id}", "{asp_onsite_contact2.id}"],
         requestorId: "{str(asp.id)}",
         requestDates: [
-            "2023-06-01",
-            "2023-06-02",
+            "2024-06-01",
+            "2024-06-02",
         ],
       )
       {{
@@ -78,11 +80,11 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
     )
     assert (
         result.data["createMealRequest"]["mealRequests"][0]["dropOffDatetime"]
-        == "2023-06-01T16:30:00+00:00"
+        == "2024-06-01T16:30:00+00:00"
     )
     assert (
         result.data["createMealRequest"]["mealRequests"][1]["dropOffDatetime"]
-        == "2023-06-02T16:30:00+00:00"
+        == "2024-06-02T16:30:00+00:00"
     )
 
     created_onsite_contacts = result.data["createMealRequest"]["mealRequests"][0][
@@ -147,6 +149,72 @@ def test_create_meal_request_fails_invalid_onsite_contact(
 
     result = graphql_schema.execute(mutation)
     assert result.errors is not None
+    counter_after = MealRequest.objects().count()
+    assert counter_before == counter_after
+
+
+# If a meal request is created with a date that is the
+# same as a previous meal request, an error is thrown
+def test_create_meal_request_fails_repeat_date(
+    meal_request_setup, onsite_contact_setup
+):
+    (
+        asp,
+        donor,
+        [asp_onsite_contact, asp_onsite_contact2],
+        donor_onsite_contact,
+    ) = onsite_contact_setup
+    _, _, meal_request = meal_request_setup
+
+    # drop_off_datetime is currently a string, so we need to convert it to a datetime object
+
+    existing_date = datetime.strptime(
+        meal_request.drop_off_datetime, "%Y-%m-%dT%H:%M:%S"
+    )
+
+    counter_before = MealRequest.objects().count()
+    mutation = f"""
+    mutation testCreateMealRequest {{
+      createMealRequest(
+        deliveryInstructions: "Leave at front door",
+        dropOffLocation: "123 Main Street",
+        dropOffTime: "16:30:00Z",
+        mealInfo: {{
+          portions: 40,
+          dietaryRestrictions: "7 gluten free, 7 no beef",
+        }},
+        onsiteContacts: ["{asp_onsite_contact.id}"],
+        requestorId: "{str(asp.id)}",
+        requestDates: [
+            "2025-06-01",
+            "{existing_date.strftime('%Y-%m-%d')}",
+        ],
+      )
+      {{
+        mealRequests {{
+          status
+          id
+          dropOffDatetime
+          mealInfo {{
+            portions
+            dietaryRestrictions
+          }}
+          onsiteContacts{{
+            id
+          }}
+        }}
+      }}
+    }}
+  """
+
+    result = graphql_schema.execute(mutation)
+    assert (
+        result.errors[0].message
+        == "Unexpected error: Meal request already exists for this ASP on 2025-03-31"
+    )
+    # This exact error message is searched for in the front end,
+    # if it changes, the front end will need to be updated to
+    # detect the new error message
     counter_after = MealRequest.objects().count()
     assert counter_before == counter_after
 
@@ -449,8 +517,8 @@ def test_create_meal_request_failure(meal_request_setup):
         ],
         requestorId: "{str(requestor.id)}",
         requestDates: [
-            "2023-06-01",
-            "2023-06-02",
+            "2024-06-01",
+            "2024-06-02",
         ],
       )
       {{
@@ -876,8 +944,8 @@ def test_get_meal_requests_by_ids(meal_request_setup):
         onsiteContacts: [],
         requestorId: "{str(asp.id)}",
         requestDates: [
-            "2023-06-01",
-            "2023-06-02",
+            "2025-06-01",
+            "2025-06-02",
         ],
       )
       {{

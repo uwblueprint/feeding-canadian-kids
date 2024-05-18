@@ -28,13 +28,40 @@ class MealRequestService(IMealRequestService):
         onsite_contacts: List[str],
     ):
         try:
-            # Create MealRequests
+            # Verify that the requestor exists
             requestor = User.objects(id=requestor_id).first()
             if not requestor:
-                raise Exception(f'requestor "{requestor_id}" not found')
+                raise Exception(f'Requestor "{requestor_id}" not found')
 
+            if requestor.info.role != UserInfoRole.ASP.value:
+                raise Exception(f'Requestor "{requestor_id}" is not an ASP')
+
+            # Make sure the request dates do not contain duplicates
+            if len(request_dates) != len(set(request_dates)):
+                raise Exception("Cannot make multiple requests for the same date")
+
+            # Verify and create MealRequests
             meal_requests = []
             for request_date in request_dates:
+                # Make sure the request date is in the future
+                if request_date < datetime.now().date():
+                    raise Exception("Request date must be in the future")
+
+                # Verify that no meal request exists for the same requestor and drop-off date
+                existing_request = MealRequest.objects(
+                    requestor=requestor,
+                    drop_off_datetime__gte=datetime.combine(
+                        request_date, datetime.min.time()
+                    ),
+                    drop_off_datetime__lte=datetime.combine(
+                        request_date, datetime.max.time()
+                    ),
+                ).first()
+                if existing_request:
+                    raise Exception(
+                        f"Meal request already exists for this ASP on {request_date}"
+                    )
+
                 new_meal_request = MealRequest(
                     requestor=requestor,
                     meal_info=meal_info,
@@ -44,13 +71,19 @@ class MealRequestService(IMealRequestService):
                     onsite_contacts=onsite_contacts,
                 )
                 new_meal_request.validate_onsite_contacts()
+                meal_requests.append(new_meal_request)
 
-                new_meal_request.save()
-                meal_requests.append(new_meal_request.to_serializable_dict())
+            # Save the meal requests
+            for meal_request in meal_requests:
+                meal_request.save()
+
+            return list(
+                map(lambda request: request.to_serializable_dict(), meal_requests)
+            )
+
         except Exception as error:
             self.logger.error(str(error))
             raise error
-        return meal_requests
 
     def update_meal_request(
         self,

@@ -140,8 +140,17 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
       ) {
         // The last word is the date
         const date = (e as Error).message.split(" ").pop();
+        if (!date) {
+          errorMessage = "Failed to create meal request. Please try again.";
+          toast({
+            title: errorMessage,
+            status: "error",
+            isClosable: true,
+          });
+          return;
+        }
         // Construct a date object from the string
-        const dateObj = new Date(date!);
+        const dateObj = new Date(date);
 
         errorMessage = `You have already created a meal request on ${dateObj.toDateString()}. Please choose another date, or edit your existing meal request.`;
       } else {

@@ -165,8 +165,6 @@ def test_create_meal_request_fails_repeat_date(
         donor_onsite_contact,
     ) = onsite_contact_setup
     _, _, meal_request = meal_request_setup
-    print("-------------------------")
-    print(f"The meal request is {meal_request.drop_off_datetime}")
 
     # drop_off_datetime is currently a string, so we need to convert it to a datetime object
 
@@ -185,7 +183,7 @@ def test_create_meal_request_fails_repeat_date(
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: ["{asp_onsite_contact.id}"],
+        onsiteContacts: ["{asp_onsite_contact.id}"],
         requestorId: "{str(asp.id)}",
         requestDates: [
             "2025-06-01",
@@ -201,7 +199,7 @@ def test_create_meal_request_fails_repeat_date(
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             id
           }}
         }}

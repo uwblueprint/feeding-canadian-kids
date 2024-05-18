@@ -3,6 +3,7 @@ from app.graphql import schema as graphql_schema
 from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
 from app.services.implementations.mock_email_service import MockEmailService
+from freezegun import freeze_time
 
 """
 Tests for MealRequestchema and query/mutation logic
@@ -18,6 +19,7 @@ def compare_returned_onsite_contact(result, onsite_contact):
     assert result["organizationId"] == str(onsite_contact.organization_id)
 
 
+@freeze_time("2023-01-01")
 def test_create_meal_request(meal_request_setup, onsite_contact_setup):
     (
         asp,
@@ -106,6 +108,7 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
         MealRequest.objects(id=meal_request["id"]).delete()
 
 
+@freeze_time("2023-01-01")
 def test_create_meal_request_fails_invalid_onsite_contact(
     meal_request_setup, onsite_contact_setup
 ):
@@ -154,6 +157,7 @@ def test_create_meal_request_fails_invalid_onsite_contact(
 
 # If a meal request is created with a date that is the
 # same as a previous meal request, an error is thrown
+@freeze_time("2023-01-01")
 def test_create_meal_request_fails_repeat_date(
     meal_request_setup, onsite_contact_setup
 ):
@@ -219,6 +223,7 @@ def test_create_meal_request_fails_repeat_date(
 
 
 # Happy path: A donor commits to fulfilling one meal request
+@freeze_time("2023-01-01")
 def test_commit_to_meal_request(meal_request_setup):
     _, donor, meal_request = meal_request_setup
 
@@ -342,6 +347,7 @@ def test_commit_to_meal_request(meal_request_setup):
 
 # Only user's with role "Donor" should be able to commit
 # to meal requests, otherwise an error is thrown
+@freeze_time("2023-01-01")
 def test_commit_to_meal_request_fails_for_non_donor(
     meal_request_setup, onsite_contact_setup
 ):
@@ -416,6 +422,7 @@ def test_commit_to_meal_request_fails_if_not_open(meal_request_setup):
         assert result.errors is not None
 
 
+@freeze_time("2023-01-01")
 def test_update_meal_request(onsite_contact_setup, meal_request_setup):
     requestor, _, asp_onsite_contacts, donor_onsite_contact = onsite_contact_setup
     _, _, meal_request = meal_request_setup
@@ -489,6 +496,7 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
     assert updatedMealRequest["dropOffDatetime"] == updatedDateTime
 
 
+@freeze_time("2023-01-01")
 def test_create_meal_request_failure(meal_request_setup):
     requestor, _, _ = meal_request_setup
 
@@ -541,6 +549,7 @@ def test_create_meal_request_failure(meal_request_setup):
     result.errors is not None
 
 
+@freeze_time("2023-01-01")
 def test_get_meal_request_by_requestor_id(meal_request_setup):
     requestor, _, meal_request = meal_request_setup
 
@@ -584,6 +593,7 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
     assert result["id"] == str(meal_request.id)
 
 
+@freeze_time("2023-01-01")
 def test_cancel_donation_as_admin(meal_request_setup, user_setup):
     _, _, meal_request = meal_request_setup
     requestor, donor, admin = user_setup
@@ -811,7 +821,7 @@ def test_delete_meal_request_as_asp(meal_request_setup):
     assert result["id"] == str(meal_request.id)
     assert MealRequest.objects(id=meal_request.id).first() is None
 
-
+@freeze_time("2023-01-01")
 def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
     asp, meal_donor, meal_request = meal_request_setup
     test_commit_to_meal_request(meal_request_setup)
@@ -926,6 +936,7 @@ def test_get_meal_request_by_donor_id(meal_request_setup, onsite_contact_setup):
     assert result["donationInfo"]["additionalInfo"] == "No nuts"
 
 
+@freeze_time("2023-01-01")
 def test_get_meal_requests_by_ids(meal_request_setup):
     asp, donor, meal_request = meal_request_setup
 
@@ -1012,6 +1023,7 @@ def test_get_meal_requests_by_ids(meal_request_setup):
         )
 
 
+@freeze_time("2023-01-01")
 def test_update_meal_request_statuses_to_fulfilled(
     meal_request_service, meal_request_setup
 ):
@@ -1028,7 +1040,7 @@ def test_update_meal_request_statuses_to_fulfilled(
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: [],
+        onsiteContacts: [],
         requestorId: "{str(asp.id)}",
         requestDates: [
             "2023-06-01",
@@ -1057,7 +1069,8 @@ def test_update_meal_request_statuses_to_fulfilled(
         requestor: "{str(donor.id)}",
         mealRequestIds: ["{str(created_ml_id)}"],
         mealDescription: "Pizza",
-        additionalInfo: "No nuts"
+        additionalInfo: "No nuts",
+        donorOnsiteContacts: []
       )
       {{
         mealRequests {{
@@ -1075,6 +1088,7 @@ def test_update_meal_request_statuses_to_fulfilled(
     assert meal_request.status == MealStatus.FULFILLED.value
 
 
+@freeze_time("2023-01-01")
 def test_dont_update_meal_request_statuses_to_fulfilled_if_future(
     meal_request_service, meal_request_setup
 ):
@@ -1091,7 +1105,7 @@ def test_dont_update_meal_request_statuses_to_fulfilled_if_future(
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: [],
+        onsiteContacts: [],
         requestorId: "{str(asp.id)}",
         requestDates: [
             "2023-06-25",
@@ -1114,7 +1128,8 @@ def test_dont_update_meal_request_statuses_to_fulfilled_if_future(
         requestor: "{str(donor.id)}",
         mealRequestIds: ["{str(created_ml_id)}"],
         mealDescription: "Pizza",
-        additionalInfo: "No nuts"
+        additionalInfo: "No nuts",
+        donorOnsiteContacts: []
       )
       {{
         mealRequests {{

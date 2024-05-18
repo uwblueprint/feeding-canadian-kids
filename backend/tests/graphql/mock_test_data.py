@@ -136,7 +136,7 @@ MOCK_INFO3_SNAKE = {
     #     {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
     #     {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
     # ],
-    "active": False,
+    "active": True,
 }
 
 MOCK_INFO3_CAMEL = {
@@ -159,7 +159,7 @@ MOCK_INFO3_CAMEL = {
     #     {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
     #     {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
     # ],
-    "active": False,
+    "active": True,
 }
 
 MOCK_USER1_SNAKE = {

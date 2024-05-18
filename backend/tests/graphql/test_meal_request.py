@@ -37,7 +37,7 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: ["{asp_onsite_contact.id}", "{asp_onsite_contact2.id}"],
+        onsiteContacts: ["{asp_onsite_contact.id}", "{asp_onsite_contact2.id}"],
         requestorId: "{str(asp.id)}",
         requestDates: [
             "2024-06-01",
@@ -53,7 +53,7 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             id
             name
             email
@@ -88,7 +88,7 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
     )
 
     created_onsite_contacts = result.data["createMealRequest"]["mealRequests"][0][
-        "onsiteStaff"
+        "onsiteContacts"
     ]
     expected_onsite_contacts = (
         [asp_onsite_contact, asp_onsite_contact2]
@@ -123,7 +123,7 @@ def test_create_meal_request_fails_invalid_onsite_contact(
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: ["{asp_onsite_contact}, fdsfdja"],
+        onsiteContacts: ["{asp_onsite_contact}, fdsfdja"],
         requestorId: "{str(asp.id)}",
         requestDates: [
             "2023-06-01",
@@ -139,7 +139,7 @@ def test_create_meal_request_fails_invalid_onsite_contact(
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             id
           }}
         }}
@@ -228,7 +228,8 @@ def test_commit_to_meal_request(meal_request_setup):
         requestor: "{str(donor.id)}",
         mealRequestIds: ["{str(meal_request.id)}"],
         mealDescription: "Pizza",
-        additionalInfo: "No nuts"
+        additionalInfo: "No nuts",
+        donorOnsiteContacts: []
       )
       {{
         mealRequests {{
@@ -243,7 +244,7 @@ def test_commit_to_meal_request(meal_request_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff {{
+          onsiteContacts {{
             name
             email
             phone
@@ -341,8 +342,11 @@ def test_commit_to_meal_request(meal_request_setup):
 
 # Only user's with role "Donor" should be able to commit
 # to meal requests, otherwise an error is thrown
-def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
+def test_commit_to_meal_request_fails_for_non_donor(
+    meal_request_setup, onsite_contact_setup
+):
     _, donor, meal_request = meal_request_setup
+    requestor, _, asp_onsite_contacts, donor_onsite_contact = onsite_contact_setup
 
     # All user info roles except for "Donor"
     INVALID_USERINFO_ROLES = [UserInfoRole.ADMIN.value, UserInfoRole.ASP.value]
@@ -358,6 +362,7 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
           mealRequestIds: ["{str(meal_request.id)}"],
           mealDescription: "Pizza",
           additionalInfo: "No nuts"
+          donorOnsiteContacts: []
         )
         {{
           mealRequests {{
@@ -369,6 +374,10 @@ def test_commit_to_meal_request_fails_for_non_donor(meal_request_setup):
 
         result = graphql_schema.execute(mutation)
         assert result.errors is not None
+        assert (
+            result.errors[0].message
+            == f'Unexpected error: user "{donor.id}" is not a donor'
+        )
 
 
 # A donor can only commit to a meal request if the meal request's
@@ -434,7 +443,7 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
           portions: {updatedMealInfo["portions"]},
           dietaryRestrictions: "{updatedMealInfo["dietaryRestrictions"]}",
         }},
-        onsiteStaff: ["{onsite_contact1.id}","{onsite_contact2.id}"]
+        onsiteContacts: ["{onsite_contact1.id}","{onsite_contact2.id}"]
       )
       {{
         mealRequest{{
@@ -446,7 +455,7 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             id
             name
             email
@@ -473,7 +482,7 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
     assert updatedMealRequest["dropOffLocation"] == updatedDropOffLocation
     assert updatedMealRequest["deliveryInstructions"] == updatedDeliveryInstructions
     assert updatedMealRequest["mealInfo"] == updatedMealInfo
-    returned_onsite_contacts = updatedMealRequest["onsiteStaff"]
+    returned_onsite_contacts = updatedMealRequest["onsiteContacts"]
     compare_returned_onsite_contact(returned_onsite_contacts[0], onsite_contact1)
     compare_returned_onsite_contact(returned_onsite_contacts[1], onsite_contact2)
 
@@ -493,7 +502,7 @@ def test_create_meal_request_failure(meal_request_setup):
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: [
+        onsiteContacts: [
           {{
             name: "John Doe",
             email: "john.doe@example.com",
@@ -549,7 +558,7 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
               portions
               dietaryRestrictions
             }},
-            onsiteStaff {{
+            onsiteContacts {{
               name
               email
               phone
@@ -597,7 +606,7 @@ def test_cancel_donation_as_admin(meal_request_setup, user_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -646,7 +655,7 @@ def test_cancel_donation_fails_if_no_donation(meal_request_setup, user_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -691,7 +700,7 @@ def test_cancel_donation_as_non_admin(meal_request_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -735,7 +744,7 @@ def test_delete_meal_request_as_admin(meal_request_setup, user_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -778,7 +787,7 @@ def test_delete_meal_request_as_asp(meal_request_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -823,7 +832,7 @@ def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
             portions
             dietaryRestrictions
           }}
-          onsiteStaff{{
+          onsiteContacts{{
             name
             email
             phone
@@ -849,8 +858,10 @@ def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
     assert MealRequest.objects(id=meal_request.id).first() is not None
 
 
-def test_get_meal_request_by_donor_id(meal_request_setup):
+def test_get_meal_request_by_donor_id(meal_request_setup, onsite_contact_setup):
     _, donor, meal_request = meal_request_setup
+
+    asp, donor, asp_onsite_contact, donor_onsite_contact = onsite_contact_setup
 
     commit = graphql_schema.execute(
         f"""mutation testCommitToMealRequest {{
@@ -858,7 +869,8 @@ def test_get_meal_request_by_donor_id(meal_request_setup):
         requestor: "{str(donor.id)}",
         mealRequestIds: ["{str(meal_request.id)}"],
         mealDescription: "Pizza",
-        additionalInfo: "No nuts"
+        additionalInfo: "No nuts",
+        donorOnsiteContacts: ["{str(donor_onsite_contact.id)}"],
       )
       {{
         mealRequests {{
@@ -884,7 +896,7 @@ def test_get_meal_request_by_donor_id(meal_request_setup):
               portions
               dietaryRestrictions
             }},
-            onsiteStaff {{
+            onsiteContacts {{
               name
               email
               phone
@@ -928,7 +940,7 @@ def test_get_meal_requests_by_ids(meal_request_setup):
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
         }},
-        onsiteStaff: [],
+        onsiteContacts: [],
         requestorId: "{str(asp.id)}",
         requestDates: [
             "2025-06-01",
@@ -965,7 +977,7 @@ def test_get_meal_requests_by_ids(meal_request_setup):
               portions
               dietaryRestrictions
             }},
-            onsiteStaff {{
+            onsiteContacts {{
               name
               email
               phone

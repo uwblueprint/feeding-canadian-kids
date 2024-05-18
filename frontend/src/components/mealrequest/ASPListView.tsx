@@ -70,7 +70,7 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
         portions
         dietaryRestrictions
       }
-      onsiteStaff {
+      onsiteContacts {
         name
         email
         phone
@@ -81,8 +81,18 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
       donationInfo {
         donor {
           info {
+            primaryContact {
+              name
+              email
+              phone
+            }
             organizationName
           }
+        }
+        donorOnsiteContacts {
+          name
+          email
+          phone
         }
         commitmentDate
         mealDescription
@@ -145,9 +155,17 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
               donor_name:
                 mealRequest.donationInfo?.donor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
-              primary_contact: mealRequest.requestor.info?.primaryContact,
-              onsite_staff: mealRequest.onsiteStaff,
+              primary_contact:
+                mealRequest.donationInfo?.donor?.info?.primaryContact ?? null,
+              onsite_contacts: mealRequest.onsiteContacts,
+              donor_onsite_contacts:
+                mealRequest.donationInfo?.donorOnsiteContacts ?? [],
+              delivery_notes: mealRequest.deliveryInstructions,
+              dietary_restrictions:
+                mealRequest.mealInfo?.dietaryRestrictions ?? "",
+
               meal_description: mealRequest.donationInfo?.mealDescription,
+              meal_donor_notes: mealRequest.donationInfo?.additionalInfo,
               delivery_instructions: mealRequest.deliveryInstructions,
               pending: mealRequest.status === MealStatus.OPEN,
               _hasContent: false,
@@ -241,7 +259,19 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
               justifyContent="flex-end"
               onClick={handleExpand(item)}
             >
-              {ids.includes(item.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
+              <HStack>
+                {ids.includes(item.id) ? (
+                  <ChevronUpIcon />
+                ) : (
+                  <ChevronDownIcon />
+                )}
+
+                <EditIcon
+                  onClick={handleEdit(item)}
+                  cursor="pointer"
+                  _hover={{ color: "primary.blue" }}
+                />
+              </HStack>
             </Flex>
           );
         }
@@ -272,6 +302,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
           p="16px"
           borderBottom="1px solid"
           borderColor="gray.400"
+          flexWrap="wrap"
         >
           <Flex flexDir="column" flex={1} p="8px">
             <Text variant="mobile-button-bold" mb="8px">
@@ -280,32 +311,66 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
             <Text variant="mobile-caption-bold">Primary:</Text>
             <Box mb="8px">
               <Text variant="mobile-caption-2">
-                {item.primary_contact.name}
+                {item.primary_contact?.name ?? ""}
               </Text>
               <Text variant="mobile-caption-2">
-                {item.primary_contact.email}
+                {item.primary_contact?.email ?? ""}
               </Text>
               <Text variant="mobile-caption-2">
-                {item.primary_contact.phone}
+                {item.primary_contact?.phone ?? ""}
               </Text>
             </Box>
-            <Text variant="mobile-caption-bold">Onsite:</Text>
-            {item.onsite_staff.map((staff: Contact) => (
+            <Text variant="mobile-caption-bold">Onsite Contacts</Text>
+            {item.donor_onsite_contacts?.map((staff: Contact) => (
               <Box key={staff.email} mb="4px">
                 <Text variant="mobile-caption-2">{staff.name}</Text>
                 <Text variant="mobile-caption-2">{staff.email}</Text>
                 <Text variant="mobile-caption-2">{staff.phone}</Text>
               </Box>
-            ))}
+            )) ?? []}
           </Flex>
-          <Box flex={1} p="8px">
-            <Text variant="mobile-button-bold">Meal Description:</Text>
-            <Text variant="mobile-caption-2">{item.meal_description}</Text>
-          </Box>
-          <Box flex={1} p="8px">
-            <Text variant="mobile-button-bold">Meal Donor Notes:</Text>
-            <Text variant="mobile-caption-2">{item.delivery_instructions}</Text>
-          </Box>
+
+          <Flex flexDir="column" flex={1} p="8px">
+            <Text variant="mobile-button-bold" mb="8px">
+              Donor Provided Info:
+            </Text>
+            <Box flex={1} p="8px" pl={0}>
+              <Text variant="mobile-button-bold">Meal Description</Text>
+              <Text variant="mobile-caption-2">{item.meal_description}</Text>
+            </Box>
+            <Box flex={1} p="8px" pl={0}>
+              <Text variant="mobile-button-bold">Donor Provided Notes:</Text>
+              <Text variant="mobile-caption-2">{item.meal_donor_notes}</Text>
+            </Box>
+          </Flex>
+
+          <Flex flexDir="column" flex={1} p="8px">
+            <Text variant="mobile-button-bold" mb="8px">
+              Your Request:
+            </Text>
+            <Box flex={1} p="8px" pl={0}>
+              <Text variant="mobile-button-bold">Your Onsite Staff</Text>
+              {item.onsite_contacts?.map((staff: Contact) => (
+                <Box key={staff.email} mb="4px">
+                  <Text variant="mobile-caption-2">{staff.name}</Text>
+                  <Text variant="mobile-caption-2">{staff.email}</Text>
+                  <Text variant="mobile-caption-2">{staff.phone}</Text>
+                </Box>
+              )) ?? []}
+            </Box>
+            <Box flex={1} p="8px" pl={0}>
+              <Text variant="mobile-button-bold">Dietary Restrictions</Text>
+              <Text variant="mobile-caption-2">
+                {item.dietary_restrictions}
+              </Text>
+            </Box>
+            <Box flex={1} p="8px" pl={0}>
+              <Text variant="mobile-button-bold">Delivery Instructions</Text>
+              <Text variant="mobile-caption-2">
+                {item.delivery_instructions}
+              </Text>
+            </Box>
+          </Flex>
         </Flex>
       </Collapse>
     ),
@@ -430,7 +495,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
-      </Box> 
+      </Box>
     </>
   );
 };

@@ -1,4 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Badge,
   Box,
@@ -18,6 +19,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
   Spacer,
   Spinner,
   Text,
@@ -39,8 +41,19 @@ import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 import useIsWebView from "../utils/useIsWebView";
 
 const GET_ASP_ONBOARDING_REQUESTS = gql`
-  query GetASPOnboardingRequests($status: [String!]) {
-    getAllOnboardingRequests(status: $status, role: "ASP", number: 100) {
+  query GetASPOnboardingRequests(
+    $status: [String!]
+    $sortByDateDirection: SortDirection!
+    $number: Int!
+    $offset: Int!
+  ) {
+    getAllOnboardingRequests(
+      status: $status
+      role: "ASP"
+      number: $number
+      offset: $offset
+      sortByDateDirection: $sortByDateDirection
+    ) {
       id
       info {
         email
@@ -66,8 +79,19 @@ const GET_ASP_ONBOARDING_REQUESTS = gql`
 `;
 
 const GET_MEAL_DONOR_ONBOARDING_REQUESTS = gql`
-  query GetMealDonorOnboardingRequests($status: [String!]) {
-    getAllOnboardingRequests(status: $status, role: "Donor", number: 100) {
+  query GetMealDonorOnboardingRequests(
+    $status: [String!]
+    $sortByDateDirection: SortDirection!
+    $number: Int!
+    $offset: Int!
+  ) {
+    getAllOnboardingRequests(
+      status: $status
+      role: "Donor"
+      number: $number
+      offset: $offset
+      sortByDateDirection: $sortByDateDirection
+    ) {
       id
       info {
         email
@@ -391,34 +415,46 @@ const ASPCardDisplay = ({
   const isWebView = useIsWebView();
 
   return (
-    <Flex
-      width="90%"
-      margin="0 5% 5%"
-      display="grid"
-      gridTemplateColumns={isWebView ? "repeat(3, 1fr)" : "repeat(1, 1fr)"}
-      gridColumnGap="3%"
-      gridRowGap={isWebView ? "30px" : "50px"}
-    >
-      {onboardingRequests
-        ? onboardingRequests.map((request: OnboardingRequest) => (
-            <ASPCard
-              key={request?.id}
-              onboardingRequest={request}
-              isASP={isASP}
-              refetch={refetch}
-            />
-          ))
-        : null}
+    <Flex flexDir="column" width="100%">
+      <Flex
+        width="90%"
+        margin="0 5% 2% 5%"
+        display="grid"
+        gridTemplateColumns={isWebView ? "repeat(3, 1fr)" : "repeat(1, 1fr)"}
+        gridColumnGap="3%"
+        gridRowGap={isWebView ? "30px" : "50px"}
+      >
+        {onboardingRequests
+          ? onboardingRequests.map((request: OnboardingRequest) => (
+              <ASPCard
+                key={request?.id}
+                onboardingRequest={request}
+                isASP={isASP}
+                refetch={refetch}
+              />
+            ))
+          : null}
+      </Flex>
+      {onboardingRequests.length === 0 && (
+        <Center h="100px">
+          <Text fontSize="24">No meal requests to display</Text>
+        </Center>
+      )}
     </Flex>
   );
 };
 
 const OnboardingRequestsPage = (): React.ReactElement => {
   const [isASP, setIsASP] = React.useState(true);
-  const [filter, setFilter] = React.useState<Array<OnboardingRequestStatuses>>([
-    OnboardingRequestStatuses.PENDING,
-  ]);
+  const [statusFilter, setStatusFilter] = React.useState<
+    Array<OnboardingRequestStatuses>
+  >([OnboardingRequestStatuses.PENDING]);
+  const [dateDirectionFilter, setDateDirectionFilter] = React.useState(
+    "DESCENDING",
+  );
   const isWebView = useIsWebView();
+  const [currentPage, setCurrentPage] = React.useState<number>(1);
+  const requestsPerPage = 9;
 
   const {
     data: OnboardingData,
@@ -429,11 +465,62 @@ const OnboardingRequestsPage = (): React.ReactElement => {
     isASP ? GET_ASP_ONBOARDING_REQUESTS : GET_MEAL_DONOR_ONBOARDING_REQUESTS,
     {
       variables: {
-        status: filter,
+        status: statusFilter,
+        sortByDateDirection: dateDirectionFilter,
+        number: requestsPerPage,
+        offset: (currentPage - 1) * requestsPerPage,
       },
     },
   );
   logPossibleGraphQLError(OnboardingError);
+
+  const getPagination = (): React.ReactElement => {
+    const a = "hi";
+    return (
+      <Flex width="100%" justifyContent="right">
+        <Flex
+          display="flex"
+          alignItems="center"
+          w="280px"
+          h="70px"
+          p="12px 16px"
+          mr="5%"
+          bgColor="gray.50"
+          border="1px solid #E2E8F0"
+          borderRadius="8px 8px 8px 8px"
+          gap="12px"
+          color="#4A5568"
+          justifyContent="center"
+        >
+          <Text fontSize="18px">Page: {currentPage}</Text>
+          {currentPage === 1 ? (
+            <ChevronLeftIcon w="30px" h="30px" ml="10px" color="#A0AEC0" />
+          ) : (
+            <ChevronLeftIcon
+              w="30px"
+              h="30px"
+              ml="10px"
+              cursor="pointer"
+              onClick={() => setCurrentPage(currentPage - 1)}
+            />
+          )}
+          {!OnboardingLoading &&
+          !OnboardingError &&
+          OnboardingData.getAllOnboardingRequests &&
+          OnboardingData.getAllOnboardingRequests.length === 9 ? (
+            <ChevronRightIcon
+              w="30px"
+              h="30px"
+              cursor="pointer"
+              onClick={() => setCurrentPage(currentPage + 1)}
+            />
+          ) : (
+            <ChevronRightIcon w="30px" h="30px" color="#A0AEC0" />
+          )}
+        </Flex>
+      </Flex>
+    );
+  };
 
   const getTitleSection = (): React.ReactElement => (
     <Flex flexDir="column" width="100%">
@@ -455,7 +542,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
               padding="2"
               borderRadius="3px"
               border="solid 1px #E2E8F0"
-              boxShadow="lg"
+              boxShadow="md"
               color="black"
               backgroundColor="white"
               _hover={{ backgroundColor: "gray.200" }}
@@ -463,7 +550,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
               <Flex gap="2px" alignItems="center" justifyContent="space-around">
                 <FiFilter />
                 <Text>Filter:</Text>
-                {filter.includes(OnboardingRequestStatuses.PENDING) && (
+                {statusFilter.includes(OnboardingRequestStatuses.PENDING) && (
                   <Badge
                     fontSize="0.7em"
                     colorScheme="yellow"
@@ -472,7 +559,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
                     Pending
                   </Badge>
                 )}
-                {filter.includes(OnboardingRequestStatuses.APPROVED) && (
+                {statusFilter.includes(OnboardingRequestStatuses.APPROVED) && (
                   <Badge
                     fontSize="0.7em"
                     colorScheme="green"
@@ -481,7 +568,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
                     Approved
                   </Badge>
                 )}
-                {filter.includes(OnboardingRequestStatuses.REJECTED) && (
+                {statusFilter.includes(OnboardingRequestStatuses.REJECTED) && (
                   <Badge fontSize="0.7em" colorScheme="red" borderRadius="8px">
                     Rejected
                   </Badge>
@@ -491,9 +578,9 @@ const OnboardingRequestsPage = (): React.ReactElement => {
             <MenuList zIndex="2">
               <MenuOptionGroup
                 type="checkbox"
-                value={filter}
+                value={statusFilter}
                 onChange={(value) =>
-                  setFilter(value as Array<OnboardingRequestStatuses>)
+                  setStatusFilter(value as Array<OnboardingRequestStatuses>)
                 }
               >
                 <MenuItemOption value={OnboardingRequestStatuses.PENDING}>
@@ -548,6 +635,25 @@ const OnboardingRequestsPage = (): React.ReactElement => {
           </Button>
         </Flex>
       </Flex>
+      <Select
+        width="180px"
+        height={{ base: "40px", lg: "45px" }}
+        pt="3"
+        fontSize="xs"
+        boxShadow="md"
+        placeholder="Select option"
+        value={dateDirectionFilter}
+        onChange={(e) => {
+          const { target } = e;
+          if (target.type === "select-one") {
+            const selectValue = target.selectedOptions[0].value;
+            setDateDirectionFilter(selectValue);
+          }
+        }}
+      >
+        <option value="DESCENDING">Newest to Oldest</option>
+        <option value="ASCENDING">Oldest to Newest</option>
+      </Select>
     </Flex>
   );
 
@@ -574,6 +680,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
           />
         )
       )}
+      {getPagination()}
     </Flex>
   );
 };

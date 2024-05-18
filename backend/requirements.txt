@@ -82,3 +82,4 @@ urllib3==1.26.4
 Werkzeug==1.0.1
 zipp==3.4.1
 tzlocal==5.2
+freezegun==1.5.1

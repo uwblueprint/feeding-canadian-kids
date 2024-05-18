@@ -44,6 +44,17 @@ class IMealRequestService(ABC):
         pass
 
     @abstractmethod
+    def update_meal_request_donation(
+        self,
+        requestor_id: str,
+        meal_request_id,
+        meal_description: str,
+        additional_info: str,
+        donor_onsite_contacts: List[str],
+    ):
+        pass
+
+    @abstractmethod
     def commit_to_meal_request(
         self,
         donor_id: str,

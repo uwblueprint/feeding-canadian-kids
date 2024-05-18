@@ -129,6 +129,37 @@ class MealRequestService(IMealRequestService):
 
         return meal_request_dto
 
+    def update_meal_request_donation(
+        self,
+        requestor_id: str,
+        meal_request_id,
+        meal_description: str,
+        additional_info: str,
+        donor_onsite_contacts: List[str],
+    ):
+        original_meal_request = MealRequest.objects(id=meal_request_id).first()
+        if not original_meal_request:
+            raise Exception(f'Meal request "{meal_request_id}" not found')
+
+        if not original_meal_request.donation_info:
+            raise Exception("No donation info found")
+
+        original_meal_request.donation_info = DonationInfo(
+            donor=original_meal_request.donation_info.donor,
+            commitment_date=original_meal_request.donation_info.commitment_date,
+            meal_description=meal_description,
+            additional_info=additional_info,
+            donor_onsite_contacts=donor_onsite_contacts,
+        )
+
+        # Does validation,
+        meal_request_dto = original_meal_request.to_dto()
+
+        original_meal_request.validate_onsite_contacts()
+        original_meal_request.save()
+
+        return meal_request_dto
+
     def commit_to_meal_request(
         self,
         donor_id: str,

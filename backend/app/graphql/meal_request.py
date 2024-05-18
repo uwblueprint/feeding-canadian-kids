@@ -102,6 +102,58 @@ class CreateMealRequests(Mutation):
         return CreateMealRequests(meal_requests=result)
 
 
+class UpdateMealRequestDonation(Mutation):
+    class Arguments:
+        requestor_id = graphene.ID(required=True)
+        meal_request_id = graphene.ID(required=True)
+        meal_description = graphene.String()
+        additional_info = graphene.String()
+        donor_onsite_contacts = graphene.List(graphene.String)
+
+    meal_request = graphene.Field(MealRequestResponse)
+
+    def mutate(
+        self,
+        info,
+        requestor_id: str,
+        meal_request_id,
+        meal_description,
+        additional_info,
+        donor_onsite_contacts,
+    ):
+        user_service = services["user_service"]
+        requestor_auth_id = user_service.get_auth_id_by_user_id(requestor_id)
+        requestor_role = user_service.get_user_role_by_auth_id(requestor_auth_id)
+
+        try:
+            meal_request = services["meal_request_service"].get_meal_request_by_id(
+                meal_request_id
+            )
+
+            if not meal_request:
+                raise Exception("Meal request not found")
+
+            if (
+                requestor_role != "Admin"
+                and meal_request.donation_info["donor"]["id"] != requestor_id
+            ):
+                raise Exception(
+                    "Requestor is not an admin or the donor of the meal request."
+                )
+
+            result = services["meal_request_service"].update_meal_request_donation(
+                requestor_id=requestor_id,
+                meal_request_id=meal_request_id,
+                meal_description=meal_description,
+                additional_info=additional_info,
+                donor_onsite_contacts=donor_onsite_contacts,
+            )
+        except Exception as e:
+            raise GraphQLError(str(e))
+
+        return UpdateMealRequest(meal_request=result)
+
+
 class UpdateMealRequest(Mutation):
     class Arguments:
         meal_request_id = graphene.ID(required=True)
@@ -237,6 +289,7 @@ class DeleteMealRequest(Mutation):
 class MealRequestMutations(MutationList):
     create_meal_request = CreateMealRequests.Field()
     update_meal_request = UpdateMealRequest.Field()
+    update_meal_request_donation = UpdateMealRequestDonation.Field()
     commit_to_meal_request = CommitToMealRequest.Field()
     cancel_donation = CancelDonation.Field()
     delete_meal_request = DeleteMealRequest.Field()

@@ -64,6 +64,7 @@ import {
   MealRequestsDonorVariables,
   MealRequestsVariables,
   MealStatus,
+  SortByDateDirection,
 } from "../types/MealRequestTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
@@ -296,7 +297,12 @@ const UpcomingPage = (): React.ReactElement => {
   const formattedTime = currentTime.toISOString().split("T")[0];
 
   const [tabSelected, setTabSelected] = useState(0);
-  const [filter, setFilter] = useState("DESCENDING");
+
+  const [
+    sortByDateDirection,
+    setSortByDateDirection,
+  ] = useState<SortByDateDirection>("ASCENDING");
+
   const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -400,8 +406,7 @@ const UpcomingPage = (): React.ReactElement => {
         donorId: authenticatedUser!.id,
         limit: 3,
         offset,
-        sortByDateDirection:
-          filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
+        sortByDateDirection,
         minDropOffDate: formattedTime,
       },
     });
@@ -415,8 +420,7 @@ const UpcomingPage = (): React.ReactElement => {
       variables: {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         donorId: authenticatedUser!.id,
-        sortByDateDirection:
-          filter === "DESCENDING" ? "DESCENDING" : "ASCENDING",
+        sortByDateDirection,
         limit: rowsPerPage,
         offset: (currentPage - 1) * rowsPerPage,
         status: [MealStatus.UPCOMING, MealStatus.FULFILLED],
@@ -434,7 +438,7 @@ const UpcomingPage = (): React.ReactElement => {
       reloadCompletedMealRequests();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tabSelected, filter]);
+  }, [tabSelected, sortByDateDirection]);
 
   // Card pagination
   useEffect(() => {
@@ -520,12 +524,14 @@ const UpcomingPage = (): React.ReactElement => {
             </Text>
           </Tab>
           <Select
-            value={filter}
+            value={sortByDateDirection}
             onChange={(e) => {
               const { target } = e;
               if (target.type === "select-one") {
                 const selectValue = target.selectedOptions[0].value;
-                setFilter(selectValue);
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                setSortByDateDirection(selectValue);
               }
             }}
             fontSize="xs"

@@ -43,6 +43,7 @@ import {
   MealRequestsData,
   MealRequestsVariables,
   MealStatus,
+  SortByDateDirection,
 } from "../../types/MealRequestTypes";
 import { Contact } from "../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
@@ -149,7 +150,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
   }>();
   const [filter, setFilter] = useState<Array<MealStatus>>([]);
-  const [sort, setSort] = useState<"ASCENDING" | "DESCENDING">("ASCENDING");
+  const [sort, setSort] = useState<SortByDateDirection>("ASCENDING");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [
@@ -510,7 +511,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
             reloadMealRequests();
           }}
           mealRequestId={currentlyEditingMealRequestId}
-          isEditDonation = {false}
+          isEditDonation={false}
         />
       ) : (
         ""

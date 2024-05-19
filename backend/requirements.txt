@@ -16,6 +16,8 @@ Flask==1.1.2
 Flask-Cors==3.0.10
 Flask-Migrate==3.0.1
 Flask-SQLAlchemy==2.5.1
+APScheduler==3.10.4
+Flask-APScheduler<=1.13.1
 google-api-core==1.26.3
 google-api-python-client==2.2.0
 google-auth==1.29.0
@@ -79,3 +81,5 @@ uritemplate==3.0.1
 urllib3==1.26.4
 Werkzeug==1.0.1
 zipp==3.4.1
+tzlocal==5.2
+freezegun==1.5.1

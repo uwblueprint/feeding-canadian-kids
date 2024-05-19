@@ -40,6 +40,64 @@ type ButtonProps = { text: string; path: string };
 type SchoolSidebarProps = { aspId: string; distance: string };
 type CalendarViewProps = { aspId: string };
 
+const GET_MEAL_REQUESTS_BY_ID = gql`
+  query GetMealRequestsByRequestorId(
+    $requestorId: ID!
+    $minDropOffDate: Date
+    $maxDropOffDate: Date
+    $status: [MealStatus]
+    $offset: Int
+    $limit: Int
+    $sortByDateDirection: SortDirection
+  ) {
+    getMealRequestsByRequestorId(
+      requestorId: $requestorId
+      minDropOffDate: $minDropOffDate
+      maxDropOffDate: $maxDropOffDate
+      status: $status
+      offset: $offset
+      limit: $limit
+      sortByDateDirection: $sortByDateDirection
+    ) {
+      id
+      requestor {
+        info {
+          primaryContact {
+            name
+            email
+            phone
+          }
+        }
+      }
+      status
+      dropOffDatetime
+      dropOffLocation
+      mealInfo {
+        portions
+        dietaryRestrictions
+      }
+      onsiteContacts {
+        name
+        email
+        phone
+      }
+      dateCreated
+      dateUpdated
+      deliveryInstructions
+      donationInfo {
+        donor {
+          info {
+            organizationName
+          }
+        }
+        commitmentDate
+        mealDescription
+        additionalInfo
+      }
+    }
+  }
+`;
+
 const GET_USER = gql`
   query GetUserByID($id: String!) {
     getUserById(id: $id) {

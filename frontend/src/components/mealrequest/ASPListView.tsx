@@ -1,15 +1,25 @@
-import { gql, useLazyQuery } from "@apollo/client";
+import {
+  WatchQueryFetchPolicy,
+  gql,
+  useApolloClient,
+  useLazyQuery,
+  useMutation,
+} from "@apollo/client";
 import {
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
   DeleteIcon,
   EditIcon,
 } from "@chakra-ui/icons";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
-  Center,
+  Button,
   Button as ChakraButton,
   Collapse,
   Flex,
@@ -20,15 +30,10 @@ import {
   MenuList,
   MenuOptionGroup,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
-import {
-  DEFAULT_OPTIONS,
-  getTheme,
-} from "@table-library/react-table-library/chakra-ui";
-import { CompactTable } from "@table-library/react-table-library/compact";
-import { useTheme } from "@table-library/react-table-library/theme";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { BsFilter } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 
@@ -38,10 +43,11 @@ import {
   MealRequestsData,
   MealRequestsVariables,
   MealStatus,
+  SortByDateDirection,
 } from "../../types/MealRequestTypes";
 import { Contact } from "../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
-import LoadingSpinner from "../common/LoadingSpinner";
+import ListView from "../common/ListView";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
@@ -79,7 +85,7 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
         portions
         dietaryRestrictions
       }
-      onsiteStaff {
+      onsiteContacts {
         name
         email
         phone
@@ -90,8 +96,18 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
       donationInfo {
         donor {
           info {
+            primaryContact {
+              name
+              email
+              phone
+            }
             organizationName
           }
+        }
+        donorOnsiteContacts {
+          name
+          email
+          phone
         }
         commitmentDate
         mealDescription
@@ -101,41 +117,21 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
   }
 `;
 
-type ListViewProps = { authId: string; rowsPerPage?: number };
+const DELETE_MEAL_REQUEST = gql`
+  mutation DeleteMealRequest($mealRequestId: ID!, $requestorId: String!) {
+    deleteMealRequest(
+      mealRequestId: $mealRequestId
+      requestorId: $requestorId
+    ) {
+      mealRequest {
+        id
+      }
+    }
+  }
+`;
 
-const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
-  const chakraTheme = getTheme(DEFAULT_OPTIONS);
-  const customTheme = {
-    Table: `
-        margin: 0 !important;
-        width: 100%;
-        --data-table-library_grid-template-columns: repeat(4, minmax(0, 1fr)) 88px;
-  
-        .animate {
-          grid-column: 1 / -1;
-  
-          display: flex;
-        }
-  
-        .animate > div {
-          flex: 1;
-          display: flex;
-        }
-      `,
-    HeaderRow: `
-        background-color: var(--chakra-colors-gray-50);
-        color: var(--chakra-colors-gray-500);
-        font-family: Inter;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 600;
-        line-height: 21px;
-        text-transform: none;
-      `,
-  };
-
-  const theme = useTheme([chakraTheme, customTheme]);
-
+type ASPListViewProps = { authId: string; rowsPerPage?: number };
+const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
     [],
   );
@@ -154,15 +150,15 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
     nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
   }>();
   const [filter, setFilter] = useState<Array<MealStatus>>([]);
-  const [sort, setSort] = useState<"ASCENDING" | "DESCENDING">("ASCENDING");
+  const [sort, setSort] = useState<SortByDateDirection>("ASCENDING");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [
     currentlyEditingMealRequestId,
     setCurrentlyEditingMealRequestId,
   ] = useState<string | undefined>(undefined);
+  const apolloClient = useApolloClient();
 
-  // type TableNodeMealRequest = TABLE_LIBRARY_TYPES.TableNode & {};
   const [
     getMealRequests,
     {
@@ -187,9 +183,17 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
               donor_name:
                 mealRequest.donationInfo?.donor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
-              primary_contact: mealRequest.requestor.info?.primaryContact,
-              onsite_staff: mealRequest.onsiteStaff,
+              primary_contact:
+                mealRequest.donationInfo?.donor?.info?.primaryContact ?? null,
+              onsite_contacts: mealRequest.onsiteContacts,
+              donor_onsite_contacts:
+                mealRequest.donationInfo?.donorOnsiteContacts ?? [],
+              delivery_notes: mealRequest.deliveryInstructions,
+              dietary_restrictions:
+                mealRequest.mealInfo?.dietaryRestrictions ?? "",
+
               meal_description: mealRequest.donationInfo?.mealDescription,
+              meal_donor_notes: mealRequest.donationInfo?.additionalInfo,
               delivery_instructions: mealRequest.deliveryInstructions,
               pending: mealRequest.status === MealStatus.OPEN,
               _hasContent: false,
@@ -201,7 +205,14 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
     },
   );
 
-  function reloadMealRequests() {
+  const [
+    itemToDelete,
+    setItemToDelete,
+  ] = useState<TABLE_LIBRARY_TYPES.TableNode | null>(null);
+
+  function reloadMealRequests(
+    fetchPolicy: WatchQueryFetchPolicy = "cache-first",
+  ) {
     getMealRequests({
       variables: {
         requestorId: authId,
@@ -210,13 +221,47 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
         limit: rowsPerPage,
         offset: (currentPage - 1) * rowsPerPage,
       },
+      fetchPolicy,
     });
   }
+
+  const [
+    deleteMealRequest,
+    { loading: deleteMealRequestLoading, error: deleteMealRequestError },
+  ] = useMutation(DELETE_MEAL_REQUEST, {
+    awaitRefetchQueries: true,
+  });
+
+  const handleDelete = async (item: TABLE_LIBRARY_TYPES.TableNode) => {
+    try {
+      await deleteMealRequest({
+        variables: {
+          mealRequestId: item.meal_request_id,
+          requestorId: authId,
+        },
+      });
+      reloadMealRequests("network-only");
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Error deleting meal request:", error);
+      logPossibleGraphQLError(error);
+    }
+  };
 
   useEffect(() => {
     reloadMealRequests();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, sort, currentPage]);
+
+  useEffect(() => {
+    // check if the query parameter refetch is set to true
+    const urlParams = new URLSearchParams(window.location.search);
+    const refetch = urlParams.get("refetch");
+    if (refetch === "true") {
+      apolloClient.cache.evict({ fieldName: "getMealRequestsByRequestorId" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleEdit = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
@@ -226,10 +271,12 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
     setCurrentlyEditingMealRequestId(item.meal_request_id);
   };
 
-  const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
-    // eslint-disable-next-line no-console
-    console.log("delete clicked for item", item.id);
-  };
+  const {
+    isOpen: deleteAlertIsOpen,
+    onOpen: setDeleteAlertOpen,
+    onClose: setDeleteAlertClosed,
+  } = useDisclosure();
+  const cancelRef = React.useRef<HTMLButtonElement>(null);
 
   const COLUMNS = [
     {
@@ -283,7 +330,19 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
               justifyContent="flex-end"
               onClick={handleExpand(item)}
             >
-              {ids.includes(item.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
+              <HStack>
+                {ids.includes(item.id) ? (
+                  <ChevronUpIcon />
+                ) : (
+                  <ChevronDownIcon />
+                )}
+
+                <EditIcon
+                  onClick={handleEdit(item)}
+                  cursor="pointer"
+                  _hover={{ color: "primary.blue" }}
+                />
+              </HStack>
             </Flex>
           );
         }
@@ -296,7 +355,10 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
               _hover={{ color: "primary.blue" }}
             />
             <DeleteIcon
-              onClick={handleDelete(item)}
+              onClick={() => {
+                setItemToDelete(item);
+                setDeleteAlertOpen();
+              }}
               cursor="pointer"
               _hover={{ color: "primary.blue" }}
             />
@@ -314,6 +376,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
           p="16px"
           borderBottom="1px solid"
           borderColor="gray.400"
+          flexWrap="wrap"
         >
           <Flex flexDir="column" flex={1} p="8px">
             <Text variant="mobile-button-bold" mb="8px">
@@ -322,32 +385,66 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
             <Text variant="mobile-caption-bold">Primary:</Text>
             <Box mb="8px">
               <Text variant="mobile-caption-2">
-                {item.primary_contact.name}
+                {item.primary_contact?.name ?? ""}
               </Text>
               <Text variant="mobile-caption-2">
-                {item.primary_contact.email}
+                {item.primary_contact?.email ?? ""}
               </Text>
               <Text variant="mobile-caption-2">
-                {item.primary_contact.phone}
+                {item.primary_contact?.phone ?? ""}
               </Text>
             </Box>
-            <Text variant="mobile-caption-bold">Onsite:</Text>
-            {item.onsite_staff.map((staff: Contact) => (
+            <Text variant="mobile-caption-bold">Onsite Contacts</Text>
+            {item.donor_onsite_contacts?.map((staff: Contact) => (
               <Box key={staff.email} mb="4px">
                 <Text variant="mobile-caption-2">{staff.name}</Text>
                 <Text variant="mobile-caption-2">{staff.email}</Text>
                 <Text variant="mobile-caption-2">{staff.phone}</Text>
               </Box>
-            ))}
+            )) ?? []}
           </Flex>
-          <Box flex={1} p="8px">
-            <Text variant="mobile-button-bold">Meal Description:</Text>
-            <Text variant="mobile-caption-2">{item.meal_description}</Text>
-          </Box>
-          <Box flex={1} p="8px">
-            <Text variant="mobile-button-bold">Meal Donor Notes:</Text>
-            <Text variant="mobile-caption-2">{item.delivery_instructions}</Text>
-          </Box>
+
+          <Flex flexDir="column" flex={1} p="8px">
+            <Text variant="mobile-button-bold" mb="8px">
+              Donor Provided Info:
+            </Text>
+            <Box flex={1} p="8px" pl={0}>
+              <Text variant="mobile-button-bold">Meal Description</Text>
+              <Text variant="mobile-caption-2">{item.meal_description}</Text>
+            </Box>
+            <Box flex={1} p="8px" pl={0}>
+              <Text variant="mobile-button-bold">Donor Provided Notes:</Text>
+              <Text variant="mobile-caption-2">{item.meal_donor_notes}</Text>
+            </Box>
+          </Flex>
+
+          <Flex flexDir="column" flex={1} p="8px">
+            <Text variant="mobile-button-bold" mb="8px">
+              Your Request:
+            </Text>
+            <Box flex={1} p="8px" pl={0}>
+              <Text variant="mobile-button-bold">Your Onsite Staff</Text>
+              {item.onsite_contacts?.map((staff: Contact) => (
+                <Box key={staff.email} mb="4px">
+                  <Text variant="mobile-caption-2">{staff.name}</Text>
+                  <Text variant="mobile-caption-2">{staff.email}</Text>
+                  <Text variant="mobile-caption-2">{staff.phone}</Text>
+                </Box>
+              )) ?? []}
+            </Box>
+            <Box flex={1} p="8px" pl={0}>
+              <Text variant="mobile-button-bold">Dietary Restrictions</Text>
+              <Text variant="mobile-caption-2">
+                {item.dietary_restrictions}
+              </Text>
+            </Box>
+            <Box flex={1} p="8px" pl={0}>
+              <Text variant="mobile-button-bold">Delivery Instructions</Text>
+              <Text variant="mobile-caption-2">
+                {item.delivery_instructions}
+              </Text>
+            </Box>
+          </Flex>
         </Flex>
       </Collapse>
     ),
@@ -369,22 +466,42 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
     );
   }
 
-  if (getMealRequestsLoading || !data) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        w="100%"
-        h="200px"
-      >
-        <LoadingSpinner />
-      </Box>
-    );
-  }
-
   return (
     <>
+      <AlertDialog
+        isOpen={deleteAlertIsOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={setDeleteAlertClosed}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Meal Request
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You cannot undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={setDeleteAlertClosed}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={() => {
+                  if (itemToDelete) handleDelete(itemToDelete);
+                  setDeleteAlertClosed();
+                }}
+                ml={3}
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
       {currentlyEditingMealRequestId ? (
         <EditMealRequestForm
           open={isEditModalOpen}
@@ -394,6 +511,7 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
             reloadMealRequests();
           }}
           mealRequestId={currentlyEditingMealRequestId}
+          isEditDonation={false}
         />
       ) : (
         ""
@@ -477,70 +595,18 @@ const ListView = ({ authId, rowsPerPage = 10 }: ListViewProps) => {
             </MenuList>
           </Menu>
         </Flex>
-        <Box
-          display="flex"
-          alignItems="center"
-          w="100%"
-          h="64px"
-          p="12px 16px"
-          bgColor="gray.50"
-          borderLeft="2px solid"
-          borderColor="gray.gray83"
-        >
-          <Text variant="desktop-body-bold">Meal Requests</Text>
-        </Box>
-        <CompactTable
+        <ListView
           columns={COLUMNS}
           rowOptions={ROW_OPTIONS}
           data={data}
-          theme={theme}
-          layout={{ custom: true }}
+          loading={getMealRequestsLoading}
+          requestType="Meal Requests"
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
         />
-        {getMealRequestsData?.getMealRequestsByRequestorId.length === 0 && (
-          <Center h="100px">
-            <Text>No meal requests to display</Text>
-          </Center>
-        )}
-        <Box
-          display="flex"
-          alignItems="center"
-          w="100%"
-          h="32px"
-          p="12px 16px"
-          bgColor="gray.50"
-          border="1px solid #E2E8F0"
-          borderRadius="0px 0px 8px 8px"
-          gap="16px"
-          color="#4A5568"
-          justifyContent="right"
-        >
-          <Text fontSize="14px">Page: {currentPage}</Text>
-          {currentPage === 1 ? (
-            <ChevronLeftIcon w="24px" h="24px" color="#A0AEC0" />
-          ) : (
-            <ChevronLeftIcon
-              w="24px"
-              h="24px"
-              cursor="pointer"
-              onClick={() => setCurrentPage(currentPage - 1)}
-            />
-          )}
-          {data?.nodes &&
-          data.nodes.length !== 0 &&
-          data.nodes.length % 5 === 0 ? (
-            <ChevronRightIcon
-              w="24px"
-              h="24px"
-              cursor="pointer"
-              onClick={() => setCurrentPage(currentPage + 1)}
-            />
-          ) : (
-            <ChevronRightIcon w="24px" h="24px" color="#A0AEC0" />
-          )}
-        </Box>
       </Box>
     </>
   );
 };
 
-export default ListView;
+export default ASPListView;

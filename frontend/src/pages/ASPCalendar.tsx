@@ -89,7 +89,7 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
         portions
         dietaryRestrictions
       }
-      onsiteStaff {
+      onsiteContacts {
         name
         email
         phone
@@ -121,7 +121,7 @@ type Staff = {
 
 type MealRequest1 = {
   date: Date;
-  onsiteStaff: Staff[];
+  onsiteContacts: Staff[];
   dropOffTime: Date;
   dropOffLocation: string;
   deliveryInstructions: string;
@@ -331,7 +331,7 @@ const ASPCalandar = (): React.ReactElement => {
                       <strong>Onsite Staff:</strong>
                     </Text>
                     {/* TODO: Change this to donor onsite staff */}
-                    {selectedMealRequest.onsiteStaff.map((staffMember) => (
+                    {selectedMealRequest.onsiteContacts.map((staffMember) => (
                       <>
                         <Text>{staffMember.name}</Text>
                         <Text>{staffMember.email}</Text>

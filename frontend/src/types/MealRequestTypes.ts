@@ -1,4 +1,4 @@
-import { Contact, Requestor } from "./UserTypes";
+import { Contact, OnsiteContact, Requestor } from "./UserTypes";
 
 type MealInfo = {
   portions: number;
@@ -11,6 +11,7 @@ type DonationInfo = {
   commitmentDate: Date;
   mealDescription: string;
   additionalInfo: string;
+  donorOnsiteContacts: Array<OnsiteContact>;
 };
 
 export enum MealStatus {
@@ -23,16 +24,19 @@ export enum MealStatus {
 export type MealRequest = {
   id: string;
   requestor: Requestor;
+  description: string;
   status: string;
   dropOffDatetime: Date;
   dropOffLocation: string;
   mealInfo: MealInfo;
-  onsiteStaff: Array<Contact>;
+  onsiteContacts: Array<OnsiteContact>;
   dateCreated: Date;
   dateUpdated: Date;
   deliveryInstructions: string;
   donationInfo: DonationInfo;
 };
+
+export type SortByDateDirection = "ASCENDING" | "DESCENDING";
 
 export type MealRequestsVariables = {
   requestorId: string;
@@ -41,11 +45,22 @@ export type MealRequestsVariables = {
   status?: Array<MealStatus>;
   offset?: number;
   limit?: number;
-  sortByDateDirection?: "ASCENDING" | "DESCENDING";
+  sortByDateDirection?: SortByDateDirection;
+};
+
+export type MealRequestsDonorVariables = {
+  donorId: string;
+  minDropOffDate?: string | Date;
+  maxDropOffDate?: string | Date;
+  status?: Array<MealStatus>;
+  offset?: number;
+  limit?: number;
+  sortByDateDirection?: SortByDateDirection;
 };
 
 export type MealRequestsData = {
   getMealRequestsByRequestorId: Array<MealRequest>;
   getMealRequestById: MealRequest;
   getMealRequestsByIds: Array<MealRequest>;
+  getMealRequestsByDonorId: Array<MealRequest>;
 };

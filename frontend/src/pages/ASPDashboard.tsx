@@ -17,7 +17,7 @@ import ASPCalandar from "./ASPCalendar";
 
 import BackgroundImage from "../assets/background.png";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
-import ListView from "../components/mealrequest/ListView";
+import ASPListView from "../components/mealrequest/ASPListView";
 import * as Routes from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 
@@ -110,8 +110,8 @@ const Dashboard = (): React.ReactElement => {
           <TabPanel defaultChecked>
             <ASPCalandar />
           </TabPanel>
-          <TabPanel>
-            <ListView authId={authenticatedUser.id} />
+          <TabPanel p="0">
+            <ASPListView authId={authenticatedUser.id} />
           </TabPanel>
           <TabPanel>
             <OldDashboard />

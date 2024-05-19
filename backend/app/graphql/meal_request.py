@@ -37,7 +37,7 @@ class CreateMealRequestResponse(graphene.ObjectType):
     drop_off_datetime = graphene.DateTime(required=True)
     status = graphene.Field(graphene.Enum.from_enum(MealStatus), required=True)
     meal_info = graphene.Field(MealInfoResponse, required=True)
-    onsite_staff = graphene.List(OnsiteContact)
+    onsite_contacts = graphene.List(OnsiteContact)
 
 
 class DonationInfo(graphene.ObjectType):
@@ -45,6 +45,7 @@ class DonationInfo(graphene.ObjectType):
     commitment_date = graphene.DateTime()
     meal_description = graphene.String()
     additional_info = graphene.String()
+    donor_onsite_contacts = graphene.List(OnsiteContact)
 
 
 class MealRequestResponse(graphene.ObjectType):
@@ -54,7 +55,7 @@ class MealRequestResponse(graphene.ObjectType):
     drop_off_datetime = graphene.DateTime()
     drop_off_location = graphene.String()
     meal_info = graphene.Field(MealInfoResponse)
-    onsite_staff = graphene.List(OnsiteContact)
+    onsite_contacts = graphene.List(OnsiteContact)
     date_created = graphene.DateTime()
     date_updated = graphene.DateTime()
     delivery_instructions = graphene.String()
@@ -72,7 +73,7 @@ class CreateMealRequests(Mutation):
         drop_off_time = graphene.Time(required=True)
         drop_off_location = graphene.String(required=True)
         delivery_instructions = graphene.String(default_value=None)
-        onsite_staff = graphene.List(graphene.String, default_value=[])
+        onsite_contacts = graphene.List(graphene.String, default_value=[])
 
     # return values
     meal_requests = graphene.List(CreateMealRequestResponse)
@@ -86,7 +87,7 @@ class CreateMealRequests(Mutation):
         drop_off_time,
         drop_off_location,
         delivery_instructions,
-        onsite_staff,
+        onsite_contacts,
     ):
         result = services["meal_request_service"].create_meal_request(
             requestor_id=requestor_id,
@@ -95,10 +96,62 @@ class CreateMealRequests(Mutation):
             drop_off_time=drop_off_time,
             drop_off_location=drop_off_location,
             delivery_instructions=delivery_instructions,
-            onsite_staff=onsite_staff,
+            onsite_contacts=onsite_contacts,
         )
 
         return CreateMealRequests(meal_requests=result)
+
+
+class UpdateMealRequestDonation(Mutation):
+    class Arguments:
+        requestor_id = graphene.ID(required=True)
+        meal_request_id = graphene.ID(required=True)
+        meal_description = graphene.String()
+        additional_info = graphene.String()
+        donor_onsite_contacts = graphene.List(graphene.String)
+
+    meal_request = graphene.Field(MealRequestResponse)
+
+    def mutate(
+        self,
+        info,
+        requestor_id: str,
+        meal_request_id,
+        meal_description,
+        additional_info,
+        donor_onsite_contacts,
+    ):
+        user_service = services["user_service"]
+        requestor_auth_id = user_service.get_auth_id_by_user_id(requestor_id)
+        requestor_role = user_service.get_user_role_by_auth_id(requestor_auth_id)
+
+        try:
+            meal_request = services["meal_request_service"].get_meal_request_by_id(
+                meal_request_id
+            )
+
+            if not meal_request:
+                raise Exception("Meal request not found")
+
+            if (
+                requestor_role != "Admin"
+                and meal_request.donation_info["donor"]["id"] != requestor_id
+            ):
+                raise Exception(
+                    "Requestor is not an admin or the donor of the meal request."
+                )
+
+            result = services["meal_request_service"].update_meal_request_donation(
+                requestor_id=requestor_id,
+                meal_request_id=meal_request_id,
+                meal_description=meal_description,
+                additional_info=additional_info,
+                donor_onsite_contacts=donor_onsite_contacts,
+            )
+        except Exception as e:
+            raise GraphQLError(str(e))
+
+        return UpdateMealRequest(meal_request=result)
 
 
 class UpdateMealRequest(Mutation):
@@ -109,7 +162,7 @@ class UpdateMealRequest(Mutation):
         meal_info = MealTypeInput()
         drop_off_location = graphene.String()
         delivery_instructions = graphene.String()
-        onsite_staff = graphene.List(graphene.String)
+        onsite_contacts = graphene.List(graphene.String)
 
     # return values
     meal_request = graphene.Field(MealRequestResponse)
@@ -123,7 +176,7 @@ class UpdateMealRequest(Mutation):
         meal_info=None,
         drop_off_location=None,
         delivery_instructions=None,
-        onsite_staff=None,
+        onsite_contacts=None,
     ):
         result = services["meal_request_service"].update_meal_request(
             requestor_id=requestor_id,
@@ -131,7 +184,7 @@ class UpdateMealRequest(Mutation):
             drop_off_datetime=drop_off_datetime,
             drop_off_location=drop_off_location,
             delivery_instructions=delivery_instructions,
-            onsite_staff=onsite_staff,
+            onsite_contacts=onsite_contacts,
             meal_request_id=meal_request_id,
         )
 
@@ -144,6 +197,7 @@ class CommitToMealRequest(Mutation):
         meal_request_ids = graphene.List(graphene.ID, required=True)
         meal_description = graphene.String(required=True)
         additional_info = graphene.String(default_value=None)
+        donor_onsite_contacts = graphene.List(graphene.ID, required=True)
 
     meal_requests = graphene.List(MealRequestResponse)
 
@@ -154,12 +208,14 @@ class CommitToMealRequest(Mutation):
         meal_request_ids,
         meal_description,
         additional_info=None,
+        donor_onsite_contacts=[],
     ):
         result = services["meal_request_service"].commit_to_meal_request(
             donor_id=requestor,
             meal_request_ids=meal_request_ids,
             meal_description=meal_description,
             additional_info=additional_info,
+            donor_onsite_contacts=donor_onsite_contacts,
         )
 
         return CommitToMealRequest(meal_requests=result)
@@ -233,6 +289,7 @@ class DeleteMealRequest(Mutation):
 class MealRequestMutations(MutationList):
     create_meal_request = CreateMealRequests.Field()
     update_meal_request = UpdateMealRequest.Field()
+    update_meal_request_donation = UpdateMealRequestDonation.Field()
     commit_to_meal_request = CommitToMealRequest.Field()
     cancel_donation = CancelDonation.Field()
     delete_meal_request = DeleteMealRequest.Field()
@@ -316,7 +373,7 @@ class MealRequestQueries(QueryList):
                 drop_off_datetime=meal_request_dto.drop_off_datetime,
                 drop_off_location=meal_request_dto.drop_off_location,
                 meal_info=meal_request_dto.meal_info,
-                onsite_staff=meal_request_dto.onsite_staff,
+                onsite_contacts=meal_request_dto.onsite_contacts,
                 date_created=meal_request_dto.date_created,
                 date_updated=meal_request_dto.date_updated,
                 delivery_instructions=meal_request_dto.delivery_instructions,
@@ -370,7 +427,7 @@ class MealRequestQueries(QueryList):
                 drop_off_datetime=meal_request_dto.drop_off_datetime,
                 drop_off_location=meal_request_dto.drop_off_location,
                 meal_info=meal_request_dto.meal_info,
-                onsite_staff=meal_request_dto.onsite_staff,
+                onsite_contacts=meal_request_dto.onsite_contacts,
                 date_created=meal_request_dto.date_created,
                 date_updated=meal_request_dto.date_updated,
                 delivery_instructions=meal_request_dto.delivery_instructions,

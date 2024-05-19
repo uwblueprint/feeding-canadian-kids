@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import os
 import re
 import firebase_admin
@@ -12,8 +13,10 @@ from .config import app_config
 from .graphql import schema as graphql_schema
 
 
+from flask_apscheduler import APScheduler
+
+
 def create_app(config_name):
-    # configure Flask logger
     dictConfig(
         {
             "version": 1,
@@ -56,6 +59,7 @@ def create_app(config_name):
         re.compile(r"^https:\/\/uw-blueprint-starter-code--pr.*\.web\.app$"),
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
+    app.config["SCHEDULER_API_ENABLED"] = True
     CORS(app)
 
     firebase_admin.initialize_app(
@@ -85,6 +89,25 @@ def create_app(config_name):
     from . import models, graphql
 
     models.init_app(app)
-    graphql.init_app(app)
+    services = graphql.init_app(app)
+
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+
+    # checks every hour for meal requests that were either yesterday or today and sends an email to the donor and requestor
+    @scheduler.task(
+        "interval", id="daily_job", seconds=60 * 60 * 24, misfire_grace_time=900
+    )
+    def dailyJob():
+        try:
+            with scheduler.app.app_context():
+                services["reminder_email_service"].send_regularly_scheduled_emails()
+                services[
+                    "meal_request_service"
+                ].update_meal_request_statuses_to_fulfilled(datetime.now(timezone.utc))
+        except Exception as e:
+            print("Error in Scheduled Task!", e)
+
+    scheduler.start()
 
     return app

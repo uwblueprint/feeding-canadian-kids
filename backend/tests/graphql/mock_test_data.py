@@ -136,7 +136,7 @@ MOCK_INFO3_SNAKE = {
     #     {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
     #     {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
     # ],
-    "active": False,
+    "active": True,
 }
 
 MOCK_INFO3_CAMEL = {
@@ -159,7 +159,7 @@ MOCK_INFO3_CAMEL = {
     #     {"name": "ghi", "phone": "135-792-4680", "email": "ghi@uwblueprint.org"},
     #     {"name": "Jack Doe", "phone": "777-888-999", "email": "com@domain.email"},
     # ],
-    "active": False,
+    "active": True,
 }
 
 MOCK_USER1_SNAKE = {
@@ -176,10 +176,25 @@ MOCK_USER3_SNAKE = {
     "auth_id": "3",
     "info": MOCK_INFO3_SNAKE,
 }
+MOCK_USER1_CAMEL = {
+    "auth_id": "1",
+    "info": MOCK_INFO1_CAMEL,
+}
+
+MOCK_USER2_CAMEL = {
+    "auth_id": "2",
+    "info": MOCK_INFO2_CAMEL,
+}
+
+MOCK_USER3_CAMEL = {
+    "auth_id": "3",
+    "info": MOCK_INFO3_CAMEL,
+}
+
 
 MOCK_MEALREQUEST1_SNAKE = {
     "status": "Open",
-    "drop_off_datetime": "2021-03-31T00:00:00",
+    "drop_off_datetime": "2025-03-31T00:00:00",
     "drop_off_location": "Test location",
     "meal_info": {
         "portions": 10,

@@ -43,6 +43,8 @@ type CalendarViewProps = {
   aspId: string;
   showTitle?: boolean;
   status?: MealStatus[];
+  showNextButton?: boolean;
+  handleNext?: (mealRequests: string[]) => void;
 };
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
@@ -112,6 +114,8 @@ export const MealRequestCalendarView = ({
     MealStatus.CANCELLED,
     MealStatus.FULFILLED,
   ],
+  showNextButton = true,
+  handleNext = (selectedMealRequests: string[]) => {},
 }: CalendarViewProps) => {
   const [
     getMealRequests,
@@ -135,7 +139,6 @@ export const MealRequestCalendarView = ({
 
   const calRef = useRef<FullCalendar>(null);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     function reloadMealRequests() {
@@ -289,14 +292,16 @@ export const MealRequestCalendarView = ({
         />
       </Box>
 
-      <ChakraButton
-        float="right"
-        margin="20px 0px"
-        onClick={() => handleNext()}
-        disabled={selectedMealRequests.length === 0}
-      >
-        Next
-      </ChakraButton>
+      {showNextButton ? (
+        <ChakraButton
+          float="right"
+          margin="20px 0px"
+          onClick={() => handleNext(selectedMealRequests)}
+          disabled={selectedMealRequests.length === 0}
+        >
+          Next
+        </ChakraButton>
+      ) : null}
     </Box>
   );
 };

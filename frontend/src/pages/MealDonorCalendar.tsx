@@ -163,12 +163,12 @@ const MealDonorCalendar = (): React.ReactElement => {
     );
   }
 
-  function handleNext(selectedMealRequest) {
+  const handleNext = (selectedMealRequests: Array<string>) => {
     // Do something with selectedMealRequests
     navigate(
       `${Routes.MEAL_DONOR_FORM_PAGE}?ids=${selectedMealRequests.join(",")}`,
     );
-  }
+  };
   return (
     <Flex borderTop="2px solid #D9D9D9">
       <Flex width="400px" justifyContent="center">
@@ -179,6 +179,8 @@ const MealDonorCalendar = (): React.ReactElement => {
           aspId={aspId}
           showTitle
           status={[MealStatus.OPEN]}
+          showNextButton
+          handleNext={handleNext}
         />
       </Flex>
     </Flex>

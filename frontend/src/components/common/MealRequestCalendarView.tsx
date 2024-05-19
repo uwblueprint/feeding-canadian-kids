@@ -39,13 +39,6 @@ import BackgroundImage from "../assets/background.png";
 
 type ButtonProps = { text: string; path: string };
 type SchoolSidebarProps = { aspId: string; distance: string };
-type CalendarViewProps = {
-  aspId: string;
-  showTitle?: boolean;
-  status?: MealStatus[];
-  showNextButton?: boolean;
-  handleNext?: (mealRequests: string[]) => void;
-};
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
@@ -100,11 +93,25 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
         commitmentDate
         mealDescription
         additionalInfo
+        donorOnsiteContacts {
+          name
+          email
+          phone
+        }
       }
     }
   }
 `;
 
+type CalendarViewProps = {
+  aspId: string;
+  showTitle?: boolean;
+  status?: MealStatus[];
+  showNextButton?: boolean;
+  handleNext?: (mealRequests: string[]) => void;
+  onSelectNewMealRequest?: (mealRequestId: MealRequest) => void;
+  allowMultipleSelection?: boolean;
+};
 export const MealRequestCalendarView = ({
   aspId,
   showTitle = false,
@@ -116,6 +123,8 @@ export const MealRequestCalendarView = ({
   ],
   showNextButton = true,
   handleNext = (selectedMealRequests: string[]) => {},
+  onSelectNewMealRequest = (mealRequest: MealRequest) => {},
+  allowMultipleSelection = true,
 }: CalendarViewProps) => {
   const [
     getMealRequests,
@@ -138,7 +147,6 @@ export const MealRequestCalendarView = ({
   }
 
   const calRef = useRef<FullCalendar>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     function reloadMealRequests() {
@@ -190,12 +198,15 @@ export const MealRequestCalendarView = ({
           extendedProps: {
             id: `${mealRequest.id}`,
             icon: "test",
+            mealRequest,
           },
-          backgroundColor: `${
-            selectedMealRequests.includes(mealRequest.id)
-              ? "#c4c4c4"
-              : "#FFFFFF"
-          }`,
+          backgroundColor: allowMultipleSelection
+            ? `${
+                selectedMealRequests.includes(mealRequest.id)
+                  ? "#c4c4c4"
+                  : "#FFFFFF"
+              }`
+            : "#FFFFFF",
           display: "block",
         };
       },
@@ -271,10 +282,25 @@ export const MealRequestCalendarView = ({
           initialView="dayGridMonth"
           events={realEvents}
           selectable
+          selectOverlap
+          select={(info) => {
+            console.log("got select!");
+            console.log(info.startStr, info.endStr);
+          }}
           displayEventEnd
           eventTextColor="#000000"
           eventBorderColor="#FFFFFF"
+          eventInteractive
+          eventLongPressDelay={0}
           eventClick={(info) => {
+            onSelectNewMealRequest(info.event.extendedProps.mealRequest);
+
+            if (!allowMultipleSelection) {
+              setSelectedMealRequests([info.event.extendedProps.id]);
+              // info.event.backgroundColor = "red";
+              return;
+            }
+
             if (selectedMealRequests.includes(info.event.extendedProps.id)) {
               setSelectedMealRequests(
                 selectedMealRequests.filter(

@@ -268,8 +268,16 @@ const ASPCalandar = (): React.ReactElement => {
           ref={calandarRef}
         /> */}
 
-        <MealRequestCalendarView aspId={authenticatedUser.id} />
+        <MealRequestCalendarView
+          aspId={authenticatedUser.id}
+          showNextButton={false}
+          onSelectNewMealRequest={(mealRequest: MealRequest) => {
+            setSelectedMealRequest(mealRequest);
+          }}
+          allowMultipleSelection={false}
+        />
       </div>
+
       <div
         style={{
           width: "30%",
@@ -285,15 +293,8 @@ const ASPCalandar = (): React.ReactElement => {
             </Text>
             <Card padding={3} width={80} variant="outline">
               <HStack padding={3} style={{ justifyContent: "space-between" }}>
+                {/* <Text>{formatDate(selectedMealRequest.dropOffDatetime)}</Text>
                 <Text>
-                  {/* {formatDate(
-                    selectedMealRequest.dropOffDatetime
-                      .toLocaleString()
-                      .split("T")[0],
-                  )} */}
-                  hello
-                </Text>
-                {/* <Text>
                   {new Date(
                     selectedMealRequest.dropOffDatetime.toLocaleString(),
                   ).toLocaleTimeString("en-US", {
@@ -328,9 +329,8 @@ const ASPCalandar = (): React.ReactElement => {
                   </Td>
                   <Td>
                     <Text>
-                      <strong>Onsite Staff:</strong>
+                      <strong>Your Onsite Staff:</strong>{" "}
                     </Text>
-                    {/* TODO: Change this to donor onsite staff */}
                     {selectedMealRequest.onsiteContacts.map((staffMember) => (
                       <>
                         <Text>{staffMember.name}</Text>
@@ -338,7 +338,6 @@ const ASPCalandar = (): React.ReactElement => {
                         <Text>{staffMember.phone}</Text>
                       </>
                     ))}
-                    <Text>TODO: Add donor onsite contacts here</Text>
                   </Td>
                 </Tr>
 
@@ -354,6 +353,7 @@ const ASPCalandar = (): React.ReactElement => {
                     </Text>
                   </Td>
                 </Tr>
+
                 <HStack padding={3} width={40}>
                   <Text>Meal Information</Text>
                 </HStack>
@@ -373,6 +373,43 @@ const ASPCalandar = (): React.ReactElement => {
                     </Text>
                   </Td>
                 </Tr>
+
+                {selectedMealRequest.donationInfo ? (
+                  <Tr>
+                    <Td width={2}>
+                      <IoInformationCircleOutline />
+                    </Td>
+                    <Td>
+                      <Text>
+                        <strong>Donor provided Information</strong>
+                      </Text>
+                      <br />
+                      Donor Name:{" "}
+                      {
+                        selectedMealRequest.donationInfo.donor.info
+                          ?.organizationName
+                      }
+                      <br />
+                      Meal Description:{" "}
+                      {selectedMealRequest.donationInfo.mealDescription}
+                      <br />
+                      Additional Info:{" "}
+                      {selectedMealRequest.donationInfo.additionalInfo}
+                      <br />
+                      Donor Onsite Contacts:
+                      {selectedMealRequest?.donationInfo?.donorOnsiteContacts?.map(
+                        (staffMember) => (
+                          <>
+                            <Text>{staffMember.name}</Text>
+                            <Text>{staffMember.email}</Text>
+                            <Text>{staffMember.phone}</Text>
+                          </>
+                        ),
+                        // eslint-disable-next-line react/jsx-no-useless-fragment
+                      ) ?? <></>}
+                    </Td>
+                  </Tr>
+                ) : null}
               </Table>
             </Card>
           </>

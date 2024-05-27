@@ -167,6 +167,7 @@ export const MealRequestCalendarView = ({
     reloadMealRequests();
 
     calRef.current?.getApi().gotoDate(date);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aspId, date, getMealRequests, getMealRequestsError]);
 
   const renderEventContent = (eventInfo: {
@@ -282,11 +283,6 @@ export const MealRequestCalendarView = ({
           initialView="dayGridMonth"
           events={realEvents}
           selectable
-          selectOverlap
-          select={(info) => {
-            console.log("got select!");
-            console.log(info.startStr, info.endStr);
-          }}
           displayEventEnd
           eventTextColor="#000000"
           eventBorderColor="#FFFFFF"
@@ -297,7 +293,6 @@ export const MealRequestCalendarView = ({
 
             if (!allowMultipleSelection) {
               setSelectedMealRequests([info.event.extendedProps.id]);
-              // info.event.backgroundColor = "red";
               return;
             }
 

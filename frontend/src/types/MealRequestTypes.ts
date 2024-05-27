@@ -26,12 +26,12 @@ export type MealRequest = {
   requestor: Requestor;
   description: string;
   status: string;
-  dropOffDatetime: Date;
+  dropOffDatetime: string;
   dropOffLocation: string;
   mealInfo: MealInfo;
   onsiteContacts: Array<OnsiteContact>;
-  dateCreated: Date;
-  dateUpdated: Date;
+  dateCreated: string;
+  dateUpdated: string;
   deliveryInstructions: string;
   donationInfo: DonationInfo;
 };

@@ -13,7 +13,9 @@ import {
 import React, { useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import BackgroundImage from "../assets/background.png"
+import ASPCalandar from "./ASPCalendar";
+
+import BackgroundImage from "../assets/background.png";
 import RefreshCredentials from "../components/auth/RefreshCredentials";
 import ASPListView from "../components/mealrequest/ASPListView";
 import * as Routes from "../constants/Routes";
@@ -59,7 +61,11 @@ const OldDashboard = (): React.ReactElement => (
         Display Simple Entities
       </NavigationButton>
       <NavigationButton path={Routes.HOOKS_PAGE}>Hooks Demo</NavigationButton>
-      <NavigationButton path={`${Routes.MEAL_DONOR_FORM_PAGE}?ids=65cc28ce55434ad75a3a6439,65cc28cd55434ad75a3a6437,65cc28ce55434ad75a3a6438`}>Meal Donation Form</NavigationButton>
+      <NavigationButton
+        path={`${Routes.MEAL_DONOR_FORM_PAGE}?ids=65cc28ce55434ad75a3a6439,65cc28cd55434ad75a3a6437,65cc28ce55434ad75a3a6438`}
+      >
+        Meal Donation Form
+      </NavigationButton>
     </Wrap>
     <div style={{ height: "2rem" }} />
   </div>
@@ -80,7 +86,7 @@ const Dashboard = (): React.ReactElement => {
       <Text variant="desktop-caption" mb="20px">
         Use this page to see your upcoming food deliveries
       </Text>
-      <Tabs defaultIndex={1} w="100%">
+      <Tabs defaultIndex={0} w="100%">
         <Flex flexDir="row" justifyContent="space-between">
           <TabList>
             <Tab gap="8px">
@@ -101,8 +107,8 @@ const Dashboard = (): React.ReactElement => {
         </Flex>
 
         <TabPanels>
-          <TabPanel>
-            <p>Insert Calendar Here</p>
+          <TabPanel defaultChecked>
+            <ASPCalandar />
           </TabPanel>
           <TabPanel p="0">
             <ASPListView authId={authenticatedUser.id} />

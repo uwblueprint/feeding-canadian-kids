@@ -54,9 +54,9 @@ def create_app(config_name):
 
     app.config["CORS_ORIGINS"] = [
         "http://localhost:3000",
-        "https://uw-blueprint-starter-code.firebaseapp.com",
-        "https://uw-blueprint-starter-code.web.app",
-        re.compile(r"^https:\/\/uw-blueprint-starter-code--pr.*\.web\.app$"),
+        "https://feeding-canadian-kids-staging.firebaseapp.com",
+        "https://feeding-canadian-kids-staging.web.app",
+        re.compile(r"^https:\/\/feeding-canadian-kids-staging--pr.*\.web\.app$"),
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
     app.config["SCHEDULER_API_ENABLED"] = True

@@ -12,20 +12,12 @@ import SetPassword from "./components/auth/SetPassword";
 import MealDonationForm from "./components/meal_donor/donation_form/MealDonationForm";
 import * as Paths from "./constants/Routes";
 import Dashboard from "./pages/ASPDashboard";
-import CreatePage from "./pages/CreatePage";
-import Default from "./pages/Default";
-import DisplayPage from "./pages/DisplayPage";
-import HooksDemo from "./pages/HooksDemo";
 import MealDonorCalendar from "./pages/MealDonorCalendar";
 import MealDonorDashboard from "./pages/MealDonorDashboard";
 import NotFound from "./pages/NotFound";
 import OnboardingRequestsPage from "./pages/OnboardingRequestsPage";
 import Settings from "./pages/Settings";
-import SimpleEntityCreatePage from "./pages/SimpleEntityCreatePage";
-import SimpleEntityDisplayPage from "./pages/SimpleEntityDisplayPage";
-import SimpleEntityUpdatePage from "./pages/SimpleEntityUpdatePage";
 import UpcomingPage from "./pages/UpcomingPage";
-import UpdatePage from "./pages/UpdatePage";
 import YourMatchesPage from "./pages/YourMatchesPage";
 import { useGetDefaultPageForUser } from "./utils/useGetDefaultPageForUser";
 
@@ -62,30 +54,14 @@ const Routes = (): React.ReactElement => {
           element={<MealDonorCalendar />}
         />
         <Route path={Paths.YOUR_MATCHES_PAGE} element={<YourMatchesPage />} />
-        <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
-        <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />
-        <Route path={Paths.DISPLAY_ENTITY_PAGE} element={<DisplayPage />} />
         <Route
           path={Paths.MEAL_DONOR_UPCOMING_PAGE}
           element={<UpcomingPage />}
         />
         <Route
-          path={Paths.CREATE_SIMPLE_ENTITY_PAGE}
-          element={<SimpleEntityCreatePage />}
-        />
-        <Route
-          path={Paths.UPDATE_SIMPLE_ENTITY_PAGE}
-          element={<SimpleEntityUpdatePage />}
-        />
-        <Route
-          path={Paths.DISPLAY_SIMPLE_ENTITY_PAGE}
-          element={<SimpleEntityDisplayPage />}
-        />
-        <Route
           path={Paths.ONBOARDING_REQUESTS_PAGE}
           element={<OnboardingRequestsPage />}
         />
-        <Route path={Paths.HOOKS_PAGE} element={<HooksDemo />} />
         <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
       </Route>
       <Route path="*" element={<NotFound />} />

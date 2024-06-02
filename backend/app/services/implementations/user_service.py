@@ -135,7 +135,7 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self, limit, offset, role):
+    def get_users(self, offset, limit, role):
         user_dtos = []
         filteredUsers = User.objects()
         if role:

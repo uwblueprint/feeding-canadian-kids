@@ -65,7 +65,9 @@ class MealRequestService(IMealRequestService):
                 new_meal_request = MealRequest(
                     requestor=requestor,
                     meal_info=meal_info,
-                    drop_off_datetime=datetime.combine(request_date, drop_off_time, timezone.utc),
+                    drop_off_datetime=datetime.combine(
+                        request_date, drop_off_time, timezone.utc
+                    ),
                     drop_off_location=drop_off_location,
                     delivery_instructions=delivery_instructions,
                     onsite_contacts=onsite_contacts,

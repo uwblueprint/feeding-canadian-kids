@@ -204,7 +204,10 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
         <HStack dir="row">
           <VStack padding={10}>
             <Text fontSize="md">
-              {formatDate(mealRequest!.dropOffDatetime + "Z")}
+              {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                formatDate(mealRequest!.dropOffDatetime + "Z")
+              }
             </Text>
             <Text fontSize="20px">
               {new Date(

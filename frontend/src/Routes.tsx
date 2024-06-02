@@ -23,11 +23,7 @@ import MealDonorDashboard from "./pages/MealDonorDashboard";
 import NotFound from "./pages/NotFound";
 import OnboardingRequestsPage from "./pages/OnboardingRequestsPage";
 import Settings from "./pages/Settings";
-import SimpleEntityCreatePage from "./pages/SimpleEntityCreatePage";
-import SimpleEntityDisplayPage from "./pages/SimpleEntityDisplayPage";
-import SimpleEntityUpdatePage from "./pages/SimpleEntityUpdatePage";
 import UpcomingPage from "./pages/UpcomingPage";
-import UpdatePage from "./pages/UpdatePage";
 import YourMatchesPage from "./pages/YourMatchesPage";
 import { useGetDefaultPageForUser } from "./utils/useGetDefaultPageForUser";
 

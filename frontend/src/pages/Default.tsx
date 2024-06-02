@@ -1,16 +1,18 @@
 import { Button, Link } from "@chakra-ui/react";
-import React, { useContext } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 import BackgroundImage from "../assets/background.png";
-import * as Routes from "../constants/Routes";
-import AuthContext from "../contexts/AuthContext";
-import useIsAdmin from "../utils/useIsAdmin";
-import useIsMealDonor from "../utils/useIsMealDonor";
+import { useGetDefaultPageForUser } from "../utils/useGetDefaultPageForUser";
+
+// NOTE: This page is now unused. In the Routes.txt file, we hard code the HOME url to the default url for the user, so they should never get to this page. This is the dev home page.
 
 const Default = (): React.ReactElement => {
-  const isMealDonor = useIsMealDonor();
-  const isAdmin = useIsAdmin();
+  const navigate = useNavigate();
+  const defaultPage = useGetDefaultPageForUser();
+  useEffect(() => {
+    navigate(defaultPage);
+  });
 
   const wrapperStyles = {
     height: "100vh",
@@ -19,30 +21,11 @@ const Default = (): React.ReactElement => {
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
   };
-  if (isMealDonor) {
-    return (
-      <div style={wrapperStyles}>
-        <Link as={RouterLink} to={Routes.MEAL_DONOR_DASHBOARD_PAGE}>
-          <Button>Go to meal donor dashboard</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  if (isAdmin) {
-    return (
-      <div style={wrapperStyles}>
-        <Link as={RouterLink} to={Routes.ONBOARDING_REQUESTS_PAGE}>
-          <Button> Go to Admin Dashboard</Button>
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div style={wrapperStyles}>
-      <Link as={RouterLink} to={Routes.ASP_DASHBOARD_PAGE}>
-        <Button>Go to ASP dashboard</Button>
+      <Link as={RouterLink} to={defaultPage}>
+        <Button>Go to your default page</Button>
       </Link>
     </div>
   );

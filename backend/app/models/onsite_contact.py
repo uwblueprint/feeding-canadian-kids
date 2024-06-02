@@ -1,6 +1,6 @@
 import mongoengine as mg
 
-from app.resources.onsite_contact_dto import OnsiteContactDTO
+from ..resources.onsite_contact_dto import OnsiteContactDTO
 
 
 class OnsiteContact(mg.Document):

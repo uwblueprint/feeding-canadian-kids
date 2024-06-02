@@ -42,7 +42,7 @@ class MealRequestDTO:
             raise Exception(error_message)
 
     def validate(self):
-        from app.models.meal_request import MEAL_STATUSES_STRINGS
+        from ..models.meal_request import MEAL_STATUSES_STRINGS
 
         error_list = []
 

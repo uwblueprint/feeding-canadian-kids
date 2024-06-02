@@ -1,6 +1,5 @@
 import graphene
 import os
-from app.services.implementations.reminder_email_service import ReminderEmailService
 
 from flask import current_app
 
@@ -13,6 +12,7 @@ from .user_mutations import UserMutations
 from .services import services
 from ..services.implementations.user_service import UserService
 from ..services.implementations.email_service import EmailService
+from ..services.implementations.reminder_email_service import ReminderEmailService
 from ..services.implementations.auth_service import AuthService
 from ..services.implementations.onsite_contact_service import OnsiteContactService
 from ..services.implementations.mock_email_service import MockEmailService

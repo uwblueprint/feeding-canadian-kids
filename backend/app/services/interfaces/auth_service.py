@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.resources.auth_dto import AuthDTO
+from ...resources.auth_dto import AuthDTO
 
 
 class IAuthService(ABC):

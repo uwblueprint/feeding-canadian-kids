@@ -18,4 +18,4 @@ def init_app(app):
             db=app.config["MONGODB_DB_NAME"],
         )
     else:
-        raise Exception("MG_DATABASE_URL and MG_DATABASE_NAME must be set in the env file.")
+        raise Exception("MG_DATABASE_URL and MG_DB_NAME must be set in the env file.")

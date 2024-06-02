@@ -204,15 +204,12 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
         <HStack dir="row">
           <VStack padding={10}>
             <Text fontSize="md">
-              {formatDate(
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                mealRequest!.dropOffDatetime?.toLocaleString().split("T")[0],
-              ) ?? ""}
+              {formatDate(mealRequest!.dropOffDatetime + "Z")}
             </Text>
             <Text fontSize="20px">
               {new Date(
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                mealRequest!.dropOffDatetime.toLocaleString(),
+                mealRequest!.dropOffDatetime + "Z",
               ).toLocaleTimeString("en-US", {
                 hour: "numeric",
                 minute: "numeric",
@@ -329,28 +326,16 @@ const UpcomingPage = (): React.ReactElement => {
       onCompleted: (results) => {
         setUpcomingMealRequests(
           results?.getMealRequestsByDonorId.map((mealRequest: MealRequest) => {
-            const date = new Date(
-              mealRequest.dropOffDatetime.toString().split("T")[0],
-            );
-            const dateParts = date
-              .toLocaleString("en-US", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-              })
-              .split(",")[0]
-              .split("/");
-            const realDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
             return {
               id: mealRequest.id,
               title: `${new Date(
-                mealRequest.dropOffDatetime.toLocaleString(),
+                mealRequest.dropOffDatetime + "Z",
               ).toLocaleTimeString("en-US", {
                 hour: "numeric",
                 minute: "numeric",
                 hour12: true,
               })}`,
-              date: realDate,
+              date: mealRequest.dropOffDatetime,
               extendedProps: { mealRequest },
               backgroundColor: "#3BA948",
               borderColor: "#3BA948",
@@ -381,8 +366,8 @@ const UpcomingPage = (): React.ReactElement => {
             ): TABLE_LIBRARY_TYPES.TableNode => ({
               id: index,
               meal_request_id: mealRequest.id,
-              date_requested: new Date(mealRequest.dropOffDatetime),
-              time_requested: new Date(mealRequest.dropOffDatetime),
+              date_requested: new Date(mealRequest.dropOffDatetime + "Z"),
+              time_requested: new Date(mealRequest.dropOffDatetime + "Z"),
               asp_name: mealRequest.requestor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
               donation_address: mealRequest.dropOffLocation,

@@ -188,7 +188,7 @@ export const MealRequestCalendarView = ({
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
       (mealRequest: MealRequest) => {
-        const startDate = new Date(mealRequest.dropOffDatetime);
+        const startDate = new Date(mealRequest.dropOffDatetime + "Z");
         const endDate = new Date(startDate);
         endDate.setHours(endDate.getHours() + 1);
 

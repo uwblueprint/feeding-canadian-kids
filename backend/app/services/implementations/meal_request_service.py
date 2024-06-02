@@ -3,7 +3,7 @@ from app.services.interfaces.email_service import IEmailService
 from app.services.implementations.email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.meal_request_service import IMealRequestService
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from ...models.meal_request import DonationInfo, MealStatus
 from ...models.user import User
@@ -44,28 +44,28 @@ class MealRequestService(IMealRequestService):
             meal_requests = []
             for request_date in request_dates:
                 # Make sure the request date is in the future
-                if request_date < datetime.now().date():
+                if request_date < datetime.now(timezone.utc).date():
                     raise Exception("Request date must be in the future")
 
                 # Verify that no meal request exists for the same requestor and drop-off date
                 existing_request = MealRequest.objects(
                     requestor=requestor,
                     drop_off_datetime__gte=datetime.combine(
-                        request_date, datetime.min.time()
+                        request_date, datetime.min.time(), timezone.utc
                     ),
                     drop_off_datetime__lte=datetime.combine(
-                        request_date, datetime.max.time()
+                        request_date, datetime.max.time(), timezone.utc
                     ),
                 ).first()
                 if existing_request:
                     raise Exception(
-                        f"Meal request already exists for this ASP on {request_date}"
+                        f"Meal request already exists for this ASP on {existing_request.drop_off_datetime.isoformat()}"
                     )
 
                 new_meal_request = MealRequest(
                     requestor=requestor,
                     meal_info=meal_info,
-                    drop_off_datetime=datetime.combine(request_date, drop_off_time),
+                    drop_off_datetime=datetime.combine(request_date, drop_off_time, timezone.utc),
                     drop_off_location=drop_off_location,
                     delivery_instructions=delivery_instructions,
                     onsite_contacts=onsite_contacts,

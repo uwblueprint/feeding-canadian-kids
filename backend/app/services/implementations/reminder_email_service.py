@@ -2,7 +2,7 @@ from app.services.interfaces.reminder_email_service import IReminderEmailService
 from app.services.interfaces.email_service import IEmailService
 from ...models.user import User
 from ...models.meal_request import MealRequest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.services.implementations.email_service import EmailService
 
 
@@ -18,7 +18,7 @@ class ReminderEmailService(IReminderEmailService):
                 list of meal requests
         """
         try:
-            tomorrow_time = datetime.now() + timedelta(days=1)
+            tomorrow_time = datetime.now(timezone.utc) + timedelta(days=1)
             meal_requests = MealRequest.objects(
                 drop_off_datetime__gt=tomorrow_time,
                 drop_off_datetime__lt=tomorrow_time + timedelta(hours=1),
@@ -36,7 +36,7 @@ class ReminderEmailService(IReminderEmailService):
                 list of meal requests
         """
         try:
-            yesterday_time = datetime.now() - timedelta(days=1)
+            yesterday_time = datetime.now(timezone.utc) - timedelta(days=1)
             meal_requests = MealRequest.objects(
                 drop_off_datetime__gt=yesterday_time - timedelta(hours=1),
                 drop_off_datetime__lt=yesterday_time,

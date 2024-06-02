@@ -30,6 +30,7 @@ import {
 } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { UserInfo } from "../../types/UserTypes";
+import { useGetDefaultPageForUser } from "../../utils/useGetDefaultPageForUser";
 import useIsWebView from "../../utils/useIsWebView";
 
 const LOGOUT = gql`
@@ -74,6 +75,8 @@ const Header = () => {
     }
   }, [authenticatedUser]);
 
+  const defaultPage = useGetDefaultPageForUser();
+
   const headerDesktop = (): React.ReactElement => (
     <Flex
       justifyContent="space-between"
@@ -88,7 +91,7 @@ const Header = () => {
           width="50px"
           height="50px"
           onClick={() => {
-            navigate(HOME_PAGE);
+            navigate(defaultPage);
           }}
           _hover={{
             cursor: "pointer",
@@ -161,7 +164,7 @@ const Header = () => {
           width="50px"
           height="50px"
           onClick={() => {
-            navigate(HOME_PAGE);
+            navigate(defaultPage);
           }}
           _hover={{
             cursor: "pointer",

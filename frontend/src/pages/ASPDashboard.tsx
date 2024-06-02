@@ -97,9 +97,6 @@ const Dashboard = (): React.ReactElement => {
               <HamburgerIcon w="16px" />
               <Text variant="desktop-button-bold">List</Text>
             </Tab>
-            <Tab>
-              <Text variant="desktop-button-bold">Old Dashboard</Text>
-            </Tab>
           </TabList>
           <NavigationButton path={Routes.CREATE_MEAL_REQUEST_PAGE}>
             + Create Request
@@ -112,9 +109,6 @@ const Dashboard = (): React.ReactElement => {
           </TabPanel>
           <TabPanel p="0">
             <ASPListView authId={authenticatedUser.id} />
-          </TabPanel>
-          <TabPanel>
-            <OldDashboard />
           </TabPanel>
         </TabPanels>
       </Tabs>

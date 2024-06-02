@@ -1,7 +1,7 @@
 from typing import List
-from ...services.interfaces.email_service import IEmailService
-from ...services.implementations.email_service import EmailService
+from .email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
+from ..interfaces.email_service import IEmailService
 from ..interfaces.meal_request_service import IMealRequestService
 from datetime import datetime, timedelta
 

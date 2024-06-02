@@ -7,6 +7,8 @@ inputs:
     required: true
   appName:
     required: true
+  databaseName:
+    required: true
   databaseUrl:
     required: true
   firebaseApiKey:
@@ -55,6 +57,7 @@ runs:
           config() {
             heroku config:set "$1"="$2" -a "${{ inputs.appName }}"
           }
+          config MG_DATABASE_NAME "${{ inputs.databaseName }}"
           config MG_DATABASE_URL "${{ inputs.databaseUrl }}"
           config FIREBASE_WEB_API_KEY "${{ inputs.firebaseApiKey }}"
           config FIREBASE_REQUEST_URI "${{ inputs.firebaseRequestUri }}"

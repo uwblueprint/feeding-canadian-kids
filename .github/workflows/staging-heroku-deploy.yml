@@ -21,7 +21,7 @@ jobs:
           email: "${{ secrets.HEROKU_EMAIL }}"
           apiKey: "${{ secrets.HEROKU_API_KEY }}"
           appName: "${{ secrets.DEV_PROJECT_ID }}"
-          databaseName: "${{ secrets.DEV_MG_DATABASE_NAME }}"
+          databaseName: "${{ secrets.DEV_MG_DB_NAME }}"
           databaseUrl: "${{ secrets.DEV_MG_DATABASE_URL }}"
           firebaseApiKey: "${{ secrets.DEV_FIREBASE_WEB_API_KEY }}"
           firebaseRequestUri: "${{ secrets.DEV_FIREBASE_REQUEST_URI }}"

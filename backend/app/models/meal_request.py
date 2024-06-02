@@ -2,8 +2,8 @@ import mongoengine as mg
 from datetime import datetime
 from enum import Enum
 
-from app.models.onsite_contact import OnsiteContact
-from app.resources.meal_request_dto import MealRequestDTO
+from .onsite_contact import OnsiteContact
+from ..resources.meal_request_dto import MealRequestDTO
 
 from .user import User
 

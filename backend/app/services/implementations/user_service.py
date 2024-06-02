@@ -1,3 +1,4 @@
+from decimal import Decimal
 import firebase_admin.auth
 from ...models.user_info import UserInfo
 
@@ -459,7 +460,7 @@ class UserService(IUserService):
                     kwargs = {
                         "id": str(asp_distance["_id"]),
                         "info": asp_distance["info"],
-                        "distance": asp_distance["distance"],
+                        "distance":round(Decimal(asp_distance["distance"]), 2),
                     }
                     asp_distance_dtos.append(ASPDistanceDTO(**kwargs))
                 except Exception as e:

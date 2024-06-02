@@ -178,8 +178,8 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
             ): TABLE_LIBRARY_TYPES.TableNode => ({
               id: index,
               meal_request_id: mealRequest.id,
-              date_requested: new Date(mealRequest.dropOffDatetime),
-              time_requested: new Date(mealRequest.dropOffDatetime),
+              date_requested: new Date(mealRequest.dropOffDatetime + "Z"),
+              time_requested: new Date(mealRequest.dropOffDatetime + "Z"),
               donor_name:
                 mealRequest.donationInfo?.donor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
@@ -265,8 +265,6 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
 
   const handleEdit = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
-    // console.log("edit clicked for item", item);
-    // console.log(item);
     setIsEditModalOpen(true);
     setCurrentlyEditingMealRequestId(item.meal_request_id);
   };

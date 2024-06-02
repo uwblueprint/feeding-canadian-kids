@@ -1,7 +1,7 @@
 from app.graphql import schema as graphql_schema
 from app.services.implementations.mock_email_service import MockEmailService
 from app.services.interfaces.reminder_email_service import IReminderEmailService
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 def test_meal_yesterday(reminder_email_setup, user_setup, meal_request_setup):
@@ -9,7 +9,9 @@ def test_meal_yesterday(reminder_email_setup, user_setup, meal_request_setup):
     users = user_setup
     reminder_email_service: IReminderEmailService = reminder_email_setup  # type: ignore
 
-    dropoff_time = datetime.now() - timedelta(days=1) - timedelta(minutes=20)
+    dropoff_time = (
+        datetime.now(timezone.utc) - timedelta(days=1) - timedelta(minutes=20)
+    )
     meal_request.drop_off_datetime = dropoff_time
     meal_request.save()
 
@@ -29,7 +31,9 @@ def test_meal_tomorrow(reminder_email_setup, user_setup, meal_request_setup):
     users = user_setup
     reminder_email_service: IReminderEmailService = reminder_email_setup  # type: ignore
 
-    dropoff_time = datetime.now() + timedelta(days=1) + timedelta(minutes=20)
+    dropoff_time = (
+        datetime.now(timezone.utc) + timedelta(days=1) + timedelta(minutes=20)
+    )
     meal_request.drop_off_datetime = dropoff_time
     meal_request.save()
 

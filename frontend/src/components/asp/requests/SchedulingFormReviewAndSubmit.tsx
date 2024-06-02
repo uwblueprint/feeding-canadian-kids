@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom";
 import { ASP_DASHBOARD_PAGE } from "../../../constants/Routes";
 import { Contact, OnsiteContact } from "../../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
+import { convertTimeToUtc } from "../../../utils/convertTimeToUTC";
 
 // Create the GraphQL mutation
 const CREATE_MEAL_REQUEST = gql`
@@ -81,9 +82,7 @@ type SchedulingFormReviewAndSubmitProps = {
   handleBack: () => void;
 };
 
-const SchedulingFormReviewAndSubmit: React.FunctionComponent<
-  SchedulingFormReviewAndSubmitProps
-> = ({
+const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormReviewAndSubmitProps> = ({
   scheduledDropOffTime,
   mealRequestDates,
   address,
@@ -107,6 +106,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
     await setIsSubmitLoading(true);
 
     try {
+      // NOTE: Have to pass in date /times to mongodb in UTC time!!
       const response = await createMealRequest({
         variables: {
           address,
@@ -114,12 +114,18 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           dietaryRestrictions,
           deliveryInstructions,
           onsiteContact: onsiteContact.map((staff: OnsiteContact) => staff.id),
-          // Format the scheduled drop off time with the current time zone
-          scheduledDropOffTime,
+          // convert time to utc (keep it as time)
+          scheduledDropOffTime: convertTimeToUtc(scheduledDropOffTime),
           userId,
-          mealRequestDates: mealRequestDates.map(
-            (date) => date.toISOString().split("T", 1)[0],
-          ),
+          mealRequestDates: mealRequestDates.map((date) => {
+            const hours = parseInt(scheduledDropOffTime.split(":")[0], 10);
+            const mins = parseInt(scheduledDropOffTime.split(":")[1], 10);
+
+            // This is very important! it makes sure that the date has the correct time before we convert timezones to UTC. If the date doesn't have the correct tiem before we convert, it can lead to some really tricky bugs!
+            date.setHours(hours, mins);
+            // ISO Date string means that the timezone is always UTC
+            return date.toISOString().split("T", 1)[0];
+          }),
         },
       });
 
@@ -152,9 +158,9 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           return;
         }
         // Construct a date object from the string
-        const dateObj = new Date(date);
+        const dateObj = new Date(date + "Z");
 
-        errorMessage = `You have already created a meal request on ${dateObj.toDateString()}. Please choose another date, or edit your existing meal request.`;
+        errorMessage = `You have already created a meal request on ${dateObj.toLocaleDateString()}. Please choose another date, or edit your existing meal request.`;
       } else {
         errorMessage = "Failed to create meal request. Please try again.";
       }

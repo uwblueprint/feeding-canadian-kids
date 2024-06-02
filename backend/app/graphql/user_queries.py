@@ -6,7 +6,7 @@ from .types import QueryList, User, ASPDistance
 class UserQueries(QueryList):
     getAllUsers = graphene.List(
         User,
-        first=graphene.Int(default_value=5),
+        limit=graphene.Int(default_value=5),
         offset=graphene.Int(default_value=0),
         role=graphene.String(default_value=""),
     )
@@ -21,29 +21,10 @@ class UserQueries(QueryList):
         offset=graphene.Int(default_value=0),
     )
 
-    def resolve_getAllUsers(self, info, first, offset, role):
+    def resolve_getAllUsers(self, info, limit, offset, role):
         user_service = services["user_service"]
-        users = user_service.get_users()
-
-        if role != "":
-            filtered = []
-            for user in users:
-                if user.info["role"] == role:
-                    filtered.append(
-                        User(
-                            id=user.id,
-                            info=user.info,
-                        )
-                    )
-            return filtered[offset : offset + first]  # noqa: E203
-
-        return [
-            User(
-                id=user.id,
-                info=user.info,
-            )
-            for user in users[offset : offset + first]  # noqa: E203
-        ]
+        users = user_service.get_users(offset, limit, role)
+        return users
 
     def resolve_getUserById(self, info, id):
         user_service = services["user_service"]

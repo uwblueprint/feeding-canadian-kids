@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from app.models.user_info import UserInfoRole
+
 
 class IUserService(ABC):
     """
@@ -72,7 +74,7 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
-    def get_users(self):
+    def get_users(self, offset: int, limit: int, role: UserInfoRole):
         """
         Get all users (possibly paginated in the future)
 

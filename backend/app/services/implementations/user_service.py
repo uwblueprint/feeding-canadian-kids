@@ -135,26 +135,16 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self):
+    def get_users(self, offset, limit, role):
         user_dtos = []
-        for user in User.objects:
-            user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+        filteredUsers = User.objects()
+        if role:
+            filteredUsers = filteredUsers.filter(info__role=role)
 
-            try:
-                kwargs = {
-                    "id": user_dict["id"],
-                    "info": user_dict["info"],
-                }
-                user_dtos.append(UserDTO(**kwargs))
-            except Exception as e:
-                reason = getattr(e, "message", None)
-                self.logger.error(
-                    "Failed to get users. Reason = {reason}".format(
-                        reason=(reason if reason else str(e))
-                    )
-                )
-                raise e
-
+        for user in filteredUsers.skip(offset).limit(limit):
+            user_dtos.append(
+                UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+            )
         return user_dtos
 
     def update_user_coordinates(self, user_dto):

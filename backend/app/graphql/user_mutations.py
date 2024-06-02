@@ -1,4 +1,4 @@
-from app.resources.update_user_dto import UpdateUserDTO
+from ..resources.update_user_dto import UpdateUserDTO
 import graphene
 from .services import services
 from .types import (

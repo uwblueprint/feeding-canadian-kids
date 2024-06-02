@@ -1,9 +1,9 @@
-from app.services.interfaces.reminder_email_service import IReminderEmailService
-from app.services.interfaces.email_service import IEmailService
+from ...services.interfaces.reminder_email_service import IReminderEmailService
+from ...services.interfaces.email_service import IEmailService
 from ...models.user import User
 from ...models.meal_request import MealRequest
 from datetime import datetime, timedelta, timezone
-from app.services.implementations.email_service import EmailService
+from ...services.implementations.email_service import EmailService
 
 
 class ReminderEmailService(IReminderEmailService):

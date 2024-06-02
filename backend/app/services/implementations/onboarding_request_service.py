@@ -1,4 +1,4 @@
-from app.resources.validate_utils import validate_userinfo
+from ...resources.validate_utils import validate_userinfo
 from ...utilities.location_to_coordinates import getGeocodeFromAddress
 from ...services.implementations.auth_service import AuthService
 from ..interfaces.onboarding_request_service import IOnboardingRequestService

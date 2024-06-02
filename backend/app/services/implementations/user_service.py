@@ -1,7 +1,7 @@
 import firebase_admin.auth
-from app.models.user_info import UserInfo
+from ...models.user_info import UserInfo
 
-from app.services.interfaces.onsite_contact_service import IOnsiteContactService
+from ...services.interfaces.onsite_contact_service import IOnsiteContactService
 from ...models.onboarding_request import OnboardingRequest
 from ..interfaces.user_service import IUserService
 from ...models.user import User

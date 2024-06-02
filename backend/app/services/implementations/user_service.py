@@ -142,7 +142,9 @@ class UserService(IUserService):
             filteredUsers = filteredUsers.filter(info__role=role)
 
         for user in filteredUsers.skip(offset).limit(limit):
-            user_dtos.append(UserService.__user_to_serializable_dict_and_remove_auth_id(user))
+            user_dtos.append(
+                UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+            )
         return user_dtos
 
     def update_user_coordinates(self, user_dto):

@@ -83,7 +83,7 @@ const MealDonationFormContactInfo: React.FunctionComponent<MealDonationFormConta
                 <OnsiteContactSection
                   onsiteInfo={onsiteContact}
                   setOnsiteInfo={setOnsiteContact}
-                  attemptedSubmit={false}
+                  attemptedSubmit={attemptedSubmit}
                   availableStaff={availableStaff}
                   dropdown
                 />

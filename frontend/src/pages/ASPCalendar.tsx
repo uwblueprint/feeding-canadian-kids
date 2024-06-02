@@ -60,8 +60,9 @@ const ASPCalandar = (): React.ReactElement => {
 
   function formatDate(inputDate: string): string {
     const date = new Date(inputDate);
-    return date.toISOString().split("T")[0];
+    return date.toDateString();
   }
+
   function formatTime(inputDate: string): string {
     return new Date(inputDate).toLocaleTimeString("en-US", {
       hour: "numeric",
@@ -98,8 +99,12 @@ const ASPCalandar = (): React.ReactElement => {
             </Text>
             <Card padding={3} width={80} variant="outline">
               <HStack padding={3} style={{ justifyContent: "space-between" }}>
-                <Text>{formatDate(selectedMealRequest.dropOffDatetime)}</Text>
-                <Text>{formatTime(selectedMealRequest.dropOffDatetime)}</Text>
+                <Text>
+                  {formatDate(selectedMealRequest.dropOffDatetime + "Z")}
+                </Text>
+                <Text>
+                  {formatTime(selectedMealRequest.dropOffDatetime + "Z")}
+                </Text>
               </HStack>
               <Table
                 variant="unstyled"

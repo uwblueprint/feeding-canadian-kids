@@ -60,6 +60,8 @@ module.exports = {
     ],
     "import/prefer-default-export": ["off"],
     "@typescript-eslint/naming-convention": "off",
+    "prefer-template": "off",
+    "arrow-body-style": "off",
   },
   ignorePatterns: ["build/*"],
 };

@@ -460,7 +460,7 @@ class UserService(IUserService):
                     kwargs = {
                         "id": str(asp_distance["_id"]),
                         "info": asp_distance["info"],
-                        "distance":round(Decimal(asp_distance["distance"]), 2),
+                        "distance": round(Decimal(asp_distance["distance"]), 2),
                     }
                     asp_distance_dtos.append(ASPDistanceDTO(**kwargs))
                 except Exception as e:

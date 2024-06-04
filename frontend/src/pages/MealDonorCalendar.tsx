@@ -35,6 +35,7 @@ import {
 import { ASPDistance, GetUserData, GetUserVariables } from "../types/UserTypes";
 import { ErrorMessage } from "../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
+import { useGetDefaultPageForUser } from "../utils/useGetDefaultPageForUser";
 
 type ButtonProps = { text: string; path: string };
 type SchoolSidebarProps = { aspId: string; distance: string };
@@ -142,6 +143,7 @@ const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
 
   const schoolInfo = userInfo?.getUserById?.info;
   const navigate = useNavigate();
+  const defaultPage = useGetDefaultPageForUser();
 
   return (
     <Flex
@@ -154,7 +156,7 @@ const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
         size="38px"
         color="#CFCECE"
         cursor="pointer"
-        onClick={() => navigate(Routes.MEAL_DONOR_DASHBOARD_PAGE)}
+        onClick={() => navigate(defaultPage)}
       />
       <Flex marginBottom="30px">
         <Image

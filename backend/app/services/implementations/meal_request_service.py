@@ -188,9 +188,9 @@ class MealRequestService(IMealRequestService):
                 meal_requestor_id = meal_request.requestor.id
                 meal_requestor = User.objects(id=meal_requestor_id).first()
 
-                self.send_donor_commit_email(meal_request, donor.info.email)
+                self.send_donor_commit_email(meal_request, donor.info.email, meal_requestor)
                 self.send_requestor_commit_email(
-                    meal_request, meal_requestor.info.email
+                    meal_request, meal_requestor.info.email, meal_requestor
                 )
 
                 meal_request.donation_info = DonationInfo(
@@ -360,7 +360,7 @@ class MealRequestService(IMealRequestService):
 
         return meal_request_dtos
 
-    def send_donor_commit_email(self, meal_request, email):
+    def send_donor_commit_email(self, meal_request, email, meal_requestor):
         if not self.email_service:
             error_message = """
                 Attempted to call committed_to_meal_request but this
@@ -370,11 +370,11 @@ class MealRequestService(IMealRequestService):
             raise Exception(error_message)
 
         try:
+            address = meal_requestor.info.organization_address
             email_body = EmailService.read_email_template(
                 "email_templates/committed_to_meal_request.html"
             ).format(
-                # TODO: add this back
-                dropoff_location="",
+                dropoff_location=address,
                 dropoff_time=meal_request.drop_off_datetime,
                 num_meals=meal_request.meal_info.portions,
             )
@@ -388,7 +388,7 @@ class MealRequestService(IMealRequestService):
             )
             raise e
 
-    def send_requestor_commit_email(self, meal_request, email):
+    def send_requestor_commit_email(self, meal_request, email, meal_requestor):
         if not self.email_service:
             error_message = """
                 Attempted to call meal_request_success but this
@@ -398,11 +398,11 @@ class MealRequestService(IMealRequestService):
             raise Exception(error_message)
 
         try:
-            # TODO: get drop of location from the requstors address
+            address = meal_requestor.info.organization_address
             email_body = EmailService.read_email_template(
                 "email_templates/meal_request_success.html"
             ).format(
-                dropoff_location="",
+                dropoff_location=address,
                 dropoff_time=meal_request.drop_off_datetime,
                 num_meals=meal_request.meal_info.portions,
             )

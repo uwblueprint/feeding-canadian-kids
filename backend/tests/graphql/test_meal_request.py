@@ -311,7 +311,7 @@ def test_create_meal_request_fails_repeat_date(
 
 # Happy path: A donor commits to fulfilling one meal request
 def test_commit_to_meal_request(meal_request_setup):
-    _, donor, meal_request = meal_request_setup
+    asp, donor, meal_request = meal_request_setup
 
     mutation = f"""
     mutation testCommitToMealRequest {{
@@ -402,8 +402,7 @@ def test_commit_to_meal_request(meal_request_setup):
         f"Number of Meals: {str(meal_request.meal_info.portions)}"
         in donor_email["body"]
     )
-    # TODO: add thsi back
-    # assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
+    assert f"Dropoff Location: {asp.info.organization_address}" in donor_email["body"]
     assert (
         f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}"
         in donor_email["body"]
@@ -416,8 +415,7 @@ def test_commit_to_meal_request(meal_request_setup):
         f"Number of Meals: {str(meal_request.meal_info.portions)}"
         in donor_email["body"]
     )
-    # TODO: add this back
-    # assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
+    assert f"Dropoff Location: {asp.info.organization_address}" in donor_email["body"]
     assert (
         f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}"
         in donor_email["body"]

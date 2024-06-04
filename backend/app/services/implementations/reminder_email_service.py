@@ -49,9 +49,9 @@ class ReminderEmailService(IReminderEmailService):
 
     def send_email(self, email, meal_request, template_file_path, subject_line):
         try:
-            # TODO: change this dropoff location
+            address = meal_request.requestor.info.organization_address
             email_body = EmailService.read_email_template(template_file_path).format(
-                dropoff_location="",
+                dropoff_location=address,
                 dropoff_time=meal_request.drop_off_datetime,
                 num_meals=meal_request.meal_info.portions,
             )

@@ -45,7 +45,6 @@ class MealRequest(mg.Document):
     )
 
     drop_off_datetime = mg.DateTimeField(required=True)
-    drop_off_location = mg.StringField(required=True)
     meal_info = mg.EmbeddedDocumentField(MealInfo, required=True)
 
     # https://docs.mongoengine.org/apireference.html#mongoengine.fields.ReferenceField

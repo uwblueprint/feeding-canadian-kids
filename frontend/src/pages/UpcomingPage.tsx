@@ -96,11 +96,11 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
             email
             phone
           }
+          organizationAddress
         }
       }
       status
       dropOffDatetime
-      dropOffLocation
       mealInfo {
         portions
         dietaryRestrictions
@@ -129,14 +129,6 @@ type Staff = {
   name: string;
   email: string;
   phone: string;
-};
-
-type MealRequest1 = {
-  date: Date;
-  onsiteContact: Staff[];
-  dropOffTime: Date;
-  dropOffLocation: string;
-  deliveryInstructions: string;
 };
 
 type UpcomingEvent = {
@@ -240,7 +232,7 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
                     Location:
                     <br />
                   </strong>
-                  {mealRequest?.dropOffLocation}
+                  {mealRequest?.requestor.info?.organizationAddress}
                 </Text>
               </VStack>
             </HStack>
@@ -373,7 +365,7 @@ const UpcomingPage = (): React.ReactElement => {
               time_requested: new Date(mealRequest.dropOffDatetime + "Z"),
               asp_name: mealRequest.requestor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
-              donation_address: mealRequest.dropOffLocation,
+              donation_address: mealRequest.requestor.info?.organizationAddress,
               dietary_restrictions: mealRequest.mealInfo.dietaryRestrictions,
               contact_info: "TODO: donor primaryContact", // mealRequest.donationInfo.primaryContact
               onsite_contact: mealRequest.onsiteContacts,

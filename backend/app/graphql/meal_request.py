@@ -53,7 +53,6 @@ class MealRequestResponse(graphene.ObjectType):
     requestor = graphene.Field(User)
     status = graphene.Field(graphene.Enum.from_enum(MealStatus), required=True)
     drop_off_datetime = graphene.DateTime()
-    drop_off_location = graphene.String()
     meal_info = graphene.Field(MealInfoResponse)
     onsite_contacts = graphene.List(OnsiteContact)
     date_created = graphene.DateTime()
@@ -71,7 +70,6 @@ class CreateMealRequests(Mutation):
 
         meal_info = MealTypeInput(required=True)
         drop_off_time = graphene.Time(required=True)
-        drop_off_location = graphene.String(required=True)
         delivery_instructions = graphene.String(default_value=None)
         onsite_contacts = graphene.List(graphene.String, default_value=[])
 
@@ -85,7 +83,6 @@ class CreateMealRequests(Mutation):
         request_dates,
         meal_info,
         drop_off_time,
-        drop_off_location,
         delivery_instructions,
         onsite_contacts,
     ):
@@ -94,7 +91,6 @@ class CreateMealRequests(Mutation):
             request_dates=request_dates,
             meal_info=meal_info,
             drop_off_time=drop_off_time,
-            drop_off_location=drop_off_location,
             delivery_instructions=delivery_instructions,
             onsite_contacts=onsite_contacts,
         )
@@ -160,7 +156,6 @@ class UpdateMealRequest(Mutation):
         requestor_id = graphene.ID(required=False)
         drop_off_datetime = graphene.DateTime(required=False)
         meal_info = MealTypeInput()
-        drop_off_location = graphene.String()
         delivery_instructions = graphene.String()
         onsite_contacts = graphene.List(graphene.String)
 
@@ -174,7 +169,6 @@ class UpdateMealRequest(Mutation):
         requestor_id: str,
         drop_off_datetime=None,
         meal_info=None,
-        drop_off_location=None,
         delivery_instructions=None,
         onsite_contacts=None,
     ):
@@ -182,7 +176,6 @@ class UpdateMealRequest(Mutation):
             requestor_id=requestor_id,
             meal_info=meal_info,
             drop_off_datetime=drop_off_datetime,
-            drop_off_location=drop_off_location,
             delivery_instructions=delivery_instructions,
             onsite_contacts=onsite_contacts,
             meal_request_id=meal_request_id,
@@ -371,7 +364,6 @@ class MealRequestQueries(QueryList):
                 requestor=meal_request_dto.requestor,
                 status=meal_request_dto.status,
                 drop_off_datetime=meal_request_dto.drop_off_datetime,
-                drop_off_location=meal_request_dto.drop_off_location,
                 meal_info=meal_request_dto.meal_info,
                 onsite_contacts=meal_request_dto.onsite_contacts,
                 date_created=meal_request_dto.date_created,
@@ -425,7 +417,6 @@ class MealRequestQueries(QueryList):
                 requestor=meal_request_dto.requestor,
                 status=meal_request_dto.status,
                 drop_off_datetime=meal_request_dto.drop_off_datetime,
-                drop_off_location=meal_request_dto.drop_off_location,
                 meal_info=meal_request_dto.meal_info,
                 onsite_contacts=meal_request_dto.onsite_contacts,
                 date_created=meal_request_dto.date_created,

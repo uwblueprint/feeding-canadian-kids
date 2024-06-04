@@ -16,7 +16,6 @@ class IMealRequestService(ABC):
         request_dates,
         meal_info,
         drop_off_time,
-        drop_off_location,
         delivery_instructions,
         onsite_contacts: List[str],
     ):
@@ -36,7 +35,6 @@ class IMealRequestService(ABC):
         requestor_id: str,
         meal_info,
         drop_off_datetime,
-        drop_off_location,
         delivery_instructions,
         onsite_contacts: List[str],
         meal_request_id,
@@ -148,7 +146,7 @@ class IMealRequestService(ABC):
         pass
 
     @abstractmethod
-    def send_donor_commit_email(self, meal_request_id, email):
+    def send_donor_commit_email(self, meal_request_id, email, meal_requestor):
         """
         Sends an email to the user with the given email, notifying them that they have committed to a meal request
         :param meal_request_id: the id of the meal request
@@ -157,7 +155,7 @@ class IMealRequestService(ABC):
         """
 
     @abstractmethod
-    def send_requestor_commit_email(self, meal_request_id, email):
+    def send_requestor_commit_email(self, meal_request_id, email, meal_requestor):
         """
         Sends an email to the user with the given email, notifying them that their meal request was successful
         :param meal_request_id: the id of the meal request

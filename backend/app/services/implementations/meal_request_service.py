@@ -188,7 +188,9 @@ class MealRequestService(IMealRequestService):
                 meal_requestor_id = meal_request.requestor.id
                 meal_requestor = User.objects(id=meal_requestor_id).first()
 
-                self.send_donor_commit_email(meal_request, donor.info.email, meal_requestor)
+                self.send_donor_commit_email(
+                    meal_request, donor.info.email, meal_requestor
+                )
                 self.send_requestor_commit_email(
                     meal_request, meal_requestor.info.email, meal_requestor
                 )

@@ -3,6 +3,7 @@ from email.mime.text import MIMEText
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from ..interfaces.email_service import IEmailService
+import os
 
 
 class EmailService(IEmailService):
@@ -46,6 +47,11 @@ class EmailService(IEmailService):
         message["from"] = self.sender
         message["to"] = to
         message["subject"] = subject
+
+        # If we have an ADMIN CC email, cc any sent emails to that email address
+        if os.getenv("ADMIN_CC_EMAIL"):
+            message["cc"] = os.getenv("ADMIN_CC_EMAIL")
+
         email = {"raw": base64.urlsafe_b64encode(message.as_string().encode()).decode()}
         try:
             sent_info = (

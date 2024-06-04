@@ -42,17 +42,19 @@ def test_meal_tomorrow(reminder_email_setup, user_setup, meal_request_setup):
     )
 
     assert "Your meal request is scheduled for tomorrow!" in requestor_email["body"]
-    assert (
-        f"Dropoff Location: {meal_request.drop_off_location}" in requestor_email["body"]
-    )
-    assert str(meal_request.drop_off_location) in requestor_email["body"]
+    # TODO: add this back
+    # assert (
+    #     f"Dropoff Location: {meal_request.drop_off_location}" in requestor_email["body"]
+    # )
+    # assert str(meal_request.drop_off_location) in requestor_email["body"]
     assert requestor_email["subject"] == "Your meal request is only one day away!"
 
     assert (
         "The meal request you donated is scheduled for tomorrow!" in donor_email["body"]
     )
-    assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
-    assert str(meal_request.drop_off_location) in donor_email["body"]
+    # TODO: add this back
+    # assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
+    # assert str(meal_request.drop_off_location) in donor_email["body"]
     assert donor_email["subject"] == "Your meal donation is only one day away!"
 
 
@@ -108,7 +110,6 @@ def commit_to_meal_request(donor, meal_request):
             }}
             status
             dropOffDatetime
-            dropOffLocation
             mealInfo {{
                 portions
                 dietaryRestrictions

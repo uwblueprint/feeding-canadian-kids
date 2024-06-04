@@ -16,7 +16,6 @@ class IMealRequestService(ABC):
         request_dates,
         meal_info,
         drop_off_time,
-        drop_off_location,
         delivery_instructions,
         onsite_contacts: List[str],
     ):
@@ -36,7 +35,6 @@ class IMealRequestService(ABC):
         requestor_id: str,
         meal_info,
         drop_off_datetime,
-        drop_off_location,
         delivery_instructions,
         onsite_contacts: List[str],
         meal_request_id,

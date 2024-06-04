@@ -121,7 +121,7 @@ const ASPCalandar = (): React.ReactElement => {
                         Location:
                         <br />
                       </strong>
-                      {selectedMealRequest.dropOffLocation}
+                      {selectedMealRequest.requestor.info?.organizationAddress}
                     </Text>
                   </Td>
                 </Tr>

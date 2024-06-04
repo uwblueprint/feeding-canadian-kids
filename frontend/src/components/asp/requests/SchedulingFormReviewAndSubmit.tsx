@@ -35,7 +35,6 @@ import { convertTimeToUtc } from "../../../utils/convertTimeToUTC";
 // Create the GraphQL mutation
 const CREATE_MEAL_REQUEST = gql`
   mutation CreateMealRequest(
-    $address: String!
     $numMeals: Int!
     $dietaryRestrictions: String
     $deliveryInstructions: String
@@ -45,7 +44,6 @@ const CREATE_MEAL_REQUEST = gql`
     $userId: ID!
   ) {
     createMealRequest(
-      dropOffLocation: $address
       deliveryInstructions: $deliveryInstructions
       onsiteContacts: $onsiteContact
       mealInfo: {
@@ -69,11 +67,11 @@ type SchedulingFormReviewAndSubmitProps = {
   mealRequestDates: Date[];
 
   // From part 2
-  address: string;
   numMeals: number;
   dietaryRestrictions: string;
   deliveryInstructions: string;
   onsiteContact: OnsiteContact[];
+  address: string;
 
   // User ID
   userId: string;
@@ -83,9 +81,9 @@ type SchedulingFormReviewAndSubmitProps = {
 };
 
 const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormReviewAndSubmitProps> = ({
+  address,
   scheduledDropOffTime,
   mealRequestDates,
-  address,
   numMeals,
   dietaryRestrictions,
   deliveryInstructions,
@@ -109,7 +107,6 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
       // NOTE: Have to pass in date /times to mongodb in UTC time!!
       const response = await createMealRequest({
         variables: {
-          address,
           numMeals,
           dietaryRestrictions,
           deliveryInstructions,

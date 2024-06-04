@@ -16,7 +16,6 @@ class MealRequestDTO:
         requestor,
         status,
         drop_off_datetime,
-        drop_off_location,
         meal_info,
         onsite_contacts,
         date_created,
@@ -28,7 +27,6 @@ class MealRequestDTO:
         self.requestor = requestor
         self.status = status
         self.drop_off_datetime = drop_off_datetime
-        self.drop_off_location = drop_off_location
         self.meal_info = meal_info
         self.onsite_contacts = onsite_contacts
         self.date_created = date_created
@@ -67,9 +65,6 @@ class MealRequestDTO:
             error_list.append(
                 "The drop_off_datetime supplied is not a datetime object."
             )
-
-        if type(self.drop_off_location) is not str:
-            error_list.append("The drop_off_location supplied is not a string.")
 
         validate_meal_info(self.meal_info, error_list)
 

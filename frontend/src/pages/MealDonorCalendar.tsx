@@ -67,11 +67,11 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
             email
             phone
           }
+          organizationAddress
         }
       }
       status
       dropOffDatetime
-      dropOffLocation
       mealInfo {
         portions
         dietaryRestrictions

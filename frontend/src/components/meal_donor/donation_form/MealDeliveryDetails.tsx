@@ -26,7 +26,9 @@ const MealDeliveryDetails: React.FunctionComponent<MealDeliveryDetailsProps> = (
         </Text>
         <HStack>
           <IoLocationOutline />
-          <Text>{mealRequestsInformation[0]?.dropOffLocation}</Text>
+          <Text>
+            {mealRequestsInformation[0]?.requestor.info?.organizationAddress}
+          </Text>
         </HStack>
       </Stack>
       <Stack overflowY="auto" maxHeight="260px" gap="0.8rem">

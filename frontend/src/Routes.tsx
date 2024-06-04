@@ -47,7 +47,7 @@ const Routes = (): React.ReactElement => {
         <Route path={Paths.ASP_DASHBOARD_PAGE} element={<Dashboard />} />
         <Route
           path={Paths.MEAL_DONOR_DASHBOARD_PAGE}
-          element={<MealDonorDashboard />}
+          element={<Navigate replace to={defaultPage} />}
         />
         <Route
           path={Paths.MEAL_DONOR_CALENDAR_PAGE}

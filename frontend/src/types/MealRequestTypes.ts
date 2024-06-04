@@ -27,7 +27,6 @@ export type MealRequest = {
   description: string;
   status: string;
   dropOffDatetime: string;
-  dropOffLocation: string;
   mealInfo: MealInfo;
   onsiteContacts: Array<OnsiteContact>;
   dateCreated: string;

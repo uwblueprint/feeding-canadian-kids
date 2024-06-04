@@ -77,10 +77,12 @@ const MealDonationForm = (): React.ReactElement => {
       id
       requestor {
         id
+        info {
+          organizationAddress
+        }
       }
       status
       dropOffDatetime
-      dropOffLocation
       mealInfo {
         portions
         dietaryRestrictions

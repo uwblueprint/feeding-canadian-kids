@@ -42,7 +42,6 @@ const GET_MEAL_REQUEST_BY_ID = gql`
       id
       status
       dropOffDatetime
-      dropOffLocation
       mealInfo {
         portions
         dietaryRestrictions
@@ -99,7 +98,6 @@ const UPDATE_MEAL_REQUEST = gql`
         id
         status
         dropOffDatetime
-        dropOffLocation
         mealInfo {
           portions
           dietaryRestrictions
@@ -143,7 +141,6 @@ const UPDATE_MEAL_DONATION = gql`
         id
         status
         dropOffDatetime
-        dropOffLocation
         mealInfo {
           portions
           dietaryRestrictions

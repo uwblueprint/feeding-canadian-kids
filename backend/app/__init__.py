@@ -70,6 +70,27 @@ def create_app(config_name):
     app.config["SCHEDULER_API_ENABLED"] = True
     CORS(app)
 
+    required_firebase_envs = [
+        "FIREBASE_PROJECT_ID", 
+        "FIREBASE_STORAGE_DEFAULT_BUCKET", 
+        "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID",
+        "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY",
+        "FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL",
+        "FIREBASE_SVC_ACCOUNT_CLIENT_ID",
+        "FIREBASE_SVC_ACCOUNT_AUTH_URI",
+        "FIREBASE_SVC_ACCOUNT_TOKEN_URI",
+        "FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL",
+        "FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL"
+    ]
+    for env in required_firebase_envs:
+        not_found_one = False
+        missing = []
+        if env not in os.environ:
+            not_found_one = True
+            missing.append(env)
+        if not_found_one:
+            raise Exception(f"Missing required environment variable: {missing}")
+
     firebase_admin.initialize_app(
         firebase_admin.credentials.Certificate(
             {

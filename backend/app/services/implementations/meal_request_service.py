@@ -293,9 +293,12 @@ class MealRequestService(IMealRequestService):
             else:
                 requests = requests[offset:]
 
+            print("3 explain is", requests.explain()["executionStats"])
             meal_request_dtos = []
             for request in requests:
                 meal_request_dtos.append(request.to_dto())
+            print("4 explain is", requests.explain()["executionStats"])
+
 
             return meal_request_dtos
 

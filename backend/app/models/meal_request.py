@@ -55,6 +55,19 @@ class MealRequest(mg.Document):
     date_updated = mg.DateTimeField(required=True, default=datetime.utcnow)
     delivery_instructions = mg.StringField(default=None)
     donation_info = mg.EmbeddedDocumentField(DonationInfo, default=None)
+    meta = {
+            'indexes': [
+                ('drop_off_datetime'),  # compound index
+                # ('status', 'drop_off_datetime'),  # compound index
+                # ('category', '_cls'),  # compound index
+                # {
+                #     'fields': ['created'],
+                #     'expireAfterSeconds': 3600  # ttl index
+                # }
+            ],
+            'auto_create_index': True,
+            'auto_create_index_on_save': True,
+        }
 
     def validate_onsite_contacts(self):
         if self.onsite_contacts:

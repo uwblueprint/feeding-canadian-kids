@@ -42,7 +42,6 @@ def create_app(config_name):
     # do not read config object if creating app from Flask CLI (e.g. flask db migrate)
     print("right before entering config setup ")
     print("type config name", type(config_name))
-    config_name = "production"
     # if type(config_name) is not ScriptInfo:
     print("Right before reading config object right now!")
     print("At this time the env vars are: ")

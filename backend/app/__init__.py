@@ -42,17 +42,16 @@ def create_app(config_name):
     # do not read config object if creating app from Flask CLI (e.g. flask db migrate)
     print("right before entering config setup ")
     print("type config name", type(config_name))
-    if type(config_name) is not ScriptInfo:
-        print("Right before reading config object right now!")
-        print("At this time the env vars are: ")
-        print("MG_DATABASE_URL:", os.getenv("MG_DATABASE_URL"))
-        print("MG_DB_NAME:", os.getenv("MG_DB_NAME"))
-        print("config name is", config_name)
-        print("app config is", app_config)
-        app.config.from_object(app_config[config_name])
-        print("Now, app.config is", app.config)
-    print("right after entering config setup")
-
+    config_name = "production"
+    # if type(config_name) is not ScriptInfo:
+    print("Right before reading config object right now!")
+    print("At this time the env vars are: ")
+    print("MG_DATABASE_URL:", os.getenv("MG_DATABASE_URL"))
+    print("MG_DB_NAME:", os.getenv("MG_DB_NAME"))
+    print("config name is", config_name)
+    print("app config is", app_config)
+    app.config.from_object(app_config[config_name])
+    print("Now, app.config is", app.config)
     app.add_url_rule(
         "/graphql",
         view_func=GraphQLView.as_view(

@@ -28,6 +28,8 @@ const REFRESH_MUTATION = `
   }
 `;
 
+// eslint-disable-next-line no-console
+console.log("bakcend url is", process.env.REACT_APP_BACKEND_URL);
 const link = createUploadLink({
   uri: `${process.env.REACT_APP_BACKEND_URL}/graphql`,
   credentials: "include",
@@ -79,11 +81,11 @@ const apolloClient = new ApolloClient({
             merge(existing, incoming) {
               // Custom merge logic
               return incoming;
-            }
-          }
-        }
-      }
-    }
+            },
+          },
+        },
+      },
+    },
   }),
 });
 

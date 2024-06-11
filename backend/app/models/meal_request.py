@@ -57,10 +57,11 @@ class MealRequest(mg.Document):
     donation_info = mg.EmbeddedDocumentField(DonationInfo, default=None)
     meta = {
             'indexes': [
-                'drop_off_datetime',  # compound index
+                ('drop_off_datetime', 'status'),  # compound index
                 'status',  
-                'requestor',
-                ('requestor', 'status', 'drop_off_datetime')
+                ('requestor', 'drop_off_datetime', 'status'),
+                ('requestor', 'id'),
+                ('donation_info.donor', 'status', 'drop_off_datetime'),
             ],
             'auto_create_index': True,
             'auto_create_index_on_save': False,

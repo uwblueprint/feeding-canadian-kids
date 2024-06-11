@@ -57,16 +57,14 @@ class MealRequest(mg.Document):
     donation_info = mg.EmbeddedDocumentField(DonationInfo, default=None)
     meta = {
             'indexes': [
-                ('drop_off_datetime'),  # compound index
-                # ('status', 'drop_off_datetime'),  # compound index
-                # ('category', '_cls'),  # compound index
-                # {
-                #     'fields': ['created'],
-                #     'expireAfterSeconds': 3600  # ttl index
-                # }
+                'drop_off_datetime',  # compound index
+                'status',  
+                'requestor',
+                ('requestor', 'status', 'drop_off_datetime')
             ],
             'auto_create_index': True,
-            'auto_create_index_on_save': True,
+            'auto_create_index_on_save': False,
+            "collection": "meal_requests"
         }
 
     def validate_onsite_contacts(self):
@@ -131,4 +129,3 @@ class MealRequest(mg.Document):
 
         return MealRequestDTO(**dict)
 
-    meta = {"collection": "meal_requests"}

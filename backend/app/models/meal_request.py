@@ -55,6 +55,18 @@ class MealRequest(mg.Document):
     date_updated = mg.DateTimeField(required=True, default=datetime.utcnow)
     delivery_instructions = mg.StringField(default=None)
     donation_info = mg.EmbeddedDocumentField(DonationInfo, default=None)
+    meta = {
+        "indexes": [
+            ("drop_off_datetime", "status"),  # compound index
+            "status",
+            ("requestor", "status", "drop_off_datetime"),
+            ("requestor", "id"),
+            ("donation_info.donor", "status", "drop_off_datetime"),
+        ],
+        "auto_create_index": True,
+        "auto_create_index_on_save": False,
+        "collection": "meal_requests",
+    }
 
     def validate_onsite_contacts(self):
         if self.onsite_contacts:
@@ -117,5 +129,3 @@ class MealRequest(mg.Document):
             dict["donation_info"]["donor"] = donor.to_serializable_dict()
 
         return MealRequestDTO(**dict)
-
-    meta = {"collection": "meal_requests"}

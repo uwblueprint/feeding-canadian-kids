@@ -25,6 +25,7 @@ class UserService(IUserService):
         """
         self.logger = logger
         self.onsite_contact_service = onsite_contact_service
+        User.ensure_indexes()
 
     def get_user_by_id(self, user_id):
         try:

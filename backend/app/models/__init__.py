@@ -17,8 +17,8 @@ def init_app(app):
     # print("app.config mgdb url", app.config["MONGODB_URL"])
     # print("app.config mg db name", app.config["MONGODB_DB_NAME"])
     print("app.config", app.config)
-    print("mongodb url in" , "MONGODB_URL" in app.config )
-    print("mongodb db name in" , "MONGODB_DB_NAME" in app.config )
+    print("mongodb url in", "MONGODB_URL" in app.config)
+    print("mongodb db name in", "MONGODB_DB_NAME" in app.config)
     if "MONGODB_URL" in app.config and "MONGODB_DB_NAME" in app.config:
         connect(
             host=app.config["MONGODB_URL"],

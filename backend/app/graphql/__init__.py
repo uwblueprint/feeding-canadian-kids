@@ -6,7 +6,6 @@ from flask import current_app
 
 from .onsite_contact_mutations import OnsiteContactMutations
 from .onsite_contact_queries import OnsiteContactQueries
-from .example import ExampleQueries, ExampleMutations
 from .user_queries import UserQueries
 from .user_mutations import UserMutations
 from .services import services
@@ -14,6 +13,7 @@ from ..services.implementations.user_service import UserService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.reminder_email_service import ReminderEmailService
 from ..services.implementations.auth_service import AuthService
+from ..services.implementations.mock_auth_service import MockAuthService
 from ..services.implementations.onsite_contact_service import OnsiteContactService
 from ..services.implementations.mock_email_service import MockEmailService
 from .auth import AuthMutations
@@ -27,7 +27,6 @@ from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQue
 
 class RootQuery(
     # All queries listed here will be merged.
-    ExampleQueries,
     UserQueries,
     OnboardingRequestQueries,
     MealRequestQueries,
@@ -38,7 +37,6 @@ class RootQuery(
 
 class RootMutation(
     # All mutations listed here will be merged.
-    ExampleMutations,
     AuthMutations,
     OnboardingRequestMutations,
     MealRequestMutations,
@@ -58,7 +56,7 @@ def init_email_service(app):
     print("Initializing email service")
     if app.config["TESTING"]:
         os.environ["ENV"] = "testing"
-        print("Using mock email service in testings!")
+        print("Using mock email service in testing!")
         services["email_service"] = MockEmailService(
             logger=current_app.logger,
             credentials={},
@@ -79,6 +77,24 @@ def init_email_service(app):
         )
 
 
+def init_auth_service(app):
+    print("Initializing auth service")
+    if app.config["TESTING"]:
+        os.environ["ENV"] = "testing"
+        print("Using mock auth service in testing!")
+        services["auth_service"] = MockAuthService(
+            logger=current_app.logger,
+            user_service=services["user_service"],
+            email_service=services["email_service"],
+        )
+    else:
+        services["auth_service"] = AuthService(
+            logger=current_app.logger,
+            user_service=services["user_service"],
+            email_service=services["email_service"],
+        )
+
+
 def init_app(app):
     with app.app_context():
         init_email_service(app)
@@ -89,11 +105,7 @@ def init_app(app):
             logger=current_app.logger,
             onsite_contact_service=services["onsite_contact_service"],
         )
-        services["auth_service"] = AuthService(
-            logger=current_app.logger,
-            user_service=services["user_service"],
-            email_service=services["email_service"],
-        )
+        init_auth_service(app)
         services["onboarding_request_service"] = OnboardingRequestService(
             logger=current_app.logger, email_service=services["email_service"]
         )

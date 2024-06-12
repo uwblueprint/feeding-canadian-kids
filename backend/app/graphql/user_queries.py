@@ -1,3 +1,4 @@
+from .middleware.auth import requires_login, requires_role, secure_requestor_id
 import graphene
 from .services import services
 from .types import QueryList, User, ASPDistance
@@ -21,11 +22,13 @@ class UserQueries(QueryList):
         offset=graphene.Int(default_value=0),
     )
 
+    @requires_role("Admin")
     def resolve_getAllUsers(self, info, limit, offset, role):
         user_service = services["user_service"]
         users = user_service.get_users(offset, limit, role)
         return users
 
+    @requires_login
     def resolve_getUserById(self, info, id):
         user_service = services["user_service"]
         user = user_service.get_user_by_id(id)
@@ -35,6 +38,7 @@ class UserQueries(QueryList):
             info=user.info,
         )
 
+    @secure_requestor_id
     def resolve_getASPNearLocation(
         self, info, requestor_id, max_distance, limit, offset
     ):

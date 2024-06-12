@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.models.user_info import UserInfoRole
+from ...models.user_info import UserInfoRole
 
 
 class IUserService(ABC):

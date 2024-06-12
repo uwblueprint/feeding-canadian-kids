@@ -270,7 +270,7 @@ const EditMealRequestForm = ({
       setLoading(true);
       const response = await updateMealRequest({
         variables: {
-          requestorId: "65dd62ce70ecfc682015245b",
+          requestorId,
           mealRequestId,
           updatedDeliveryInstructions: deliveryInstructions,
           updatedMealInfoPortions: numberOfMeals,
@@ -308,7 +308,6 @@ const EditMealRequestForm = ({
       const response = await updateMealDonation({
         variables: {
           requestorId,
-          // requestorId: "65dd62ce70ecfc682015245b",
           mealRequestId,
           mealDescription,
           additionalInfo: additionalNotes,

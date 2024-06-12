@@ -4,7 +4,6 @@ import re
 import firebase_admin
 
 from flask import Flask
-from flask.cli import ScriptInfo
 from flask_cors import CORS
 from .graphql.view import GraphQLView
 from logging.config import dictConfig
@@ -71,8 +70,8 @@ def create_app(config_name):
     CORS(app)
 
     required_firebase_envs = [
-        "FIREBASE_PROJECT_ID", 
-        "FIREBASE_STORAGE_DEFAULT_BUCKET", 
+        "FIREBASE_PROJECT_ID",
+        "FIREBASE_STORAGE_DEFAULT_BUCKET",
         "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID",
         "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY",
         "FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL",
@@ -80,7 +79,7 @@ def create_app(config_name):
         "FIREBASE_SVC_ACCOUNT_AUTH_URI",
         "FIREBASE_SVC_ACCOUNT_TOKEN_URI",
         "FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL",
-        "FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL"
+        "FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL",
     ]
     for env in required_firebase_envs:
         not_found_one = False

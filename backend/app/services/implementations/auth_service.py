@@ -165,7 +165,8 @@ class AuthService(IAuthService):
 
         try:
             verification_link = firebase_admin.auth.generate_email_verification_link(
-                email
+                email,
+                firebase_admin.auth.ActionCodeSettings("https://feeding-canadian-kids-staging.web.app")
             )
             email_body = EmailService.read_email_template(
                 "email_templates/verification_email.html"

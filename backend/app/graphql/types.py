@@ -62,8 +62,6 @@ class UserInfo(graphene.ObjectType):
     initial_onsite_contacts = graphene.List(Contact)
     active = graphene.Boolean()
 
-    # def resolve_onsite_contacts()
-
 
 class ContactInput(graphene.InputObjectType):
     name = graphene.String(required=True)

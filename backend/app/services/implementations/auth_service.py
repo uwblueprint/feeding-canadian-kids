@@ -164,9 +164,7 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            verification_link = firebase_admin.auth.generate_email_verification_link(
-                email
-            )
+            verification_link = firebase_admin.auth.generate_email_verification_link(email)
             email_body = EmailService.read_email_template(
                 "email_templates/verification_email.html"
             ).format(verification_link=verification_link)
@@ -241,7 +239,7 @@ class AuthService(IAuthService):
         except Exception:
             return False
 
-    def is_authorized_by_role(self, context, *roles):
+    def is_authorized_by_role(self, context, roles):
         try:
             return self.__is_authorized_by_condition(
                 context,

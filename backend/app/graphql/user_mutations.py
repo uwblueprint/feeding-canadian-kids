@@ -1,4 +1,4 @@
-from app.graphql.middleware.auth import secure_requestor_id
+from app.graphql.middleware.auth import requires_role, secure_requestor_id
 from ..resources.update_user_dto import UpdateUserDTO
 import graphene
 from .services import services
@@ -50,7 +50,7 @@ class ActivateUserByID(Mutation):
 
     user = graphene.Field(User)
 
-    @secure_requestor_id
+    @requires_role("Admin")
     def mutate(self, info, requestor_id, id):
         user_service = services["user_service"]
         requestor_auth_id = user_service.get_auth_id_by_user_id(requestor_id)
@@ -71,7 +71,7 @@ class DeactivateUserByID(Mutation):
 
     user = graphene.Field(User)
 
-    @secure_requestor_id
+    @requires_role("Admin")
     def mutate(self, info, requestor_id, id):
         user_service = services["user_service"]
         requestor_auth_id = user_service.get_auth_id_by_user_id(requestor_id)

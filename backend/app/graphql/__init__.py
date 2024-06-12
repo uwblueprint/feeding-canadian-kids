@@ -6,7 +6,6 @@ from flask import current_app
 
 from .onsite_contact_mutations import OnsiteContactMutations
 from .onsite_contact_queries import OnsiteContactQueries
-from .example import ExampleQueries, ExampleMutations
 from .user_queries import UserQueries
 from .user_mutations import UserMutations
 from .services import services
@@ -28,7 +27,6 @@ from .onboarding_request import OnboardingRequestMutations, OnboardingRequestQue
 
 class RootQuery(
     # All queries listed here will be merged.
-    ExampleQueries,
     UserQueries,
     OnboardingRequestQueries,
     MealRequestQueries,
@@ -39,7 +37,6 @@ class RootQuery(
 
 class RootMutation(
     # All mutations listed here will be merged.
-    ExampleMutations,
     AuthMutations,
     OnboardingRequestMutations,
     MealRequestMutations,

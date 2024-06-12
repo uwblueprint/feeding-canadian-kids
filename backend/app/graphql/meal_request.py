@@ -1,7 +1,7 @@
 import graphene
 from graphql import GraphQLError
 from typing import List
-from .middleware.auth import requires_role, requires_user_id, secure_requestor_id, requires_login
+from .middleware.auth import secure_requestor_id, requires_login, requires_role, secure_donor_id
 
 from .types import (
     Mutation,
@@ -111,6 +111,7 @@ class UpdateMealRequestDonation(Mutation):
     meal_request = graphene.Field(MealRequestResponse)
 
     @secure_requestor_id
+    @requires_role("Donor")
     def mutate(
         self,
         info,
@@ -135,13 +136,13 @@ class UpdateMealRequestDonation(Mutation):
             print("requestor id is", requestor_id)
 
             #TODO: Re-enable this check
-            # if (
-            #     requestor_role != "Admin"
-            #     and meal_request.donation_info["donor"]["id"] != requestor_id
-            # ):
-            #     raise Exception(
-            #         "Requestor is not an admin or the donor of the meal request."
-            #     )
+            if (
+                requestor_role != "Admin"
+                and meal_request.donation_info["donor"]["id"] != requestor_id
+            ):
+                raise Exception(
+                    "Requestor is not an admin or the donor of the meal request."
+                )
 
             result = services["meal_request_service"].update_meal_request_donation(
                 requestor_id=requestor_id,
@@ -169,6 +170,7 @@ class UpdateMealRequest(Mutation):
     meal_request = graphene.Field(MealRequestResponse)
 
     @secure_requestor_id
+    @requires_role("ASP")
     def mutate(
         self,
         info,
@@ -201,6 +203,7 @@ class CommitToMealRequest(Mutation):
 
     meal_requests = graphene.List(MealRequestResponse)
 
+    @requires_role("Donor")
     def mutate(
         self,
         info,
@@ -229,6 +232,7 @@ class CancelDonation(Mutation):
     # return values (return updated meal request)
     meal_request = graphene.Field(MealRequestResponse)
 
+    @requires_role("Donor")
     def mutate(self, info, meal_request_id, requestor_id):
         user = services["user_service"]
         requestor_auth_id = user.get_auth_id_by_user_id(requestor_id)
@@ -399,6 +403,7 @@ class MealRequestQueries(QueryList):
         sort_by_date_direction=SortDirection(default_value=SortDirection.ASCENDING),
     )
 
+    @secure_donor_id
     def resolve_getMealRequestsByDonorId(
         self,
         info,

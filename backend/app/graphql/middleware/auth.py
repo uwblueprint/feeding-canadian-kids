@@ -8,12 +8,24 @@ Ensures that the the user is either an admin or logged in as the requestor id th
 def secure_requestor_id(resolver):
     @wraps(resolver)
     def wrapper(parent, info, **kwargs):
-        print("Got called!", kwargs)
-
         is_admin = services["auth_service"].is_authorized_by_role(info.context, "admin")
         authorized = services["auth_service"].is_authorized_by_user_id(info.context, kwargs.get("requestor_id"))
-        print("is_admin", is_admin)
-        print("authorized", authorized)
+
+        if not is_admin and not authorized:
+            raise ClientError("You are not authorized to make this request.")
+        return resolver(parent, info, **kwargs)
+
+    return wrapper
+
+"""
+Ensures that the the user is either an admin or logged in as the donor id they claim.
+"""
+def secure_donor_id(resolver):
+    @wraps(resolver)
+    def wrapper(parent, info, **kwargs):
+
+        is_admin = services["auth_service"].is_authorized_by_role(info.context, "admin")
+        authorized = services["auth_service"].is_authorized_by_user_id(info.context, kwargs.get("donor_id"))
 
         if not is_admin and not authorized:
             raise ClientError("You are not authorized to make this request.")
@@ -49,7 +61,7 @@ def requires_role(role):
             authorized = services["auth_service"].is_authorized_by_role(info.context, [role, "Admin"])
 
             if not authorized:
-                raise ClientError("You are not authorized to make this request. You need to be logged in.")
+                raise ClientError("You are not authorized to make this request. ")
 
             return resolver(parent, info, **kwargs)
 

@@ -1,3 +1,4 @@
+from app.graphql.middleware.auth import requires_role
 import graphene
 from graphql import GraphQLError
 from mongoengine.errors import NotUniqueError
@@ -45,6 +46,7 @@ class OnboardingRequestQueries(QueryList):
         OnboardingRequest, id=graphene.String(required=True)
     )
 
+    @requires_role("Admin")
     def resolve_getAllOnboardingRequests(
         self, info, number, offset, role, status, sort_by_date_direction
     ):
@@ -67,6 +69,7 @@ class OnboardingRequestQueries(QueryList):
             for onboarding_request_dto in onboarding_request_dtos
         ]
 
+    # unprotected since this is used during signup (no login check)
     def resolve_getOnboardingRequestById(self, info, id):
         onboarding_request_dto = services[
             "onboarding_request_service"
@@ -111,6 +114,7 @@ class ApproveOnboardingRequest(Mutation):
 
     onboarding_request = graphene.Field(OnboardingRequest)
 
+    @requires_role("Admin")
     def mutate(self, info, id):
         onboarding_request_dto = services[
             "onboarding_request_service"
@@ -131,6 +135,7 @@ class RejectOnboardingRequest(Mutation):
 
     onboarding_request = graphene.Field(OnboardingRequest)
 
+    @requires_role("Admin")
     def mutate(self, info, id):
         onboarding_request_dto = services[
             "onboarding_request_service"

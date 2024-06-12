@@ -485,6 +485,20 @@ const Join = (): React.ReactElement => {
           status: "error",
           isClosable: true,
         });
+      } else if (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        e?.graphQLErrors &&
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        String(e.graphQLErrors[0]?.message).includes("Email already exists")
+      ) {
+        toast({
+          title:
+            "There is already an account with that Email Address ! Please try a different one.",
+          status: "error",
+          isClosable: true,
+        });
       } else {
         toast({
           title: "Failed to create account. Please try again.",

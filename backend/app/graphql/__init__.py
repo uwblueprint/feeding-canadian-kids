@@ -76,6 +76,7 @@ def init_email_service(app):
             display_name="Feeding Canadian Kids",
         )
 
+
 def init_auth_service(app):
     print("Initializing auth service")
     if app.config["TESTING"]:

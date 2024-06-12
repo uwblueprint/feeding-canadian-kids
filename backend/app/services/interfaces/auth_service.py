@@ -36,7 +36,6 @@ class IAuthService(ABC):
         """
         pass
 
-
     @abstractmethod
     def revoke_tokens(self, user_id):
         """
@@ -144,4 +143,3 @@ class IAuthService(ABC):
     @abstractmethod
     def is_authenticated(self, context):
         pass
-

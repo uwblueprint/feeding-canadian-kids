@@ -1,3 +1,4 @@
+from app.graphql.middleware.auth import secure_requestor_id
 import graphene
 from .services import services
 from .types import QueryList, User, ASPDistance
@@ -35,6 +36,7 @@ class UserQueries(QueryList):
             info=user.info,
         )
 
+    @secure_requestor_id
     def resolve_getASPNearLocation(
         self, info, requestor_id, max_distance, limit, offset
     ):

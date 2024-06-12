@@ -33,7 +33,7 @@ def make_decorator(fn_name, lookup_params=False):
 
 
 # Require the user to be logged in.
-requires_login = make_decorator("is_authenticated")
+# requires_login = make_decorator("is_authenticated")
 
 # Require the user role to match one of the provided ones, or an admin.
 requires_role = make_decorator("is_authorized_by_role")
@@ -50,8 +50,39 @@ requires_self = make_decorator(
     lookup_params=True,
 )
 
-# Require the user email to match the provided one, or the user to be an admin.
-requires_email = make_decorator(
-    "is_authorized_by_email",
-    lookup_params=True,
-)
+"""
+Ensures that the the user is either an admin or logged in as the requestor id they claim.
+"""
+def secure_requestor_id(resolver):
+    @wraps(resolver)
+    def wrapper(parent, info, **kwargs):
+        print("Got called!", kwargs)
+
+        is_admin = services["auth_service"].is_authorized_by_role(info.context, "admin")
+        authorized = services["auth_service"].is_authorized_by_user_id(info.context, kwargs.get("requestor_id"))
+        print("is_admin", is_admin)
+        print("authorized", authorized)
+
+        if not is_admin and not authorized:
+            raise ClientError("You are not authorized to make this request.")
+        return resolver(parent, info, **kwargs)
+
+    return wrapper
+
+
+"""
+Ensures that the the user is logged in.
+"""
+def requires_login(resolver):
+    @wraps(resolver)
+    def wrapper(parent, info, **kwargs):
+        print("Got called!", kwargs)
+
+        authorized = services["auth_service"].is_authenticated(info.context)
+
+        if not authorized:
+            raise ClientError("You are not authorized to make this request. You need to be logged in.")
+
+        return resolver(parent, info, **kwargs)
+
+    return wrapper

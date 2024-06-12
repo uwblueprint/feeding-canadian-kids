@@ -14,6 +14,7 @@ from ..services.implementations.user_service import UserService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.reminder_email_service import ReminderEmailService
 from ..services.implementations.auth_service import AuthService
+from ..services.implementations.mock_auth_service import MockAuthService
 from ..services.implementations.onsite_contact_service import OnsiteContactService
 from ..services.implementations.mock_email_service import MockEmailService
 from .auth import AuthMutations
@@ -58,7 +59,7 @@ def init_email_service(app):
     print("Initializing email service")
     if app.config["TESTING"]:
         os.environ["ENV"] = "testing"
-        print("Using mock email service in testings!")
+        print("Using mock email service in testing!")
         services["email_service"] = MockEmailService(
             logger=current_app.logger,
             credentials={},
@@ -78,6 +79,23 @@ def init_email_service(app):
             display_name="Feeding Canadian Kids",
         )
 
+def init_auth_service(app):
+    print("Initializing auth service")
+    if app.config["TESTING"]:
+        os.environ["ENV"] = "testing"
+        print("Using mock auth service in testing!")
+        services["auth_service"] = MockAuthService(
+            logger=current_app.logger,
+            user_service=services["user_service"],
+            email_service=services["email_service"],
+        )
+    else:
+        services["auth_service"] = AuthService(
+            logger=current_app.logger,
+            user_service=services["user_service"],
+            email_service=services["email_service"],
+        )
+
 
 def init_app(app):
     with app.app_context():
@@ -89,11 +107,7 @@ def init_app(app):
             logger=current_app.logger,
             onsite_contact_service=services["onsite_contact_service"],
         )
-        services["auth_service"] = AuthService(
-            logger=current_app.logger,
-            user_service=services["user_service"],
-            email_service=services["email_service"],
-        )
+        init_auth_service(app)
         services["onboarding_request_service"] = OnboardingRequestService(
             logger=current_app.logger, email_service=services["email_service"]
         )

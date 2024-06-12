@@ -28,3 +28,9 @@ class OnboardingRequest(mg.Document):
         id = onboarding_request_dict.pop("_id", None)
         onboarding_request_dict["id"] = str(id)
         return onboarding_request_dict
+    meta = {
+        'indexes': [
+            ('date_submitted', 'status'),
+            ('date_submitted', 'info.role', 'status')
+        ],
+    }

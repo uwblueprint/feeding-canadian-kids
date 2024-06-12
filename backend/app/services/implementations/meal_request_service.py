@@ -294,7 +294,6 @@ class MealRequestService(IMealRequestService):
             else:
                 requests = requests[offset:]
 
-            print("3 explain is", requests.explain()["executionStats"])
             meal_request_dtos = []
             for request in requests:
                 meal_request_dtos.append(request.to_dto())
@@ -327,6 +326,7 @@ class MealRequestService(IMealRequestService):
                 donation_info__donor=donor,
                 status__in=status_value_list,
             ).order_by(f"{sort_prefix}drop_off_datetime")
+
 
             # Filter results by optional parameters.
             # Since we want to filter these optionally (i.e. filter only if specified),

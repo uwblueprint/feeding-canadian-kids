@@ -59,7 +59,7 @@ class MealRequest(mg.Document):
             'indexes': [
                 ('drop_off_datetime', 'status'),  # compound index
                 'status',  
-                ('requestor', 'drop_off_datetime', 'status'),
+                ('requestor', 'status', 'drop_off_datetime'),
                 ('requestor', 'id'),
                 ('donation_info.donor', 'status', 'drop_off_datetime'),
             ],

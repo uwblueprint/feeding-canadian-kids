@@ -298,7 +298,6 @@ class MealRequestService(IMealRequestService):
             for request in requests:
                 meal_request_dtos.append(request.to_dto())
 
-
             return meal_request_dtos
 
         except Exception as error:
@@ -326,7 +325,6 @@ class MealRequestService(IMealRequestService):
                 donation_info__donor=donor,
                 status__in=status_value_list,
             ).order_by(f"{sort_prefix}drop_off_datetime")
-
 
             # Filter results by optional parameters.
             # Since we want to filter these optionally (i.e. filter only if specified),

@@ -32,7 +32,7 @@ class OnsiteContact(mg.Document):
 
     meta = {
         "indexes": [
-            'organization_id',
+            "organization_id",
         ],
-        "collection": "onsite_contacts"
+        "collection": "onsite_contacts",
     }

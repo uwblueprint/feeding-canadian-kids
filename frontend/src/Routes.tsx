@@ -14,10 +14,6 @@ import * as Paths from "./constants/Routes";
 import Dashboard from "./pages/ASPDashboard";
 import AdminMealRequestsPage from "./pages/AdminMealRequestsPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
-import CreatePage from "./pages/CreatePage";
-import Default from "./pages/Default";
-import DisplayPage from "./pages/DisplayPage";
-import HooksDemo from "./pages/HooksDemo";
 import MealDonorCalendar from "./pages/MealDonorCalendar";
 import MealDonorDashboard from "./pages/MealDonorDashboard";
 import NotFound from "./pages/NotFound";
@@ -47,34 +43,34 @@ const Routes = (): React.ReactElement => {
         path={Paths.CREATE_MEAL_REQUEST_PAGE}
         element={<CreateMealRequest />}
       />
-      <Route path={Paths.YOUR_MATCHES_PAGE} element={<YourMatchesPage />} />
-      <Route path={Paths.CREATE_ENTITY_PAGE} element={<CreatePage />} />
-      <Route path={Paths.UPDATE_ENTITY_PAGE} element={<UpdatePage />} />
-      <Route path={Paths.DISPLAY_ENTITY_PAGE} element={<DisplayPage />} />
-      <Route path={Paths.MEAL_DONOR_UPCOMING_PAGE} element={<UpcomingPage />} />
-      <Route
-        path={Paths.CREATE_SIMPLE_ENTITY_PAGE}
-        element={<SimpleEntityCreatePage />}
-      />
-      <Route
-        path={Paths.UPDATE_SIMPLE_ENTITY_PAGE}
-        element={<SimpleEntityUpdatePage />}
-      />
-      <Route
-        path={Paths.DISPLAY_SIMPLE_ENTITY_PAGE}
-        element={<SimpleEntityDisplayPage />}
-      />
-      <Route
-        path={Paths.ONBOARDING_REQUESTS_PAGE}
-        element={<OnboardingRequestsPage />}
-      />
+      <Route path={Paths.MEAL_DONOR_FORM_PAGE} element={<MealDonationForm />} />
+      <Route path="" element={<AuthWall />}>
+        <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
+        <Route path={Paths.ASP_DASHBOARD_PAGE} element={<Dashboard />} />
+        <Route
+          path={Paths.MEAL_DONOR_DASHBOARD_PAGE}
+          element={<Navigate replace to={defaultPage} />}
+        />
+        <Route
+          path={Paths.MEAL_DONOR_CALENDAR_PAGE}
+          element={<MealDonorCalendar />}
+        />
+        <Route path={Paths.YOUR_MATCHES_PAGE} element={<YourMatchesPage />} />
+        <Route
+          path={Paths.MEAL_DONOR_UPCOMING_PAGE}
+          element={<UpcomingPage />}
+        />
+        <Route
+          path={Paths.ONBOARDING_REQUESTS_PAGE}
+          element={<OnboardingRequestsPage />}
+        />
       <Route path={Paths.ADMIN_MEAL_REQUESTS_PAGE} element={<AdminMealRequestsPage />}/>
       <Route path={Paths.ADMIN_USERS_PAGE} element={<AdminUsersPage/>}/>
-      <Route path={Paths.HOOKS_PAGE} element={<HooksDemo />} />
       <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
     </Route>
     <Route path="*" element={<NotFound />} />
   </RouteContainer>
-);
+  );
+}
 
 export default Routes;

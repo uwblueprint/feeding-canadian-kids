@@ -66,12 +66,11 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
       }
       status
       dropOffDatetime
-      dropOffLocation
       mealInfo {
         portions
         dietaryRestrictions
       }
-      onsiteStaff {
+      onsiteContacts {
         name
         email
         phone
@@ -155,7 +154,7 @@ const AdminListView = ({ authId, rowsPerPage = 10 }: AdminListViewProps) => {
               donor_name:
                 mealRequest.donationInfo?.donor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
-              onsite_staff: mealRequest.onsiteStaff,
+              onsite_contact: mealRequest.onsiteContacts,
               meal_description: mealRequest.donationInfo?.mealDescription,
               dietary_restrictions: mealRequest.mealInfo?.dietaryRestrictions,
               status: mealRequest.status,
@@ -289,11 +288,11 @@ const AdminListView = ({ authId, rowsPerPage = 10 }: AdminListViewProps) => {
             </Box>
             <Box flex={1} p="8px">
                 <Text variant="mobile-button-bold">Onsite ASP Contact</Text>
-                {item.onsite_staff.map((staff: Contact) => (
-                    <Box key={staff.email} mb="8px">
-                        <Text variant="mobile-caption-2">{staff.name}</Text>
-                        <Text variant="mobile-caption-2">{staff.email}</Text>
-                        <Text variant="mobile-caption-2">{staff.phone}</Text>
+                {item.onsite_contacts.map((contact: Contact) => (
+                    <Box key={contact.email} mb="8px">
+                        <Text variant="mobile-caption-2">{contact.name}</Text>
+                        <Text variant="mobile-caption-2">{contact.email}</Text>
+                        <Text variant="mobile-caption-2">{contact.phone}</Text>
                     </Box>
                 ))}
             </Box>

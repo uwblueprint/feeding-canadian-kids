@@ -21,12 +21,12 @@ import ListView from "../common/ListView";
 
 const GET_ALL_USERS = gql`
   query GetAllUsers(
-    $first: Int
+    $limit: Int
     $offset: Int
     $role: String
   ) {
     getAllUsers(
-      first: $first
+      limit: $limit
       offset: $offset
       role: $role
     ) {
@@ -131,7 +131,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
         getUsers({
           variables: {
             role: isASP ? "ASP" : "Donor",
-            first: rowsPerPage,
+            limit: rowsPerPage,
             offset: (currentPage - 1) * rowsPerPage,
           },
         });

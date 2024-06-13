@@ -91,7 +91,7 @@ export type GetAllUsersData = {
 };
 
 export type GetAllUserVariables = {
-  first: number;
+  limit: number;
   offset: number;
   role: Role;
 };

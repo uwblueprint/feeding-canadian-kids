@@ -31,7 +31,9 @@ const YourMatchesPage = (): React.ReactElement => {
         requestorId: "${userId}", 
         maxDistance: ${MAX_DISTANCE}, 
         offset: $offset
-        limit: $limit) {
+        limit: $limit
+        mustHaveOpenRequests: true
+        ) {
         id
         distance
         info {

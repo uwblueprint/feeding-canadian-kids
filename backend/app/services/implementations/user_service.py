@@ -1,3 +1,4 @@
+from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 import firebase_admin.auth
 from ...models.user_info import UserInfo
@@ -431,7 +432,9 @@ class UserService(IUserService):
         }
         return UserDTO(**kwargs)
 
-    def get_asp_near_location(self, requestor_id, max_distance, limit, offset):
+    def get_asp_near_location(
+        self, requestor_id, max_distance, limit, offset, must_have_open_requests
+    ):
         try:
             requestor = self.get_user_by_id(requestor_id)
             if not requestor:
@@ -449,6 +452,61 @@ class UserService(IUserService):
                     },
                 },
                 {"$match": {"info.role": "ASP"}},
+            ]
+
+            if must_have_open_requests:
+                # Remove and ASP's who: Don't have meal requests with Status Pending within now and the next 3 months
+                # To debug queries like these, use MongoDB Compass.
+                now = datetime.now(timezone.utc)
+                future_cutoff = now + timedelta(weeks=12)
+                pipeline += [
+                    {
+                        "$lookup": {
+                            "from": "meal_requests",
+                            "localField": "_id",
+                            "foreignField": "requestor",
+                            "as": "meal_requests",
+                        }
+                    },
+                    {
+                        "$addFields": {
+                            "meal_requests": {
+                                "$filter": {
+                                    "input": "$meal_requests",
+                                    "as": "meal_requests",
+                                    "cond": {
+                                        "$and": [
+                                            {
+                                                "$gt": [
+                                                    "$$meal_requests.drop_off_datetime",
+                                                    datetime.now(timezone.utc),
+                                                ]
+                                            },
+                                            {
+                                                "$lt": [
+                                                    "$$meal_requests.drop_off_datetime",
+                                                    future_cutoff,
+                                                ]
+                                            },
+                                            {"$eq": ["$$meal_requests.status", "Open"]},
+                                        ]
+                                    },
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "$match": {
+                            "$nor": [
+                                {"meal_requests": {"$exists": False}},
+                                {"meal_requests": {"$size": 0}},
+                                {"meal_requests": {"$size": 1}},
+                            ]
+                        }
+                    },
+                ]
+
+            pipeline += [
                 {"$skip": offset},
                 {"$limit": limit},
             ]

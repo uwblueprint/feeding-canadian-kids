@@ -167,7 +167,9 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
-    def get_asp_near_location(self, requestor_id, max_distance, limit, offset):
+    def get_asp_near_location(
+        self, requestor_id, max_distance, limit, offset, must_have_open_requests
+    ):
         """
         Gets all ASPs within certain distance of user
 

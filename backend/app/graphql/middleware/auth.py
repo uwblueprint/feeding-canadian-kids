@@ -50,8 +50,6 @@ Ensures that the the user is logged in.
 def requires_login(resolver):
     @wraps(resolver)
     def wrapper(parent, info, **kwargs):
-        print("Got called!", kwargs)
-
         authorized = services["auth_service"].is_authenticated(info.context)
 
         if not authorized:

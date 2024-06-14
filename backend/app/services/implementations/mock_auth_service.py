@@ -1,7 +1,6 @@
 from .email_service import EmailService
 
 from ..interfaces.auth_service import IAuthService
-from ...resources.auth_dto import AuthDTO
 
 
 class MockAuthService(IAuthService):

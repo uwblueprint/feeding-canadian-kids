@@ -1,21 +1,17 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
-import {
-    Box,
-    Button as ChakraButton,
-    Collapse,
-    Flex,
-    Text,
-  } from "@chakra-ui/react";
+import { Box, Collapse, Flex, Text } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
 import React, { useEffect, useState } from "react";
 
 import { Contact } from "../../types/UserTypes";
 import ListView from "../common/ListView";
 
-type MealDonorListViewProps = { 
-  completedMealRequests: {
-    nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
-  } | undefined; 
+type MealDonorListViewProps = {
+  completedMealRequests:
+    | {
+        nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
+      }
+    | undefined;
   completedMealRequestsLoading: boolean;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;

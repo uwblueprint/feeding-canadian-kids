@@ -64,13 +64,16 @@ const Routes = (): React.ReactElement => {
           path={Paths.ONBOARDING_REQUESTS_PAGE}
           element={<OnboardingRequestsPage />}
         />
-      <Route path={Paths.ADMIN_MEAL_REQUESTS_PAGE} element={<AdminMealRequestsPage />}/>
-      <Route path={Paths.ADMIN_USERS_PAGE} element={<AdminUsersPage/>}/>
-      <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
-    </Route>
-    <Route path="*" element={<NotFound />} />
-  </RouteContainer>
+        <Route
+          path={Paths.ADMIN_MEAL_REQUESTS_PAGE}
+          element={<AdminMealRequestsPage />}
+        />
+        <Route path={Paths.ADMIN_USERS_PAGE} element={<AdminUsersPage />} />
+        <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </RouteContainer>
   );
-}
+};
 
 export default Routes;

@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Union
+
 from .email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.email_service import IEmailService
@@ -7,7 +8,8 @@ from datetime import datetime, timedelta, timezone
 
 from ...models.meal_request import DonationInfo, MealStatus
 from ...models.user import User
-from ...models.user_info import UserInfoRole
+from ...models.onsite_contact import OnsiteContact
+from ...models.user_info import Contact, UserInfo, UserInfoRole
 from ...graphql.types import SortDirection
 from ...resources.meal_request_dto import MealRequestDTO
 
@@ -189,13 +191,6 @@ class MealRequestService(IMealRequestService):
                 meal_requestor_id = meal_request.requestor.id
                 meal_requestor = User.objects(id=meal_requestor_id).first()
 
-                self.send_donor_commit_email(
-                    meal_request, donor.info.email, meal_requestor
-                )
-                self.send_requestor_commit_email(
-                    meal_request, meal_requestor.info.email, meal_requestor
-                )
-
                 meal_request.donation_info = DonationInfo(
                     donor=donor,
                     commitment_date=datetime.utcnow(),
@@ -203,13 +198,19 @@ class MealRequestService(IMealRequestService):
                     additional_info=additional_info,
                     donor_onsite_contacts=donor_onsite_contacts,
                 )
-
                 # Change the meal request's status to "Upcoming"
                 meal_request.status = MealStatus.UPCOMING.value
 
-                meal_request_dtos.append(meal_request.to_dto())
+                self.send_donor_commit_email(
+                    meal_request, donor.info.email, meal_requestor
+                )
+                self.send_requestor_commit_email(
+                    meal_request, meal_requestor.info.email, meal_requestor
+                )
 
+                meal_request_dtos.append(meal_request.to_dto())
                 meal_request.save()
+
 
             return meal_request_dtos
 
@@ -363,7 +364,16 @@ class MealRequestService(IMealRequestService):
 
         return meal_request_dtos
 
-    def send_donor_commit_email(self, meal_request, email, meal_requestor):
+
+    def get_onsite_contacts_string(self, onsite_contacts: List[Union[OnsiteContact, Contact]]):
+        string = "--\n"
+        for contact in onsite_contacts:
+            string += f"{contact.name}\n{contact.email}\n{contact.phone}\n"
+            string += "--\n"
+
+        return string
+    
+    def send_donor_commit_email(self, meal_request: MealRequest, email, meal_requestor):
         if not self.email_service:
             error_message = """
                 Attempted to call committed_to_meal_request but this
@@ -380,6 +390,17 @@ class MealRequestService(IMealRequestService):
                 dropoff_location=address,
                 dropoff_time=meal_request.drop_off_datetime,
                 num_meals=meal_request.meal_info.portions,
+                dietary_restrictions=meal_request.meal_info.dietary_restrictions,
+                delivery_instructions=meal_request.delivery_instructions,
+                asp_organization_name=meal_request.requestor.info.organization_name,
+                asp_primary_contact=self.get_onsite_contacts_string([meal_requestor.info.primary_contact]),
+                # asp_onsite_contacts=self.get_onsite_contacts_string(meal_request.onsite_contacts),
+                asp_onsite_contacts="",
+                donor_organization_name=meal_request.donation_info.donor.info.organization_name,
+                donor_primary_contact=self.get_onsite_contacts_string([meal_request.donation_info.donor.info.primary_contact]),
+                donor_onsite_contacts=self.get_onsite_contacts_string(meal_request.donation_info.donor_onsite_contacts),
+                meal_description=meal_request.donation_info.meal_description,
+                additional_info=meal_request.donation_info.additional_info,
             )
             self.email_service.send_email(
                 email, "Thank you for committing to a meal request!", email_body
@@ -408,6 +429,17 @@ class MealRequestService(IMealRequestService):
                 dropoff_location=address,
                 dropoff_time=meal_request.drop_off_datetime,
                 num_meals=meal_request.meal_info.portions,
+                dietary_restrictions=meal_request.meal_info.dietary_restrictions,
+                delivery_instructions=meal_request.delivery_instructions,
+                asp_organization_name=meal_request.requestor.info.organization_name,
+                asp_primary_contact=self.get_onsite_contacts_string([meal_requestor.info.primary_contact]),
+                # asp_onsite_contacts=self.get_onsite_contacts_string(meal_request.onsite_contacts),
+                asp_onsite_contacts="",
+                donor_organization_name=meal_request.donation_info.donor.info.organization_name,
+                donor_primary_contact=self.get_onsite_contacts_string([meal_request.donation_info.donor.info.primary_contact]),
+                donor_onsite_contacts=self.get_onsite_contacts_string(meal_request.donation_info.donor_onsite_contacts),
+                meal_description=meal_request.donation_info.meal_description,
+                additional_info=meal_request.donation_info.additional_info,
             )
             self.email_service.send_email(
                 email, "Your meal request has been fulfilled!", email_body
@@ -427,6 +459,7 @@ class MealRequestService(IMealRequestService):
             meal_requests = MealRequest.objects(
                 status=MealStatus.UPCOMING.value,
                 drop_off_datetime__lte=six_hours_before,
+
             ).all()
 
             for meal_request in meal_requests:

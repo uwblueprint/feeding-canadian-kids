@@ -82,7 +82,7 @@ const YourMatchesPage = (): React.ReactElement => {
   }
 
   // Print out the ASPs near the donor
-  logPossibleGraphQLError(aspsError);
+  logPossibleGraphQLError(aspsError, setAuthenticatedUser);
 
   if (aspsError) {
     return <ErrorMessage />;

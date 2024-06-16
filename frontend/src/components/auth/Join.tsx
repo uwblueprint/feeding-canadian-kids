@@ -118,7 +118,7 @@ const Join = (): React.ReactElement => {
   );
   const toast = useToast();
   const navigate = useNavigate();
-  const { authenticatedUser } = useContext(AuthContext);
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   if (authenticatedUser) {
     return <Navigate replace to={ASP_DASHBOARD_PAGE} />;
@@ -508,7 +508,7 @@ const Join = (): React.ReactElement => {
       }
       // eslint-disable-next-line no-console
       console.log(e);
-      logPossibleGraphQLError(e as ApolloError);
+      logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
     }
   };
 

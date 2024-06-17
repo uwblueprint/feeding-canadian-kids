@@ -4,7 +4,6 @@ import re
 import firebase_admin
 
 from flask import Flask
-from flask.cli import ScriptInfo
 from flask_cors import CORS
 from .graphql.view import GraphQLView
 from logging.config import dictConfig
@@ -40,9 +39,17 @@ def create_app(config_name):
 
     app = Flask(__name__, template_folder="templates", static_folder="static")
     # do not read config object if creating app from Flask CLI (e.g. flask db migrate)
-    if type(config_name) is not ScriptInfo:
-        app.config.from_object(app_config[config_name])
-
+    print("right before entering config setup ")
+    print("type config name", type(config_name))
+    # if type(config_name) is not ScriptInfo:
+    print("Right before reading config object right now!")
+    print("At this time the env vars are: ")
+    print("MG_DATABASE_URL:", os.getenv("MG_DATABASE_URL"))
+    print("MG_DB_NAME:", os.getenv("MG_DB_NAME"))
+    print("config name is", config_name)
+    print("app config is", app_config)
+    app.config.from_object(app_config[config_name])
+    print("Now, app.config is", app.config)
     app.add_url_rule(
         "/graphql",
         view_func=GraphQLView.as_view(
@@ -61,6 +68,27 @@ def create_app(config_name):
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
     app.config["SCHEDULER_API_ENABLED"] = True
     CORS(app)
+
+    required_firebase_envs = [
+        "FIREBASE_PROJECT_ID",
+        "FIREBASE_STORAGE_DEFAULT_BUCKET",
+        "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID",
+        "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY",
+        "FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL",
+        "FIREBASE_SVC_ACCOUNT_CLIENT_ID",
+        "FIREBASE_SVC_ACCOUNT_AUTH_URI",
+        "FIREBASE_SVC_ACCOUNT_TOKEN_URI",
+        "FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL",
+        "FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL",
+    ]
+    for env in required_firebase_envs:
+        not_found_one = False
+        missing = []
+        if env not in os.environ:
+            not_found_one = True
+            missing.append(env)
+        if not_found_one:
+            raise Exception(f"Missing required environment variable: {missing}")
 
     firebase_admin.initialize_app(
         firebase_admin.credentials.Certificate(

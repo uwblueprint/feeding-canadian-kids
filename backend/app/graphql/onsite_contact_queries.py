@@ -1,3 +1,4 @@
+from app.graphql.middleware.auth import requires_login
 import graphene
 from .services import services
 from .types import OnsiteContact, QueryList
@@ -11,10 +12,12 @@ class OnsiteContactQueries(QueryList):
         OnsiteContact, id=graphene.String(required=True)
     )
 
+    @requires_login
     def resolve_get_onsite_contact_for_user_by_id(self, info, user_id):
         return services["onsite_contact_service"].get_onsite_contacts_for_user_by_id(
             user_id
         )
 
+    @requires_login
     def resolve_get_onsite_contact_by_id(self, info, id):
         return services["onsite_contact_service"].get_onsite_contact_by_id(id)

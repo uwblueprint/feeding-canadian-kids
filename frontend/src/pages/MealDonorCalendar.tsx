@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   IoArrowBackCircleOutline,
   IoLocationOutline,
@@ -26,6 +26,7 @@ import RefreshCredentials from "../components/auth/RefreshCredentials";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import { MealRequestCalendarView } from "../components/common/MealRequestCalendarView";
 import * as Routes from "../constants/Routes";
+import AuthContext from "../contexts/AuthContext";
 import {
   MealRequest,
   MealRequestsData,
@@ -138,8 +139,9 @@ const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
       id: aspId,
     },
   });
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
-  logPossibleGraphQLError(getUserError);
+  logPossibleGraphQLError(getUserError, setAuthenticatedUser);
 
   const schoolInfo = userInfo?.getUserById?.info;
   const navigate = useNavigate();

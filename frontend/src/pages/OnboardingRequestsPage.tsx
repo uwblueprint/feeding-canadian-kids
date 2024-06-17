@@ -26,7 +26,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useContext } from "react";
 import { FiFilter } from "react-icons/fi";
 
 import { BanIcon } from "../assets/icons/BanIcon";
@@ -36,6 +36,7 @@ import { LocationIcon } from "../assets/icons/LocationIcon";
 import { PersonIcon } from "../assets/icons/PersonIcon";
 import TitleSection from "../components/asp/requests/TitleSection";
 import LoadingSpinner from "../components/common/LoadingSpinner";
+import AuthContext from "../contexts/AuthContext";
 import { SortByDateDirection } from "../types/MealRequestTypes";
 import { OnboardingRequest } from "../types/UserTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
@@ -153,6 +154,8 @@ const ApproveDenyModal = ({
 }): React.ReactElement => {
   const toast = useToast();
   const [isSubmitLoading, setIsSubmitLoading] = React.useState(false);
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
   const [approveOnboardingRequest] = useMutation<{
     approveOnboardingRequest: { id: string };
   }>(APPROVE_ONBOARDING_REQUEST);
@@ -178,7 +181,7 @@ const ApproveDenyModal = ({
         });
       }
     } catch (e: unknown) {
-      logPossibleGraphQLError(e);
+      logPossibleGraphQLError(e, setAuthenticatedUser);
       toast({
         title: "Failed to approve. Please try again.",
         status: "error",
@@ -209,7 +212,7 @@ const ApproveDenyModal = ({
         });
       }
     } catch (e: unknown) {
-      logPossibleGraphQLError(e);
+      logPossibleGraphQLError(e, setAuthenticatedUser);
       toast({
         title: "Failed to deny. Please try again.",
         status: "error",
@@ -455,6 +458,8 @@ const OnboardingRequestsPage = (): React.ReactElement => {
     setDateDirectionFilter,
   ] = React.useState<SortByDateDirection>("DESCENDING");
   const isWebView = useIsWebView();
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const requestsPerPage = 9;
 
@@ -474,7 +479,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
       },
     },
   );
-  logPossibleGraphQLError(OnboardingError);
+  logPossibleGraphQLError(OnboardingError, setAuthenticatedUser);
 
   const getPagination = (): React.ReactElement => {
     const a = "hi";

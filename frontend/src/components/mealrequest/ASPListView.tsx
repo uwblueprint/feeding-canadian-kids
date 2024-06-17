@@ -33,10 +33,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { BsFilter } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 
+import AuthContext from "../../contexts/AuthContext";
 import EditMealRequestForm from "../../pages/EditMealRequestForm";
 import {
   MealRequest,
@@ -135,6 +136,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
     [],
   );
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const handleExpand = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     if (item.pending) return;
@@ -244,7 +246,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Error deleting meal request:", error);
-      logPossibleGraphQLError(error);
+      logPossibleGraphQLError(error, setAuthenticatedUser);
     }
   };
 
@@ -449,7 +451,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
   };
 
   if (getMealRequestsError) {
-    logPossibleGraphQLError(getMealRequestsError);
+    logPossibleGraphQLError(getMealRequestsError, setAuthenticatedUser);
 
     return (
       <Box

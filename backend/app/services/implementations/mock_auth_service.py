@@ -1,15 +1,9 @@
 from .email_service import EmailService
-import firebase_admin.auth
 
 from ..interfaces.auth_service import IAuthService
-from ...resources.auth_dto import AuthDTO
-
-# from ...resources.create_user_dto import CreateUserDTO
-# from ...resources.token import Token
-from ...utilities.firebase_rest_client import FirebaseRestClient
 
 
-class AuthService(IAuthService):
+class MockAuthService(IAuthService):
     """
     AuthService implementation with user authentication methods
     """
@@ -28,77 +22,16 @@ class AuthService(IAuthService):
         self.logger = logger
         self.user_service = user_service
         self.email_service = email_service
-        self.firebase_rest_client = FirebaseRestClient(logger)
+        self.firebase_rest_client = None
 
     def generate_token(self, email, password, **_):
-        try:
-            token = self.firebase_rest_client.sign_in_with_password(email, password)
-            user = self.user_service.get_user_by_email(email)
-            return AuthDTO(**{**token.__dict__, **user.__dict__})
-        except Exception as e:
-            self.logger.error(
-                "Failed to generate token for user with email {email}".format(
-                    email=email
-                )
-            )
-            raise e
-
-    # generate_token_for_oauth function is not being used
-    # def generate_token_for_oauth(self, id_token, user_to_create=None, **_):
-    #     try:
-    #         google_user = self.firebase_rest_client.sign_in_with_google(id_token)
-    #         # google_user["idToken"] refers to the user's Firebase Auth access token
-    #         token = Token(google_user["idToken"], google_user["refreshToken"])
-    #         # If user already has a login with this email, just return the token
-    #         try:
-    #             # Note: error message will be logged from UserService if this fails.
-    #             # May want to silence the logger for this special OAuth lookup case
-    #             user = self.user_service.get_user_by_email(google_user["email"])
-    #             return AuthDTO(**{**token.__dict__, **user.__dict__})
-    #         except Exception:
-    #             if user_to_create is None:
-    #                 raise
-
-    #         user = self.user_service.create_user(
-    #             CreateUserDTO(
-    #                 **{
-    #                     **user_to_create.__dict__,
-    #                     "email": google_user["email"],
-    #                 }
-    #             ),
-    #             auth_id=google_user["localId"],
-    #             signup_method="GOOGLE",
-    #         )
-    #         return AuthDTO(**{**token.__dict__, **user.__dict__})
-    #     except Exception as e:
-    #         reason = getattr(e, "message", None)
-    #         self.logger.error(
-    #             "Failed to generate token for user with OAuth id token. "
-    #             + "Reason = {reason}".format(reason=(reason if reason else str(e)))
-    #         )
-    #         raise e
+        return ""
 
     def revoke_tokens(self, user_id):
-        try:
-            auth_id = self.user_service.get_auth_id_by_user_id(user_id)
-            firebase_admin.auth.revoke_refresh_tokens(auth_id)
-        except Exception as e:
-            reason = getattr(e, "message", None)
-            error_message = [
-                "Failed to revoke refresh tokens of user with id {user_id}".format(
-                    user_id=user_id
-                ),
-                "Reason =",
-                (reason if reason else str(e)),
-            ]
-            self.logger.error(" ".join(error_message))
+        pass
 
     def renew_token(self, refresh_token):
-        try:
-            return self.firebase_rest_client.refresh_token(refresh_token)
-        except Exception as e:
-            self.logger.error("Failed to refresh token")
-            raise e
+        return ""
 
     def forgot_password(self, email):
         if not self.email_service:
@@ -139,11 +72,7 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            firebase_user = firebase_admin.auth.get_user_by_email(email)
-            auth_id = firebase_user.uid
-
-            firebase_admin.auth.update_user(auth_id, password=password)
-
+            pass
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(
@@ -164,12 +93,7 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            verification_link = firebase_admin.auth.generate_email_verification_link(
-                email,
-                firebase_admin.auth.ActionCodeSettings(
-                    "https://feeding-canadian-kids-staging.web.app"
-                ),
-            )
+            verification_link = ""
             email_body = EmailService.read_email_template(
                 "email_templates/verification_email.html"
             ).format(verification_link=verification_link)
@@ -234,46 +158,19 @@ class AuthService(IAuthService):
             raise e
 
     def __is_authorized_by_condition(self, context, condition):
-        return context.firebase_user.email_verified and (
-            condition or context.user.info.role == "Admin"
-        )
+        return True
 
     def is_authenticated(self, context):
-        try:
-            return context.firebase_user.email_verified
-        except Exception:
-            return False
+        return True
 
-    def is_authorized_by_role(self, context, roles):
-        try:
-            return self.__is_authorized_by_condition(
-                context,
-                context.user.info.role in roles,
-            )
-        except Exception:
-            return False
+    def is_authorized_by_role(self, context, *roles):
+        return True
 
     def is_authorized_by_user_id(self, context, requested_user_id):
-        try:
-            return self.__is_authorized_by_condition(
-                context, requested_user_id == str(context.user.id)
-            )
-        except Exception:
-            return False
+        return True
 
     def is_authorized_by_self(self, context, requested_user_id):
-        try:
-            return context.firebase_user.email_verified and requested_user_id == str(
-                context.user.id
-            )
-        except Exception:
-            return False
+        return True
 
     def is_authorized_by_email(self, context, requested_email):
-        try:
-            return self.__is_authorized_by_condition(
-                context,
-                requested_email == context.firebase_user.email,
-            )
-        except Exception:
-            return False
+        return True

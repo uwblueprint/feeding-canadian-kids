@@ -39,7 +39,7 @@ const useGetOnsiteContacts = (
       }
     },
     onError: (e) => {
-      logPossibleGraphQLError(e);
+      logPossibleGraphQLError(e, setAuthenticatedUser);
       if (toast) {
         toast({
           title: "Sorry, something went wrong!",

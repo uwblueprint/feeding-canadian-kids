@@ -11,6 +11,7 @@ from ...models.user import User
 class OnsiteContactService(IOnsiteContactService):
     def __init__(self, logger):
         self.logger = logger
+        OnsiteContact.ensure_indexes()
 
     def get_onsite_contact_by_id(
         self,

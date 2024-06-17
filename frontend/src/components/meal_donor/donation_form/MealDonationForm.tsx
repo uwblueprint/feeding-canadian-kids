@@ -129,7 +129,7 @@ const MealDonationForm = (): React.ReactElement => {
     };
   }, []);
 
-  logPossibleGraphQLError(getUserError);
+  logPossibleGraphQLError(getUserError, setAuthenticatedUser);
   if (getUserError) {
     return <ErrorMessage />;
   }

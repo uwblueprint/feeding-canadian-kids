@@ -23,6 +23,7 @@ class OnboardingRequestService(IOnboardingRequestService):
         """
         self.logger = logger
         self.email_service = email_service
+        OnboardingRequest.ensure_indexes()
 
     def create_onboarding_request(self, userInfo: UserInfo):
         try:

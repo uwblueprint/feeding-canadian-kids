@@ -18,4 +18,4 @@ class User(mg.Document):
         user_dict["id"] = str(id)
         return user_dict
 
-    meta = {"collection": "users"}
+    meta = {"indexes": ["info.email", "auth_id"], "collection": "users"}

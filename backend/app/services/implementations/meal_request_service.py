@@ -16,6 +16,7 @@ class MealRequestService(IMealRequestService):
     def __init__(self, logger, email_service: IEmailService):
         self.logger = logger
         self.email_service = email_service
+        MealRequest.ensure_indexes()
 
     def create_meal_request(
         self,

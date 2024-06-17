@@ -390,7 +390,7 @@ const UpcomingPage = (): React.ReactElement => {
         minDropOffDate: formattedTime,
       },
     });
-    logPossibleGraphQLError(getUpcomingMealRequestsError);
+    logPossibleGraphQLError(getUpcomingMealRequestsError, setAuthenticatedUser);
   }
 
   function reloadCompletedMealRequests() {
@@ -407,7 +407,10 @@ const UpcomingPage = (): React.ReactElement => {
         maxDropOffDate: yesterday.toISOString().split("T")[0],
       },
     });
-    logPossibleGraphQLError(getCompletedMealRequestsError);
+    logPossibleGraphQLError(
+      getCompletedMealRequestsError,
+      setAuthenticatedUser,
+    );
   }
 
   // Sorting, changing tabs

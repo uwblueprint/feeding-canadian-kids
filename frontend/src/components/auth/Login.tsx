@@ -76,7 +76,7 @@ const Login = (): React.ReactElement => {
       user = await authAPIClient.login(email, password, "", login);
       setError(false);
     } catch (e: unknown) {
-      logPossibleGraphQLError(e as ApolloError);
+      logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
       setError(true);
     }
     setAuthenticatedUser(user);

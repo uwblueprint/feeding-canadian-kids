@@ -31,7 +31,9 @@ const YourMatchesPage = (): React.ReactElement => {
         requestorId: "${userId}", 
         maxDistance: ${MAX_DISTANCE}, 
         offset: $offset
-        limit: $limit) {
+        limit: $limit
+        mustHaveOpenRequests: true
+        ) {
         id
         distance
         info {
@@ -80,7 +82,7 @@ const YourMatchesPage = (): React.ReactElement => {
   }
 
   // Print out the ASPs near the donor
-  logPossibleGraphQLError(aspsError);
+  logPossibleGraphQLError(aspsError, setAuthenticatedUser);
 
   if (aspsError) {
     return <ErrorMessage />;

@@ -87,8 +87,9 @@ def create_app(config_name):
         if env not in os.environ:
             not_found_one = True
             missing.append(env)
-        if not_found_one:
-            raise Exception(f"Missing required environment variable: {missing}")
+
+    if not_found_one:
+        raise Exception(f"Missing required environment variable(s): {", ".join(missing)}")
 
     firebase_admin.initialize_app(
         firebase_admin.credentials.Certificate(

@@ -13,6 +13,8 @@ inputs:
     required: true
   firebaseApiKey:
     required: true
+  firebaseAuthUri:
+    required: true
   firebaseRequestUri:
     required: true
   firebaseBucket:
@@ -63,6 +65,7 @@ runs:
           config FIREBASE_REQUEST_URI "${{ inputs.firebaseRequestUri }}"
           config FIREBASE_STORAGE_DEFAULT_BUCKET "${{ inputs.firebaseBucket }}"
           config FIREBASE_PROJECT_ID "${{ inputs.firebaseProject }}"
+          config FIREBASE_SVC_ACCOUNT_AUTH_URI="${{ inputs.firebaseAuthUri }}"
           config FIREBASE_SVC_ACCOUNT_PRIVATE_KEY "${{ inputs.firebasePrivateKey }}"
           config FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL "${{ inputs.firebaseEmail }}"
           config MAILER_USER "${{ inputs.mailerUser }}"

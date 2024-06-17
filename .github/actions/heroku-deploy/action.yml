@@ -13,7 +13,11 @@ inputs:
     required: true
   firebaseApiKey:
     required: true
+  firebaseAuthProviderX509CertUrl:
+    required: true
   firebaseAuthUri:
+    required: true
+  firebaseClientX509CertUrl:
     required: true
   firebaseRequestUri:
     required: true
@@ -68,6 +72,8 @@ runs:
           config FIREBASE_SVC_ACCOUNT_AUTH_URI="${{ inputs.firebaseAuthUri }}"
           config FIREBASE_SVC_ACCOUNT_PRIVATE_KEY "${{ inputs.firebasePrivateKey }}"
           config FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL "${{ inputs.firebaseEmail }}"
+          config FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL "${{ inputs.firebaseAuthProviderX509CertUrl }}"
+          config FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL "${{ inputs.firebaseClientX509CertUrl }}"
           config MAILER_USER "${{ inputs.mailerUser }}"
           config MAILER_CLIENT_ID "${{ inputs.mailerId }}"
           config MAILER_CLIENT_SECRET "${{ inputs.mailerSecret }}"

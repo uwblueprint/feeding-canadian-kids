@@ -83,6 +83,7 @@ runs:
         config FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL "${{ inputs.firebaseClientX509CertUrl }}"
         config FIREBASE_SVC_ACCOUNT_CLIENT_ID "${{ inputs.firebaseClientId  }}"
         config FIREBASE_SVC_ACCOUNT_TOKEN_URI "${{ inputs.firebaseAccountTokenUri }}"
+        config USE_GOOGLE_API "${{ inputs.useGoogleApi }}"
         config GEOCODING_API_KEY "${{ inputs.geocodingApiKey }}"
         config GOOGLE_API_KEY "${{ inputs.googleApiKey }}"
         config ADMIN_CC_EMAIL "${{ inputs.adminCCEmail }}"

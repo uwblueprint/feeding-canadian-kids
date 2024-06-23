@@ -25,6 +25,12 @@ inputs:
     required: true
   firebaseProject:
     required: true
+  firebaseClientId:
+    required: true
+  firebasePrivateKeyId:
+    required: true
+  firebaseAccountTokenUri:
+    required: true
   firebasePrivateKey:
     required: true
   firebaseEmail:
@@ -42,44 +48,47 @@ inputs:
     default: main
 
 runs:
-    using: composite
-    steps:
-      - name: Set Heroku login credentials
-        run: |
-          cat > ~/.netrc <<EOF
-            machine api.heroku.com
-              login ${{ inputs.email }}
-              password ${{ inputs.apiKey }}
-            machine git.heroku.com
-              login ${{ inputs.email }}
-              password ${{ inputs.apiKey }}
-          EOF
-        shell: bash
-      - name: Add Heroku git remote
-        run: heroku git:remote --app "${{ inputs.appName }}"
-        shell: bash
-      - name: Set Heroku config vars
-        run: |
-          config() {
-            heroku config:set "$1"="$2" -a "${{ inputs.appName }}"
-          }
-          config MG_DB_NAME "${{ inputs.databaseName }}"
-          config MG_DATABASE_URL "${{ inputs.databaseUrl }}"
-          config FIREBASE_WEB_API_KEY "${{ inputs.firebaseApiKey }}"
-          config FIREBASE_REQUEST_URI "${{ inputs.firebaseRequestUri }}"
-          config FIREBASE_STORAGE_DEFAULT_BUCKET "${{ inputs.firebaseBucket }}"
-          config FIREBASE_PROJECT_ID "${{ inputs.firebaseProject }}"
-          config FIREBASE_SVC_ACCOUNT_AUTH_URI="${{ inputs.firebaseAuthUri }}"
-          config FIREBASE_SVC_ACCOUNT_PRIVATE_KEY "${{ inputs.firebasePrivateKey }}"
-          config FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL "${{ inputs.firebaseEmail }}"
-          config FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL "${{ inputs.firebaseAuthProviderX509CertUrl }}"
-          config FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL "${{ inputs.firebaseClientX509CertUrl }}"
-          config MAILER_USER "${{ inputs.mailerUser }}"
-          config MAILER_CLIENT_ID "${{ inputs.mailerId }}"
-          config MAILER_CLIENT_SECRET "${{ inputs.mailerSecret }}"
-          config MAILER_REFRESH_TOKEN "${{ inputs.mailerRefreshToken }}"
-          config PREVIEW_DEPLOY true
-        shell: bash
-      - name: Push to Heroku
-        run: git push heroku `git subtree split --prefix backend "${{ inputs.sourceBranch }}"`:refs/heads/main --force
-        shell: bash
+  using: composite
+  steps:
+    - name: Set Heroku login credentials
+      run: |
+        cat > ~/.netrc <<EOF
+          machine api.heroku.com
+            login ${{ inputs.email }}
+            password ${{ inputs.apiKey }}
+          machine git.heroku.com
+            login ${{ inputs.email }}
+            password ${{ inputs.apiKey }}
+        EOF
+      shell: bash
+    - name: Add Heroku git remote
+      run: heroku git:remote --app "${{ inputs.appName }}"
+      shell: bash
+    - name: Set Heroku config vars
+      run: |
+        config() {
+          heroku config:set "$1"="$2" -a "${{ inputs.appName }}"
+        }
+        config MG_DB_NAME "${{ inputs.databaseName }}"
+        config MG_DATABASE_URL "${{ inputs.databaseUrl }}"
+        config FIREBASE_WEB_API_KEY "${{ inputs.firebaseApiKey }}"
+        config FIREBASE_REQUEST_URI "${{ inputs.firebaseRequestUri }}"
+        config FIREBASE_STORAGE_DEFAULT_BUCKET "${{ inputs.firebaseBucket }}"
+        config FIREBASE_PROJECT_ID "${{ inputs.firebaseProject }}"
+        config FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID "${{ inputs.firebasePrivateKeyId }}"
+        config FIREBASE_SVC_ACCOUNT_AUTH_URI="${{ inputs.firebaseAuthUri }}"
+        config FIREBASE_SVC_ACCOUNT_PRIVATE_KEY "${{ inputs.firebasePrivateKey }}"
+        config FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL "${{ inputs.firebaseEmail }}"
+        config FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL "${{ inputs.firebaseAuthProviderX509CertUrl }}"
+        config FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL "${{ inputs.firebaseClientX509CertUrl }}"
+        config FIREBASE_SVC_ACCOUNT_CLIENT_ID "${{ inputs.firebaseClientId  }}"
+        config FIREBASE_SVC_ACCOUNT_TOKEN_URI "${{ inputs.firebaseAccountTokenUri }}"
+        config MAILER_USER "${{ inputs.mailerUser }}"
+        config MAILER_CLIENT_ID "${{ inputs.mailerId }}"
+        config MAILER_CLIENT_SECRET "${{ inputs.mailerSecret }}"
+        config MAILER_REFRESH_TOKEN "${{ inputs.mailerRefreshToken }}"
+        config PREVIEW_DEPLOY true
+      shell: bash
+    - name: Push to Heroku
+      run: git push heroku `git subtree split --prefix backend "${{ inputs.sourceBranch }}"`:refs/heads/main --force
+      shell: bash

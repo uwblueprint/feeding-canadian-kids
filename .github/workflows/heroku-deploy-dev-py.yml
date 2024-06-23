@@ -67,6 +67,9 @@ jobs:
           heroku config:set FIREBASE_SVC_ACCOUNT_AUTH_URI="${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_AUTH_URI }}" -a $HEROKU_APP_NAME && \
           heroku config:set FIREBASE_SVC_ACCOUNT_TOKEN_URI="${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_TOKEN_URI }}" -a $HEROKU_APP_NAME && \
           heroku config:set FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL="${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL }}" -a $HEROKU_APP_NAME && \
+          heroku config:set FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID="${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID }}" -a $HEROKU_APP_NAME && \
+          heroku config:set FIREBASE_SVC_ACCOUNT_CLIENT_ID="${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_CLIENT_ID }}" -a $HEROKU_APP_NAME && \
+          heroku config:set FIREBASE_SVC_ACCOUNT_TOKEN_URI="${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_TOKEN_URI }}" -a $HEROKU_APP_NAME && \
           heroku config:set FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL="${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL }}" -a $HEROKU_APP_NAME && \
           } file-storage
           } no-auth

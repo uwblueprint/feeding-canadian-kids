@@ -84,7 +84,8 @@ def create_app(config_name):
     for env in required_firebase_envs:
         not_found_one = False
         missing = []
-        if env not in os.environ:
+        print(f"variable: {env} is {os.getenv(env)}")
+        if env not in os.environ or not os.getenv(env):
             not_found_one = True
             missing.append(env)
 

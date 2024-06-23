@@ -39,4 +39,9 @@ jobs:
           mailerId: "${{ secrets.DEV_MAILER_CLIENT_ID }}"
           mailerSecret: "${{ secrets.DEV_MAILER_CLIENT_SECRET }}"
           mailerRefreshToken: "${{ secrets.DEV_MAILER_REFRESH_TOKEN }}"
+          useGoogleApi: "${{ secrets.DEV_USE_GOOGLE_API }}"
+          GEOCODING_API_KEY
+          geocodingApiKey: "${{ secrets.DEV_GEOCODING_API_KEY }}"
+          googleApiKey: "${{ secrets.DEV_GOOGLE_API_KEY }}"
+          adminCCEmail: "${{ secrets.DEV_ADMIN_CC_EMAIL }}"
           sourceBranch: "main"

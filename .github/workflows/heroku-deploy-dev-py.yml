@@ -77,6 +77,10 @@ jobs:
           heroku config:set MAILER_CLIENT_ID="${{ secrets.DEV_MAILER_CLIENT_ID }}" -a $HEROKU_APP_NAME && \
           heroku config:set MAILER_CLIENT_SECRET="${{ secrets.DEV_MAILER_CLIENT_SECRET }}" -a $HEROKU_APP_NAME && \
           heroku config:set MAILER_REFRESH_TOKEN="${{ secrets.DEV_MAILER_REFRESH_TOKEN }}" -a $HEROKU_APP_NAME && \
+          heroku config:set USE_GOOGLE_API="${{ secrets.DEV_USE_GOOGLE_API }}" -a $HEROKU_APP_NAME && \
+          heroku config:set GEOCODING_API_KEY="${{ secrets.DEV_GEOCODING_API_KEY }}" -a $HEROKU_APP_NAME && \
+          heroku config:set GOOGLE_API_KEY="${{ secrets.DEV_GOOGLE_API_KEY }}" -a $HEROKU_APP_NAME && \
+          heroku config:set DEV_ADMIN_CC_EMAIL="${{ secrets.DEV_ADMIN_CC_EMAIL }}" -a $HEROKU_APP_NAME && \
           heroku config:set PREVIEW_DEPLOY=true -a $HEROKU_APP_NAME && \
           heroku config:set FLASK_CONFIG="${{ secrets.DEV_FLASK_CONFIG }}" -a $HEROKU_APP_NAME && \
           heroku config:set FLASK_APP=app -a $HEROKU_APP_NAME

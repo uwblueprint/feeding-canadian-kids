@@ -29,7 +29,7 @@ jobs:
           firebaseRequestUri: "${{ secrets.DEV_FIREBASE_REQUEST_URI }}"
           firebaseBucket: "${{ secrets.DEV_FIREBASE_STORAGE_DEFAULT_BUCKET }}"
           firebaseClientX509CertUrl: "${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL }}"
-          firebaseProject: "${{ secrets.DEV_PROJECT_ID }}"
+          firebaseProject: "${{ secrets.DEV_FIREBASE_PROJECT_ID }}"
           firebasePrivateKey: "${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_PRIVATE_KEY }}"
           firebaseClientId: "${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_CLIENT_ID }}"
           firebasePrivateKeyId: "${{secrets.DEV_FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID }}"

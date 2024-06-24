@@ -31,16 +31,16 @@ required_env_vars = [
     "GOOGLE_API_KEY",
     "GEOCODING_API_KEY",
     "USE_GOOGLE_API",
-    "FLASK_CONFIG"
-    "FLASK_APP",
+    "FLASK_CONFIG" "FLASK_APP",
     "PYTHONUNBUFFERED",
     "MAILER_CLIENT_SECRET",
     "MAILER_CLIENT_ID",
     "MAILER_REFRESH_TOKEN",
     "MAILER_USER",
     "MG_DB_NAME",
-    "MG_DATABASE_URL"
+    "MG_DATABASE_URL",
 ]
+
 
 def create_app(config_name):
     dictConfig(
@@ -99,7 +99,9 @@ def create_app(config_name):
         not_found_one = False
         missing = []
         print(f"variable: {env_var} is {os.getenv(env_var)}")
-        if (env_var not in os.environ or os.getenv(env_var) == None) and not app.config["TESTING"]:
+        if (env_var not in os.environ or os.getenv(env_var) is None) and not app.config[
+            "TESTING"
+        ]:
             not_found_one = True
             missing.append(env_var)
 

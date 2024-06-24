@@ -110,12 +110,12 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            user = self.user_service.get_user_by_email(email)
-
-            url = "https://feeding-canadian-kids-staging.web.app"
-            set_password_link = "{url}/{ObjectID}/reset-password".format(
-                url=url, ObjectID=user.id
+            set_password_link = firebase_admin.auth.generate_password_reset_link(email, 
+                firebase_admin.auth.ActionCodeSettings(
+                    "https://feeding-canadian-kids-staging.web.app"
+                ),
             )
+
             email_body = EmailService.read_email_template(
                 "email_templates/reset_password.html"
             ).format(reset_link=set_password_link)

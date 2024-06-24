@@ -1,3 +1,4 @@
+from app.graphql.middleware.auth import requires_role
 import graphene
 
 from .types import Mutation, MutationList, UserInfo
@@ -130,6 +131,7 @@ class ResetPassword(Mutation):
 
     success = graphene.Boolean()
 
+    @requires_role("Admin")
     def mutate(self, info, email, password):
         services["auth_service"].reset_password(email, password)
         return ResetPassword(success=True)

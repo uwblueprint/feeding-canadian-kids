@@ -67,7 +67,7 @@ class Register(Mutation):
         auth_dto = services["auth_service"].generate_token(email, password)
         info.context.cookies.refresh_token = auth_dto.refresh_token
         # Instead of sending an email verification link, since we got here from an email, we can assume the email is verified
-        # This is done in the create user 
+        # This is done in the create user
         # services["auth_service"].send_email_verification_link(email)
         registered_user = RegisteredUser(
             access_token=auth_dto.access_token,

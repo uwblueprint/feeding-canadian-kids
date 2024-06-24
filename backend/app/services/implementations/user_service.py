@@ -166,10 +166,10 @@ class UserService(IUserService):
 
         try:
             firebase_user = firebase_admin.auth.create_user(
-                email=create_user_dto.email, 
+                email=create_user_dto.email,
                 password=create_user_dto.password,
                 # This is True, because we assume the only way the user got the request_id is through an email which is sent once the onboarding request is approved.
-                email_verified=True
+                email_verified=True,
             )
 
             try:

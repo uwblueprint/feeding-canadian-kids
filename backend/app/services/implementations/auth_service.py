@@ -110,7 +110,8 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            set_password_link = firebase_admin.auth.generate_password_reset_link(email, 
+            set_password_link = firebase_admin.auth.generate_password_reset_link(
+                email,
                 firebase_admin.auth.ActionCodeSettings(
                     "https://feeding-canadian-kids-staging.web.app"
                 ),

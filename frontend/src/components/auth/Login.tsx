@@ -17,8 +17,10 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import BackgroundImage from "../../assets/background.png";
 import {
   ASP_DASHBOARD_PAGE,
+  FORGOT_PASSWORD_PAGE,
   HOME_PAGE,
   JOIN_PAGE,
+  RESET_PASSWORD_PAGE,
 } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser, LoginData } from "../../types/UserTypes";
@@ -170,13 +172,15 @@ const Login = (): React.ReactElement => {
               />
             </FormControl>
           </Box>
-          <Text
-            pb={12}
-            variant={{ base: "mobile-xs", md: "desktop-xs" }}
-            textDecoration="underline"
-          >
-            Forgot Password?
-          </Text>
+          <Link to={FORGOT_PASSWORD_PAGE}>
+            <Text
+              pb={12}
+              variant={{ base: "mobile-xs", md: "desktop-xs" }}
+              textDecoration="underline"
+            >
+              Forgot Password?
+            </Text>
+          </Link>
         </Flex>
         <VStack pb={5} width="100%">
           <Button

@@ -43,7 +43,7 @@ const ListView = ({ columns, rowOptions, data, loading, requestType, currentPage
     Table: `
         margin: 0 !important;
         width: 100%;
-        --data-table-library_grid-template-columns: repeat(4, minmax(0, 1fr)) 88px;
+        --data-table-library_grid-template-columns: repeat(${columns.length - 1}, minmax(0, 1fr)) 88px;
   
         .animate {
           grid-column: 1 / -1;
@@ -136,7 +136,7 @@ const ListView = ({ columns, rowOptions, data, loading, requestType, currentPage
         )}
         {data?.nodes &&
         data.nodes.length !== 0 &&
-        data.nodes.length % 5 === 0 ? (
+        data.nodes.length % rowsPerPage === 0 ? (
           <ChevronRightIcon
             w="24px"
             h="24px"

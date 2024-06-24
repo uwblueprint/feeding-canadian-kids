@@ -1,12 +1,5 @@
-import { gql, useLazyQuery } from "@apollo/client";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  Button as ChakraButton,
-  Collapse,
-  Flex,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Collapse, Flex, Text } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
 import React, { useEffect, useState } from "react";
 

@@ -15,6 +15,33 @@ from .graphql import schema as graphql_schema
 from flask_apscheduler import APScheduler
 
 
+required_env_vars = [
+    "FIREBASE_WEB_API_KEY",
+    "FIREBASE_PROJECT_ID",
+    "FIREBASE_STORAGE_DEFAULT_BUCKET",
+    "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID",
+    "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY",
+    "FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL",
+    "FIREBASE_SVC_ACCOUNT_CLIENT_ID",
+    "FIREBASE_SVC_ACCOUNT_AUTH_URI",
+    "FIREBASE_SVC_ACCOUNT_TOKEN_URI",
+    "FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL",
+    "FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL",
+    "ADMIN_CC_EMAIL",
+    "GOOGLE_API_KEY",
+    "GEOCODING_API_KEY",
+    "USE_GOOGLE_API",
+    "FLASK_CONFIG"
+    "FLASK_APP",
+    "PYTHONUNBUFFERED",
+    "MAILER_CLIENT_SECRET",
+    "MAILER_CLIENT_ID",
+    "MAILER_REFRESH_TOKEN",
+    "MAILER_USER",
+    "MG_DB_NAME",
+    "MG_DATABASE_URL"
+]
+
 def create_app(config_name):
     dictConfig(
         {
@@ -68,26 +95,13 @@ def create_app(config_name):
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
     app.config["SCHEDULER_API_ENABLED"] = True
     CORS(app)
-
-    required_firebase_envs = [
-        "FIREBASE_PROJECT_ID",
-        "FIREBASE_STORAGE_DEFAULT_BUCKET",
-        "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID",
-        "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY",
-        "FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL",
-        "FIREBASE_SVC_ACCOUNT_CLIENT_ID",
-        "FIREBASE_SVC_ACCOUNT_AUTH_URI",
-        "FIREBASE_SVC_ACCOUNT_TOKEN_URI",
-        "FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL",
-        "FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL",
-    ]
-    for env in required_firebase_envs:
+    for env_var in required_env_vars:
         not_found_one = False
         missing = []
-        print(f"variable: {env} is {os.getenv(env)}")
-        if env not in os.environ or not os.getenv(env):
+        print(f"variable: {env_var} is {os.getenv(env_var)}")
+        if (env_var not in os.environ or os.getenv(env_var) == None) and not app.config["TESTING"]:
             not_found_one = True
-            missing.append(env)
+            missing.append(env_var)
 
     if not_found_one:
         all_missing = ", ".join(missing)

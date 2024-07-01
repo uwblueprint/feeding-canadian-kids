@@ -1,4 +1,4 @@
-import { gql, useLazyQuery } from "@apollo/client";
+import { WatchQueryFetchPolicy, gql, useLazyQuery } from "@apollo/client";
 import {
   Box,
   Button as ChakraButton,
@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   Wrap,
+  background,
 } from "@chakra-ui/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
@@ -103,6 +104,7 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
   }
 `;
 
+
 type CalendarViewProps = {
   aspId: string;
   showTitle?: boolean;
@@ -111,6 +113,9 @@ type CalendarViewProps = {
   handleNext?: (mealRequests: string[]) => void;
   onSelectNewMealRequest?: (mealRequestId: MealRequest) => void;
   allowMultipleSelection?: boolean;
+  shouldRefetch?: boolean;
+  afterRefetch?: () => void;
+  pageContext?: string;
 };
 export const MealRequestCalendarView = ({
   aspId,
@@ -125,6 +130,9 @@ export const MealRequestCalendarView = ({
   handleNext = (selectedMealRequests: string[]) => {},
   onSelectNewMealRequest = (mealRequest: MealRequest) => {},
   allowMultipleSelection = true,
+  shouldRefetch = false,
+  afterRefetch = () => {},
+  pageContext = "",
 }: CalendarViewProps) => {
   const [
     getMealRequests,
@@ -146,24 +154,33 @@ export const MealRequestCalendarView = ({
     return inputDate.toISOString().split("T")[0];
   }
 
+  function reloadMealRequests(fetchPolicy: WatchQueryFetchPolicy = "cache-first") {
+    const monthBefore = new Date(date);
+    monthBefore.setMonth(monthBefore.getMonth() - 1);
+    const monthAfter = new Date(date);
+    monthAfter.setMonth(monthAfter.getMonth() + 1);
+    getMealRequests({
+      variables: {
+        requestorId: aspId,
+        minDropOffDate: formatDate(monthBefore),
+        maxDropOffDate: formatDate(monthAfter),
+        status,
+      },
+      fetchPolicy
+    });
+    logPossibleGraphQLError(getMealRequestsError);
+  }
   const calRef = useRef<FullCalendar>(null);
 
   useEffect(() => {
-    function reloadMealRequests() {
-      const monthBefore = new Date(date);
-      monthBefore.setMonth(monthBefore.getMonth() - 1);
-      const monthAfter = new Date(date);
-      monthAfter.setMonth(monthAfter.getMonth() + 1);
-      getMealRequests({
-        variables: {
-          requestorId: aspId,
-          minDropOffDate: formatDate(monthBefore),
-          maxDropOffDate: formatDate(monthAfter),
-          status,
-        },
-      });
-      logPossibleGraphQLError(getMealRequestsError);
+    if (shouldRefetch) {
+      reloadMealRequests("network-only");
+      afterRefetch();
     }
+  }, [shouldRefetch]);
+
+  useEffect(() => {
+  
     reloadMealRequests();
 
     calRef.current?.getApi().gotoDate(date);
@@ -176,14 +193,24 @@ export const MealRequestCalendarView = ({
     };
     timeText: string;
   }) => (
-    <>
-      <Flex alignItems="center" gap="2px" fontSize="11px">
-        <b>{eventInfo.event.title}</b>
-        <PiForkKnifeFill />
-      </Flex>
-      <Box>{eventInfo.timeText.replace(/([ap])/g, "$1m")}</Box>
-    </>
+
+    <Flex paddingX="10px" direction="column" paddingY="3px" alignItems="center" fontSize="10px">
+      <b>{eventInfo.timeText.replace(/([ap])/g, "$1m")}</b>
+    </Flex>
+
   );
+
+  const getEventColor = (mealRequest: MealRequest) => {
+    if (pageContext === "asp") {
+      if (mealRequest.donationInfo) {
+        return mealRequest.id === selectedMealRequests[0] ? '#2e8438' : '#3BA948';
+      }
+      
+      return mealRequest.id === selectedMealRequests[0] ? '#BFBFBF': '#DFDFDF';
+    }
+
+    return '#DFDFDF';
+  };
 
   const realEvents =
     mealRequests?.getMealRequestsByRequestorId.map(
@@ -201,13 +228,8 @@ export const MealRequestCalendarView = ({
             icon: "test",
             mealRequest,
           },
-          backgroundColor: allowMultipleSelection
-            ? `${
-                selectedMealRequests.includes(mealRequest.id)
-                  ? "#c4c4c4"
-                  : "#FFFFFF"
-              }`
-            : "#FFFFFF",
+          backgroundColor: getEventColor(mealRequest),
+          textColor:  mealRequest.donationInfo?  'white' : 'black',
           display: "block",
         };
       },
@@ -229,6 +251,14 @@ export const MealRequestCalendarView = ({
 
   return (
     <Box>
+      <style>
+        {`
+          .fc-event {
+            border-radius: 50px;
+            overflow: hidden;
+          }
+        `}
+      </style>
       {showTitle ? (
         <>
           <Text fontSize="24px" fontWeight="600" color="#272D77">
@@ -266,6 +296,7 @@ export const MealRequestCalendarView = ({
                 prevMonth.setMonth(prevMonth.getMonth() - 1);
                 setDate(prevMonth);
               },
+              
             },
             customNextButton: {
               icon: "fc-icon-chevron-right",
@@ -284,7 +315,7 @@ export const MealRequestCalendarView = ({
           events={realEvents}
           selectable
           displayEventEnd
-          eventTextColor="#000000"
+          eventTextColor="#FFFFFF"
           eventBorderColor="#FFFFFF"
           eventInteractive
           eventLongPressDelay={0}

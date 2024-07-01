@@ -4,6 +4,7 @@ import {
   Button as ChakraButton,
   Flex,
   Image,
+  Stack,
   Text,
   Wrap,
   background,
@@ -104,7 +105,6 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
   }
 `;
 
-
 type CalendarViewProps = {
   aspId: string;
   showTitle?: boolean;
@@ -154,7 +154,9 @@ export const MealRequestCalendarView = ({
     return inputDate.toISOString().split("T")[0];
   }
 
-  function reloadMealRequests(fetchPolicy: WatchQueryFetchPolicy = "cache-first") {
+  function reloadMealRequests(
+    fetchPolicy: WatchQueryFetchPolicy = "cache-first",
+  ) {
     const monthBefore = new Date(date);
     monthBefore.setMonth(monthBefore.getMonth() - 1);
     const monthAfter = new Date(date);
@@ -166,7 +168,7 @@ export const MealRequestCalendarView = ({
         maxDropOffDate: formatDate(monthAfter),
         status,
       },
-      fetchPolicy
+      fetchPolicy,
     });
     logPossibleGraphQLError(getMealRequestsError);
   }
@@ -180,7 +182,6 @@ export const MealRequestCalendarView = ({
   }, [shouldRefetch]);
 
   useEffect(() => {
-  
     reloadMealRequests();
 
     calRef.current?.getApi().gotoDate(date);
@@ -193,23 +194,39 @@ export const MealRequestCalendarView = ({
     };
     timeText: string;
   }) => (
-
-    <Flex paddingX="10px" direction="column" paddingY="3px" alignItems="center" fontSize="10px">
-      <b>{eventInfo.timeText.replace(/([ap])/g, "$1m")}</b>
+    <Flex
+      paddingX="10px"
+      direction="column"
+      paddingY="3px"
+      alignItems="center"
+      fontSize="10px"
+    >
+      {pageContext === "asp" ? (
+        <b>{eventInfo.timeText.replace(/([ap])/g, "$1m")}</b>
+      ) : (
+        <Stack>
+          <Flex alignItems="center" gap="2px" fontSize="11px">
+            <b>{eventInfo.event.title}</b>
+            <PiForkKnifeFill />
+          </Flex>
+          <Box>{eventInfo.timeText.replace(/([ap])/g, "$1m")}</Box>
+        </Stack>
+      )}
     </Flex>
-
   );
 
   const getEventColor = (mealRequest: MealRequest) => {
     if (pageContext === "asp") {
       if (mealRequest.donationInfo) {
-        return mealRequest.id === selectedMealRequests[0] ? '#2e8438' : '#3BA948';
+        return mealRequest.id === selectedMealRequests[0]
+          ? "#2e8438"
+          : "#3BA948";
       }
-      
-      return mealRequest.id === selectedMealRequests[0] ? '#BFBFBF': '#DFDFDF';
+
+      return mealRequest.id === selectedMealRequests[0] ? "#BFBFBF" : "#DFDFDF";
     }
 
-    return '#DFDFDF';
+    return "#FFFFFF";
   };
 
   const realEvents =
@@ -229,7 +246,7 @@ export const MealRequestCalendarView = ({
             mealRequest,
           },
           backgroundColor: getEventColor(mealRequest),
-          textColor:  mealRequest.donationInfo?  'white' : 'black',
+          textColor: mealRequest.donationInfo ? "white" : "black",
           display: "block",
         };
       },
@@ -251,14 +268,16 @@ export const MealRequestCalendarView = ({
 
   return (
     <Box>
-      <style>
-        {`
+      {pageContext === "asp" ? (
+        <style>
+          {`
           .fc-event {
             border-radius: 50px;
             overflow: hidden;
           }
         `}
-      </style>
+        </style>
+      ) : null}
       {showTitle ? (
         <>
           <Text fontSize="24px" fontWeight="600" color="#272D77">
@@ -296,7 +315,6 @@ export const MealRequestCalendarView = ({
                 prevMonth.setMonth(prevMonth.getMonth() - 1);
                 setDate(prevMonth);
               },
-              
             },
             customNextButton: {
               icon: "fc-icon-chevron-right",

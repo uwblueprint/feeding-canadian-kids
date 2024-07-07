@@ -11,11 +11,12 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import BackgroundImage from "../../assets/background.png";
 import { LOGIN_PAGE } from "../../constants/Routes";
+import AuthContext from "../../contexts/AuthContext";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 
 const SetPassword = (): React.ReactElement => {
@@ -27,6 +28,7 @@ const SetPassword = (): React.ReactElement => {
   const navigate = useNavigate();
   const toast = useToast();
   const { objectID: objectId } = useParams();
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const GET_ONBOARDING_REQUEST = gql`
     query GetOnboardingRequestById{
@@ -103,7 +105,8 @@ const SetPassword = (): React.ReactElement => {
 
   const [register, { loading: registerLoading }] = useMutation(REGISTER_USER);
 
-  const dataStatus = () => onboardingData?.getOnboardingRequestById?.status !== "Approved";
+  const dataStatus = () =>
+    onboardingData?.getOnboardingRequestById?.status !== "Approved";
 
   const handleRegister = async () => {
     try {
@@ -136,7 +139,7 @@ const SetPassword = (): React.ReactElement => {
     handleRegister();
   };
 
-  logPossibleGraphQLError(onboardingError);
+  logPossibleGraphQLError(onboardingError, setAuthenticatedUser);
 
   return (
     <Flex

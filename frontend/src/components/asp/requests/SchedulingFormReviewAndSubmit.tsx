@@ -23,11 +23,12 @@ import {
   Tr,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Value } from "react-multi-date-picker";
 import { useNavigate } from "react-router-dom";
 
 import { ASP_DASHBOARD_PAGE } from "../../../constants/Routes";
+import AuthContext from "../../../contexts/AuthContext";
 import { Contact, OnsiteContact } from "../../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
 import { convertTimeToUtc } from "../../../utils/convertTimeToUTC";
@@ -95,6 +96,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
     createMealRequest: { id: string };
   }>(CREATE_MEAL_REQUEST);
 
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const toast = useToast();
 
   const navigate = useNavigate();
@@ -136,7 +138,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
         navigate(`${ASP_DASHBOARD_PAGE}?refetch=true`);
       }
     } catch (e: unknown) {
-      logPossibleGraphQLError(e);
+      logPossibleGraphQLError(e, setAuthenticatedUser);
       let errorMessage;
       if (
         (e as Error).message.includes(

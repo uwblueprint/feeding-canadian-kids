@@ -724,7 +724,7 @@ const Settings = (): React.ReactElement => {
       );
       setIsLoading(false);
     } catch (e: unknown) {
-      logPossibleGraphQLError(e as ApolloError);
+      logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
       setIsLoading(false);
 
       if (

@@ -256,10 +256,11 @@ const EditMealRequestForm = ({
 
         setLoading(false);
       } catch (error) {
-        logPossibleGraphQLError(error as ApolloError);
+        logPossibleGraphQLError(error as ApolloError, setAuthenticatedUser);
       }
     }
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestorId, mealRequestId, apolloClient]);
 
   const [updateMealRequest] = useMutation(UPDATE_MEAL_REQUEST);
@@ -291,7 +292,7 @@ const EditMealRequestForm = ({
       setLoading(false);
     } catch (e: unknown) {
       // eslint-disable-next-line no-console
-      logPossibleGraphQLError(e as ApolloError);
+      logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
       toast({
         title: "Failed to update meal request.",
         status: "error",
@@ -329,7 +330,7 @@ const EditMealRequestForm = ({
       setLoading(false);
     } catch (e: unknown) {
       // eslint-disable-next-line no-console
-      logPossibleGraphQLError(e as ApolloError);
+      logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
       toast({
         title: "Failed to update meal donation information.",
         status: "error",

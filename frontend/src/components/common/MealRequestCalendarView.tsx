@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   IoArrowBackCircleOutline,
   IoLocationOutline,
@@ -22,6 +22,7 @@ import { isCallSignatureDeclaration } from "typescript";
 import LoadingSpinner from "./LoadingSpinner";
 
 import * as Routes from "../../constants/Routes";
+import AuthContext from "../../contexts/AuthContext";
 import {
   MealRequest,
   MealRequestsData,
@@ -126,6 +127,7 @@ export const MealRequestCalendarView = ({
   onSelectNewMealRequest = (mealRequest: MealRequest) => {},
   allowMultipleSelection = true,
 }: CalendarViewProps) => {
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [
     getMealRequests,
     {
@@ -135,6 +137,11 @@ export const MealRequestCalendarView = ({
     },
   ] = useLazyQuery<MealRequestsData, MealRequestsVariables>(
     GET_MEAL_REQUESTS_BY_ID,
+    {
+      onError: (error) => {
+        logPossibleGraphQLError(error, setAuthenticatedUser);
+      },
+    },
   );
 
   const [selectedMealRequests, setSelectedMealRequests] = useState<string[]>(
@@ -162,13 +169,13 @@ export const MealRequestCalendarView = ({
           status,
         },
       });
-      logPossibleGraphQLError(getMealRequestsError);
+      logPossibleGraphQLError(getMealRequestsError, setAuthenticatedUser);
     }
     reloadMealRequests();
 
     calRef.current?.getApi().gotoDate(date);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aspId, date, getMealRequests, getMealRequestsError]);
+  }, [aspId, date, getMealRequests]);
 
   const renderEventContent = (eventInfo: {
     event: {

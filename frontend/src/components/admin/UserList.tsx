@@ -1,8 +1,28 @@
-import { gql, useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from "@chakra-ui/icons";
-import { Box, Collapse, Flex, HStack, Tag, Text } from "@chakra-ui/react";
+import { 
+  Box, 
+  Button,
+  Collapse, 
+  Flex, 
+  HStack, 
+  Modal, 
+  ModalBody,
+  ModalCloseButton, 
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spinner, 
+  Tag, 
+  Text, 
+  useDisclosure ,
+  useToast
+} from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+
+import AuthContext from "../../contexts/AuthContext";
 
 import {
   Contact,
@@ -38,7 +58,159 @@ const GET_ALL_USERS = gql`
   }
 `;
 
+const ACTIVATE_USER = gql`
+  mutation ActivateUserByID($id: String!, $requestorId: String!) {
+    activateUserByID(id: $id, requestorId: $requestorId) {
+      user {
+        id
+      }
+    }
+  }
+`;
+
+const DEACTIVATE_USER = gql`
+  mutation DeactivateUserByID($id: String!, $requestorId: String!) {
+    deactivateUserByID(id: $id, requestorId: $requestorId) {
+      user {
+        id
+      }
+    }
+  }
+`;
+
 type UserListProps = { isASP: boolean; rowsPerPage?: number };
+
+const ActivateDeactivateModal = ({
+    isOpen,
+    onClose,
+    userId,
+    isActive,
+    refetch,
+  }: {
+    isOpen: boolean;
+    onClose: () => void;
+    userId: string;
+    isActive: boolean;
+    refetch: () => void;
+  }): React.ReactElement => {
+    const toast = useToast();
+    const [isSubmitLoading, setIsSubmitLoading] = React.useState(false);
+    const [activateUserById] = useMutation<{
+      activateUserById: { id: string; requestorId: string; };
+    }>(ACTIVATE_USER);
+    const [deactivateUserById] = useMutation<{
+      deactivateUserById: { id: string; requestorId: string; };
+    }>(DEACTIVATE_USER);
+    const { authenticatedUser } = useContext(AuthContext);
+  
+    const onActivate = async () => {
+      await setIsSubmitLoading(true);
+  
+      try {
+        const response = await activateUserById({
+          variables: {
+            id: userId,
+            requestorId: authenticatedUser?.id
+          },
+        });
+  
+        if (response.data) {
+          toast({
+            title: "Activation Successful!",
+            status: "success",
+            isClosable: true,
+          });
+        }
+      } catch (e: unknown) {
+        logPossibleGraphQLError(e);
+        toast({
+          title: "Failed to activate. Please try again.",
+          status: "error",
+          isClosable: true,
+        });
+      }
+
+      refetch();
+      onClose();
+      await setIsSubmitLoading(false);
+    }
+
+    const onDeactivate = async () => {
+      await setIsSubmitLoading(true);
+  
+      try {
+        const response = await deactivateUserById({
+          variables: {
+            id: userId,
+            requestorId: authenticatedUser?.id
+          },
+        });
+  
+        if (response.data) {
+          toast({
+            title: "Deactivation Successful!",
+            status: "success",
+            isClosable: true,
+          });
+        }
+      } catch (e: unknown) {
+        logPossibleGraphQLError(e);
+        toast({
+          title: "Failed to deactivate. Please try again.",
+          status: "error",
+          isClosable: true,
+        });
+      }
+  
+      refetch();
+      onClose();
+      await setIsSubmitLoading(false);
+    };
+  
+    return (
+      <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered>
+        <ModalOverlay />
+        <ModalContent p="0.5%">
+          <ModalHeader fontSize="md">{isActive ? "Deactivate?" : "Activate?"}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {isActive 
+            ? "Deactivating the user means they will no longer be in the system."
+            : "Activating the user means they will be in the system."}
+            Your changes will not be saved if you leave this page.
+          </ModalBody>
+          <ModalFooter>
+            {isActive
+            ? <Button
+                width="25%"
+                color="text.white"
+                bgColor="text.red"
+                _hover={{
+                  bgColor: "background.darkred",
+                }}
+                onClick={onDeactivate}
+                disabled={isSubmitLoading}
+              >
+                {isSubmitLoading ? <Spinner /> : "Deactivate"}
+              </Button>
+            : <Button
+                width="25%"
+                // color="text.white"
+                // bgColor="text.red"
+                // _hover={{
+                //   bgColor: "background.darkred",
+                // }}
+                onClick={onActivate}
+                disabled={isSubmitLoading}
+              >
+                {isSubmitLoading ? <Spinner /> : "Activate"}
+              </Button>
+            } 
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    );
+  };
 
 const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
@@ -55,6 +227,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     }
   };
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [data, setData] = useState<{
     nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
   }>();
@@ -103,17 +276,17 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     },
   });
 
-  useEffect(() => {
-    function reloadMealRequests() {
-      getUsers({
-        variables: {
-          role: isASP ? "ASP" : "Donor",
-          limit: rowsPerPage,
-          offset: (currentPage - 1) * rowsPerPage,
-        },
-      });
-    }
+  function reloadMealRequests() {
+    getUsers({
+      variables: {
+        role: isASP ? "ASP" : "Donor",
+        limit: rowsPerPage,
+        offset: (currentPage - 1) * rowsPerPage,
+      },
+    });
+  }
 
+  useEffect(() => {
     reloadMealRequests();
   }, [isASP, rowsPerPage, currentPage]);
 
@@ -221,6 +394,30 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
                 <Text variant="mobile-caption-2">{staff.phone}</Text>
               </Box>
             ))}
+          </Box>
+          <Box>
+            <Button
+              width="100%"
+              color="text.red"
+              bgColor="text.white"
+              border="2px solid"
+              borderColor="text.red"
+              _hover={{
+                bgColor: "gray.gray83",
+              }}
+              onClick={() => {
+                onOpen();
+              }}
+            >
+              Deactivate
+            </Button>
+            <ActivateDeactivateModal
+              isOpen={isOpen}
+              onClose={onClose}
+              userId={String(item.id)}
+              isActive
+              refetch={() => reloadMealRequests()}
+            />
           </Box>
         </Flex>
       </Collapse>

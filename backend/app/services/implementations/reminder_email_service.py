@@ -1,9 +1,9 @@
-from app.services.interfaces.reminder_email_service import IReminderEmailService
-from app.services.interfaces.email_service import IEmailService
+from ...services.interfaces.reminder_email_service import IReminderEmailService
+from ...services.interfaces.email_service import IEmailService
 from ...models.user import User
 from ...models.meal_request import MealRequest
-from datetime import datetime, timedelta
-from app.services.implementations.email_service import EmailService
+from datetime import datetime, timedelta, timezone
+from ...services.implementations.email_service import EmailService
 
 
 class ReminderEmailService(IReminderEmailService):
@@ -18,7 +18,7 @@ class ReminderEmailService(IReminderEmailService):
                 list of meal requests
         """
         try:
-            tomorrow_time = datetime.now() + timedelta(days=1)
+            tomorrow_time = datetime.now(timezone.utc) + timedelta(days=1)
             meal_requests = MealRequest.objects(
                 drop_off_datetime__gt=tomorrow_time,
                 drop_off_datetime__lt=tomorrow_time + timedelta(hours=1),
@@ -36,7 +36,7 @@ class ReminderEmailService(IReminderEmailService):
                 list of meal requests
         """
         try:
-            yesterday_time = datetime.now() - timedelta(days=1)
+            yesterday_time = datetime.now(timezone.utc) - timedelta(days=1)
             meal_requests = MealRequest.objects(
                 drop_off_datetime__gt=yesterday_time - timedelta(hours=1),
                 drop_off_datetime__lt=yesterday_time,
@@ -49,8 +49,9 @@ class ReminderEmailService(IReminderEmailService):
 
     def send_email(self, email, meal_request, template_file_path, subject_line):
         try:
+            address = meal_request.requestor.info.organization_address
             email_body = EmailService.read_email_template(template_file_path).format(
-                dropoff_location=meal_request.drop_off_location,
+                dropoff_location=address,
                 dropoff_time=meal_request.drop_off_datetime,
                 num_meals=meal_request.meal_info.portions,
             )

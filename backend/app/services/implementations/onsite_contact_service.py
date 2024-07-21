@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-from app.models.onsite_contact import OnsiteContact
-from app.resources.onsite_contact_dto import OnsiteContactDTO
+from ...models.onsite_contact import OnsiteContact
+from ...resources.onsite_contact_dto import OnsiteContactDTO
 
 from ..interfaces.onsite_contact_service import IOnsiteContactService
 
@@ -11,6 +11,7 @@ from ...models.user import User
 class OnsiteContactService(IOnsiteContactService):
     def __init__(self, logger):
         self.logger = logger
+        OnsiteContact.ensure_indexes()
 
     def get_onsite_contact_by_id(
         self,

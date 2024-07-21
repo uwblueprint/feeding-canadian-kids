@@ -8,15 +8,12 @@ import {
   TabPanels,
   Tabs,
   Text,
-  Wrap,
 } from "@chakra-ui/react";
 import React, { useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import ASPCalendar from "./ASPCalendar";
 
-import BackgroundImage from "../assets/background.png";
-import RefreshCredentials from "../components/auth/RefreshCredentials";
 import ASPListView from "../components/mealrequest/ASPListView";
 import * as Routes from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
@@ -27,49 +24,6 @@ const NavigationButton = ({ children, path }: ButtonProps) => {
   const navigate = useNavigate();
   return <ChakraButton onClick={() => navigate(path)}>{children}</ChakraButton>;
 };
-
-const OldDashboard = (): React.ReactElement => (
-  <div
-    style={{
-      textAlign: "center",
-      paddingTop: "20px",
-      backgroundImage: `url(${BackgroundImage})`,
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-      backgroundSize: "cover",
-    }}
-  >
-    <Wrap>
-      <RefreshCredentials />
-      <NavigationButton path={Routes.CREATE_ENTITY_PAGE}>
-        Create Entity
-      </NavigationButton>
-
-      <NavigationButton path={Routes.UPDATE_ENTITY_PAGE}>
-        Update Entity
-      </NavigationButton>
-      <NavigationButton path={Routes.DISPLAY_ENTITY_PAGE}>
-        Display Entities
-      </NavigationButton>
-      <NavigationButton path={Routes.CREATE_SIMPLE_ENTITY_PAGE}>
-        Create Simple Entity
-      </NavigationButton>
-      <NavigationButton path={Routes.UPDATE_SIMPLE_ENTITY_PAGE}>
-        Update Simple Entity
-      </NavigationButton>
-      <NavigationButton path={Routes.DISPLAY_SIMPLE_ENTITY_PAGE}>
-        Display Simple Entities
-      </NavigationButton>
-      <NavigationButton path={Routes.HOOKS_PAGE}>Hooks Demo</NavigationButton>
-      <NavigationButton
-        path={`${Routes.MEAL_DONOR_FORM_PAGE}?ids=65cc28ce55434ad75a3a6439,65cc28cd55434ad75a3a6437,65cc28ce55434ad75a3a6438`}
-      >
-        Meal Donation Form
-      </NavigationButton>
-    </Wrap>
-    <div style={{ height: "2rem" }} />
-  </div>
-);
 
 const Dashboard = (): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
@@ -97,9 +51,6 @@ const Dashboard = (): React.ReactElement => {
               <HamburgerIcon w="16px" />
               <Text variant="desktop-button-bold">List</Text>
             </Tab>
-            <Tab>
-              <Text variant="desktop-button-bold">Old Dashboard</Text>
-            </Tab>
           </TabList>
           <NavigationButton path={Routes.CREATE_MEAL_REQUEST_PAGE}>
             + Create Request
@@ -112,9 +63,6 @@ const Dashboard = (): React.ReactElement => {
           </TabPanel>
           <TabPanel p="0">
             <ASPListView authId={authenticatedUser.id} />
-          </TabPanel>
-          <TabPanel>
-            <OldDashboard />
           </TabPanel>
         </TabPanels>
       </Tabs>

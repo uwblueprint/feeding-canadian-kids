@@ -1,6 +1,6 @@
 import mongoengine as mg
 
-from app.models.user_info import UserInfo
+from .user_info import UserInfo
 
 
 class User(mg.Document):
@@ -18,4 +18,4 @@ class User(mg.Document):
         user_dict["id"] = str(id)
         return user_dict
 
-    meta = {"collection": "users"}
+    meta = {"indexes": ["info.email", "auth_id"], "collection": "users"}

@@ -28,7 +28,6 @@ const useGetOnsiteContacts = (
     variables: { id: authenticatedUser?.id },
     onCompleted: (data) => {
       if (data.getOnsiteContactForUserById) {
-        // console.log("DATA IS: ", [...data.getOnsiteContactForUserById]);
         // json parse/stringify creates a deep copy of the array of contacts
         // this prevents setOnsiteInfo from mutating the original state of userInfo.onsiteContacts
         setOnsiteContacts(
@@ -40,7 +39,7 @@ const useGetOnsiteContacts = (
       }
     },
     onError: (e) => {
-      logPossibleGraphQLError(e);
+      logPossibleGraphQLError(e, setAuthenticatedUser);
       if (toast) {
         toast({
           title: "Sorry, something went wrong!",

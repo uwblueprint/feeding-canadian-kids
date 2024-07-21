@@ -1,12 +1,24 @@
 from abc import ABC, abstractmethod
 
-from app.resources.auth_dto import AuthDTO
+from ...resources.auth_dto import AuthDTO
 
 
 class IAuthService(ABC):
-    """
-    AuthService interface with user authentication methods
-    """
+    @abstractmethod
+    def __init__(self, logger, user_service, email_service=None):
+        pass
+
+    @abstractmethod
+    def send_onboarding_request_approve_email(self, objectID, email):
+        pass
+
+    @abstractmethod
+    def send_onboarding_request_rejected_email(self, email):
+        pass
+
+    @abstractmethod
+    def is_authorized_by_self(self, context, requested_user_id):
+        pass
 
     @abstractmethod
     def generate_token(self, email, password) -> AuthDTO:
@@ -23,20 +35,6 @@ class IAuthService(ABC):
         :raises Exception: if token generation fails
         """
         pass
-
-    # @abstractmethod
-    # def generate_token_for_oauth(self, id_token):
-    #     """
-    #     Generate a short-lived JWT access token and a long-lived refresh token
-    #     when supplied user's OAuth ID token
-
-    #     :param id_token: user's OAuth ID token
-    #     :type id_token: str
-    #     :return: AuthDTO object containing the access/refresh token and user info
-    #     :rtype: AuthDTO
-    #     :raises Exception: if token generation fails
-    #     """
-    #     pass
 
     @abstractmethod
     def revoke_tokens(self, user_id):
@@ -99,7 +97,7 @@ class IAuthService(ABC):
         pass
 
     @abstractmethod
-    def is_authorized_by_role(self, access_token, roles):
+    def is_authorized_by_role(self, context, roles):
         """
         Determine if the provided access token is valid and authorized for at least
         one of the specified roles
@@ -114,7 +112,7 @@ class IAuthService(ABC):
         pass
 
     @abstractmethod
-    def is_authorized_by_user_id(self, access_token, requested_user_id):
+    def is_authorized_by_user_id(self, context, requested_user_id):
         """
         Determine if the provided access token is valid and issued to the requestor
 
@@ -128,7 +126,7 @@ class IAuthService(ABC):
         pass
 
     @abstractmethod
-    def is_authorized_by_email(self, access_token, requested_email):
+    def is_authorized_by_email(self, context, requested_email):
         """
         Determine if the provided access token is valid and issued to the requested user
         with the specified email address
@@ -140,4 +138,8 @@ class IAuthService(ABC):
         :return: true if token valid and authorized, false otherwise
         :rtype: bool
         """
+        pass
+
+    @abstractmethod
+    def is_authenticated(self, context):
         pass

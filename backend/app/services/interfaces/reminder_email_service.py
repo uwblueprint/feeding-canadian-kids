@@ -1,6 +1,6 @@
 from abc import ABC
 
-from app.services.interfaces.email_service import IEmailService
+from ...services.interfaces.email_service import IEmailService
 
 
 class IReminderEmailService(ABC):

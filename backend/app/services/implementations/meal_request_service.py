@@ -1,9 +1,9 @@
 from typing import List
-from app.services.interfaces.email_service import IEmailService
-from app.services.implementations.email_service import EmailService
+from .email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
+from ..interfaces.email_service import IEmailService
 from ..interfaces.meal_request_service import IMealRequestService
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from ...models.meal_request import DonationInfo, MealStatus
 from ...models.user import User
@@ -16,6 +16,7 @@ class MealRequestService(IMealRequestService):
     def __init__(self, logger, email_service: IEmailService):
         self.logger = logger
         self.email_service = email_service
+        MealRequest.ensure_indexes()
 
     def create_meal_request(
         self,
@@ -23,7 +24,6 @@ class MealRequestService(IMealRequestService):
         request_dates,
         meal_info,
         drop_off_time,
-        drop_off_location,
         delivery_instructions,
         onsite_contacts: List[str],
     ):
@@ -44,29 +44,30 @@ class MealRequestService(IMealRequestService):
             meal_requests = []
             for request_date in request_dates:
                 # Make sure the request date is in the future
-                if request_date < datetime.now().date():
+                if request_date < datetime.now(timezone.utc).date():
                     raise Exception("Request date must be in the future")
 
                 # Verify that no meal request exists for the same requestor and drop-off date
                 existing_request = MealRequest.objects(
                     requestor=requestor,
                     drop_off_datetime__gte=datetime.combine(
-                        request_date, datetime.min.time()
+                        request_date, datetime.min.time(), timezone.utc
                     ),
                     drop_off_datetime__lte=datetime.combine(
-                        request_date, datetime.max.time()
+                        request_date, datetime.max.time(), timezone.utc
                     ),
                 ).first()
                 if existing_request:
                     raise Exception(
-                        f"Meal request already exists for this ASP on {request_date}"
+                        f"Meal request already exists for this ASP on {existing_request.drop_off_datetime.isoformat()}"
                     )
 
                 new_meal_request = MealRequest(
                     requestor=requestor,
                     meal_info=meal_info,
-                    drop_off_datetime=datetime.combine(request_date, drop_off_time),
-                    drop_off_location=drop_off_location,
+                    drop_off_datetime=datetime.combine(
+                        request_date, drop_off_time, timezone.utc
+                    ),
                     delivery_instructions=delivery_instructions,
                     onsite_contacts=onsite_contacts,
                 )
@@ -90,7 +91,6 @@ class MealRequestService(IMealRequestService):
         requestor_id,
         meal_info,
         drop_off_datetime,
-        drop_off_location,
         delivery_instructions,
         onsite_contacts,
         meal_request_id,
@@ -112,9 +112,6 @@ class MealRequestService(IMealRequestService):
                 portions=meal_info.portions,
                 dietary_restrictions=meal_info.dietary_restrictions,
             )
-
-        if drop_off_location is not None:
-            original_meal_request.drop_off_location = drop_off_location
 
         if delivery_instructions is not None:
             original_meal_request.delivery_instructions = delivery_instructions
@@ -192,9 +189,11 @@ class MealRequestService(IMealRequestService):
                 meal_requestor_id = meal_request.requestor.id
                 meal_requestor = User.objects(id=meal_requestor_id).first()
 
-                self.send_donor_commit_email(meal_request, donor.info.email)
+                self.send_donor_commit_email(
+                    meal_request, donor.info.email, meal_requestor
+                )
                 self.send_requestor_commit_email(
-                    meal_request, meal_requestor.info.email
+                    meal_request, meal_requestor.info.email, meal_requestor
                 )
 
                 meal_request.donation_info = DonationInfo(
@@ -364,7 +363,7 @@ class MealRequestService(IMealRequestService):
 
         return meal_request_dtos
 
-    def send_donor_commit_email(self, meal_request, email):
+    def send_donor_commit_email(self, meal_request, email, meal_requestor):
         if not self.email_service:
             error_message = """
                 Attempted to call committed_to_meal_request but this
@@ -374,10 +373,11 @@ class MealRequestService(IMealRequestService):
             raise Exception(error_message)
 
         try:
+            address = meal_requestor.info.organization_address
             email_body = EmailService.read_email_template(
                 "email_templates/committed_to_meal_request.html"
             ).format(
-                dropoff_location=meal_request.drop_off_location,
+                dropoff_location=address,
                 dropoff_time=meal_request.drop_off_datetime,
                 num_meals=meal_request.meal_info.portions,
             )
@@ -391,7 +391,7 @@ class MealRequestService(IMealRequestService):
             )
             raise e
 
-    def send_requestor_commit_email(self, meal_request, email):
+    def send_requestor_commit_email(self, meal_request, email, meal_requestor):
         if not self.email_service:
             error_message = """
                 Attempted to call meal_request_success but this
@@ -401,10 +401,11 @@ class MealRequestService(IMealRequestService):
             raise Exception(error_message)
 
         try:
+            address = meal_requestor.info.organization_address
             email_body = EmailService.read_email_template(
                 "email_templates/meal_request_success.html"
             ).format(
-                dropoff_location=meal_request.drop_off_location,
+                dropoff_location=address,
                 dropoff_time=meal_request.drop_off_datetime,
                 num_meals=meal_request.meal_info.portions,
             )

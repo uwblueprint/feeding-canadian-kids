@@ -1,7 +1,7 @@
 from app.graphql import schema as graphql_schema
 from app.services.implementations.mock_email_service import MockEmailService
 from app.services.interfaces.reminder_email_service import IReminderEmailService
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 def test_meal_yesterday(reminder_email_setup, user_setup, meal_request_setup):
@@ -9,7 +9,9 @@ def test_meal_yesterday(reminder_email_setup, user_setup, meal_request_setup):
     users = user_setup
     reminder_email_service: IReminderEmailService = reminder_email_setup  # type: ignore
 
-    dropoff_time = datetime.now() - timedelta(days=1) - timedelta(minutes=20)
+    dropoff_time = (
+        datetime.now(timezone.utc) - timedelta(days=1) - timedelta(minutes=20)
+    )
     meal_request.drop_off_datetime = dropoff_time
     meal_request.save()
 
@@ -25,11 +27,13 @@ def test_meal_yesterday(reminder_email_setup, user_setup, meal_request_setup):
 
 
 def test_meal_tomorrow(reminder_email_setup, user_setup, meal_request_setup):
-    _, _, meal_request = meal_request_setup
+    asp, _, meal_request = meal_request_setup
     users = user_setup
     reminder_email_service: IReminderEmailService = reminder_email_setup  # type: ignore
 
-    dropoff_time = datetime.now() + timedelta(days=1) + timedelta(minutes=20)
+    dropoff_time = (
+        datetime.now(timezone.utc) + timedelta(days=1) + timedelta(minutes=20)
+    )
     meal_request.drop_off_datetime = dropoff_time
     meal_request.save()
 
@@ -39,16 +43,16 @@ def test_meal_tomorrow(reminder_email_setup, user_setup, meal_request_setup):
 
     assert "Your meal request is scheduled for tomorrow!" in requestor_email["body"]
     assert (
-        f"Dropoff Location: {meal_request.drop_off_location}" in requestor_email["body"]
+        f"Dropoff Location: {asp.info.organization_address}" in requestor_email["body"]
     )
-    assert str(meal_request.drop_off_location) in requestor_email["body"]
+    assert str(asp.info.organization_address) in requestor_email["body"]
     assert requestor_email["subject"] == "Your meal request is only one day away!"
 
     assert (
         "The meal request you donated is scheduled for tomorrow!" in donor_email["body"]
     )
-    assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
-    assert str(meal_request.drop_off_location) in donor_email["body"]
+    assert f"Dropoff Location: {asp.info.organization_address}" in donor_email["body"]
+    assert str(asp.info.organization_address) in donor_email["body"]
     assert donor_email["subject"] == "Your meal donation is only one day away!"
 
 
@@ -104,7 +108,6 @@ def commit_to_meal_request(donor, meal_request):
             }}
             status
             dropOffDatetime
-            dropOffLocation
             mealInfo {{
                 portions
                 dietaryRestrictions

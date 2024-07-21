@@ -25,16 +25,18 @@ import {
   Tr,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Value } from "react-multi-date-picker";
 import { useNavigate } from "react-router-dom";
 
 import MealDeliveryDetails from "./MealDeliveryDetails";
 
 import { MEAL_DONOR_DASHBOARD_PAGE } from "../../../constants/Routes";
+import AuthContext from "../../../contexts/AuthContext";
 import { MealRequest } from "../../../types/MealRequestTypes";
 import { Contact, OnsiteContact } from "../../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
+import { useGetDefaultPageForUser } from "../../../utils/useGetDefaultPageForUser";
 import OnsiteContactSection from "../../common/OnsiteContactSection";
 
 // Create the GraphQL mutation
@@ -95,6 +97,8 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
 
   const navigate = useNavigate();
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const defaultPage = useGetDefaultPageForUser();
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const handleSubmit = async () => {
     await setIsSubmitLoading(true);
@@ -119,10 +123,10 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
           status: "success",
           isClosable: true,
         });
-        navigate(MEAL_DONOR_DASHBOARD_PAGE);
+        navigate(defaultPage);
       }
     } catch (e: unknown) {
-      logPossibleGraphQLError(e);
+      logPossibleGraphQLError(e, setAuthenticatedUser);
       toast({
         title: "Failed to commit to meal request. Please try again.",
         status: "error",

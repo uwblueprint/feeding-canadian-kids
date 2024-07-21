@@ -1,6 +1,6 @@
 import mongoengine as mg
 
-from app.resources.onsite_contact_dto import OnsiteContactDTO
+from ..resources.onsite_contact_dto import OnsiteContactDTO
 
 
 class OnsiteContact(mg.Document):
@@ -30,4 +30,9 @@ class OnsiteContact(mg.Document):
     def __str__(self):
         return f"OnsiteContact({self.id}, {self.organization_id}, {self.name}, {self.email}, {self.phone})"
 
-    meta = {"collection": "onsite_contacts"}
+    meta = {
+        "indexes": [
+            "organization_id",
+        ],
+        "collection": "onsite_contacts",
+    }

@@ -1,8 +1,4 @@
-import {
-  gql,
-  useMutation,
-} from "@apollo/client";
-
+import { gql, useMutation } from "@apollo/client";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -29,7 +25,6 @@ import {
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
-
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { GiMeal } from "react-icons/gi";
 import {
@@ -47,9 +42,7 @@ import { MealRequestCalendarView } from "../components/common/MealRequestCalenda
 import { CREATE_MEAL_REQUEST_PAGE, LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 import { MealRequest } from "../types/MealRequestTypes";
-
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
-
 
 const DELETE_MEAL_REQUEST = gql`
   mutation DeleteMealRequest($mealRequestId: ID!, $requestorId: String!) {
@@ -64,8 +57,8 @@ const DELETE_MEAL_REQUEST = gql`
   }
 `;
 
-type ASPCalendarProps = { authId: string;};
-const ASPCalendar = ({ authId}: ASPCalendarProps) => {
+type ASPCalendarProps = { authId: string };
+const ASPCalendar = ({ authId }: ASPCalendarProps) => {
   const [selectedMealRequest, setSelectedMealRequest] = useState<
     MealRequest | undefined
   >(undefined);
@@ -87,15 +80,12 @@ const ASPCalendar = ({ authId}: ASPCalendarProps) => {
   } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
 
-  
-
   const [
     deleteMealRequest,
     { loading: deleteMealRequestLoading, error: deleteMealRequestError },
   ] = useMutation(DELETE_MEAL_REQUEST, {
     awaitRefetchQueries: true,
   });
-  
 
   if (!authenticatedUser) {
     return <Navigate replace to={LOGIN_PAGE} />;
@@ -103,11 +93,7 @@ const ASPCalendar = ({ authId}: ASPCalendarProps) => {
 
   function formatDate(inputDate: string): string {
     const date = new Date(inputDate);
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    });
+    return date.toDateString();
   }
 
   function formatTime(inputDate: string): string {
@@ -128,7 +114,6 @@ const ASPCalendar = ({ authId}: ASPCalendarProps) => {
     return `${startTime} - ${endTime}`;
   }
 
-
   const handleEdit = (item: MealRequest) => () => {
     setIsEditModalOpen(true);
     setCurrentlyEditingMealRequestId(item.id);
@@ -138,7 +123,6 @@ const ASPCalendar = ({ authId}: ASPCalendarProps) => {
     setItemToDelete(item);
     setDeleteAlertOpen();
   };
-  
 
   const deleteRequest = async (item: MealRequest) => {
     try {
@@ -153,7 +137,7 @@ const ASPCalendar = ({ authId}: ASPCalendarProps) => {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Error deleting meal request:", error);
-      logPossibleGraphQLError(error);
+      logPossibleGraphQLError(error, setAuthenticatedUser);
     }
   };
 
@@ -183,7 +167,6 @@ const ASPCalendar = ({ authId}: ASPCalendarProps) => {
                 onClick={() => {
                   if (itemToDelete) deleteRequest(itemToDelete);
                   setDeleteAlertClosed();
-                  
                 }}
                 ml={3}
               >
@@ -278,7 +261,12 @@ const ASPCalendar = ({ authId}: ASPCalendarProps) => {
                         <IoLocationOutline size={16} />
                       </Td>
                       <Td>
-                        <Text>{selectedMealRequest.dropOffLocation}</Text>
+                        <Text>
+                          {
+                            selectedMealRequest.requestor.info
+                              ?.organizationAddress
+                          }
+                        </Text>
                       </Td>
                     </Tr>
                     <Tr>

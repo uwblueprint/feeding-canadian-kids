@@ -4,7 +4,6 @@ import re
 import firebase_admin
 
 from flask import Flask
-from flask.cli import ScriptInfo
 from flask_cors import CORS
 from .graphql.view import GraphQLView
 from logging.config import dictConfig
@@ -14,6 +13,33 @@ from .graphql import schema as graphql_schema
 
 
 from flask_apscheduler import APScheduler
+
+
+required_env_vars = [
+    "FIREBASE_WEB_API_KEY",
+    "FIREBASE_PROJECT_ID",
+    "FIREBASE_STORAGE_DEFAULT_BUCKET",
+    "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID",
+    "FIREBASE_SVC_ACCOUNT_PRIVATE_KEY",
+    "FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL",
+    "FIREBASE_SVC_ACCOUNT_CLIENT_ID",
+    "FIREBASE_SVC_ACCOUNT_AUTH_URI",
+    "FIREBASE_SVC_ACCOUNT_TOKEN_URI",
+    "FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL",
+    "FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL",
+    "ADMIN_CC_EMAIL",
+    "GOOGLE_API_KEY",
+    "GEOCODING_API_KEY",
+    "USE_GOOGLE_API",
+    "FLASK_CONFIG" "FLASK_APP",
+    "PYTHONUNBUFFERED",
+    "MAILER_CLIENT_SECRET",
+    "MAILER_CLIENT_ID",
+    "MAILER_REFRESH_TOKEN",
+    "MAILER_USER",
+    "MG_DB_NAME",
+    "MG_DATABASE_URL",
+]
 
 
 def create_app(config_name):
@@ -40,9 +66,17 @@ def create_app(config_name):
 
     app = Flask(__name__, template_folder="templates", static_folder="static")
     # do not read config object if creating app from Flask CLI (e.g. flask db migrate)
-    if type(config_name) is not ScriptInfo:
-        app.config.from_object(app_config[config_name])
-
+    print("right before entering config setup ")
+    print("type config name", type(config_name))
+    # if type(config_name) is not ScriptInfo:
+    print("Right before reading config object right now!")
+    print("At this time the env vars are: ")
+    print("MG_DATABASE_URL:", os.getenv("MG_DATABASE_URL"))
+    print("MG_DB_NAME:", os.getenv("MG_DB_NAME"))
+    print("config name is", config_name)
+    print("app config is", app_config)
+    app.config.from_object(app_config[config_name])
+    print("Now, app.config is", app.config)
     app.add_url_rule(
         "/graphql",
         view_func=GraphQLView.as_view(
@@ -54,13 +88,26 @@ def create_app(config_name):
 
     app.config["CORS_ORIGINS"] = [
         "http://localhost:3000",
-        "https://uw-blueprint-starter-code.firebaseapp.com",
-        "https://uw-blueprint-starter-code.web.app",
-        re.compile(r"^https:\/\/uw-blueprint-starter-code--pr.*\.web\.app$"),
+        "https://feeding-canadian-kids-staging.firebaseapp.com",
+        "https://feeding-canadian-kids-staging.web.app",
+        re.compile(r"^https:\/\/feeding-canadian-kids-staging--pr.*\.web\.app$"),
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
     app.config["SCHEDULER_API_ENABLED"] = True
     CORS(app)
+    for env_var in required_env_vars:
+        not_found_one = False
+        missing = []
+        print(f"variable: {env_var} is {os.getenv(env_var)}")
+        if (env_var not in os.environ or os.getenv(env_var) is None) and not app.config[
+            "TESTING"
+        ]:
+            not_found_one = True
+            missing.append(env_var)
+
+    if not_found_one:
+        all_missing = ", ".join(missing)
+        raise Exception(f"Missing required environment variable(s): {all_missing}")
 
     firebase_admin.initialize_app(
         firebase_admin.credentials.Certificate(

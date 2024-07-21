@@ -33,10 +33,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { BsFilter } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 
+import AuthContext from "../../contexts/AuthContext";
 import EditMealRequestForm from "../../pages/EditMealRequestForm";
 import {
   MealRequest,
@@ -76,11 +77,11 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
             email
             phone
           }
+          organizationAddress
         }
       }
       status
       dropOffDatetime
-      dropOffLocation
       mealInfo {
         portions
         dietaryRestrictions
@@ -135,6 +136,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
     [],
   );
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const handleExpand = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     if (item.pending) return;
@@ -178,8 +180,8 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
             ): TABLE_LIBRARY_TYPES.TableNode => ({
               id: index,
               meal_request_id: mealRequest.id,
-              date_requested: new Date(mealRequest.dropOffDatetime),
-              time_requested: new Date(mealRequest.dropOffDatetime),
+              date_requested: new Date(mealRequest.dropOffDatetime + "Z"),
+              time_requested: new Date(mealRequest.dropOffDatetime + "Z"),
               donor_name:
                 mealRequest.donationInfo?.donor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
@@ -244,7 +246,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Error deleting meal request:", error);
-      logPossibleGraphQLError(error);
+      logPossibleGraphQLError(error, setAuthenticatedUser);
     }
   };
 
@@ -265,8 +267,6 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
 
   const handleEdit = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
-    // console.log("edit clicked for item", item);
-    // console.log(item);
     setIsEditModalOpen(true);
     setCurrentlyEditingMealRequestId(item.meal_request_id);
   };
@@ -451,7 +451,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
   };
 
   if (getMealRequestsError) {
-    logPossibleGraphQLError(getMealRequestsError);
+    logPossibleGraphQLError(getMealRequestsError, setAuthenticatedUser);
 
     return (
       <Box

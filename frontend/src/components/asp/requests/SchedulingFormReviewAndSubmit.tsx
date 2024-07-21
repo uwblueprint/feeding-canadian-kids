@@ -23,18 +23,19 @@ import {
   Tr,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Value } from "react-multi-date-picker";
 import { useNavigate } from "react-router-dom";
 
 import { ASP_DASHBOARD_PAGE } from "../../../constants/Routes";
+import AuthContext from "../../../contexts/AuthContext";
 import { Contact, OnsiteContact } from "../../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
+import { convertTimeToUtc } from "../../../utils/convertTimeToUTC";
 
 // Create the GraphQL mutation
 const CREATE_MEAL_REQUEST = gql`
   mutation CreateMealRequest(
-    $address: String!
     $numMeals: Int!
     $dietaryRestrictions: String
     $deliveryInstructions: String
@@ -44,7 +45,6 @@ const CREATE_MEAL_REQUEST = gql`
     $userId: ID!
   ) {
     createMealRequest(
-      dropOffLocation: $address
       deliveryInstructions: $deliveryInstructions
       onsiteContacts: $onsiteContact
       mealInfo: {
@@ -68,11 +68,11 @@ type SchedulingFormReviewAndSubmitProps = {
   mealRequestDates: Date[];
 
   // From part 2
-  address: string;
   numMeals: number;
   dietaryRestrictions: string;
   deliveryInstructions: string;
   onsiteContact: OnsiteContact[];
+  address: string;
 
   // User ID
   userId: string;
@@ -81,12 +81,10 @@ type SchedulingFormReviewAndSubmitProps = {
   handleBack: () => void;
 };
 
-const SchedulingFormReviewAndSubmit: React.FunctionComponent<
-  SchedulingFormReviewAndSubmitProps
-> = ({
+const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormReviewAndSubmitProps> = ({
+  address,
   scheduledDropOffTime,
   mealRequestDates,
-  address,
   numMeals,
   dietaryRestrictions,
   deliveryInstructions,
@@ -98,6 +96,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
     createMealRequest: { id: string };
   }>(CREATE_MEAL_REQUEST);
 
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const toast = useToast();
 
   const navigate = useNavigate();
@@ -107,19 +106,25 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
     await setIsSubmitLoading(true);
 
     try {
+      // NOTE: Have to pass in date /times to mongodb in UTC time!!
       const response = await createMealRequest({
         variables: {
-          address,
           numMeals,
           dietaryRestrictions,
           deliveryInstructions,
           onsiteContact: onsiteContact.map((staff: OnsiteContact) => staff.id),
-          // Format the scheduled drop off time with the current time zone
-          scheduledDropOffTime,
+          // convert time to utc (keep it as time)
+          scheduledDropOffTime: convertTimeToUtc(scheduledDropOffTime),
           userId,
-          mealRequestDates: mealRequestDates.map(
-            (date) => date.toISOString().split("T", 1)[0],
-          ),
+          mealRequestDates: mealRequestDates.map((date) => {
+            const hours = parseInt(scheduledDropOffTime.split(":")[0], 10);
+            const mins = parseInt(scheduledDropOffTime.split(":")[1], 10);
+
+            // This is very important! it makes sure that the date has the correct time before we convert timezones to UTC. If the date doesn't have the correct tiem before we convert, it can lead to some really tricky bugs!
+            date.setHours(hours, mins);
+            // ISO Date string means that the timezone is always UTC
+            return date.toISOString().split("T", 1)[0];
+          }),
         },
       });
 
@@ -133,7 +138,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
         navigate(`${ASP_DASHBOARD_PAGE}?refetch=true`);
       }
     } catch (e: unknown) {
-      logPossibleGraphQLError(e);
+      logPossibleGraphQLError(e, setAuthenticatedUser);
       let errorMessage;
       if (
         (e as Error).message.includes(
@@ -152,9 +157,9 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<
           return;
         }
         // Construct a date object from the string
-        const dateObj = new Date(date);
+        const dateObj = new Date(date + "Z");
 
-        errorMessage = `You have already created a meal request on ${dateObj.toDateString()}. Please choose another date, or edit your existing meal request.`;
+        errorMessage = `You have already created a meal request on ${dateObj.toLocaleDateString()}. Please choose another date, or edit your existing meal request.`;
       } else {
         errorMessage = "Failed to create meal request. Please try again.";
       }

@@ -1,3 +1,4 @@
+from app.graphql.middleware.auth import secure_requestor_id
 import graphene
 from .services import services
 from .types import (
@@ -17,6 +18,7 @@ class CreateOnsiteContact(Mutation):
 
     onsite_contact = graphene.Field(OnsiteContact)
 
+    @secure_requestor_id
     def mutate(self, info, requestor_id, organization_id, name, phone, email):
         onsite_contact_service = services["onsite_contact_service"]
         user_service = services["user_service"]
@@ -43,8 +45,8 @@ class UpdateOnsiteContact(Mutation):
 
     onsite_contact = graphene.Field(OnsiteContact)
 
+    @secure_requestor_id
     def mutate(self, info, requestor_id, id, name=None, phone=None, email=None):
-        # TODO: Add requestor_id check
         user_service = services["user_service"]
         onsite_contact_service = services["onsite_contact_service"]
 
@@ -69,6 +71,7 @@ class DeleteOnsiteContact(Mutation):
 
     success = graphene.Boolean()
 
+    @secure_requestor_id
     def mutate(self, info, requestor_id, id):
         onsite_contact_service = services["onsite_contact_service"]
         user_service = services["user_service"]

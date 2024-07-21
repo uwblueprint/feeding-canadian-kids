@@ -1,7 +1,9 @@
+from datetime import datetime, timezone, timedelta
+from decimal import Decimal
 import firebase_admin.auth
-from app.models.user_info import UserInfo
+from ...models.user_info import UserInfo
 
-from app.services.interfaces.onsite_contact_service import IOnsiteContactService
+from ...services.interfaces.onsite_contact_service import IOnsiteContactService
 from ...models.onboarding_request import OnboardingRequest
 from ..interfaces.user_service import IUserService
 from ...models.user import User
@@ -24,6 +26,7 @@ class UserService(IUserService):
         """
         self.logger = logger
         self.onsite_contact_service = onsite_contact_service
+        User.ensure_indexes()
 
     def get_user_by_id(self, user_id):
         try:
@@ -135,26 +138,16 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self):
+    def get_users(self, offset, limit, role):
         user_dtos = []
-        for user in User.objects:
-            user_dict = UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+        filteredUsers = User.objects()
+        if role:
+            filteredUsers = filteredUsers.filter(info__role=role)
 
-            try:
-                kwargs = {
-                    "id": user_dict["id"],
-                    "info": user_dict["info"],
-                }
-                user_dtos.append(UserDTO(**kwargs))
-            except Exception as e:
-                reason = getattr(e, "message", None)
-                self.logger.error(
-                    "Failed to get users. Reason = {reason}".format(
-                        reason=(reason if reason else str(e))
-                    )
-                )
-                raise e
-
+        for user in filteredUsers.skip(offset).limit(limit):
+            user_dtos.append(
+                UserService.__user_to_serializable_dict_and_remove_auth_id(user)
+            )
         return user_dtos
 
     def update_user_coordinates(self, user_dto):
@@ -173,7 +166,10 @@ class UserService(IUserService):
 
         try:
             firebase_user = firebase_admin.auth.create_user(
-                email=create_user_dto.email, password=create_user_dto.password
+                email=create_user_dto.email,
+                password=create_user_dto.password,
+                # This is True, because we assume the only way the user got the request_id is through an email which is sent once the onboarding request is approved.
+                email_verified=True,
             )
 
             try:
@@ -439,7 +435,9 @@ class UserService(IUserService):
         }
         return UserDTO(**kwargs)
 
-    def get_asp_near_location(self, requestor_id, max_distance, limit, offset):
+    def get_asp_near_location(
+        self, requestor_id, max_distance, limit, offset, must_have_open_requests
+    ):
         try:
             requestor = self.get_user_by_id(requestor_id)
             if not requestor:
@@ -457,6 +455,61 @@ class UserService(IUserService):
                     },
                 },
                 {"$match": {"info.role": "ASP"}},
+            ]
+
+            if must_have_open_requests:
+                # Remove and ASP's who: Don't have meal requests with Status Pending within now and the next 3 months
+                # To debug queries like these, use MongoDB Compass.
+                now = datetime.now(timezone.utc)
+                future_cutoff = now + timedelta(weeks=12)
+                pipeline += [
+                    {
+                        "$lookup": {
+                            "from": "meal_requests",
+                            "localField": "_id",
+                            "foreignField": "requestor",
+                            "as": "meal_requests",
+                        }
+                    },
+                    {
+                        "$addFields": {
+                            "meal_requests": {
+                                "$filter": {
+                                    "input": "$meal_requests",
+                                    "as": "meal_requests",
+                                    "cond": {
+                                        "$and": [
+                                            {
+                                                "$gt": [
+                                                    "$$meal_requests.drop_off_datetime",
+                                                    datetime.now(timezone.utc),
+                                                ]
+                                            },
+                                            {
+                                                "$lt": [
+                                                    "$$meal_requests.drop_off_datetime",
+                                                    future_cutoff,
+                                                ]
+                                            },
+                                            {"$eq": ["$$meal_requests.status", "Open"]},
+                                        ]
+                                    },
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "$match": {
+                            "$nor": [
+                                {"meal_requests": {"$exists": False}},
+                                {"meal_requests": {"$size": 0}},
+                                {"meal_requests": {"$size": 1}},
+                            ]
+                        }
+                    },
+                ]
+
+            pipeline += [
                 {"$skip": offset},
                 {"$limit": limit},
             ]
@@ -469,7 +522,7 @@ class UserService(IUserService):
                     kwargs = {
                         "id": str(asp_distance["_id"]),
                         "info": asp_distance["info"],
-                        "distance": asp_distance["distance"],
+                        "distance": round(Decimal(asp_distance["distance"]), 2),
                     }
                     asp_distance_dtos.append(ASPDistanceDTO(**kwargs))
                 except Exception as e:

@@ -77,10 +77,12 @@ const MealDonationForm = (): React.ReactElement => {
       id
       requestor {
         id
+        info {
+          organizationAddress
+        }
       }
       status
       dropOffDatetime
-      dropOffLocation
       mealInfo {
         portions
         dietaryRestrictions
@@ -127,7 +129,7 @@ const MealDonationForm = (): React.ReactElement => {
     };
   }, []);
 
-  logPossibleGraphQLError(getUserError);
+  logPossibleGraphQLError(getUserError, setAuthenticatedUser);
   if (getUserError) {
     return <ErrorMessage />;
   }

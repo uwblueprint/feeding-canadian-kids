@@ -11,8 +11,11 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import BackgroundImage from "../../assets/background.png";
+import { LOGIN_PAGE } from "../../constants/Routes";
+import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import { isValidEmail } from "../../utils/ValidationUtils";
 
 const ForgotPassword = () => {
@@ -29,9 +32,12 @@ const ForgotPassword = () => {
     }
   `;
 
-  const [forgotPassword, { loading: forgotPasswordLoading }] =
-    useMutation(FORGOT_PASSWORD);
+  const [
+    forgotPassword,
+    { loading: forgotPasswordLoading, error },
+  ] = useMutation(FORGOT_PASSWORD);
 
+  const navigate = useNavigate();
   const handleResetPassword = async () => {
     try {
       await forgotPassword({
@@ -39,7 +45,16 @@ const ForgotPassword = () => {
           email,
         },
       });
+      logPossibleGraphQLError(error, () => {});
+      toast({
+        title: "Please check your email for a link to reset your password!",
+        status: "success",
+        isClosable: true,
+      });
+      navigate(LOGIN_PAGE);
     } catch (e: unknown) {
+      logPossibleGraphQLError(e, () => {});
+      logPossibleGraphQLError(error, () => {});
       toast({
         title: "Failed to send email. Please try again",
         status: "error",

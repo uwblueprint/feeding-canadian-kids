@@ -13,7 +13,8 @@ import AuthContext from "../contexts/AuthContext";
 import { ErrorMessage } from "../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
-const MAX_DISTANCE = 50;
+// This distance is in KM
+const MAX_DISTANCE = 100;
 
 const YourMatchesPage = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -30,7 +31,9 @@ const YourMatchesPage = (): React.ReactElement => {
         requestorId: "${userId}", 
         maxDistance: ${MAX_DISTANCE}, 
         offset: $offset
-        limit: $limit) {
+        limit: $limit
+        mustHaveOpenRequests: true
+        ) {
         id
         distance
         info {
@@ -79,7 +82,7 @@ const YourMatchesPage = (): React.ReactElement => {
   }
 
   // Print out the ASPs near the donor
-  logPossibleGraphQLError(aspsError);
+  logPossibleGraphQLError(aspsError, setAuthenticatedUser);
 
   if (aspsError) {
     return <ErrorMessage />;

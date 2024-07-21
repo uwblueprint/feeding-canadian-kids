@@ -1,3 +1,4 @@
+from app.graphql.middleware.auth import requires_role
 import graphene
 
 from .types import Mutation, MutationList, UserInfo
@@ -65,7 +66,9 @@ class Register(Mutation):
         services["user_service"].create_user(create_user_dto)
         auth_dto = services["auth_service"].generate_token(email, password)
         info.context.cookies.refresh_token = auth_dto.refresh_token
-        services["auth_service"].send_email_verification_link(email)
+        # Instead of sending an email verification link, since we got here from an email, we can assume the email is verified
+        # This is done in the create user
+        # services["auth_service"].send_email_verification_link(email)
         registered_user = RegisteredUser(
             access_token=auth_dto.access_token,
             id=auth_dto.id,
@@ -130,6 +133,7 @@ class ResetPassword(Mutation):
 
     success = graphene.Boolean()
 
+    @requires_role("Admin")
     def mutate(self, info, email, password):
         services["auth_service"].reset_password(email, password)
         return ResetPassword(success=True)

@@ -14,8 +14,11 @@ import {
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+// NOTE: This page is not meant to be used anymore
+// The reset password mutation is now for ADMINS only, so this page doesn't work for normal users
 import BackgroundImage from "../../assets/background.png";
 import { LOGIN_PAGE } from "../../constants/Routes";
+import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 
 const ResetPassword = (): React.ReactElement => {
   const [notMatching, setNotMatching] = useState(false);
@@ -51,11 +54,6 @@ const ResetPassword = (): React.ReactElement => {
           phone
           email
         }
-        onsiteContacts {
-          name
-          phone
-          email
-        }
       }
     }
   }
@@ -70,9 +68,11 @@ const ResetPassword = (): React.ReactElement => {
   `;
 
   const { data: userData, error: getUserError } = useQuery(GET_USER);
+  logPossibleGraphQLError(getUserError, (_) => {});
 
-  const [resetPassword, { loading: resetPasswordLoading }] =
-    useMutation(RESET_PASSWORD);
+  const [resetPassword, { loading: resetPasswordLoading }] = useMutation(
+    RESET_PASSWORD,
+  );
 
   const handleResetPassword = async () => {
     try {

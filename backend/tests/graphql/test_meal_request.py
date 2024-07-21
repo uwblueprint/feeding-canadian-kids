@@ -34,7 +34,6 @@ def test_create_meal_request(meal_request_setup, onsite_contact_setup):
     mutation testCreateMealRequest {{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        dropOffLocation: "123 Main Street",
         dropOffTime: "16:30:00Z",
         mealInfo: {{
           portions: 40,
@@ -126,7 +125,6 @@ def test_create_meal_request_fails_invalid_onsite_contact(
     mutation testCreateMealRequest {{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        dropOffLocation: "123 Main Street",
         dropOffTime: "16:30:00Z",
         mealInfo: {{
           portions: 40,
@@ -190,7 +188,6 @@ def test_update_meal_request_donation(meal_request_setup, onsite_contact_setup):
           }}
           status
           dropOffDatetime
-          dropOffLocation
           mealInfo {{
             portions
             dietaryRestrictions
@@ -271,7 +268,6 @@ def test_create_meal_request_fails_repeat_date(
     mutation testCreateMealRequest {{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        dropOffLocation: "123 Main Street",
         dropOffTime: "16:30:00Z",
         mealInfo: {{
           portions: 40,
@@ -304,7 +300,7 @@ def test_create_meal_request_fails_repeat_date(
     result = graphql_schema.execute(mutation)
     assert (
         result.errors[0].message
-        == "Unexpected error: Meal request already exists for this ASP on 2025-03-31"
+        == "Unexpected error: Meal request already exists for this ASP on 2025-03-31T00:00:00"
     )
     # This exact error message is searched for in the front end,
     # if it changes, the front end will need to be updated to
@@ -315,7 +311,7 @@ def test_create_meal_request_fails_repeat_date(
 
 # Happy path: A donor commits to fulfilling one meal request
 def test_commit_to_meal_request(meal_request_setup):
-    _, donor, meal_request = meal_request_setup
+    asp, donor, meal_request = meal_request_setup
 
     mutation = f"""
     mutation testCommitToMealRequest {{
@@ -334,7 +330,6 @@ def test_commit_to_meal_request(meal_request_setup):
           }}
           status
           dropOffDatetime
-          dropOffLocation
           mealInfo {{
             portions
             dietaryRestrictions
@@ -407,7 +402,7 @@ def test_commit_to_meal_request(meal_request_setup):
         f"Number of Meals: {str(meal_request.meal_info.portions)}"
         in donor_email["body"]
     )
-    assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
+    assert f"Dropoff Location: {asp.info.organization_address}" in donor_email["body"]
     assert (
         f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}"
         in donor_email["body"]
@@ -420,7 +415,7 @@ def test_commit_to_meal_request(meal_request_setup):
         f"Number of Meals: {str(meal_request.meal_info.portions)}"
         in donor_email["body"]
     )
-    assert f"Dropoff Location: {meal_request.drop_off_location}" in donor_email["body"]
+    assert f"Dropoff Location: {asp.info.organization_address}" in donor_email["body"]
     assert (
         f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}"
         in donor_email["body"]
@@ -520,7 +515,6 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
 
     updatedDateTime = "2023-10-31T16:45:00+00:00"
     updatedDeliveryInstructions = "Updated delivery instructions"
-    updatedDropOffLocation = "Updated drop off location"
     updatedMealInfo = {
         "portions": 11,
         "dietaryRestrictions": "No nuts",
@@ -533,7 +527,6 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
         mealRequestId:"{meal_request.id}",
         deliveryInstructions:"{updatedDeliveryInstructions}",
         dropOffDatetime: "{updatedDateTime}",
-        dropOffLocation:"{updatedDropOffLocation}",
         mealInfo: {{
           portions: {updatedMealInfo["portions"]},
           dietaryRestrictions: "{updatedMealInfo["dietaryRestrictions"]}",
@@ -545,7 +538,6 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
           id
           status
           dropOffDatetime
-          dropOffLocation
           mealInfo{{
             portions
             dietaryRestrictions
@@ -574,7 +566,6 @@ def test_update_meal_request(onsite_contact_setup, meal_request_setup):
     assert result.errors is None
 
     updatedMealRequest = result.data["updateMealRequest"]["mealRequest"]
-    assert updatedMealRequest["dropOffLocation"] == updatedDropOffLocation
     assert updatedMealRequest["deliveryInstructions"] == updatedDeliveryInstructions
     assert updatedMealRequest["mealInfo"] == updatedMealInfo
     returned_onsite_contacts = updatedMealRequest["onsiteContacts"]
@@ -592,7 +583,6 @@ def test_create_meal_request_failure(meal_request_setup):
     mutation testCreateMealRequest {{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        dropOffLocation: "123 Main Street",
         dropOffTime: "12:00:00Z",
         mealInfo: {{
           portions: 40,
@@ -649,7 +639,6 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
             }},
             status,
             dropOffDatetime,
-            dropOffLocation,
             mealInfo {{
               portions
               dietaryRestrictions
@@ -697,7 +686,6 @@ def test_cancel_donation_as_admin(meal_request_setup, user_setup):
           id
           status
           dropOffDatetime
-          dropOffLocation
           mealInfo{{
             portions
             dietaryRestrictions
@@ -746,7 +734,6 @@ def test_cancel_donation_fails_if_no_donation(meal_request_setup, user_setup):
           id
           status
           dropOffDatetime
-          dropOffLocation
           mealInfo{{
             portions
             dietaryRestrictions
@@ -791,7 +778,6 @@ def test_cancel_donation_as_non_admin(meal_request_setup):
           id
           status
           dropOffDatetime
-          dropOffLocation
           mealInfo{{
             portions
             dietaryRestrictions
@@ -835,7 +821,6 @@ def test_delete_meal_request_as_admin(meal_request_setup, user_setup):
           id
           status
           dropOffDatetime
-          dropOffLocation
           mealInfo{{
             portions
             dietaryRestrictions
@@ -878,7 +863,6 @@ def test_delete_meal_request_as_asp(meal_request_setup):
           id
           status
           dropOffDatetime
-          dropOffLocation
           mealInfo{{
             portions
             dietaryRestrictions
@@ -923,7 +907,6 @@ def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
           id
           status
           dropOffDatetime
-          dropOffLocation
           mealInfo{{
             portions
             dietaryRestrictions
@@ -992,7 +975,6 @@ def test_get_meal_request_by_donor_id(meal_request_setup, onsite_contact_setup):
             }},
             status,
             dropOffDatetime,
-            dropOffLocation,
             mealInfo {{
               portions
               dietaryRestrictions
@@ -1036,7 +1018,6 @@ def test_get_meal_requests_by_ids(meal_request_setup):
     mutation m{{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        dropOffLocation: "123 Main Street",
         dropOffTime: "16:30:00Z",
         mealInfo: {{
           portions: 40,
@@ -1074,7 +1055,6 @@ def test_get_meal_requests_by_ids(meal_request_setup):
             }},
             status,
             dropOffDatetime,
-            dropOffLocation,
             mealInfo {{
               portions
               dietaryRestrictions
@@ -1125,7 +1105,6 @@ def test_update_meal_request_statuses_to_fulfilled(
     mutation m{{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        dropOffLocation: "123 Main Street",
         dropOffTime: "16:30:00Z",
         mealInfo: {{
           portions: 40,
@@ -1190,7 +1169,6 @@ def test_dont_update_meal_request_statuses_to_fulfilled_if_future(
     mutation m{{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        dropOffLocation: "123 Main Street",
         dropOffTime: "16:30:00Z",
         mealInfo: {{
           portions: 40,

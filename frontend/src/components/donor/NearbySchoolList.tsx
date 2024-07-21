@@ -53,7 +53,8 @@ const NearbySchoolList = ({
 
           <Text>
             Partner with a school in your community that aligns with your
-            donation preferences.
+            donation preferences. Only showing schools that are within 100km of
+            your location and have open meal requests within the next 3 months.
           </Text>
         </Flex>
         <Flex flex="1" padding="0 7vw" flexDirection="column">

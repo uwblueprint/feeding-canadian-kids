@@ -1,6 +1,12 @@
 import graphene
 from graphql import GraphQLError
 from typing import List
+from .middleware.auth import (
+    secure_requestor_id,
+    requires_login,
+    requires_role,
+    secure_donor_id,
+)
 
 from .types import (
     Mutation,
@@ -53,7 +59,6 @@ class MealRequestResponse(graphene.ObjectType):
     requestor = graphene.Field(User)
     status = graphene.Field(graphene.Enum.from_enum(MealStatus), required=True)
     drop_off_datetime = graphene.DateTime()
-    drop_off_location = graphene.String()
     meal_info = graphene.Field(MealInfoResponse)
     onsite_contacts = graphene.List(OnsiteContact)
     date_created = graphene.DateTime()
@@ -71,13 +76,13 @@ class CreateMealRequests(Mutation):
 
         meal_info = MealTypeInput(required=True)
         drop_off_time = graphene.Time(required=True)
-        drop_off_location = graphene.String(required=True)
         delivery_instructions = graphene.String(default_value=None)
         onsite_contacts = graphene.List(graphene.String, default_value=[])
 
     # return values
     meal_requests = graphene.List(CreateMealRequestResponse)
 
+    @secure_requestor_id
     def mutate(
         self,
         info,
@@ -85,7 +90,6 @@ class CreateMealRequests(Mutation):
         request_dates,
         meal_info,
         drop_off_time,
-        drop_off_location,
         delivery_instructions,
         onsite_contacts,
     ):
@@ -94,7 +98,6 @@ class CreateMealRequests(Mutation):
             request_dates=request_dates,
             meal_info=meal_info,
             drop_off_time=drop_off_time,
-            drop_off_location=drop_off_location,
             delivery_instructions=delivery_instructions,
             onsite_contacts=onsite_contacts,
         )
@@ -112,6 +115,8 @@ class UpdateMealRequestDonation(Mutation):
 
     meal_request = graphene.Field(MealRequestResponse)
 
+    @secure_requestor_id
+    @requires_role("Donor")
     def mutate(
         self,
         info,
@@ -133,6 +138,9 @@ class UpdateMealRequestDonation(Mutation):
             if not meal_request:
                 raise Exception("Meal request not found")
 
+            print("requestor id is", requestor_id)
+
+            # TODO: Re-enable this check
             if (
                 requestor_role != "Admin"
                 and meal_request.donation_info["donor"]["id"] != requestor_id
@@ -160,13 +168,14 @@ class UpdateMealRequest(Mutation):
         requestor_id = graphene.ID(required=False)
         drop_off_datetime = graphene.DateTime(required=False)
         meal_info = MealTypeInput()
-        drop_off_location = graphene.String()
         delivery_instructions = graphene.String()
         onsite_contacts = graphene.List(graphene.String)
 
     # return values
     meal_request = graphene.Field(MealRequestResponse)
 
+    @secure_requestor_id
+    @requires_role("ASP")
     def mutate(
         self,
         info,
@@ -174,7 +183,6 @@ class UpdateMealRequest(Mutation):
         requestor_id: str,
         drop_off_datetime=None,
         meal_info=None,
-        drop_off_location=None,
         delivery_instructions=None,
         onsite_contacts=None,
     ):
@@ -182,7 +190,6 @@ class UpdateMealRequest(Mutation):
             requestor_id=requestor_id,
             meal_info=meal_info,
             drop_off_datetime=drop_off_datetime,
-            drop_off_location=drop_off_location,
             delivery_instructions=delivery_instructions,
             onsite_contacts=onsite_contacts,
             meal_request_id=meal_request_id,
@@ -201,6 +208,7 @@ class CommitToMealRequest(Mutation):
 
     meal_requests = graphene.List(MealRequestResponse)
 
+    @requires_role("Donor")
     def mutate(
         self,
         info,
@@ -229,6 +237,7 @@ class CancelDonation(Mutation):
     # return values (return updated meal request)
     meal_request = graphene.Field(MealRequestResponse)
 
+    @requires_role("Donor")
     def mutate(self, info, meal_request_id, requestor_id):
         user = services["user_service"]
         requestor_auth_id = user.get_auth_id_by_user_id(requestor_id)
@@ -256,6 +265,7 @@ class DeleteMealRequest(Mutation):
 
     meal_request = graphene.Field(MealRequestResponse)
 
+    @secure_requestor_id
     def mutate(self, info, meal_request_id, requestor_id):
         user = services["user_service"]
         requestor_auth_id = user.get_auth_id_by_user_id(requestor_id)
@@ -324,6 +334,7 @@ class MealRequestQueries(QueryList):
         ids=graphene.List(graphene.ID),
     )
 
+    @secure_requestor_id
     def resolve_getMealRequestById(
         self,
         info,
@@ -333,6 +344,7 @@ class MealRequestQueries(QueryList):
         meal_request = services["meal_request_service"].get_meal_request_by_id(id)
         return meal_request
 
+    @secure_requestor_id
     def resolve_getMealRequestsByIds(
         self,
         info,
@@ -342,6 +354,7 @@ class MealRequestQueries(QueryList):
         meal_requests = services["meal_request_service"].get_meal_requests_by_ids(ids)
         return meal_requests
 
+    @requires_login
     def resolve_getMealRequestsByRequestorId(
         self,
         info,
@@ -371,7 +384,6 @@ class MealRequestQueries(QueryList):
                 requestor=meal_request_dto.requestor,
                 status=meal_request_dto.status,
                 drop_off_datetime=meal_request_dto.drop_off_datetime,
-                drop_off_location=meal_request_dto.drop_off_location,
                 meal_info=meal_request_dto.meal_info,
                 onsite_contacts=meal_request_dto.onsite_contacts,
                 date_created=meal_request_dto.date_created,
@@ -396,6 +408,7 @@ class MealRequestQueries(QueryList):
         sort_by_date_direction=SortDirection(default_value=SortDirection.ASCENDING),
     )
 
+    @secure_donor_id
     def resolve_getMealRequestsByDonorId(
         self,
         info,
@@ -425,7 +438,6 @@ class MealRequestQueries(QueryList):
                 requestor=meal_request_dto.requestor,
                 status=meal_request_dto.status,
                 drop_off_datetime=meal_request_dto.drop_off_datetime,
-                drop_off_location=meal_request_dto.drop_off_location,
                 meal_info=meal_request_dto.meal_info,
                 onsite_contacts=meal_request_dto.onsite_contacts,
                 date_created=meal_request_dto.date_created,

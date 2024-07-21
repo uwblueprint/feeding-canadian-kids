@@ -26,7 +26,9 @@ const MealDeliveryDetails: React.FunctionComponent<MealDeliveryDetailsProps> = (
         </Text>
         <HStack>
           <IoLocationOutline />
-          <Text>{mealRequestsInformation[0]?.dropOffLocation}</Text>
+          <Text>
+            {mealRequestsInformation[0]?.requestor.info?.organizationAddress}
+          </Text>
         </HStack>
       </Stack>
       <Stack overflowY="auto" maxHeight="260px" gap="0.8rem">
@@ -42,7 +44,7 @@ const MealDeliveryDetails: React.FunctionComponent<MealDeliveryDetailsProps> = (
             <HStack>
               <Stack w="50%">
                 <Text fontSize="xs" lineHeight="15px">
-                  {new Date(request.dropOffDatetime).toLocaleDateString(
+                  {new Date(request.dropOffDatetime + "Z").toLocaleDateString(
                     undefined,
                     {
                       month: "long",
@@ -54,10 +56,9 @@ const MealDeliveryDetails: React.FunctionComponent<MealDeliveryDetailsProps> = (
                   {request.mealInfo.portions} Meals
                 </Text>
                 <Text lineHeight="20px" fontSize="xs">
-                  {new Date(request.dropOffDatetime).toLocaleTimeString(
+                  {new Date(request.dropOffDatetime + "Z").toLocaleTimeString(
                     "en-US",
                     {
-                      timeZone: "America/Toronto",
                       hour: "numeric",
                       minute: "numeric",
                       hour12: true,

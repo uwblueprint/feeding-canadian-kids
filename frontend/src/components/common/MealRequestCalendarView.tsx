@@ -186,6 +186,7 @@ export const MealRequestCalendarView = ({
       reloadMealRequests("network-only");
       afterRefetch();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldRefetch]);
 
   useEffect(() => {
@@ -200,27 +201,38 @@ export const MealRequestCalendarView = ({
       title: string;
     };
     timeText: string;
-  }) => (
-    <Flex
-      paddingX="10px"
-      direction="column"
-      paddingY="3px"
-      alignItems="center"
-      fontSize="10px"
-    >
-      {pageContext === "asp" ? (
-        <b>{eventInfo.timeText.replace(/([ap])/g, "$1m")}</b>
-      ) : (
-        <Stack>
-          <Flex alignItems="center" gap="2px" fontSize="11px">
-            <b>{eventInfo.event.title}</b>
-            <PiForkKnifeFill />
-          </Flex>
-          <Box>{eventInfo.timeText.replace(/([ap])/g, "$1m")}</Box>
-        </Stack>
-      )}
-    </Flex>
-  );
+  }) => {
+    const aspEventText = eventInfo.timeText.replace(/([ap])/g, "$1m");
+    // For meal donors, we are low on space, so remove the spaces and remove the first "am" or "pm"
+    // to save space
+    const mealDonorEventText = eventInfo.timeText
+      .replace(/([ap])/g, "$1m")
+      .replace(" ", "")
+      .replace("am", "")
+      .replace("pm", "");
+
+    return (
+      <Flex
+        paddingX={pageContext === "asp" ? "10px" : "0px"}
+        direction="column"
+        paddingY="3px"
+        alignItems="center"
+        fontSize="10px"
+      >
+        {pageContext === "asp" ? (
+          <b>{aspEventText}</b>
+        ) : (
+          <Stack width="100%" padding="0">
+            <Flex alignItems="center" gap="2px" fontSize="11px">
+              <b>{eventInfo.event.title}</b>
+              <PiForkKnifeFill />
+            </Flex>
+            <Box>{mealDonorEventText}</Box>
+          </Stack>
+        )}
+      </Flex>
+    );
+  };
 
   const getEventColor = (mealRequest: MealRequest) => {
     if (pageContext === "asp") {
@@ -231,6 +243,10 @@ export const MealRequestCalendarView = ({
       }
 
       return mealRequest.id === selectedMealRequests[0] ? "#BFBFBF" : "#DFDFDF";
+    }
+
+    if (selectedMealRequests.includes(mealRequest.id)) {
+      return "#c4c4c4";
     }
 
     return "#FFFFFF";

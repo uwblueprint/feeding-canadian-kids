@@ -24,6 +24,7 @@ import {
   Wrap,
   useDisclosure,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { GiMeal } from "react-icons/gi";
@@ -80,6 +81,8 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
   } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
 
+  const toast = useToast();
+
   const [
     deleteMealRequest,
     { loading: deleteMealRequestLoading, error: deleteMealRequestError },
@@ -126,7 +129,6 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
 
   const deleteRequest = async (item: MealRequest) => {
     try {
-      console.log(item);
       await deleteMealRequest({
         variables: {
           mealRequestId: item.id,
@@ -134,10 +136,17 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
         },
       });
       setShouldRefetchData(true);
+      setSelectedMealRequest(undefined);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Error deleting meal request:", error);
       logPossibleGraphQLError(error, setAuthenticatedUser);
+      toast({
+        title:
+          "Sorry, something went wrong when trying to delete this meal request!",
+        status: "error",
+        isClosable: true,
+      });
     }
   };
 
@@ -379,7 +388,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                   </HStack>
                   <HStack marginTop={5}>
                     <PiHourglass size={16} />
-                    <Text fontSize="14px">Meal Donor not found</Text>
+                    <Text fontSize="14px">Meal Donor not found yet</Text>
                   </HStack>
                   <Box position="absolute" bottom={2} right={2}>
                     <HStack spacing={2}>

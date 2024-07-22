@@ -1,4 +1,9 @@
 from typing import List
+
+from app.utilities.format_onsite_contacts import (
+    get_meal_request_snippet,
+)
+
 from .email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.email_service import IEmailService
@@ -189,13 +194,6 @@ class MealRequestService(IMealRequestService):
                 meal_requestor_id = meal_request.requestor.id
                 meal_requestor = User.objects(id=meal_requestor_id).first()
 
-                self.send_donor_commit_email(
-                    meal_request, donor.info.email, meal_requestor
-                )
-                self.send_requestor_commit_email(
-                    meal_request, meal_requestor.info.email, meal_requestor
-                )
-
                 meal_request.donation_info = DonationInfo(
                     donor=donor,
                     commitment_date=datetime.utcnow(),
@@ -203,12 +201,17 @@ class MealRequestService(IMealRequestService):
                     additional_info=additional_info,
                     donor_onsite_contacts=donor_onsite_contacts,
                 )
-
                 # Change the meal request's status to "Upcoming"
                 meal_request.status = MealStatus.UPCOMING.value
 
-                meal_request_dtos.append(meal_request.to_dto())
+                self.send_donor_commit_email(
+                    meal_request, donor.info.email, meal_requestor
+                )
+                self.send_requestor_commit_email(
+                    meal_request, meal_requestor.info.email, meal_requestor
+                )
 
+                meal_request_dtos.append(meal_request.to_dto())
                 meal_request.save()
 
             return meal_request_dtos
@@ -363,7 +366,7 @@ class MealRequestService(IMealRequestService):
 
         return meal_request_dtos
 
-    def send_donor_commit_email(self, meal_request, email, meal_requestor):
+    def send_donor_commit_email(self, meal_request: MealRequest, email, meal_requestor):
         if not self.email_service:
             error_message = """
                 Attempted to call committed_to_meal_request but this
@@ -373,13 +376,10 @@ class MealRequestService(IMealRequestService):
             raise Exception(error_message)
 
         try:
-            address = meal_requestor.info.organization_address
             email_body = EmailService.read_email_template(
                 "email_templates/committed_to_meal_request.html"
             ).format(
-                dropoff_location=address,
-                dropoff_time=meal_request.drop_off_datetime,
-                num_meals=meal_request.meal_info.portions,
+                meal_request_snippet=get_meal_request_snippet(meal_request),
             )
             self.email_service.send_email(
                 email, "Thank you for committing to a meal request!", email_body
@@ -401,13 +401,10 @@ class MealRequestService(IMealRequestService):
             raise Exception(error_message)
 
         try:
-            address = meal_requestor.info.organization_address
             email_body = EmailService.read_email_template(
                 "email_templates/meal_request_success.html"
             ).format(
-                dropoff_location=address,
-                dropoff_time=meal_request.drop_off_datetime,
-                num_meals=meal_request.meal_info.portions,
+                meal_request_snippet=get_meal_request_snippet(meal_request),
             )
             self.email_service.send_email(
                 email, "Your meal request has been fulfilled!", email_body

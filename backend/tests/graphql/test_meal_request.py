@@ -410,7 +410,7 @@ def test_commit_to_meal_request(meal_request_setup):
 
     assert requestor_email["subject"] == "Your meal request has been fulfilled!"
     assert requestor_email["to"] == meal_request.requestor.info.email
-    assert "Your meal request has been fulfilled!" in requestor_email["body"]
+    assert "A donor has been found for your meal request" in requestor_email["body"]
     assert (
         f"Number of Meals: {str(meal_request.meal_info.portions)}"
         in donor_email["body"]

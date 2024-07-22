@@ -1,6 +1,8 @@
-from typing import List, Union
+from typing import List
 
-from app.utilities.format_onsite_contacts import get_meal_request_snippet, get_onsite_contacts_string
+from app.utilities.format_onsite_contacts import (
+    get_meal_request_snippet,
+)
 
 from .email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
@@ -10,8 +12,7 @@ from datetime import datetime, timedelta, timezone
 
 from ...models.meal_request import DonationInfo, MealStatus
 from ...models.user import User
-from ...models.onsite_contact import OnsiteContact
-from ...models.user_info import Contact, UserInfo, UserInfoRole
+from ...models.user_info import UserInfoRole
 from ...graphql.types import SortDirection
 from ...resources.meal_request_dto import MealRequestDTO
 
@@ -213,7 +214,6 @@ class MealRequestService(IMealRequestService):
                 meal_request_dtos.append(meal_request.to_dto())
                 meal_request.save()
 
-
             return meal_request_dtos
 
         except Exception as error:
@@ -366,8 +366,6 @@ class MealRequestService(IMealRequestService):
 
         return meal_request_dtos
 
-
-    
     def send_donor_commit_email(self, meal_request: MealRequest, email, meal_requestor):
         if not self.email_service:
             error_message = """
@@ -426,7 +424,6 @@ class MealRequestService(IMealRequestService):
             meal_requests = MealRequest.objects(
                 status=MealStatus.UPCOMING.value,
                 drop_off_datetime__lte=six_hours_before,
-
             ).all()
 
             for meal_request in meal_requests:

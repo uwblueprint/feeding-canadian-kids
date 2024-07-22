@@ -1,7 +1,6 @@
-from typing import List, Union
-
-from app.graphql.types import Contact, OnsiteContact
-from app.utilities.format_onsite_contacts import get_meal_request_snippet, get_onsite_contacts_string
+from app.utilities.format_onsite_contacts import (
+    get_meal_request_snippet,
+)
 from ...services.interfaces.reminder_email_service import IReminderEmailService
 from ...services.interfaces.email_service import IEmailService
 from ...models.user import User
@@ -51,7 +50,9 @@ class ReminderEmailService(IReminderEmailService):
 
         return meal_requests
 
-    def send_email(self, email, meal_request: MealRequest, template_file_path, subject_line):
+    def send_email(
+        self, email, meal_request: MealRequest, template_file_path, subject_line
+    ):
         try:
             email_body = EmailService.read_email_template(template_file_path).format(
                 meal_request_snippet=get_meal_request_snippet(meal_request),

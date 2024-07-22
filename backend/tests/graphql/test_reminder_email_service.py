@@ -49,7 +49,7 @@ def test_meal_tomorrow(reminder_email_setup, user_setup, meal_request_setup):
     assert requestor_email["subject"] == "Your meal request is only one day away!"
 
     assert (
-        "The meal request you donated is scheduled for tomorrow!" in donor_email["body"]
+        "The meal request you are donating to is scheduled for tomorrow!" in donor_email["body"]
     )
     assert f"Dropoff Location: {asp.info.organization_address}" in donor_email["body"]
     assert str(asp.info.organization_address) in donor_email["body"]

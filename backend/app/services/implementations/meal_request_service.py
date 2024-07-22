@@ -1,5 +1,7 @@
 from typing import List, Union
 
+from app.utilities.format_onsite_contacts import get_meal_request_snippet, get_onsite_contacts_string
+
 from .email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.email_service import IEmailService
@@ -365,13 +367,6 @@ class MealRequestService(IMealRequestService):
         return meal_request_dtos
 
 
-    def get_onsite_contacts_string(self, onsite_contacts: List[Union[OnsiteContact, Contact]]):
-        string = "--\n"
-        for contact in onsite_contacts:
-            string += f"{contact.name}\n{contact.email}\n{contact.phone}\n"
-            string += "--\n"
-
-        return string
     
     def send_donor_commit_email(self, meal_request: MealRequest, email, meal_requestor):
         if not self.email_service:
@@ -383,24 +378,10 @@ class MealRequestService(IMealRequestService):
             raise Exception(error_message)
 
         try:
-            address = meal_requestor.info.organization_address
             email_body = EmailService.read_email_template(
                 "email_templates/committed_to_meal_request.html"
             ).format(
-                dropoff_location=address,
-                dropoff_time=meal_request.drop_off_datetime,
-                num_meals=meal_request.meal_info.portions,
-                dietary_restrictions=meal_request.meal_info.dietary_restrictions,
-                delivery_instructions=meal_request.delivery_instructions,
-                asp_organization_name=meal_request.requestor.info.organization_name,
-                asp_primary_contact=self.get_onsite_contacts_string([meal_requestor.info.primary_contact]),
-                # asp_onsite_contacts=self.get_onsite_contacts_string(meal_request.onsite_contacts),
-                asp_onsite_contacts="",
-                donor_organization_name=meal_request.donation_info.donor.info.organization_name,
-                donor_primary_contact=self.get_onsite_contacts_string([meal_request.donation_info.donor.info.primary_contact]),
-                donor_onsite_contacts=self.get_onsite_contacts_string(meal_request.donation_info.donor_onsite_contacts),
-                meal_description=meal_request.donation_info.meal_description,
-                additional_info=meal_request.donation_info.additional_info,
+                meal_request_snippet=get_meal_request_snippet(meal_request),
             )
             self.email_service.send_email(
                 email, "Thank you for committing to a meal request!", email_body
@@ -422,24 +403,10 @@ class MealRequestService(IMealRequestService):
             raise Exception(error_message)
 
         try:
-            address = meal_requestor.info.organization_address
             email_body = EmailService.read_email_template(
                 "email_templates/meal_request_success.html"
             ).format(
-                dropoff_location=address,
-                dropoff_time=meal_request.drop_off_datetime,
-                num_meals=meal_request.meal_info.portions,
-                dietary_restrictions=meal_request.meal_info.dietary_restrictions,
-                delivery_instructions=meal_request.delivery_instructions,
-                asp_organization_name=meal_request.requestor.info.organization_name,
-                asp_primary_contact=self.get_onsite_contacts_string([meal_requestor.info.primary_contact]),
-                # asp_onsite_contacts=self.get_onsite_contacts_string(meal_request.onsite_contacts),
-                asp_onsite_contacts="",
-                donor_organization_name=meal_request.donation_info.donor.info.organization_name,
-                donor_primary_contact=self.get_onsite_contacts_string([meal_request.donation_info.donor.info.primary_contact]),
-                donor_onsite_contacts=self.get_onsite_contacts_string(meal_request.donation_info.donor_onsite_contacts),
-                meal_description=meal_request.donation_info.meal_description,
-                additional_info=meal_request.donation_info.additional_info,
+                meal_request_snippet=get_meal_request_snippet(meal_request),
             )
             self.email_service.send_email(
                 email, "Your meal request has been fulfilled!", email_body

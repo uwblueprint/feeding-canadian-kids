@@ -1,3 +1,6 @@
+from app.utilities.format_onsite_contacts import (
+    get_meal_request_snippet,
+)
 from ...services.interfaces.reminder_email_service import IReminderEmailService
 from ...services.interfaces.email_service import IEmailService
 from ...models.user import User
@@ -47,13 +50,12 @@ class ReminderEmailService(IReminderEmailService):
 
         return meal_requests
 
-    def send_email(self, email, meal_request, template_file_path, subject_line):
+    def send_email(
+        self, email, meal_request: MealRequest, template_file_path, subject_line
+    ):
         try:
-            address = meal_request.requestor.info.organization_address
             email_body = EmailService.read_email_template(template_file_path).format(
-                dropoff_location=address,
-                dropoff_time=meal_request.drop_off_datetime,
-                num_meals=meal_request.meal_info.portions,
+                meal_request_snippet=get_meal_request_snippet(meal_request),
             )
             self.email_service.send_email(email, subject_line, email_body)
         except Exception as e:

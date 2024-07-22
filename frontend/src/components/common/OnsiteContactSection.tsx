@@ -113,6 +113,88 @@ const OnsiteTextInputRow = ({
   </Tr>
 );
 
+const MobileOnsiteTextInputRow = ({
+  onsiteInfo,
+  setOnsiteInfo,
+  index,
+  attemptedSubmit,
+}: OnsiteTextInputRowProps): React.ReactElement => (
+  <Flex flexDir="column" gap="8px" key={index}>
+    <Flex flexDir="row" justifyContent="space-between">
+      <FormControl isRequired={index === 0}>
+        <FormLabel variant="mobile-form-label-bold">
+          {`Additional Onsite Staff (${index + 1})`}
+        </FormLabel>
+      </FormControl>
+      {onsiteInfo.length >= 2 && (
+        <DeleteIcon
+          h="16px"
+          w="16px"
+          color="gray.gray300"
+          cursor="pointer"
+          _hover={{ color: "primary.blue" }}
+          onClick={() => {
+            onsiteInfo.splice(index, 1);
+            setOnsiteInfo([...onsiteInfo]);
+          }}
+        />
+      )}
+    </Flex>
+    {index === 0 && (
+      <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
+        *Must add at least 1 onsite staff. Maximum is 10.
+      </Text>
+    )}
+    <FormControl
+      isRequired={index === 0}
+      isInvalid={attemptedSubmit && onsiteInfo[index].name === ""}
+    >
+      <Input
+        h="37px"
+        variant="mobile-outline"
+        value={onsiteInfo[index].name}
+        placeholder={PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME}
+        onChange={(e) => {
+          onsiteInfo[index].name = e.target.value;
+          setOnsiteInfo([...onsiteInfo]);
+        }}
+      />
+    </FormControl>
+    <FormControl
+      isRequired={index === 0}
+      isInvalid={attemptedSubmit && onsiteInfo[index].phone === ""}
+    >
+      <Input
+        h="37px"
+        variant="mobile-outline"
+        type="tel"
+        value={onsiteInfo[index].phone}
+        placeholder={PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER}
+        onChange={(e) => {
+          onsiteInfo[index].phone = e.target.value;
+          setOnsiteInfo([...onsiteInfo]);
+        }}
+      />
+    </FormControl>
+    <FormControl
+      isRequired={index === 0}
+      isInvalid={attemptedSubmit && !isValidEmail(onsiteInfo[index].email)}
+    >
+      <Input
+        h="37px"
+        variant="mobile-outline"
+        type="email"
+        value={onsiteInfo[index].email}
+        placeholder={PLACEHOLDER_MOBILE_EXAMPLE_EMAIL}
+        onChange={(e) => {
+          onsiteInfo[index].email = e.target.value;
+          setOnsiteInfo([...onsiteInfo]);
+        }}
+      />
+    </FormControl>
+  </Flex>
+);
+
 type onsiteContactDropdownProps = {
   onsiteInfo: Array<Contact>;
   setOnsiteInfo: React.Dispatch<React.SetStateAction<Contact[]>>;
@@ -194,6 +276,82 @@ const OnsiteDropdownInputRow = ({
     )}
   </Tr>
 );
+
+const MobileOnsiteDropdownInputRow = ({
+  onsiteInfo,
+  setOnsiteInfo,
+  availableStaff,
+  index,
+  attemptedSubmit,
+}: onsiteContactDropdownProps): React.ReactElement => (
+  <Flex flexDir="column" gap="8px" key={index}>
+    <Flex flexDir="row" justifyContent="space-between">
+      <FormControl isRequired={index === 0}>
+        <FormLabel variant="mobile-form-label-bold">
+          {`Additional Onsite Staff (${index + 1})`}
+        </FormLabel>
+      </FormControl>
+      {onsiteInfo.length >= 2 && (
+        <DeleteIcon
+          h="16px"
+          w="16px"
+          color="gray.gray300"
+          cursor="pointer"
+          _hover={{ color: "primary.blue" }}
+          onClick={() => {
+            onsiteInfo.splice(index, 1);
+            setOnsiteInfo([...onsiteInfo]);
+          }}
+        />
+      )}
+    </Flex>
+    {index === 0 && (
+      <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
+        *Must add at least 1 onsite staff. Maximum is 10.
+      </Text>
+    )}
+    <FormControl
+      isRequired={index === 0}
+      isInvalid={attemptedSubmit && onsiteInfo[index].name === ""}
+    >
+      <Select
+        h="37px"
+        variant="mobile-outline"
+        fontSize="xs"
+        borderColor="gray.gray300"
+        borderWidth={1}
+        value={
+          onsiteInfo[index]
+            ? availableStaff.findIndex(
+                (staff) =>
+                  staff.name === onsiteInfo[index].name &&
+                  staff.phone === onsiteInfo[index].phone &&
+                  staff.email === onsiteInfo[index].email,
+              )
+            : ""
+        }
+        placeholder="Select a staff member"
+        onChange={(e) => {
+          // Find available staff with this name, and fill in the rest of the info
+          const staff = availableStaff[parseInt(e.target.value, 10)];
+          onsiteInfo[index] = staff;
+          setOnsiteInfo([...onsiteInfo]);
+        }}
+      >
+        {availableStaff.map((staff, index2) => (
+          <option key={index2} value={index2}>
+            {staff.name}
+          </option>
+        ))}
+      </Select>
+    </FormControl>
+    {/* display text for phone number and email */}
+
+    <Text>{onsiteInfo[index] ? onsiteInfo[index].phone : ""}</Text>
+    <Text>{onsiteInfo[index] ? onsiteInfo[index].email : ""}</Text>
+  </Flex>
+);
+
 type OnsiteContactSectionProps = {
   onsiteInfo: Array<OnsiteContact>;
   setOnsiteInfo: React.Dispatch<React.SetStateAction<OnsiteContact[]>>;
@@ -324,84 +482,41 @@ const OnsiteContactSection = ({
   return (
     <Flex flexDir="column" gap="20px">
       {/* {showCreateModal ? <CreateMeal} */}
-      {onsiteInfo.map((info, index) => (
-        <Flex flexDir="column" gap="8px" key={index}>
-          <Flex flexDir="row" justifyContent="space-between">
-            <FormControl isRequired={index === 0}>
-              <FormLabel variant="mobile-form-label-bold">
-                {`Additional Onsite Staff (${index + 1})`}
-              </FormLabel>
-            </FormControl>
-            {onsiteInfo.length >= 2 && (
-              <DeleteIcon
-                h="16px"
-                w="16px"
-                color="gray.gray300"
-                cursor="pointer"
-                _hover={{ color: "primary.blue" }}
-                onClick={() => {
-                  onsiteInfo.splice(index, 1);
-                  setOnsiteInfo([...onsiteInfo]);
-                }}
-              />
-            )}
-          </Flex>
-          {index === 0 && (
-            <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
-              *Must add at least 1 onsite staff. Maximum is 10.
-            </Text>
-          )}
-          <FormControl
-            isRequired={index === 0}
-            isInvalid={attemptedSubmit && onsiteInfo[index].name === ""}
-          >
-            <Input
-              h="37px"
-              variant="mobile-outline"
-              value={onsiteInfo[index].name}
-              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME}
-              onChange={(e) => {
-                onsiteInfo[index].name = e.target.value;
-                setOnsiteInfo([...onsiteInfo]);
-              }}
-            />
-          </FormControl>
-          <FormControl
-            isRequired={index === 0}
-            isInvalid={attemptedSubmit && onsiteInfo[index].phone === ""}
-          >
-            <Input
-              h="37px"
-              variant="mobile-outline"
-              type="tel"
-              value={onsiteInfo[index].phone}
-              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER}
-              onChange={(e) => {
-                onsiteInfo[index].phone = e.target.value;
-                setOnsiteInfo([...onsiteInfo]);
-              }}
-            />
-          </FormControl>
-          <FormControl
-            isRequired={index === 0}
-            isInvalid={
-              attemptedSubmit && !isValidEmail(onsiteInfo[index].email)
+      {onsiteInfo.map((info, index) =>
+        dropdown ? (
+          <MobileOnsiteDropdownInputRow
+            key={index}
+            onsiteInfo={onsiteInfo}
+            setOnsiteInfo={setOnsiteInfo}
+            availableStaff={
+              /* Remove previously selected staff from dropdown */
+              availableStaff.filter(
+                (staff) =>
+                  !onsiteInfo
+                    .slice(0, index)
+                    .concat(onsiteInfo.slice(index + 1))
+                    .some(
+                      (prevStaff) =>
+                        prevStaff &&
+                        prevStaff.name === staff.name &&
+                        prevStaff.phone === staff.phone &&
+                        prevStaff.email === staff.email,
+                    ),
+              )
             }
-          >
-            <Input
-              h="37px"
-              variant="mobile-outline"
-              type="email"
-              value={onsiteInfo[index].email}
-              placeholder={PLACEHOLDER_MOBILE_EXAMPLE_EMAIL}
-              onChange={(e) => {
-                onsiteInfo[index].email = e.target.value;
-                setOnsiteInfo([...onsiteInfo]);
-              }}
-            />
-          </FormControl>
-        </Flex>
-      ))}
+            index={index}
+            attemptedSubmit={attemptedSubmit}
+          />
+        ) : (
+          <MobileOnsiteTextInputRow
+            key={index}
+            onsiteInfo={onsiteInfo}
+            setOnsiteInfo={setOnsiteInfo}
+            index={index}
+            attemptedSubmit={attemptedSubmit}
+          />
+        ),
+      )}
       {onsiteInfo.length < 10 && (
         <Text
           variant="mobile-body-bold"

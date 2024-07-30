@@ -654,7 +654,7 @@ const Join = (): React.ReactElement => {
         {isWebView && <Divider />}
         {isWebView ? getWebContactSection() : getMobileContactSection()}
         <Text>
-          Next, you can optionally add additional contacts that may be onsite
+          Next, you will need to add additional contacts that may be onsite
           during the meal delivery. For each{" "}
           {role === "ASP" ? "meal request" : "meal donation"} you will be able
           to select which of these contacts will be present.

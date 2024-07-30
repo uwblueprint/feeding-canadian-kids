@@ -663,7 +663,7 @@ const Join = (): React.ReactElement => {
           onsiteInfo={onsiteInfo}
           setOnsiteInfo={setOnsiteInfo}
           attemptedSubmit={attemptedSubmit}
-          minimumRowCount={0}
+          minimumRowCount={1}
         />
         {getSubmitSection()}
       </Flex>

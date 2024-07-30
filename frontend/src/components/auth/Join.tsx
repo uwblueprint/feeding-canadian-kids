@@ -657,7 +657,9 @@ const Join = (): React.ReactElement => {
           Next, you will need to add additional contacts that may be onsite
           during the meal delivery. For each{" "}
           {role === "ASP" ? "meal request" : "meal donation"} you will be able
-          to select which of these contacts will be present.
+          to select which of these contacts will be present. Feel free to
+          include your own name here if you'll be available during some
+          deliveries.
         </Text>
         <OnsiteContactSection
           onsiteInfo={onsiteInfo}

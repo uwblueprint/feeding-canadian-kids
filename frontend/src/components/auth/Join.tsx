@@ -658,7 +658,7 @@ const Join = (): React.ReactElement => {
           during the meal delivery. For each{" "}
           {role === "ASP" ? "meal request" : "meal donation"} you will be able
           to select which of these contacts will be present. Feel free to
-          include your own name here if you'll be available during some
+          include your own name here if you may be available during meal
           deliveries.
         </Text>
         <OnsiteContactSection

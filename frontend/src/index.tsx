@@ -3,6 +3,7 @@ import { setContext } from "@apollo/client/link/context";
 import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { ChakraProvider } from "@chakra-ui/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import * as Sentry from "@sentry/react";
 import { createUploadLink } from "apollo-upload-client";
 import axios from "axios";
 import React from "react";
@@ -19,6 +20,22 @@ import {
   getLocalStorageObjProperty,
   setLocalStorageObjProperty,
 } from "./utils/LocalStorageUtils";
+
+Sentry.init({
+  dsn:
+    "https://de8c9b5036d06fcbc79a82cbc7340507@o4507682847850496.ingest.us.sentry.io/4507682862530560",
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(),
+  ],
+  // Performance Monitoring
+  tracesSampleRate: 1.0, //  Capture 100% of the transactions
+  // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
+  tracePropagationTargets: ["localhost"],
+  // Session Replay
+  replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+  replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+});
 
 const REFRESH_MUTATION = `
   mutation Index_Refresh {

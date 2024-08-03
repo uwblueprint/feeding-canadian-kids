@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { Button as ChakraButton, VStack } from "@chakra-ui/react";
+import { Button, Button as ChakraButton, VStack } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -92,6 +92,11 @@ const YourMatchesPage = (): React.ReactElement => {
     <LoadingSpinner />
   ) : (
     <VStack>
+      {/* <Button
+        onClick={() => {
+          throw new Error("This is an error message.");
+        }}
+      /> */}
       <NearbySchoolList
         schools={aspsData.getASPNearLocation}
         offset={offset}

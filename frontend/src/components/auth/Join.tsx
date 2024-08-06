@@ -46,7 +46,7 @@ const PLACEHOLDER_WEB_EXAMPLE_PHONE_NUMBER = "111-222-3333";
 const PLACEHOLDER_WEB_EXAMPLE_EMAIL = "example@domain.com";
 const PLACEHOLDER_WEB_EXAMPLE_ORG_NAME = "Feeding Canadian Kids";
 const PLACEHOLDER_WEB_EXAMPLE_NUM_KIDS = "50";
-const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown";
+const PLACEHOLDER_WEB_EXAMPLE_ADDRESS = "123 Main Street, Anytown, AB";
 const PLACEHOLDER_WEB_EXAMPLE_DESCRIPTION =
   "Non-Profit Organization in Alberta";
 
@@ -254,7 +254,7 @@ const Join = (): React.ReactElement => {
             isInvalid={attemptedSubmit && organizationAddress === ""}
           >
             <FormLabel variant="desktop-button-bold">
-              Address of organization
+              Address and city
             </FormLabel>
             <Input
               value={organizationAddress}
@@ -352,7 +352,7 @@ const Join = (): React.ReactElement => {
             isInvalid={attemptedSubmit && primaryContact.name === ""}
           >
             <FormLabel variant="desktop-button-bold">
-              1. Primary contact name
+              Primary contact name
             </FormLabel>
             <Input
               value={primaryContact.name}
@@ -653,10 +653,19 @@ const Join = (): React.ReactElement => {
           : getMobileOrganizationSection()}
         {isWebView && <Divider />}
         {isWebView ? getWebContactSection() : getMobileContactSection()}
+        <Text>
+          Next, you will need to add additional contacts that may be onsite
+          during the meal delivery. For each{" "}
+          {role === "ASP" ? "meal request" : "meal donation"} you will be able
+          to select which of these contacts will be present. Feel free to
+          include your own name here if you may be available during meal
+          deliveries.
+        </Text>
         <OnsiteContactSection
           onsiteInfo={onsiteInfo}
           setOnsiteInfo={setOnsiteInfo}
           attemptedSubmit={attemptedSubmit}
+          minimumRowCount={1}
         />
         {getSubmitSection()}
       </Flex>

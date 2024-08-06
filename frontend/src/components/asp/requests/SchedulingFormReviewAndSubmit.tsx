@@ -171,7 +171,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
         // Construct a date object from the string
         const dateObj = new Date(date + "Z");
 
-        errorMessage = `You have already created a meal request at ${dateObj.toLocaleString()} which is within 6 hours of a new meal request. Please choose another date/time, or edit your existing meal request.`;
+        errorMessage = `You have already created a meal request at ${dateObj.toLocaleString()} which is within 6 hours of one of the new meal requests. Please choose another date/time, or edit your existing meal request.`;
       } else {
         errorMessage = "Failed to create meal request. Please try again.";
       }

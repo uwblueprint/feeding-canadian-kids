@@ -3,7 +3,7 @@ from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
 from app.services.implementations.mock_email_service import MockEmailService
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from freezegun import freeze_time
 
 
@@ -258,17 +258,17 @@ def test_create_meal_request_fails_repeat_date(
     _, _, meal_request = meal_request_setup
 
     # drop_off_datetime is currently a string, so we need to convert it to a datetime object
-
     existing_date = datetime.strptime(
         meal_request.drop_off_datetime, "%Y-%m-%dT%H:%M:%S"
     )
+    invalid_new_time = str((existing_date + timedelta(hours=3)).time())+ "Z"
 
     counter_before = MealRequest.objects().count()
     mutation = f"""
     mutation testCreateMealRequest {{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        dropOffTime: "16:30:00Z",
+        dropOffTime: "{invalid_new_time}",
         mealInfo: {{
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",

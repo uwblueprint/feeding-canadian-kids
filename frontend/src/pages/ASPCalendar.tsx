@@ -100,13 +100,15 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
   }
 
   function formatTime(inputDate: string): string {
-    const startTime = new Date(inputDate).toLocaleTimeString("en-US", {
+    const startTime = new Date(inputDate + "Z").toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "numeric",
       hour12: true,
     });
 
-    const endDate = new Date(new Date(inputDate).getTime() + 60 * 60 * 1000);
+    const endDate = new Date(
+      new Date(inputDate + "Z").getTime() + 60 * 60 * 1000,
+    );
 
     const endTime = new Date(endDate).toLocaleTimeString("en-US", {
       hour: "numeric",

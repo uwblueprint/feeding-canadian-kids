@@ -49,18 +49,19 @@ class MealRequestService(IMealRequestService):
             meal_requests = []
             for request_date in request_dates:
                 # Make sure the request date is in the future
-                if request_date < datetime.now(timezone.utc).date():
+                request_datetime = datetime.combine(
+                    request_date, drop_off_time, timezone.utc
+                )
+
+                if request_datetime < datetime.now(timezone.utc):
                     raise Exception("Request date must be in the future")
 
                 # Verify that no meal request exists for the same requestor and drop-off date
+                # check that no meal request exists in a 12 hour window centered at the request date time
                 existing_request = MealRequest.objects(
                     requestor=requestor,
-                    drop_off_datetime__gte=datetime.combine(
-                        request_date, datetime.min.time(), timezone.utc
-                    ),
-                    drop_off_datetime__lte=datetime.combine(
-                        request_date, datetime.max.time(), timezone.utc
-                    ),
+                    drop_off_datetime__gte=request_datetime - timedelta(hours=6),
+                    drop_off_datetime__lte=request_datetime + timedelta(hours=6),
                 ).first()
                 if existing_request:
                     raise Exception(

@@ -19,10 +19,11 @@ import {
   Text,
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BsFilter } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 
+import AuthContext from "../../contexts/AuthContext";
 import {
   MealRequest,
   MealRequestsData,
@@ -128,6 +129,7 @@ const AdminListView = ({ authId, rowsPerPage = 10 }: AdminListViewProps) => {
   const [filter, setFilter] = useState<Array<MealStatus>>([]);
   const [sort, setSort] = useState<"ASCENDING" | "DESCENDING">("ASCENDING");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const { setAuthenticatedUser } = useContext(AuthContext);
 
   const [
     getMealRequests,
@@ -302,7 +304,7 @@ const AdminListView = ({ authId, rowsPerPage = 10 }: AdminListViewProps) => {
   };
 
   if (getMealRequestsError) {
-    logPossibleGraphQLError(getMealRequestsError);
+    logPossibleGraphQLError(getMealRequestsError, setAuthenticatedUser);
 
     return (
       <Box

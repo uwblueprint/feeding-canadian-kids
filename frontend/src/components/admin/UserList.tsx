@@ -101,7 +101,7 @@ const ActivateDeactivateModal = ({
     const [deactivateUserById] = useMutation<{
       deactivateUserById: { id: string; requestorId: string; };
     }>(DEACTIVATE_USER);
-    const { authenticatedUser } = useContext(AuthContext);
+    const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   
     const onActivate = async () => {
       await setIsSubmitLoading(true);
@@ -122,7 +122,7 @@ const ActivateDeactivateModal = ({
           });
         }
       } catch (e: unknown) {
-        logPossibleGraphQLError(e);
+        logPossibleGraphQLError(e, setAuthenticatedUser);
         toast({
           title: "Failed to activate. Please try again.",
           status: "error",
@@ -130,7 +130,6 @@ const ActivateDeactivateModal = ({
         });
       }
 
-      refetch();
       onClose();
       await setIsSubmitLoading(false);
     }
@@ -154,7 +153,7 @@ const ActivateDeactivateModal = ({
           });
         }
       } catch (e: unknown) {
-        logPossibleGraphQLError(e);
+        logPossibleGraphQLError(e, setAuthenticatedUser);
         toast({
           title: "Failed to deactivate. Please try again.",
           status: "error",
@@ -162,7 +161,6 @@ const ActivateDeactivateModal = ({
         });
       }
   
-      refetch();
       onClose();
       await setIsSubmitLoading(false);
     };
@@ -175,8 +173,8 @@ const ActivateDeactivateModal = ({
           <ModalCloseButton />
           <ModalBody>
             {isActive 
-            ? "Deactivating the user means they will no longer be in the system."
-            : "Activating the user means they will be in the system."}
+            ? "Deactivating the user means they will no longer be in the system. "
+            : "Activating the user means they will be in the system. "}
             Your changes will not be saved if you leave this page.
           </ModalBody>
           <ModalFooter>
@@ -188,19 +186,20 @@ const ActivateDeactivateModal = ({
                 _hover={{
                   bgColor: "background.darkred",
                 }}
-                onClick={onDeactivate}
+                onClick={() => {
+                  onDeactivate();
+                  refetch();
+                }}
                 disabled={isSubmitLoading}
               >
                 {isSubmitLoading ? <Spinner /> : "Deactivate"}
               </Button>
             : <Button
                 width="25%"
-                // color="text.white"
-                // bgColor="text.red"
-                // _hover={{
-                //   bgColor: "background.darkred",
-                // }}
-                onClick={onActivate}
+                onClick={() => {
+                  onActivate();
+                  refetch();
+                }}
                 disabled={isSubmitLoading}
               >
                 {isSubmitLoading ? <Spinner /> : "Activate"}
@@ -232,28 +231,16 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
   }>();
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const { setAuthenticatedUser } = useContext(AuthContext);
+  const [userId, setUserId] = useState<string>("");
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const [reload, setReload] = useState(false);
 
   const [
     getUsers,
     { loading: getUsersLoading, error: getUsersError, data: getUsersData },
   ] = useLazyQuery<GetAllUsersData, GetAllUserVariables>(GET_ALL_USERS, {
     onCompleted: (results) => {
-      const test = {
-        nodes: results.getAllUsers?.map(
-          (userData: UserData): TABLE_LIBRARY_TYPES.TableNode => ({
-            id: userData.id,
-            name: userData.info?.organizationName,
-            address: userData.info?.organizationAddress,
-            email: userData.info?.email,
-            description: userData.info?.organizationDesc,
-            primary_contact: userData.info?.primaryContact,
-            onsite_staff: userData.info?.initialOnsiteContacts,
-            active: userData.info?.active,
-            _hasContent: false,
-            nodes: null,
-          }),
-        ),
-      };
       setData({
         nodes: results.getAllUsers?.map(
           (
@@ -276,19 +263,19 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     },
   });
 
-  function reloadMealRequests() {
-    getUsers({
-      variables: {
-        role: isASP ? "ASP" : "Donor",
-        limit: rowsPerPage,
-        offset: (currentPage - 1) * rowsPerPage,
-      },
-    });
-  }
-
   useEffect(() => {
+    function reloadMealRequests() {
+      getUsers({
+        variables: {
+          role: isASP ? "ASP" : "Donor",
+          limit: rowsPerPage,
+          offset: (currentPage - 1) * rowsPerPage,
+        },
+      });
+    }
+
     reloadMealRequests();
-  }, [isASP, rowsPerPage, currentPage]);
+  }, [isASP, rowsPerPage, currentPage, reload]);
 
   const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
@@ -396,28 +383,42 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
             ))}
           </Box>
           <Box>
-            <Button
-              width="100%"
-              color="text.red"
-              bgColor="text.white"
-              border="2px solid"
-              borderColor="text.red"
-              _hover={{
-                bgColor: "gray.gray83",
-              }}
-              onClick={() => {
-                onOpen();
-              }}
-            >
-              Deactivate
-            </Button>
-            <ActivateDeactivateModal
-              isOpen={isOpen}
-              onClose={onClose}
-              userId={String(item.id)}
-              isActive
-              refetch={() => reloadMealRequests()}
-            />
+            {item.active
+            ? <Button
+                width="100%"
+                color="text.red"
+                bgColor="text.white"
+                border="2px solid"
+                borderColor="text.red"
+                _hover={{
+                  bgColor: "gray.gray83",
+                }}
+                onClick={() => {
+                  setUserId(String(item.id));
+                  setIsActive(true);
+                  onOpen();
+                }}
+              >
+                Deactivate
+              </Button>
+            : <Button
+                width="100%"
+                color="green"
+                bgColor="text.white"
+                border="2px solid"
+                borderColor="green"
+                _hover={{
+                  bgColor: "gray.gray83",
+                }}
+                onClick={() => {
+                  setUserId(String(item.id));
+                  setIsActive(false);
+                  onOpen();
+                }}
+              >
+                Activate
+              </Button>
+            }
           </Box>
         </Flex>
       </Collapse>
@@ -425,7 +426,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   };
 
   if (getUsersError) {
-    logPossibleGraphQLError(getUsersError);
+    logPossibleGraphQLError(getUsersError, setAuthenticatedUser);
 
     return (
       <Box
@@ -450,6 +451,15 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
         requestType={isASP ? "After School Programs" : "Meal Donors"}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+      />
+      <ActivateDeactivateModal
+        isOpen={isOpen}
+        onClose={onClose}
+        userId={userId}
+        isActive={isActive}
+        refetch={() => {
+          setReload(prev => !prev);
+        }}
       />
     </Box>
   );

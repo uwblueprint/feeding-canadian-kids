@@ -44,20 +44,21 @@ required_env_vars = [
 
 
 def create_app(config_name):
-    sentry_sdk.init(
-        dsn="https://85a9bf2fc71b287cc4e60cb9f918f034@o4507682847850496.ingest.us.sentry.io/4507801405227008",
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for tracing.
-        traces_sample_rate=1.0,
-        # Set profiles_sample_rate to 1.0 to profile 100%
-        # of sampled transactions.
-        # We recommend adjusting this value in production.
-        profiles_sample_rate=1.0,
-        # Config name is either development or testing or production
-        environment=config_name,
-        send_default_pii=True,
-    )
     print("Environment is", config_name)
+    if config_name != "testing":
+        sentry_sdk.init(
+            dsn="https://85a9bf2fc71b287cc4e60cb9f918f034@o4507682847850496.ingest.us.sentry.io/4507801405227008",
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for tracing.
+            traces_sample_rate=1.0,
+            # Set profiles_sample_rate to 1.0 to profile 100%
+            # of sampled transactions.
+            # We recommend adjusting this value in production.
+            profiles_sample_rate=1.0,
+            # Config name is either development or testing or production
+            environment=config_name,
+            send_default_pii=True,
+        )
     dictConfig(
         {
             "version": 1,

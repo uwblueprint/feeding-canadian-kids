@@ -92,11 +92,6 @@ const YourMatchesPage = (): React.ReactElement => {
     <LoadingSpinner />
   ) : (
     <VStack>
-      {/* <Button
-        onClick={() => {
-          throw new Error("This is an error message.");
-        }}
-      /> */}
       <NearbySchoolList
         schools={aspsData.getASPNearLocation}
         offset={offset}

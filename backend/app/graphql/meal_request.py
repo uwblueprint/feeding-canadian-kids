@@ -350,6 +350,7 @@ class MealRequestQueries(QueryList):
     )
 
     @secure_requestor_id
+    @requires_role("Admin")
     def resolve_getMealRequests(
         self,
         info,

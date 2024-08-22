@@ -64,6 +64,18 @@ class IMealRequestService(ABC):
         pass
 
     @abstractmethod
+    def get_meal_requests(
+        self,
+        min_drop_off_date,
+        max_drop_off_date,
+        status,
+        offset,
+        limit,
+        sort_by_date_direction,
+    ) -> List[MealRequestDTO]:
+        pass
+
+    @abstractmethod
     def get_meal_request_by_id(
         self,
         id: str,

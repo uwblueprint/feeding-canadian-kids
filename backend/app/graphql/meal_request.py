@@ -310,6 +310,21 @@ class MealRequestMutations(MutationList):
 
 
 class MealRequestQueries(QueryList):
+    # Get all meal requests, with option to filter by certain statuses
+    getMealRequests = graphene.List(
+        MealRequestResponse,
+        admin_id=graphene.ID(required=True),  # Admin ID
+        min_drop_off_date=graphene.Date(default_value=None),
+        max_drop_off_date=graphene.Date(default_value=None),
+        status=graphene.List(
+            graphene.Enum.from_enum(MealStatus),
+            default_value=MEAL_STATUSES_ENUMS,
+        ),
+        offset=graphene.Int(default_value=0),
+        limit=graphene.Int(default_value=None),
+        sort_by_date_direction=SortDirection(default_value=SortDirection.ASCENDING),
+    )
+
     getMealRequestsByRequestorId = graphene.List(
         MealRequestResponse,
         requestor_id=graphene.ID(required=True),
@@ -337,6 +352,51 @@ class MealRequestQueries(QueryList):
         requestor_id=graphene.ID(required=True),
         ids=graphene.List(graphene.ID),
     )
+
+    @secure_requestor_id
+    @requires_role("Admin")
+    def resolve_getMealRequests(
+        self,
+        info,
+        admin_id: str,
+        min_drop_off_date: str,
+        max_drop_off_date: str,
+        status: List[MealStatus],
+        offset: int,
+        limit: int,
+        sort_by_date_direction: SortDirection,
+    ):
+        # The user must actually be an admin to view all meal requests
+        user_service = services["user_service"]
+        admin_auth_id = user_service.get_auth_id_by_user_id(admin_id)
+        admin_role = user_service.get_user_role_by_auth_id(admin_auth_id)
+        if admin_role != "Admin":
+            raise Exception("Only admins can view all meal requests")
+
+        meal_request_dtos = services["meal_request_service"].get_meal_requests(
+            min_drop_off_date,
+            max_drop_off_date,
+            status,
+            offset,
+            limit,
+            sort_by_date_direction,
+        )
+
+        return [
+            MealRequestResponse(
+                id=meal_request_dto.id,
+                requestor=meal_request_dto.requestor,
+                status=meal_request_dto.status,
+                drop_off_datetime=meal_request_dto.drop_off_datetime,
+                meal_info=meal_request_dto.meal_info,
+                onsite_contacts=meal_request_dto.onsite_contacts,
+                date_created=meal_request_dto.date_created,
+                date_updated=meal_request_dto.date_updated,
+                delivery_instructions=meal_request_dto.delivery_instructions,
+                donation_info=meal_request_dto.donation_info,
+            )
+            for meal_request_dto in meal_request_dtos
+        ]
 
     @secure_requestor_id
     def resolve_getMealRequestById(

@@ -266,9 +266,54 @@ const EditMealRequestForm = ({
   const [updateMealRequest] = useMutation(UPDATE_MEAL_REQUEST);
   const [updateMealDonation] = useMutation(UPDATE_MEAL_DONATION);
 
+  // For validation
+  const validateData = () => {
+    if (
+      numberOfMeals <= 0 ||
+      onsiteContacts.length === 0 ||
+      onsiteContacts.some(
+        (contact) =>
+          !contact ||
+          contact.name === "" ||
+          contact.email === "" ||
+          contact.phone === "",
+      )
+    ) {
+      setAttemptedSubmit(true);
+      return false;
+    }
+
+    if (isEditDonation) {
+      if (mealDescription === "") {
+        setAttemptedSubmit(true);
+        return false;
+      }
+    }
+
+    if (!isEditDonation) {
+      if (deliveryInstructions === "") {
+        setAttemptedSubmit(true);
+        return false;
+      }
+    }
+
+    setAttemptedSubmit(false);
+    return true;
+  };
+
   async function submitEditMealRequest() {
     try {
       setLoading(true);
+
+      // Validate the data
+      const valid = validateData();
+
+      // If there are any errors, return
+      if (!valid) {
+        setLoading(false);
+        return;
+      }
+
       const response = await updateMealRequest({
         variables: {
           requestorId,
@@ -306,6 +351,16 @@ const EditMealRequestForm = ({
   async function submitEditMealDonation() {
     try {
       setLoading(true);
+
+      // Validate the data
+      const valid = validateData();
+
+      // If there are any errors, return
+      if (!valid) {
+        setLoading(false);
+        return;
+      }
+
       const response = await updateMealDonation({
         variables: {
           requestorId,
@@ -380,15 +435,17 @@ const EditMealRequestForm = ({
                     modified later)
                   </FormHelperText>
                   <Input
+                    // TODO should we change this placeholder?
                     placeholder="Ex. 40 mac and cheeses with 9 gluten free ones. Also will donate 30 bags of cheetos."
                     value={mealDescription}
                     onChange={(e) => setMealDescription(e.target.value)}
                     ref={initialFocusRef}
+                    isInvalid={attemptedSubmit && mealDescription === ""}
                     type="text"
                   />
                 </FormControl>
 
-                <FormControl mt={3} isRequired>
+                <FormControl mt={3}>
                   <FormLabel
                     variant={{
                       base: "mobile-form-label-bold",
@@ -399,6 +456,7 @@ const EditMealRequestForm = ({
                   </FormLabel>
                   <Input
                     size="lg"
+                    // Should we change this placeholder?
                     placeholder="Ex. A man with a beard will leave the food at the front door of the school."
                     value={additionalNotes}
                     onChange={(e) => setAdditionalNotes(e.target.value)}
@@ -408,7 +466,7 @@ const EditMealRequestForm = ({
                 <OnsiteContactsSection
                   onsiteInfo={mealDonorOnsiteContacts}
                   setOnsiteInfo={setMealDonorOnsiteContacts}
-                  attemptedSubmit={false /* todo change */}
+                  attemptedSubmit={attemptedSubmit}
                   availableStaff={availableOnsiteContacts}
                   dropdown
                 />
@@ -533,7 +591,7 @@ const EditMealRequestForm = ({
               <OnsiteContactsSection
                 onsiteInfo={onsiteContacts}
                 setOnsiteInfo={setOnsiteContacts}
-                attemptedSubmit={false /* todo change */}
+                attemptedSubmit={attemptedSubmit}
                 availableStaff={availableOnsiteContacts}
                 dropdown
               />

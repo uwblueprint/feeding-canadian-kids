@@ -149,6 +149,10 @@ class UpdateMealRequestDonation(Mutation):
                     "Requestor is not an admin or the donor of the meal request."
                 )
 
+            # For now, enforce that a meal description is required
+            if not meal_description:
+                raise Exception("Meal description is required.")
+
             result = services["meal_request_service"].update_meal_request_donation(
                 requestor_id=requestor_id,
                 meal_request_id=meal_request_id,

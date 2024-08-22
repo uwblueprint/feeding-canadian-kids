@@ -195,7 +195,7 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
       <Card padding={3} variant="outline">
         <Flex
           direction={["column", "row"]}
-          justifyContent="space-between"
+          justifyContent="space-around"
           alignItems="center"
         >
           <VStack padding={10}>

@@ -261,7 +261,7 @@ def test_create_meal_request_fails_repeat_date(
     existing_date = datetime.strptime(
         meal_request.drop_off_datetime, "%Y-%m-%dT%H:%M:%S"
     )
-    invalid_new_time = str((existing_date + timedelta(hours=3)).time())+ "Z"
+    invalid_new_time = str((existing_date + timedelta(hours=3)).time()) + "Z"
 
     counter_before = MealRequest.objects().count()
     mutation = f"""

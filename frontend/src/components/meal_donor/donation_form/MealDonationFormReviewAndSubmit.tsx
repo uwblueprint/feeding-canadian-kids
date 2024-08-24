@@ -31,12 +31,15 @@ import { useNavigate } from "react-router-dom";
 
 import MealDeliveryDetails from "./MealDeliveryDetails";
 
+
+import * as Routes from "../../../constants/Routes";
 import { MEAL_DONOR_DASHBOARD_PAGE } from "../../../constants/Routes";
 import AuthContext from "../../../contexts/AuthContext";
 import { MealRequest } from "../../../types/MealRequestTypes";
 import { Contact, OnsiteContact } from "../../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
 import { useGetDefaultPageForUser } from "../../../utils/useGetDefaultPageForUser";
+import useIsMealDonor from "../../../utils/useIsMealDonor";
 import OnsiteContactSection from "../../common/OnsiteContactSection";
 
 // Create the GraphQL mutation
@@ -75,6 +78,7 @@ type MealDonationFormReviewAndSubmitProps = {
   // Other required data
   requestorId: string;
   primaryContact: Contact;
+  aspId: string;
 
   // Switch tabs
   handleBack: () => void;
@@ -87,6 +91,7 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
   additionalInfo,
   requestorId,
   primaryContact,
+  aspId,
   handleBack,
 }) => {
   const [commitToMealRequest] = useMutation<{
@@ -98,6 +103,7 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
   const navigate = useNavigate();
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const defaultPage = useGetDefaultPageForUser();
+  const isMealDonor = useIsMealDonor();
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const handleSubmit = async () => {
@@ -123,7 +129,15 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
           status: "success",
           isClosable: true,
         });
-        navigate(defaultPage);
+
+        if (isMealDonor) {
+          navigate(
+            `${Routes.MEAL_DONOR_CONFIRMATION_PAGE}?aspId=${aspId}`,
+          );
+        }
+        else {
+          navigate(defaultPage);
+        }
       }
     } catch (e: unknown) {
       logPossibleGraphQLError(e, setAuthenticatedUser);

@@ -65,6 +65,7 @@ const MealDonationForm = (): React.ReactElement => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const idsParam = searchParams.get("ids");
+  const aspId = searchParams.get("aspId");
   // Split the idsParam by dot to get an array of ids
   const ids = idsParam ? idsParam.split(",") : [];
 
@@ -191,6 +192,7 @@ const MealDonationForm = (): React.ReactElement => {
               onsiteContact={onsiteContacts}
               requestorId={requestorId}
               primaryContact={primaryContact}
+              aspId={aspId || ""}
               handleBack={() => {}} // Leave like this, gets updated by three-step form
             />
           }

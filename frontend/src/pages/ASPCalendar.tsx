@@ -390,7 +390,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                   </HStack>
                   <HStack marginTop={5}>
                     <PiHourglass size={16} />
-                    <Text fontSize="14px">Meal Donor not found yet</Text>
+                    <Text fontSize="14px">No committed meal donor</Text>
                   </HStack>
                   <Box position="absolute" bottom={2} right={2}>
                     <HStack spacing={2}>

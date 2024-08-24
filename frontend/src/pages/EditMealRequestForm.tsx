@@ -290,13 +290,6 @@ const EditMealRequestForm = ({
       }
     }
 
-    if (!isEditDonation) {
-      if (deliveryInstructions === "") {
-        setAttemptedSubmit(true);
-        return false;
-      }
-    }
-
     setAttemptedSubmit(false);
     return true;
   };
@@ -527,16 +520,17 @@ const EditMealRequestForm = ({
               </Text>
 
               {!isUpcoming ? (
-                <FormControl mt={3} mb={6} isRequired>
+                <FormControl
+                  mt={3}
+                  mb={6}
+                  isRequired
+                  isInvalid={attemptedSubmit && numberOfMeals <= 0}
+                >
                   <FormLabel
                     variant={{
                       base: "mobile-form-label-bold",
                       md: "form-label-bold",
                     }}
-
-                    // TODO: Hook this up to a state variable
-                    // TODO: Setup correct validation for this
-                    // isInvalid={attemptedSubmit && }
                   >
                     Number of meals
                   </FormLabel>
@@ -552,7 +546,7 @@ const EditMealRequestForm = ({
               ) : null}
 
               {!isUpcoming ? (
-                <FormControl mt={3} mb={6} isRequired>
+                <FormControl mt={3} mb={6}>
                   <FormLabel
                     variant={{
                       base: "mobile-form-label-bold",
@@ -569,14 +563,12 @@ const EditMealRequestForm = ({
                 </FormControl>
               ) : null}
 
-              <FormControl mt={3} mb={6} isRequired>
+              <FormControl mt={3} mb={6}>
                 <FormLabel
                   variant={{
                     base: "mobile-form-label-bold",
                     md: "form-label-bold",
                   }}
-                  // TODO: Setup correct validation for this
-                  // isInvalid={attemptedSubmit && }
                 >
                   Delivery Notes
                 </FormLabel>

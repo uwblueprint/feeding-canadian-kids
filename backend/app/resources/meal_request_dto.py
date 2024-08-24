@@ -49,17 +49,15 @@ class MealRequestDTO:
 
         validate_user(self.requestor, "requestor", error_list)
 
-        # if type(self.status) is not str:
-        #     error_list.append("The status supplied is not a string.")
+        if type(self.status) is not str:
+            error_list.append(f"The status supplied was type {type(self.status)}, but expected a string.")
 
         if self.status not in MEAL_STATUSES_STRINGS:
-            # TODO: revisit this
-            pass
-            # error_list.append(
-            #     "The status {self_status} is not one of {valid_statuses}".format(
-            #         self_status=self.status, valid_statuses=", ".join(MEAL_STATUSES)
-            #     )
-            # )
+            error_list.append(
+                "The status {self_status} is not one of {valid_statuses}".format(
+                    self_status=self.status, valid_statuses=", ".join(MEAL_STATUSES_STRINGS)
+                )
+            )
 
         if type(self.drop_off_datetime) is not datetime.datetime:
             error_list.append(

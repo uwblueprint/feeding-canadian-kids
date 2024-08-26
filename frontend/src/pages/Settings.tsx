@@ -240,7 +240,10 @@ const Settings = (): React.ReactElement => {
   const [createOnsiteContact] = useMutation(CREATE_ONSITE_CONTACT);
   const [updateOnsiteContact] = useMutation(UPDATE_ONSITE_CONTACT);
   const [deleteOnsiteContact] = useMutation(DELETE_ONSITE_CONTACT);
-  const [forgotPassword] = useMutation(FORGOT_PASSWORD);
+  const [
+    forgotPassword,
+    { loading: forgotPasswordLoading },
+  ] = useMutation(FORGOT_PASSWORD);
 
   // OnsiteContact query
 
@@ -336,9 +339,20 @@ const Settings = (): React.ReactElement => {
             borderColor="primary.green"
             borderRadius="6px"
             _hover={{ color: "text.white", bgColor: "primary.green" }}
+            disabled={forgotPasswordLoading}
             onClick={onClickResetPassword}
           >
-            Reset Password
+            {forgotPasswordLoading ? (
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="primary.green"
+                size="lg"
+              />
+            ) : (
+              "Reset Password"
+            )}
           </Button>
         </HStack>
       </Flex>

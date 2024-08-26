@@ -13,6 +13,7 @@ import MealDonationForm from "./components/meal_donor/donation_form/MealDonation
 import * as Paths from "./constants/Routes";
 import Dashboard from "./pages/ASPDashboard";
 import MealDonorCalendar from "./pages/MealDonorCalendar";
+import MealDonorConfirmation from "./pages/MealDonorConfirmation";
 import MealDonorDashboard from "./pages/MealDonorDashboard";
 import NotFound from "./pages/NotFound";
 import OnboardingRequestsPage from "./pages/OnboardingRequestsPage";
@@ -57,6 +58,10 @@ const Routes = (): React.ReactElement => {
         <Route
           path={Paths.MEAL_DONOR_UPCOMING_PAGE}
           element={<UpcomingPage />}
+        />
+        <Route
+          path={Paths.MEAL_DONOR_CONFIRMATION_PAGE}
+          element={<MealDonorConfirmation />}
         />
         <Route
           path={Paths.ONBOARDING_REQUESTS_PAGE}

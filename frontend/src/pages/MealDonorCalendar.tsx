@@ -228,7 +228,7 @@ const MealDonorCalendar = (): React.ReactElement => {
   const handleNext = (selectedMealRequests: Array<string>) => {
     // Do something with selectedMealRequests
     navigate(
-      `${Routes.MEAL_DONOR_FORM_PAGE}?ids=${selectedMealRequests.join(",")}`,
+      `${Routes.MEAL_DONOR_FORM_PAGE}?ids=${selectedMealRequests.join(",")}&aspId=${aspId}`,
     );
   };
   return (

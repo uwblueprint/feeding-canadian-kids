@@ -26,6 +26,8 @@ export const MEAL_DONOR_FORM_PAGE = "/meal_donor/donate/";
 
 export const MEAL_DONOR_UPCOMING_PAGE = "/meal_donor/upcoming";
 
+export const MEAL_DONOR_CONFIRMATION_PAGE = "/meal_donor/confirmation"
+
 export const YOUR_MATCHES_PAGE = "/meal_donor/matches";
 
 export const SETTINGS_PAGE = "/settings";

@@ -191,10 +191,13 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
         {currentlyEditingMealRequestId ? (
           <EditMealRequestForm
             open={isEditModalOpen}
-            onClose={() => {
+            onClose={(meal_request) => {
               setIsEditModalOpen(false);
               setCurrentlyEditingMealRequestId(undefined);
               setShouldRefetchData(true);
+              if (meal_request !== undefined) {
+                setSelectedMealRequest(meal_request);
+              }
             }}
             mealRequestId={currentlyEditingMealRequestId}
             isEditDonation={false}

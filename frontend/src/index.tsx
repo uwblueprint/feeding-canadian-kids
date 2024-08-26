@@ -46,7 +46,7 @@ const REFRESH_MUTATION = `
 `;
 
 // eslint-disable-next-line no-console
-console.log("bakcend url is", process.env.REACT_APP_BACKEND_URL);
+console.log("Backend url is", process.env.REACT_APP_BACKEND_URL);
 const link = createUploadLink({
   uri: `${process.env.REACT_APP_BACKEND_URL}/graphql`,
   credentials: "include",

@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import {
   Box,
   Button,
@@ -105,6 +105,7 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
   const defaultPage = useGetDefaultPageForUser();
   const isMealDonor = useIsMealDonor();
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const apolloClient = useApolloClient();
 
   const handleSubmit = async () => {
     await setIsSubmitLoading(true);
@@ -131,6 +132,8 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
         });
 
         if (isMealDonor) {
+          apolloClient.cache.evict({ fieldName: "getMealRequestsByRequestorId" });
+          apolloClient.cache.evict({ fieldName: "getMealRequestsByDonorId" });
           navigate(
             `${Routes.MEAL_DONOR_CONFIRMATION_PAGE}?aspId=${aspId}`,
           );

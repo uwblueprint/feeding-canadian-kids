@@ -30,7 +30,7 @@ import React, { useContext, useEffect, useState } from "react";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import OnsiteContactsSection from "../components/common/OnsiteContactSection";
 import AuthContext from "../contexts/AuthContext";
-import { MealRequestsData } from "../types/MealRequestTypes";
+import { MealRequest, MealRequestsData } from "../types/MealRequestTypes";
 import { Contact, OnsiteContact } from "../types/UserTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 import useGetOnsiteContacts from "../utils/useGetOnsiteContacts";
@@ -181,7 +181,7 @@ const EditMealRequestForm = ({
   isEditDonation,
 }: {
   open: boolean;
-  onClose: () => void;
+  onClose: (meal_request : MealRequest | undefined) => void;
   mealRequestId: string;
   isEditDonation: boolean;
 }) => {
@@ -263,8 +263,8 @@ const EditMealRequestForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestorId, mealRequestId, apolloClient]);
 
-  const [updateMealRequest] = useMutation(UPDATE_MEAL_REQUEST);
-  const [updateMealDonation] = useMutation(UPDATE_MEAL_DONATION);
+  const [updateMealRequest] = useMutation<MealRequestsData>(UPDATE_MEAL_REQUEST);
+  const [updateMealDonation] = useMutation<MealRequestsData>(UPDATE_MEAL_DONATION);
 
   // For validation
   const validateData = () => {
@@ -328,6 +328,7 @@ const EditMealRequestForm = ({
         throw new GraphQLError("Failed to update meal request.");
       }
       setLoading(false);
+      onClose(data.updateMealRequest.mealRequest);
     } catch (e: unknown) {
       // eslint-disable-next-line no-console
       logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
@@ -337,8 +338,8 @@ const EditMealRequestForm = ({
         isClosable: true,
       });
       setLoading(false);
+      onClose(undefined);
     }
-    onClose();
   }
 
   async function submitEditMealDonation() {
@@ -376,6 +377,7 @@ const EditMealRequestForm = ({
         throw new GraphQLError("Failed to update meal donation information.");
       }
       setLoading(false);
+      onClose(data.updateMealDonation.mealRequest);
     } catch (e: unknown) {
       // eslint-disable-next-line no-console
       logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
@@ -385,13 +387,13 @@ const EditMealRequestForm = ({
         isClosable: true,
       });
       setLoading(false);
+      onClose(undefined);
     }
-    onClose();
   }
 
   if (isEditDonation) {
     return (
-      <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={onClose}>
+      <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={() => onClose(undefined)}>
         <ModalOverlay />
         <ModalContent
           maxWidth={{ base: "100%", md: "900px" }}
@@ -466,7 +468,7 @@ const EditMealRequestForm = ({
               </ModalBody>
 
               <ModalFooter>
-                <Button onClick={onClose} mr={3} variant="outline">
+                <Button onClick={() => onClose(undefined)} mr={3} variant="outline">
                   Cancel
                 </Button>
                 <Button
@@ -487,7 +489,7 @@ const EditMealRequestForm = ({
   }
 
   return (
-    <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={onClose}>
+    <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={() => onClose(undefined)}>
       <ModalOverlay />
       <ModalContent
         maxWidth={{ base: "100%", md: "900px" }}
@@ -590,7 +592,7 @@ const EditMealRequestForm = ({
             </ModalBody>
 
             <ModalFooter>
-              <Button onClick={onClose} mr={3} variant="outline">
+              <Button onClick={() => onClose(undefined)} mr={3} variant="outline">
                 Cancel
               </Button>
               <Button

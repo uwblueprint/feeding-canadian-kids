@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import {
   Box,
   Button,
@@ -103,6 +103,8 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
 
   const navigate = useNavigate();
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const apolloClient = useApolloClient();
+
 
   // Datetimes is a list of javascript dates with the correct date and time.
   // The "mealRequestDates" only is dates without the time, so we need to add the time to it.
@@ -142,6 +144,8 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
 
       // On success, navigate to dashboard
       if (response.data) {
+        apolloClient.cache.evict({ fieldName: "getMealRequestsByRequestorId" });
+        apolloClient.cache.evict({ fieldName: "getMealRequestsByDonorId" });
         toast({
           title: "Meal request submitted!",
           status: "success",

@@ -8,7 +8,7 @@ create should be working
 work on other pages as well
 
 */
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
+import { ApolloError, gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import {
   Button,
   Center,
@@ -231,6 +231,7 @@ const Settings = (): React.ReactElement => {
   const [createOnsiteContact] = useMutation(CREATE_ONSITE_CONTACT);
   const [updateOnsiteContact] = useMutation(UPDATE_ONSITE_CONTACT);
   const [deleteOnsiteContact] = useMutation(DELETE_ONSITE_CONTACT);
+  const apolloClient = useApolloClient();
 
   // OnsiteContact query
 
@@ -723,6 +724,7 @@ const Settings = (): React.ReactElement => {
         requestOnsiteContacts.map((obj) => JSON.parse(JSON.stringify(obj))),
       );
       setIsLoading(false);
+      apolloClient.cache.evict({ fieldName: "getOnsiteContactForUserById" });
     } catch (e: unknown) {
       logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
       setIsLoading(false);

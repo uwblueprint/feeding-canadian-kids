@@ -95,7 +95,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
   }
 
   function formatDate(inputDate: string): string {
-    const date = new Date(inputDate);
+    const date = new Date(inputDate + "Z");
     return date.toDateString();
   }
 

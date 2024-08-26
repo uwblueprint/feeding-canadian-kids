@@ -7,9 +7,9 @@ on:
   #     - main
   #   paths:
   #     - "frontend/**"
-  pull_request:
-    paths:
-      - "frontend/**"
+  # pull_request:
+  #   paths:
+  #     - "frontend/**"
   push:
       branches:
         - "shahanneda/prod-deploy"

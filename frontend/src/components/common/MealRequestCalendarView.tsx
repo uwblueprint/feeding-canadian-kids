@@ -40,9 +40,6 @@ import { ErrorMessage } from "../../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import BackgroundImage from "../assets/background.png";
 
-type ButtonProps = { text: string; path: string };
-type SchoolSidebarProps = { aspId: string; distance: string };
-
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
     $requestorId: ID!

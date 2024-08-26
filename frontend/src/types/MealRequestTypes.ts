@@ -57,9 +57,15 @@ export type MealRequestsDonorVariables = {
   sortByDateDirection?: SortByDateDirection;
 };
 
+type UpdateMealRequestType =  {
+  mealRequest : MealRequest
+}
+
 export type MealRequestsData = {
   getMealRequestsByRequestorId: Array<MealRequest>;
   getMealRequestById: MealRequest;
   getMealRequestsByIds: Array<MealRequest>;
   getMealRequestsByDonorId: Array<MealRequest>;
+  updateMealRequest: UpdateMealRequestType;
+  updateMealDonation: UpdateMealRequestType;
 };

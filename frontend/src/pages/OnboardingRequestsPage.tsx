@@ -352,12 +352,6 @@ const ASPCard = ({
               <Text fontWeight="bold">Number of Kids</Text>
               <Text>{onboardingRequest?.info?.roleInfo?.aspInfo?.numKids}</Text>
             </Box>
-
-            <BanIcon />
-            <Box>
-              <Text fontWeight="bold">Dietary Restrictions</Text>
-              <Text>TODO: ADD DIET HERE</Text>
-            </Box>
           </>
         )}
         {onboardingRequest?.status === OnboardingRequestStatuses.PENDING ? (
@@ -531,14 +525,7 @@ const OnboardingRequestsPage = (): React.ReactElement => {
 
   const getTitleSection = (): React.ReactElement => (
     <Flex flexDir="column" width="100%">
-      <TitleSection
-        title="Onboarding Requests"
-        description={
-          isASP
-            ? "These are After School Program onboarding requests"
-            : "These are Meal Donor onboarding requests"
-        }
-      />
+      <TitleSection title="Onboarding Requests" />
       <Flex width="100%" justifyContent="space-between">
         <Flex>
           <Menu>

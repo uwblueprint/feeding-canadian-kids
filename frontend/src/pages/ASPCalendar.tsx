@@ -95,7 +95,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
   }
 
   function formatDate(inputDate: string): string {
-    const date = new Date(inputDate);
+    const date = new Date(inputDate + "Z");
     return date.toDateString();
   }
 
@@ -191,10 +191,13 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
         {currentlyEditingMealRequestId ? (
           <EditMealRequestForm
             open={isEditModalOpen}
-            onClose={() => {
+            onClose={(meal_request) => {
               setIsEditModalOpen(false);
               setCurrentlyEditingMealRequestId(undefined);
               setShouldRefetchData(true);
+              if (meal_request !== undefined) {
+                setSelectedMealRequest(meal_request);
+              }
             }}
             mealRequestId={currentlyEditingMealRequestId}
             isEditDonation={false}
@@ -390,7 +393,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                   </HStack>
                   <HStack marginTop={5}>
                     <PiHourglass size={16} />
-                    <Text fontSize="14px">Meal Donor not found yet</Text>
+                    <Text fontSize="14px">No committed meal donor</Text>
                   </HStack>
                   <Box position="absolute" bottom={2} right={2}>
                     <HStack spacing={2}>

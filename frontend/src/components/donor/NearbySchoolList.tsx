@@ -53,8 +53,8 @@ const NearbySchoolList = ({
 
           <Text>
             Partner with a school in your community that aligns with your
-            donation preferences. Only showing schools that are within 100km of
-            your location and have open meal requests within the next 3 months.
+            donation preferences. These schools are within 100 km of your
+            location and have open meal requests within the next 3 months.
           </Text>
         </Flex>
         <Flex flex="1" padding="0 7vw" flexDirection="column">
@@ -68,65 +68,71 @@ const NearbySchoolList = ({
             height={{ base: undefined, xl: "80vh" }}
             width="100%"
           >
-            {schools.map((school) => (
-              <Card
-                key={school?.id}
-                borderWidth="1px"
-                borderRadius="lg"
-                p="20px"
-                m="10px"
-                direction={{ base: "column", sm: "row" }}
-                width="100%"
-              >
-                <Flex
-                  alignItems="center"
-                  justifyItems="center"
-                  marginRight="1vw"
+            {schools.length === 0 ? (
+              <Center height="100vh">  
+                <Text>No schools available</Text>
+              </Center>
+            ) : (
+              schools.map((school) => (
+                <Card
+                  key={school?.id}
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  p="20px"
+                  m="10px"
+                  direction={{ base: "column", sm: "row" }}
+                  width="100%"
                 >
-                  <Image
-                    src="/classroom.png"
-                    alt={school?.info?.organizationName}
-                    borderRadius="full"
-                    w={{ base: "10vh", sm: "20vh" }}
-                    h={{ base: "10vh", sm: "20vh" }}
-                    objectFit="contain"
-                  />
-                </Flex>
+                  <Flex
+                    alignItems="center"
+                    justifyItems="center"
+                    marginRight="1vw"
+                  >
+                    <Image
+                      src="/classroom.png"
+                      alt={school?.info?.organizationName}
+                      borderRadius="full"
+                      w={{ base: "10vh", sm: "20vh" }}
+                      h={{ base: "10vh", sm: "20vh" }}
+                      objectFit="contain"
+                    />
+                  </Flex>
 
-                <CardBody justifyContent="left" alignItems="left">
-                  <Center h="100%">
-                    <Flex direction="column" width="100%">
-                      <Text>{school?.distance} km away</Text>
-                      <Text fontSize="lg" fontWeight="bold">
-                        {school?.info?.organizationName}
-                      </Text>
-                      <Flex alignItems="center" mt={2} columnGap={2}>
-                        <IoPersonOutline />
-                        <Text>
-                          {school?.info?.roleInfo.aspInfo?.numKids} children
+                  <CardBody justifyContent="left" alignItems="left">
+                    <Center h="100%">
+                      <Flex direction="column" width="100%">
+                        <Text>{school?.distance} km away</Text>
+                        <Text fontSize="lg" fontWeight="bold">
+                          {school?.info?.organizationName}
+                        </Text>
+                        <Flex alignItems="center" mt={2} columnGap={2}>
+                          <IoPersonOutline />
+                          <Text>
+                            {school?.info?.roleInfo.aspInfo?.numKids} children
+                          </Text>
+                        </Flex>
+                        <Text color="primary.blue" fontSize="xs">
+                          <button
+                            style={{
+                              textDecoration: "underline",
+                              fontWeight: "bold",
+                            }}
+                            onClick={() => {
+                              navigate(
+                                `${MEAL_DONOR_CALENDAR_PAGE}?aspId=${school?.id}&distance=${school?.distance}`,
+                              );
+                            }}
+                            type="button"
+                          >
+                            View meals needed 🡒
+                          </button>
                         </Text>
                       </Flex>
-                      <Text color="primary.blue" fontSize="xs">
-                        <button
-                          style={{
-                            textDecoration: "underline",
-                            fontWeight: "bold",
-                          }}
-                          onClick={() => {
-                            navigate(
-                              `${MEAL_DONOR_CALENDAR_PAGE}?aspId=${school?.id}&distance=${school?.distance}`,
-                            );
-                          }}
-                          type="button"
-                        >
-                          View meals needed 🡒
-                        </button>
-                      </Text>
-                    </Flex>
-                  </Center>
-                </CardBody>
-              </Card>
-            ))}
+                    </Center>
+                  </CardBody>
+                </Card>
+              ))
+            )}
           </Box>
           <HStack alignSelf="center" justifyContent="center">
             <ChakraButton

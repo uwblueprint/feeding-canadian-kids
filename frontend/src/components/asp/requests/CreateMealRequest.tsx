@@ -65,7 +65,6 @@ const CreateMealRequest = (): React.ReactElement => {
     Array(7).fill(false),
   );
 
-  // TODO: once the last tab is reached, submit the form
   // Below is a way to get a list of days, i.e. the indexes of the true values in the boolean array
   const selectedDays = weekdayButtonStates
     .map((state, i) => (state ? i : -1))

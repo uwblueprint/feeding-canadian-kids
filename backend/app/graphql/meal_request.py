@@ -140,7 +140,6 @@ class UpdateMealRequestDonation(Mutation):
 
             print("requestor id is", requestor_id)
 
-            # TODO: Re-enable this check
             if (
                 requestor_role != "Admin"
                 and meal_request.donation_info["donor"]["id"] != requestor_id

@@ -10,6 +10,14 @@ on:
   pull_request:
     paths:
       - "frontend/**"
+  push:
+      branches:
+        - "shahanneda/prod-deploy"
+  pull_request:
+    branches:
+      - "main" 
+    paths:
+      - ".github/workflows/prod-firebase-deploy.yaml"
 
 jobs:
   build_and_deploy:

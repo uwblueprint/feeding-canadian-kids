@@ -186,7 +186,7 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
             <OnsiteContactSection
               onsiteInfo={onsiteContact}
               setOnsiteInfo={setOnsiteContact}
-              attemptedSubmit={false /* todo change */}
+              attemptedSubmit={attemptedSubmit}
               availableStaff={availableStaff}
               dropdown
             />

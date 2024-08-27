@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import sentry_sdk
 import os
 import re
 import firebase_admin
@@ -43,6 +44,21 @@ required_env_vars = [
 
 
 def create_app(config_name):
+    print("Environment is", config_name)
+    if config_name != "testing":
+        sentry_sdk.init(
+            dsn="https://85a9bf2fc71b287cc4e60cb9f918f034@o4507682847850496.ingest.us.sentry.io/4507801405227008",
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for tracing.
+            traces_sample_rate=1.0,
+            # Set profiles_sample_rate to 1.0 to profile 100%
+            # of sampled transactions.
+            # We recommend adjusting this value in production.
+            profiles_sample_rate=1.0,
+            # Config name is either development or testing or production
+            environment=config_name,
+            send_default_pii=True,
+        )
     dictConfig(
         {
             "version": 1,
@@ -66,17 +82,15 @@ def create_app(config_name):
 
     app = Flask(__name__, template_folder="templates", static_folder="static")
     # do not read config object if creating app from Flask CLI (e.g. flask db migrate)
-    print("right before entering config setup ")
-    print("type config name", type(config_name))
     # if type(config_name) is not ScriptInfo:
-    print("Right before reading config object right now!")
-    print("At this time the env vars are: ")
-    print("MG_DATABASE_URL:", os.getenv("MG_DATABASE_URL"))
-    print("MG_DB_NAME:", os.getenv("MG_DB_NAME"))
-    print("config name is", config_name)
-    print("app config is", app_config)
+    # print("Right before reading config object right now!")
+    # print("At this time the env vars are: ")
+    # print("MG_DATABASE_URL:", os.getenv("MG_DATABASE_URL"))
+    # print("MG_DB_NAME:", os.getenv("MG_DB_NAME"))
+    # print("config name is", config_name)
+    # print("app config is", app_config)
     app.config.from_object(app_config[config_name])
-    print("Now, app.config is", app.config)
+    # print("Now, app.config is", app.config)
     app.add_url_rule(
         "/graphql",
         view_func=GraphQLView.as_view(
@@ -98,7 +112,7 @@ def create_app(config_name):
     for env_var in required_env_vars:
         not_found_one = False
         missing = []
-        print(f"variable: {env_var} is {os.getenv(env_var)}")
+        # print(f"variable: {env_var} is {os.getenv(env_var)}")
         if (env_var not in os.environ or os.getenv(env_var) is None) and not app.config[
             "TESTING"
         ]:

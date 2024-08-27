@@ -30,7 +30,7 @@ import React, { useContext, useEffect, useState } from "react";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import OnsiteContactsSection from "../components/common/OnsiteContactSection";
 import AuthContext from "../contexts/AuthContext";
-import { MealRequestsData } from "../types/MealRequestTypes";
+import { MealRequest, MealRequestsData } from "../types/MealRequestTypes";
 import { Contact, OnsiteContact } from "../types/UserTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 import useGetOnsiteContacts from "../utils/useGetOnsiteContacts";
@@ -181,7 +181,7 @@ const EditMealRequestForm = ({
   isEditDonation,
 }: {
   open: boolean;
-  onClose: () => void;
+  onClose: (meal_request : MealRequest | undefined) => void;
   mealRequestId: string;
   isEditDonation: boolean;
 }) => {
@@ -263,12 +263,50 @@ const EditMealRequestForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestorId, mealRequestId, apolloClient]);
 
-  const [updateMealRequest] = useMutation(UPDATE_MEAL_REQUEST);
-  const [updateMealDonation] = useMutation(UPDATE_MEAL_DONATION);
+  const [updateMealRequest] = useMutation<MealRequestsData>(UPDATE_MEAL_REQUEST);
+  const [updateMealDonation] = useMutation<MealRequestsData>(UPDATE_MEAL_DONATION);
+
+  // For validation
+  const validateData = () => {
+    if (
+      numberOfMeals <= 0 ||
+      onsiteContacts.length === 0 ||
+      onsiteContacts.some(
+        (contact) =>
+          !contact ||
+          contact.name === "" ||
+          contact.email === "" ||
+          contact.phone === "",
+      )
+    ) {
+      setAttemptedSubmit(true);
+      return false;
+    }
+
+    if (isEditDonation) {
+      if (mealDescription === "") {
+        setAttemptedSubmit(true);
+        return false;
+      }
+    }
+
+    setAttemptedSubmit(false);
+    return true;
+  };
 
   async function submitEditMealRequest() {
     try {
       setLoading(true);
+
+      // Validate the data
+      const valid = validateData();
+
+      // If there are any errors, return
+      if (!valid) {
+        setLoading(false);
+        return;
+      }
+
       const response = await updateMealRequest({
         variables: {
           requestorId,
@@ -290,6 +328,7 @@ const EditMealRequestForm = ({
         throw new GraphQLError("Failed to update meal request.");
       }
       setLoading(false);
+      onClose(data.updateMealRequest.mealRequest);
     } catch (e: unknown) {
       // eslint-disable-next-line no-console
       logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
@@ -299,13 +338,23 @@ const EditMealRequestForm = ({
         isClosable: true,
       });
       setLoading(false);
+      onClose(undefined);
     }
-    onClose();
   }
 
   async function submitEditMealDonation() {
     try {
       setLoading(true);
+
+      // Validate the data
+      const valid = validateData();
+
+      // If there are any errors, return
+      if (!valid) {
+        setLoading(false);
+        return;
+      }
+
       const response = await updateMealDonation({
         variables: {
           requestorId,
@@ -328,6 +377,7 @@ const EditMealRequestForm = ({
         throw new GraphQLError("Failed to update meal donation information.");
       }
       setLoading(false);
+      onClose(data.updateMealDonation.mealRequest);
     } catch (e: unknown) {
       // eslint-disable-next-line no-console
       logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
@@ -337,13 +387,13 @@ const EditMealRequestForm = ({
         isClosable: true,
       });
       setLoading(false);
+      onClose(undefined);
     }
-    onClose();
   }
 
   if (isEditDonation) {
     return (
-      <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={onClose}>
+      <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={() => onClose(undefined)}>
         <ModalOverlay />
         <ModalContent
           maxWidth={{ base: "100%", md: "900px" }}
@@ -380,15 +430,17 @@ const EditMealRequestForm = ({
                     modified later)
                   </FormHelperText>
                   <Input
+                    // TODO should we change this placeholder?
                     placeholder="Ex. 40 mac and cheeses with 9 gluten free ones. Also will donate 30 bags of cheetos."
                     value={mealDescription}
                     onChange={(e) => setMealDescription(e.target.value)}
                     ref={initialFocusRef}
+                    isInvalid={attemptedSubmit && mealDescription === ""}
                     type="text"
                   />
                 </FormControl>
 
-                <FormControl mt={3} isRequired>
+                <FormControl mt={3}>
                   <FormLabel
                     variant={{
                       base: "mobile-form-label-bold",
@@ -399,6 +451,7 @@ const EditMealRequestForm = ({
                   </FormLabel>
                   <Input
                     size="lg"
+                    // Should we change this placeholder?
                     placeholder="Ex. A man with a beard will leave the food at the front door of the school."
                     value={additionalNotes}
                     onChange={(e) => setAdditionalNotes(e.target.value)}
@@ -408,14 +461,14 @@ const EditMealRequestForm = ({
                 <OnsiteContactsSection
                   onsiteInfo={mealDonorOnsiteContacts}
                   setOnsiteInfo={setMealDonorOnsiteContacts}
-                  attemptedSubmit={false /* todo change */}
+                  attemptedSubmit={attemptedSubmit}
                   availableStaff={availableOnsiteContacts}
                   dropdown
                 />
               </ModalBody>
 
               <ModalFooter>
-                <Button onClick={onClose} mr={3} variant="outline">
+                <Button onClick={() => onClose(undefined)} mr={3} variant="outline">
                   Cancel
                 </Button>
                 <Button
@@ -436,7 +489,7 @@ const EditMealRequestForm = ({
   }
 
   return (
-    <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={onClose}>
+    <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={() => onClose(undefined)}>
       <ModalOverlay />
       <ModalContent
         maxWidth={{ base: "100%", md: "900px" }}
@@ -469,16 +522,17 @@ const EditMealRequestForm = ({
               </Text>
 
               {!isUpcoming ? (
-                <FormControl mt={3} mb={6} isRequired>
+                <FormControl
+                  mt={3}
+                  mb={6}
+                  isRequired
+                  isInvalid={attemptedSubmit && numberOfMeals <= 0}
+                >
                   <FormLabel
                     variant={{
                       base: "mobile-form-label-bold",
                       md: "form-label-bold",
                     }}
-
-                    // TODO: Hook this up to a state variable
-                    // TODO: Setup correct validation for this
-                    // isInvalid={attemptedSubmit && }
                   >
                     Number of meals
                   </FormLabel>
@@ -494,7 +548,7 @@ const EditMealRequestForm = ({
               ) : null}
 
               {!isUpcoming ? (
-                <FormControl mt={3} mb={6} isRequired>
+                <FormControl mt={3} mb={6}>
                   <FormLabel
                     variant={{
                       base: "mobile-form-label-bold",
@@ -511,14 +565,12 @@ const EditMealRequestForm = ({
                 </FormControl>
               ) : null}
 
-              <FormControl mt={3} mb={6} isRequired>
+              <FormControl mt={3} mb={6}>
                 <FormLabel
                   variant={{
                     base: "mobile-form-label-bold",
                     md: "form-label-bold",
                   }}
-                  // TODO: Setup correct validation for this
-                  // isInvalid={attemptedSubmit && }
                 >
                   Delivery Notes
                 </FormLabel>
@@ -533,14 +585,14 @@ const EditMealRequestForm = ({
               <OnsiteContactsSection
                 onsiteInfo={onsiteContacts}
                 setOnsiteInfo={setOnsiteContacts}
-                attemptedSubmit={false /* todo change */}
+                attemptedSubmit={attemptedSubmit}
                 availableStaff={availableOnsiteContacts}
                 dropdown
               />
             </ModalBody>
 
             <ModalFooter>
-              <Button onClick={onClose} mr={3} variant="outline">
+              <Button onClick={() => onClose(undefined)} mr={3} variant="outline">
                 Cancel
               </Button>
               <Button

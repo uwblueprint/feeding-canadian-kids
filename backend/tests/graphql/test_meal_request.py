@@ -3,7 +3,7 @@ from app.models.meal_request import MealRequest, MealStatus
 from app.models.user_info import UserInfoRole
 from app.services.implementations.mock_email_service import MockEmailService
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from freezegun import freeze_time
 
 
@@ -258,17 +258,17 @@ def test_create_meal_request_fails_repeat_date(
     _, _, meal_request = meal_request_setup
 
     # drop_off_datetime is currently a string, so we need to convert it to a datetime object
-
     existing_date = datetime.strptime(
         meal_request.drop_off_datetime, "%Y-%m-%dT%H:%M:%S"
     )
+    invalid_new_time = str((existing_date + timedelta(hours=3)).time()) + "Z"
 
     counter_before = MealRequest.objects().count()
     mutation = f"""
     mutation testCreateMealRequest {{
       createMealRequest(
         deliveryInstructions: "Leave at front door",
-        dropOffTime: "16:30:00Z",
+        dropOffTime: "{invalid_new_time}",
         mealInfo: {{
           portions: 40,
           dietaryRestrictions: "7 gluten free, 7 no beef",
@@ -410,7 +410,7 @@ def test_commit_to_meal_request(meal_request_setup):
 
     assert requestor_email["subject"] == "Your meal request has been fulfilled!"
     assert requestor_email["to"] == meal_request.requestor.info.email
-    assert "Your meal request has been fulfilled!" in requestor_email["body"]
+    assert "A donor has been found for your meal request" in requestor_email["body"]
     assert (
         f"Number of Meals: {str(meal_request.meal_info.portions)}"
         in donor_email["body"]
@@ -935,6 +935,50 @@ def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
         == "Only admins or requestors who have not found a donor can delete meal requests."
     )
     assert MealRequest.objects(id=meal_request.id).first() is not None
+
+
+def test_get_meal_requests(meal_request_setup, onsite_contact_setup, user_setup):
+    asp, donor, meal_request = meal_request_setup
+    asp_onsite_contact, _, donor_onsite_contact, _ = onsite_contact_setup
+    _, _, admin = user_setup
+
+    executed = graphql_schema.execute(
+        f"""{{
+          getMealRequests(adminId: "{str(admin.id)}") {{
+            id
+            requestor {{
+              id
+            }},
+            status,
+            dropOffDatetime,
+            mealInfo {{
+              portions
+              dietaryRestrictions
+            }},
+            onsiteContacts {{
+              name
+              email
+              phone
+            }},
+            dateCreated,
+            dateUpdated,
+            deliveryInstructions,
+            donationInfo {{
+              donor {{
+                id
+              }},
+              commitmentDate
+              mealDescription
+              additionalInfo
+            }}
+          }}
+      }}"""
+    )
+
+    assert len(executed.data["getMealRequests"]) == 1
+    result = executed.data["getMealRequests"][0]
+    assert result["requestor"]["id"] == str(asp.id)
+    assert result["id"] == str(meal_request.id)
 
 
 def test_get_meal_request_by_donor_id(meal_request_setup, onsite_contact_setup):

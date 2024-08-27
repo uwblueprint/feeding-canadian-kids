@@ -1,4 +1,9 @@
 from typing import List
+
+from app.utilities.format_onsite_contacts import (
+    get_meal_request_snippet,
+)
+
 from .email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
 from ..interfaces.email_service import IEmailService
@@ -44,18 +49,19 @@ class MealRequestService(IMealRequestService):
             meal_requests = []
             for request_date in request_dates:
                 # Make sure the request date is in the future
-                if request_date < datetime.now(timezone.utc).date():
+                request_datetime = datetime.combine(
+                    request_date, drop_off_time, timezone.utc
+                )
+
+                if request_datetime < datetime.now(timezone.utc):
                     raise Exception("Request date must be in the future")
 
                 # Verify that no meal request exists for the same requestor and drop-off date
+                # check that no meal request exists in a 12 hour window centered at the request date time
                 existing_request = MealRequest.objects(
                     requestor=requestor,
-                    drop_off_datetime__gte=datetime.combine(
-                        request_date, datetime.min.time(), timezone.utc
-                    ),
-                    drop_off_datetime__lte=datetime.combine(
-                        request_date, datetime.max.time(), timezone.utc
-                    ),
+                    drop_off_datetime__gte=request_datetime - timedelta(hours=6),
+                    drop_off_datetime__lte=request_datetime + timedelta(hours=6),
                 ).first()
                 if existing_request:
                     raise Exception(
@@ -189,13 +195,6 @@ class MealRequestService(IMealRequestService):
                 meal_requestor_id = meal_request.requestor.id
                 meal_requestor = User.objects(id=meal_requestor_id).first()
 
-                self.send_donor_commit_email(
-                    meal_request, donor.info.email, meal_requestor
-                )
-                self.send_requestor_commit_email(
-                    meal_request, meal_requestor.info.email, meal_requestor
-                )
-
                 meal_request.donation_info = DonationInfo(
                     donor=donor,
                     commitment_date=datetime.utcnow(),
@@ -203,12 +202,17 @@ class MealRequestService(IMealRequestService):
                     additional_info=additional_info,
                     donor_onsite_contacts=donor_onsite_contacts,
                 )
-
                 # Change the meal request's status to "Upcoming"
                 meal_request.status = MealStatus.UPCOMING.value
 
-                meal_request_dtos.append(meal_request.to_dto())
+                self.send_donor_commit_email(
+                    meal_request, donor.info.email, meal_requestor
+                )
+                self.send_requestor_commit_email(
+                    meal_request, meal_requestor.info.email, meal_requestor
+                )
 
+                meal_request_dtos.append(meal_request.to_dto())
                 meal_request.save()
 
             return meal_request_dtos
@@ -251,6 +255,50 @@ class MealRequestService(IMealRequestService):
             meal_request_dto = meal_request.to_dto()
 
             return meal_request_dto
+
+        except Exception as error:
+            self.logger.error(str(error))
+            raise error
+
+    def get_meal_requests(
+        self,
+        min_drop_off_date,
+        max_drop_off_date,
+        status: List[MealStatus],
+        offset,
+        limit,
+        sort_by_date_direction,
+    ) -> List[MealRequestDTO]:
+        status_value_list = list(map(lambda stat: stat.value, status))
+        try:
+            sort_prefix = "+"
+            if sort_by_date_direction == SortDirection.DESCENDING:
+                sort_prefix = "-"
+            requests = MealRequest.objects(
+                status__in=status_value_list,
+            ).order_by(f"{sort_prefix}drop_off_datetime")
+
+            # Filter results by optional parameters.
+            # Since we want to filter these optionally (i.e. filter only if specified),
+            # we cannot include them in the query above.
+            if min_drop_off_date is not None:
+                requests = requests.filter(
+                    drop_off_datetime__gte=min_drop_off_date,
+                )
+            if max_drop_off_date is not None:
+                requests = requests.filter(
+                    drop_off_datetime__lte=max_drop_off_date,
+                )
+            if limit is not None:
+                requests = requests[offset : offset + limit]
+            else:
+                requests = requests[offset:]
+
+            meal_request_dtos = []
+            for request in requests:
+                meal_request_dtos.append(request.to_dto())
+
+            return meal_request_dtos
 
         except Exception as error:
             self.logger.error(str(error))
@@ -363,7 +411,7 @@ class MealRequestService(IMealRequestService):
 
         return meal_request_dtos
 
-    def send_donor_commit_email(self, meal_request, email, meal_requestor):
+    def send_donor_commit_email(self, meal_request: MealRequest, email, meal_requestor):
         if not self.email_service:
             error_message = """
                 Attempted to call committed_to_meal_request but this
@@ -373,13 +421,10 @@ class MealRequestService(IMealRequestService):
             raise Exception(error_message)
 
         try:
-            address = meal_requestor.info.organization_address
             email_body = EmailService.read_email_template(
                 "email_templates/committed_to_meal_request.html"
             ).format(
-                dropoff_location=address,
-                dropoff_time=meal_request.drop_off_datetime,
-                num_meals=meal_request.meal_info.portions,
+                meal_request_snippet=get_meal_request_snippet(meal_request),
             )
             self.email_service.send_email(
                 email, "Thank you for committing to a meal request!", email_body
@@ -401,13 +446,10 @@ class MealRequestService(IMealRequestService):
             raise Exception(error_message)
 
         try:
-            address = meal_requestor.info.organization_address
             email_body = EmailService.read_email_template(
                 "email_templates/meal_request_success.html"
             ).format(
-                dropoff_location=address,
-                dropoff_time=meal_request.drop_off_datetime,
-                num_meals=meal_request.meal_info.portions,
+                meal_request_snippet=get_meal_request_snippet(meal_request),
             )
             self.email_service.send_email(
                 email, "Your meal request has been fulfilled!", email_body

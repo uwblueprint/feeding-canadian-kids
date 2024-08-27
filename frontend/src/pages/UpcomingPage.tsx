@@ -176,7 +176,7 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
   return (
     <div
       style={{
-        width: "55%",
+        maxWidth: "800px",
       }}
     >
       {currentlyEditingMealRequestId ? (
@@ -193,7 +193,11 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
         ""
       )}
       <Card padding={3} variant="outline">
-        <HStack dir="row">
+        <Flex
+          direction={["column", "row"]}
+          justifyContent="space-around"
+          alignItems="center"
+        >
           <VStack padding={10}>
             <Text fontSize="md">
               {
@@ -274,7 +278,7 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
               </VStack>
             </HStack>
           </VStack>
-        </HStack>
+        </Flex>
       </Card>
     </div>
   );
@@ -461,15 +465,6 @@ const UpcomingPage = (): React.ReactElement => {
         {tabSelected === 0 ? "Upcoming" : "Completed"} Donations
       </Text>
 
-      <Text
-        fontFamily="Inter"
-        fontWeight="400"
-        fontSize={["12px", "16px"]}
-        pb="10px"
-      >
-        My {tabSelected === 0 ? "upcoming" : "completed"} meal donations
-      </Text>
-
       {
         // Not entirely sure why this was here...
         /* <Flex
@@ -547,13 +542,11 @@ const UpcomingPage = (): React.ReactElement => {
             )}
             {!getUpcomingMealRequestsLoading && (
               <>
-                {isWebView && (
-                  <Stack direction="column">
-                    {upcomingMealRequests?.map((event) => (
-                      <UpcomingCard event={event} key={event.id} />
-                    ))}
-                  </Stack>
-                )}
+                <Stack direction="column">
+                  {upcomingMealRequests?.map((event) => (
+                    <UpcomingCard event={event} key={event.id} />
+                  ))}
+                </Stack>
                 <HStack>
                   <Button
                     leftIcon={<ChevronLeftIcon />}

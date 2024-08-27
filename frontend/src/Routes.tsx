@@ -15,6 +15,7 @@ import Dashboard from "./pages/ASPDashboard";
 import AdminMealRequestsPage from "./pages/AdminMealRequestsPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import MealDonorCalendar from "./pages/MealDonorCalendar";
+import MealDonorConfirmation from "./pages/MealDonorConfirmation";
 import MealDonorDashboard from "./pages/MealDonorDashboard";
 import NotFound from "./pages/NotFound";
 import OnboardingRequestsPage from "./pages/OnboardingRequestsPage";
@@ -37,7 +38,6 @@ const Routes = (): React.ReactElement => {
       <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
       <Route path={Paths.JOIN_SUCCESS_PAGE} element={<JoinSuccess />} />
       <Route path={Paths.FORGOT_PASSWORD_PAGE} element={<ForgotPassword />} />
-      <Route path={Paths.RESET_PASSWORD_PAGE} element={<ResetPassword />} />
       <Route path={Paths.SET_PASSWORD_PAGE} element={<SetPassword />} />
       <Route
         path={Paths.CREATE_MEAL_REQUEST_PAGE}
@@ -59,6 +59,10 @@ const Routes = (): React.ReactElement => {
         <Route
           path={Paths.MEAL_DONOR_UPCOMING_PAGE}
           element={<UpcomingPage />}
+        />
+        <Route
+          path={Paths.MEAL_DONOR_CONFIRMATION_PAGE}
+          element={<MealDonorConfirmation />}
         />
         <Route
           path={Paths.ONBOARDING_REQUESTS_PAGE}

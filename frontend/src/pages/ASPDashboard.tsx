@@ -12,7 +12,7 @@ import {
 import React, { useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import ASPCalandar from "./ASPCalendar";
+import ASPCalendar from "./ASPCalendar";
 
 import ASPListView from "../components/mealrequest/ASPListView";
 import * as Routes from "../constants/Routes";
@@ -33,7 +33,7 @@ const Dashboard = (): React.ReactElement => {
   }
 
   return (
-    <Flex flexDir="column" alignItems="center" w="80vw" mx="auto" mb="100px">
+    <Flex flexDir="column" alignItems="center" w="90vw" mx="auto" mb="100px">
       <Text variant="desktop-display-xl" my="20px">
         Your Dashboard
       </Text>
@@ -59,7 +59,7 @@ const Dashboard = (): React.ReactElement => {
 
         <TabPanels>
           <TabPanel defaultChecked>
-            <ASPCalandar />
+            <ASPCalendar authId={authenticatedUser.id}/>
           </TabPanel>
           <TabPanel p="0">
             <ASPListView authId={authenticatedUser.id} />

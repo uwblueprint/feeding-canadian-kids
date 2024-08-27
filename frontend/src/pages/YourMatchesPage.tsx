@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { Button as ChakraButton, VStack } from "@chakra-ui/react";
+import { Button, Button as ChakraButton, VStack } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
 

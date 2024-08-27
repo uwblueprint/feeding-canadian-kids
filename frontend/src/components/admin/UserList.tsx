@@ -349,12 +349,16 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
 
   const ROW_OPTIONS = {
     renderAfterRow: (item: TABLE_LIBRARY_TYPES.TableNode) => (
-      <Collapse className="animate" in={ids.includes(item.id)}>
+      <Collapse className="animate" in={ids.includes(item.id)} >
         <Flex
-          flexDir="row"
           p="16px"
           borderBottom="1px solid"
           borderColor="gray.400"
+          flexDir="column"
+        >
+        <Flex
+          flexDir="row"
+          width="100%"
         >
           <Box flex={1} p="8px">
             <Text variant="mobile-button-bold">Description</Text>
@@ -416,11 +420,12 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
               </Button>
             }
           </Box>
-          {isASP ?
-          <Box marginTop="auto" cursor="pointer" textDecoration="underline" onClick={() => handleViewRequests(String(item.id))}>
+        </Flex>
+        {isASP ?
+          <Box marginTop="auto" marginLeft="auto" cursor="pointer" textDecoration="underline" onClick={() => handleViewRequests(String(item.id))}>
             View their meal requests &rarr;
           </Box> 
-          : <Box marginTop="auto" cursor="pointer" textDecoration="underline" onClick={() => handleViewDonations(String(item.id))}>
+          : <Box marginTop="auto" marginLeft="auto" cursor="pointer" textDecoration="underline" onClick={() => handleViewDonations(String(item.id))}>
             View their meal donations &rarr;
           </Box>}
         </Flex>

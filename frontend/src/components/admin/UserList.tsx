@@ -6,6 +6,7 @@ import {
   Collapse, 
   Flex, 
   HStack, 
+  Link,
   Modal, 
   ModalBody,
   ModalCloseButton, 
@@ -21,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
 import React, { useContext, useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 
 import AuthContext from "../../contexts/AuthContext";
 
@@ -215,6 +217,16 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
     [],
   );
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [data, setData] = useState<{
+    nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
+  }>();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const { setAuthenticatedUser } = useContext(AuthContext);
+  const [userId, setUserId] = useState<string>("");
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const [reload, setReload] = useState(false);
+  const [redirectTo, setRedirectTo] = useState<string>();
 
   const handleExpand = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     if (item.pending) return;
@@ -226,15 +238,13 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     }
   };
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [data, setData] = useState<{
-    nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
-  }>();
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const { setAuthenticatedUser } = useContext(AuthContext);
-  const [userId, setUserId] = useState<string>("");
-  const [isActive, setIsActive] = useState<boolean>(false);
-  const [reload, setReload] = useState(false);
+  const handleViewDonations = (donorId: string) => {
+    setRedirectTo(`/admin/meal_requests/donor/${donorId}`);
+  }
+
+  const handleViewRequests = (donorId: string) => {
+    setRedirectTo(`/admin/meal_requests/asp/${donorId}`);
+  }
 
   const [
     getUsers,
@@ -262,20 +272,6 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
       });
     },
   });
-
-  useEffect(() => {
-    function reloadMealRequests() {
-      getUsers({
-        variables: {
-          role: isASP ? "ASP" : "Donor",
-          limit: rowsPerPage,
-          offset: (currentPage - 1) * rowsPerPage,
-        },
-      });
-    }
-
-    reloadMealRequests();
-  }, [isASP, rowsPerPage, currentPage, reload]);
 
   const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
@@ -382,7 +378,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
               </Box>
             ))}
           </Box>
-          <Box>
+          <Box >
             {item.active
             ? <Button
                 width="100%"
@@ -420,10 +416,35 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
               </Button>
             }
           </Box>
+          {isASP ?
+          <Box marginTop="auto" cursor="pointer" textDecoration="underline" onClick={() => handleViewRequests(String(item.id))}>
+            View their meal requests &rarr;
+          </Box> 
+          : <Box marginTop="auto" cursor="pointer" textDecoration="underline" onClick={() => handleViewDonations(String(item.id))}>
+            View their meal donations &rarr;
+          </Box>}
         </Flex>
       </Collapse>
     ),
   };
+
+  useEffect(() => {
+    function reloadMealRequests() {
+      getUsers({
+        variables: {
+          role: isASP ? "ASP" : "Donor",
+          limit: rowsPerPage,
+          offset: (currentPage - 1) * rowsPerPage,
+        },
+      });
+    }
+
+    reloadMealRequests();
+  }, [isASP, rowsPerPage, currentPage, reload]);
+
+  if (redirectTo) {
+    return <Navigate to={redirectTo}/>;
+  }
 
   if (getUsersError) {
     logPossibleGraphQLError(getUsersError, setAuthenticatedUser);

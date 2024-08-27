@@ -64,10 +64,11 @@ const Routes = (): React.ReactElement => {
           path={Paths.ONBOARDING_REQUESTS_PAGE}
           element={<OnboardingRequestsPage />}
         />
-        <Route
-          path={Paths.ADMIN_MEAL_REQUESTS_PAGE}
-          element={<AdminMealRequestsPage />}
-        />
+        <Route path={Paths.ADMIN_MEAL_REQUESTS_PAGE}>
+          <Route path="donor/:donorId" element={<AdminMealRequestsPage />}/>
+          <Route path="asp/:aspId" element={<AdminMealRequestsPage />}/>
+          <Route path="" element={<AdminMealRequestsPage />}/>
+        </Route>
         <Route path={Paths.ADMIN_USERS_PAGE} element={<AdminUsersPage />} />
         <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
       </Route>

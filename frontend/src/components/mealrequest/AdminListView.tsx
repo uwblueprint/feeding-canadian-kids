@@ -28,12 +28,71 @@ import {
   MealRequest,
   MealRequestsData,
   MealRequestsDonorVariables,
+  MealRequestsRequestorVariables,
   MealRequestsVariables,
   MealStatus,
 } from "../../types/MealRequestTypes";
 import { Contact } from "../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import ListView from "../common/ListView";
+
+const GET_MEAL_REQUESTS = gql`
+  query GetMealRequests(
+    $adminId: ID!
+    $minDropOffDate: Date
+    $maxDropOffDate: Date
+    $status: [MealStatus]
+    $offset: Int
+    $limit: Int
+    $sortByDateDirection: SortDirection
+  ) {
+    getMealRequests(
+      adminId: $adminId
+      minDropOffDate: $minDropOffDate
+      maxDropOffDate: $maxDropOffDate
+      status: $status
+      offset: $offset
+      limit: $limit
+      sortByDateDirection: $sortByDateDirection
+    ) {
+      id
+      requestor {
+        info {
+          organizationName,
+          primaryContact {
+            name
+            email
+            phone
+          }
+        }
+      }
+      status
+      dropOffDatetime
+      mealInfo {
+        portions
+        dietaryRestrictions
+      }
+      onsiteContacts {
+        name
+        email
+        phone
+      }
+      dateCreated
+      dateUpdated
+      deliveryInstructions
+      donationInfo {
+        donor {
+          info {
+            organizationName
+          }
+        }
+        commitmentDate
+        mealDescription
+        additionalInfo
+      }
+    }
+  }
+`;
 
 const GET_MEAL_REQUESTS_BY_DONOR_ID = gql`
   query GetMealRequestsByDonorId(
@@ -93,7 +152,6 @@ const GET_MEAL_REQUESTS_BY_DONOR_ID = gql`
   }
 `
 
-// MODIFY
 const GET_MEAL_REQUESTS_BY_REQUESTOR_ID = gql`
   query GetMealRequestsByRequestorId(
     $requestorId: ID!
@@ -165,9 +223,9 @@ const Status = ({ status }: { status: string}) => {
   }
 }
 
-type AdminListViewProps = { authId: string; rowsPerPage?: number; donorId?: string; aspId?: string };
+type AdminListViewProps = { rowsPerPage?: number; donorId?: string; aspId?: string };
 
-const AdminListView = ({ authId, rowsPerPage = 10, donorId, aspId }: AdminListViewProps) => {
+const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps) => {
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
     [],
   );
@@ -177,7 +235,7 @@ const AdminListView = ({ authId, rowsPerPage = 10, donorId, aspId }: AdminListVi
   const [filter, setFilter] = useState<Array<MealStatus>>([]);
   const [sort, setSort] = useState<"ASCENDING" | "DESCENDING">("ASCENDING");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { setAuthenticatedUser } = useContext(AuthContext);
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const handleExpand = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     if (item.pending) return;
@@ -190,12 +248,49 @@ const AdminListView = ({ authId, rowsPerPage = 10, donorId, aspId }: AdminListVi
   };
 
   const [
-    getMealRequestsByRequestorId,
+    getMealRequests,
     {
       loading: getMealRequestsLoading,
       error: getMealRequestsError,
     },
   ] = useLazyQuery<MealRequestsData, MealRequestsVariables>(
+    GET_MEAL_REQUESTS,
+    {
+      onCompleted: (results) => {
+        setData({
+          nodes: results.getMealRequests?.map(
+            (
+              mealRequest: MealRequest,
+              index: number,
+            ): TABLE_LIBRARY_TYPES.TableNode => ({
+              id: index,
+              meal_request_id: mealRequest.id,
+              date_requested: new Date(mealRequest.dropOffDatetime),
+              time_requested: new Date(mealRequest.dropOffDatetime),
+              asp_name: mealRequest.requestor.info?.organizationName,
+              donor_name:
+                mealRequest.donationInfo?.donor.info?.organizationName,
+              num_meals: mealRequest.mealInfo?.portions,
+              onsite_contact: mealRequest.onsiteContacts,
+              meal_description: mealRequest.donationInfo?.mealDescription,
+              dietary_restrictions: mealRequest.mealInfo?.dietaryRestrictions,
+              status: mealRequest.status,
+              _hasContent: false,
+              nodes: null,
+            }),
+          ),
+        });
+      },
+    },
+  );
+
+  const [
+    getMealRequestsByRequestorId,
+    {
+      loading: getMealRequestsRequestorLoading,
+      error: getMealRequestsRequestorError,
+    },
+  ] = useLazyQuery<MealRequestsData, MealRequestsRequestorVariables>(
     GET_MEAL_REQUESTS_BY_REQUESTOR_ID,
     {
       onCompleted: (results) => {
@@ -285,10 +380,10 @@ const AdminListView = ({ authId, rowsPerPage = 10, donorId, aspId }: AdminListVi
             offset: (currentPage - 1) * rowsPerPage,
           },
         });
-      } else {
-        getMealRequestsByRequestorId({
+      } else if (authenticatedUser) {
+        getMealRequests({
           variables: {
-            requestorId: authId, // MODIFY
+            adminId: authenticatedUser?.id,
             sortByDateDirection: sort,
             ...(filter.length > 0 && { status: filter }),
             limit: rowsPerPage,
@@ -298,7 +393,7 @@ const AdminListView = ({ authId, rowsPerPage = 10, donorId, aspId }: AdminListVi
       }
     }
     reloadMealRequests();
-  }, [filter, sort, currentPage]);
+  }, [filter, sort, currentPage, authenticatedUser]);
 
   const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     // eslint-disable-next-line no-console
@@ -417,9 +512,11 @@ const AdminListView = ({ authId, rowsPerPage = 10, donorId, aspId }: AdminListVi
     ),
   };
 
-  if (getMealRequestsError || getMealRequestsDonorError) {
+  if (getMealRequestsError || getMealRequestsRequestorError || getMealRequestsDonorError) {
     if (getMealRequestsError) {
       logPossibleGraphQLError(getMealRequestsError, setAuthenticatedUser);
+    } else if (getMealRequestsRequestorError) {
+      logPossibleGraphQLError(getMealRequestsRequestorError, setAuthenticatedUser);
     } else {
       logPossibleGraphQLError(getMealRequestsDonorError, setAuthenticatedUser);
     }
@@ -518,7 +615,7 @@ const AdminListView = ({ authId, rowsPerPage = 10, donorId, aspId }: AdminListVi
           columns={COLUMNS}
           rowOptions={ROW_OPTIONS}
           data={data}
-          loading={getMealRequestsLoading || getMealRequestsDonorLoading}
+          loading={getMealRequestsLoading || getMealRequestsRequestorLoading || getMealRequestsDonorLoading}
           requestType="Meal Requests"
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}

@@ -38,6 +38,16 @@ export type MealRequest = {
 export type SortByDateDirection = "ASCENDING" | "DESCENDING";
 
 export type MealRequestsVariables = {
+  adminId: string;
+  minDropOffDate?: string | Date;
+  maxDropOffDate?: string | Date;
+  status?: Array<MealStatus>;
+  offset?: number;
+  limit?: number;
+  sortByDateDirection?: SortByDateDirection;
+};
+
+export type MealRequestsRequestorVariables = {
   requestorId: string;
   minDropOffDate?: string | Date;
   maxDropOffDate?: string | Date;
@@ -64,6 +74,7 @@ type UpdateMealRequestType =  {
 export type MealRequestsData = {
   getMealRequestsByRequestorId: Array<MealRequest>;
   getMealRequestById: MealRequest;
+  getMealRequests: Array<MealRequest>;
   getMealRequestsByIds: Array<MealRequest>;
   getMealRequestsByDonorId: Array<MealRequest>;
   updateMealRequest: UpdateMealRequestType;

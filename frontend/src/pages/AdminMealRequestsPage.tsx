@@ -65,7 +65,7 @@ const AdminMealRequestsPage = (): React.ReactElement => {
                     description={description}
                 />
             </Flex>
-            <AdminListView authId="65b6fc756aacd51b15a859ce" donorId={donorId} aspId={aspId}/>
+            <AdminListView donorId={donorId} aspId={aspId}/>
         </Flex>
     )
 }

@@ -30,7 +30,6 @@ import AuthContext from "../contexts/AuthContext";
 import {
   MealRequest,
   MealRequestsData,
-  MealRequestsVariables,
   MealStatus,
 } from "../types/MealRequestTypes";
 import { ASPDistance, GetUserData, GetUserVariables } from "../types/UserTypes";

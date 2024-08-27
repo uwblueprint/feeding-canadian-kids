@@ -58,7 +58,8 @@ const GET_MEAL_REQUESTS = gql`
       id
       requestor {
         info {
-          organizationName,
+          organizationName
+          organizationAddress
           primaryContact {
             name
             email
@@ -85,6 +86,11 @@ const GET_MEAL_REQUESTS = gql`
           info {
             organizationName
           }
+        }
+        donorOnsiteContacts {
+          name
+          email
+          phone
         }
         commitmentDate
         mealDescription
@@ -116,7 +122,8 @@ const GET_MEAL_REQUESTS_BY_DONOR_ID = gql`
       id
       requestor {
         info {
-          organizationName,
+          organizationName
+          organizationAddress
           primaryContact {
             name
             email
@@ -143,6 +150,11 @@ const GET_MEAL_REQUESTS_BY_DONOR_ID = gql`
           info {
             organizationName
           }
+        }
+        donorOnsiteContacts {
+          name
+          email
+          phone
         }
         commitmentDate
         mealDescription
@@ -174,7 +186,8 @@ const GET_MEAL_REQUESTS_BY_REQUESTOR_ID = gql`
       id
       requestor {
         info {
-          organizationName,
+          organizationName
+          organizationAddress
           primaryContact {
             name
             email
@@ -201,6 +214,11 @@ const GET_MEAL_REQUESTS_BY_REQUESTOR_ID = gql`
           info {
             organizationName
           }
+        }
+        donorOnsiteContacts {
+          name
+          email
+          phone
         }
         commitmentDate
         mealDescription
@@ -267,11 +285,13 @@ const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps)
               meal_request_id: mealRequest.id,
               date_requested: new Date(mealRequest.dropOffDatetime),
               time_requested: new Date(mealRequest.dropOffDatetime),
+              location: mealRequest.requestor.info?.organizationAddress,
               asp_name: mealRequest.requestor.info?.organizationName,
               donor_name:
                 mealRequest.donationInfo?.donor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
               onsite_contact: mealRequest.onsiteContacts,
+              donor_onsite_contact: mealRequest.donationInfo?.donorOnsiteContacts,
               meal_description: mealRequest.donationInfo?.mealDescription,
               dietary_restrictions: mealRequest.mealInfo?.dietaryRestrictions,
               status: mealRequest.status,
@@ -304,11 +324,13 @@ const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps)
               meal_request_id: mealRequest.id,
               date_requested: new Date(mealRequest.dropOffDatetime),
               time_requested: new Date(mealRequest.dropOffDatetime),
+              location: mealRequest.requestor.info?.organizationAddress,
               asp_name: mealRequest.requestor.info?.organizationName,
               donor_name:
                 mealRequest.donationInfo?.donor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
               onsite_contact: mealRequest.onsiteContacts,
+              donor_onsite_contact: mealRequest.donationInfo?.donorOnsiteContacts,
               meal_description: mealRequest.donationInfo?.mealDescription,
               dietary_restrictions: mealRequest.mealInfo?.dietaryRestrictions,
               status: mealRequest.status,
@@ -341,11 +363,13 @@ const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps)
               meal_request_id: mealRequest.id,
               date_requested: new Date(mealRequest.dropOffDatetime),
               time_requested: new Date(mealRequest.dropOffDatetime),
+              location: mealRequest.requestor.info?.organizationAddress,
               asp_name: mealRequest.requestor.info?.organizationName,
               donor_name:
                 mealRequest.donationInfo?.donor.info?.organizationName,
               num_meals: mealRequest.mealInfo?.portions,
               onsite_contact: mealRequest.onsiteContacts,
+              donor_onsite_contact: mealRequest.donationInfo?.donorOnsiteContacts,
               meal_description: mealRequest.donationInfo?.mealDescription,
               dietary_restrictions: mealRequest.mealInfo?.dietaryRestrictions,
               status: mealRequest.status,
@@ -495,11 +519,23 @@ const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps)
                 <Text variant="mobile-button-bold">Meal Description</Text>
                 <Text variant="mobile-caption-2" mb="12px">{item.meal_description}</Text>
                 <Text variant="mobile-button-bold">Dietary Restrictions</Text>
-                <Text variant="mobile-caption-2">{item.dietary_restrictions}</Text>
+                <Text variant="mobile-caption-2" mb="12px">{item.dietary_restrictions}</Text>
+                <Text variant="mobile-button-bold">Meal Donation Location</Text>
+                <Text variant="mobile-caption-2">{item.location}</Text>
             </Box>
             <Box flex={1} p="8px">
                 <Text variant="mobile-button-bold">Onsite ASP Contact</Text>
-                {item.onsite_contacts?.map((contact: Contact) => (
+                {item.onsite_contact?.map((contact: Contact) => (
+                    <Box key={contact.email} mb="8px">
+                        <Text variant="mobile-caption-2">{contact.name}</Text>
+                        <Text variant="mobile-caption-2">{contact.email}</Text>
+                        <Text variant="mobile-caption-2">{contact.phone}</Text>
+                    </Box>
+                ))}
+            </Box>
+            <Box flex={1} p="8px">
+                <Text variant="mobile-button-bold">Onsite Meal Donor Contact</Text>
+                {item.donor_onsite_contact?.map((contact: Contact) => (
                     <Box key={contact.email} mb="8px">
                         <Text variant="mobile-caption-2">{contact.name}</Text>
                         <Text variant="mobile-caption-2">{contact.email}</Text>

@@ -20,7 +20,6 @@ import {
   FORGOT_PASSWORD_PAGE,
   HOME_PAGE,
   JOIN_PAGE,
-  RESET_PASSWORD_PAGE,
 } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser, LoginData } from "../../types/UserTypes";

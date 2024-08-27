@@ -6,6 +6,7 @@ import {
   FormLabel,
   Input,
   Link,
+  Spinner,
   Text,
   VStack,
   useToast,
@@ -152,6 +153,7 @@ const ForgotPassword = () => {
           bgColor="#272D77"
           _hover={{ bgColor: "#272D77" }}
           borderRadius="6px"
+          disabled={forgotPasswordLoading}
           onClick={() => {
             if (isValidEmail(email)) {
               setEmailError(false);
@@ -161,7 +163,17 @@ const ForgotPassword = () => {
             }
           }}
         >
-          {forgotPasswordLoading ? "Loading..." : "Reset"}
+          {forgotPasswordLoading ? (
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="primary.green"
+              size="lg"
+            />
+          ) : (
+            "Reset"
+          )}
         </Button>
         {!emailError && (
           <Text

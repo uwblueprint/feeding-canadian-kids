@@ -162,6 +162,15 @@ const DELETE_ONSITE_CONTACT = gql`
   }
 `;
 
+const FORGOT_PASSWORD = gql`
+  mutation ForgotPassword($email: String!) {
+    forgotPassword(email: $email) {
+      success
+    }
+  }    
+`;
+
+
 const Settings = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
@@ -231,6 +240,11 @@ const Settings = (): React.ReactElement => {
   const [createOnsiteContact] = useMutation(CREATE_ONSITE_CONTACT);
   const [updateOnsiteContact] = useMutation(UPDATE_ONSITE_CONTACT);
   const [deleteOnsiteContact] = useMutation(DELETE_ONSITE_CONTACT);
+  const [
+    forgotPassword,
+    { loading: forgotPasswordLoading },
+  ] = useMutation(FORGOT_PASSWORD);
+  
   const apolloClient = useApolloClient();
 
   // OnsiteContact query
@@ -286,8 +300,15 @@ const Settings = (): React.ReactElement => {
     return false;
   };
 
-  const onClickResetPassword = () => {
-    navigate(`/${authenticatedUser?.id}/reset-password`);
+  const onClickResetPassword = async() => {
+    await forgotPassword({ variables: { email: userInfo?.email } });
+
+    toast({
+      title: "Reset Password Email Sent",
+      status: "success",
+      isClosable: true,
+    });
+
   };
 
   const getTitleSection = (): React.ReactElement => (
@@ -320,9 +341,20 @@ const Settings = (): React.ReactElement => {
             borderColor="primary.green"
             borderRadius="6px"
             _hover={{ color: "text.white", bgColor: "primary.green" }}
+            disabled={forgotPasswordLoading}
             onClick={onClickResetPassword}
           >
-            Reset Password
+            {forgotPasswordLoading ? (
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="primary.green"
+                size="lg"
+              />
+            ) : (
+              "Reset Password"
+            )}
           </Button>
         </HStack>
       </Flex>

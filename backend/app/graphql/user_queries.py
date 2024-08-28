@@ -10,6 +10,7 @@ class UserQueries(QueryList):
         limit=graphene.Int(default_value=5),
         offset=graphene.Int(default_value=0),
         role=graphene.String(default_value=""),
+        name=graphene.String(default_value=""),
     )
 
     getUserById = graphene.Field(User, id=graphene.String(required=True))
@@ -24,9 +25,9 @@ class UserQueries(QueryList):
     )
 
     @requires_role("Admin")
-    def resolve_getAllUsers(self, info, limit, offset, role):
+    def resolve_getAllUsers(self, info, limit, offset, role, name):
         user_service = services["user_service"]
-        users = user_service.get_users(offset, limit, role)
+        users = user_service.get_users(offset, limit, role, name)
         return users
 
     @requires_login

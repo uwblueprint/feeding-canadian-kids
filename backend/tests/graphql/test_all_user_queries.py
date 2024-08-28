@@ -98,6 +98,48 @@ def test_all_users_filter_by_role(user_setup):
     assert user_result["id"] == str(user_3.id)
     assert user_result["info"] == MOCK_INFO3_CAMEL
 
+def test_all_users_filter_by_name(user_setup):
+    user_1, user_2, user_3 = user_setup
+    executed = graphql_schema.execute(
+        """{
+        getAllUsers(name: "Test3") {
+            id
+            info {
+                email
+                organizationAddress
+                organizationName
+                organizationDesc
+                organizationCoordinates
+                role
+                roleInfo {
+                    aspInfo {
+                        numKids
+                    }
+                    donorInfo {
+                        type
+                        tags
+                    }
+                }
+                primaryContact {
+                    name
+                    phone
+                    email
+                }
+                initialOnsiteContacts {
+                    name
+                    phone
+                    email
+                }
+                active
+            }
+        }}"""
+    )
+
+    assert len(executed.data["getAllUsers"]) == 1
+    user_result = executed.data["getAllUsers"][0]
+    assert user_result["id"] == str(user_3.id)
+    assert user_result["info"] == MOCK_INFO3_CAMEL
+
 
 def test_get_user_by_id(user_setup):
     user_1, user_2, user_3 = user_setup

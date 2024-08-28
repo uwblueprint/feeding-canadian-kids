@@ -138,11 +138,14 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self, offset, limit, role):
+    def get_users(self, offset, limit, role, name):
         user_dtos = []
         filteredUsers = User.objects()
         if role:
             filteredUsers = filteredUsers.filter(info__role=role)
+        
+        if name:
+            filteredUsers = filteredUsers.filter(info__organization_name__iregex=name)
 
         for user in filteredUsers.skip(offset).limit(limit):
             user_dtos.append(

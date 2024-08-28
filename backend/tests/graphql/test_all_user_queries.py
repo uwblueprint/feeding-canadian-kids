@@ -98,6 +98,7 @@ def test_all_users_filter_by_role(user_setup):
     assert user_result["id"] == str(user_3.id)
     assert user_result["info"] == MOCK_INFO3_CAMEL
 
+
 def test_all_users_filter_by_name(user_setup):
     user_1, user_2, user_3 = user_setup
     executed = graphql_schema.execute(

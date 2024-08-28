@@ -143,7 +143,7 @@ class UserService(IUserService):
         filteredUsers = User.objects()
         if role:
             filteredUsers = filteredUsers.filter(info__role=role)
-        
+
         if name:
             filteredUsers = filteredUsers.filter(info__organization_name__iregex=name)
 

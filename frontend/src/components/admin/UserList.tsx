@@ -1,12 +1,14 @@
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
-import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, ChevronUpIcon, DeleteIcon, Search2Icon } from "@chakra-ui/icons";
 import { 
   Box, 
   Button,
   Collapse, 
   Flex, 
   HStack, 
-  Link,
+  Input, 
+  InputGroup,
+  InputLeftElement, 
   Modal, 
   ModalBody,
   ModalCloseButton, 
@@ -36,8 +38,8 @@ import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import ListView from "../common/ListView";
 
 const GET_ALL_USERS = gql`
-  query GetAllUsers($limit: Int, $offset: Int, $role: String) {
-    getAllUsers(limit: $limit, offset: $offset, role: $role) {
+  query GetAllUsers($limit: Int, $offset: Int, $role: String, $name: String) {
+    getAllUsers(limit: $limit, offset: $offset, role: $role, name: $name) {
       id
       info {
         email
@@ -227,6 +229,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   const [isActive, setIsActive] = useState<boolean>(false);
   const [reload, setReload] = useState(false);
   const [redirectTo, setRedirectTo] = useState<string>();
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const handleExpand = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     if (item.pending) return;
@@ -244,6 +247,10 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
 
   const handleViewRequests = (donorId: string) => {
     setRedirectTo(`/admin/meal_requests/asp/${donorId}`);
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   }
 
   const [
@@ -272,11 +279,6 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
       });
     },
   });
-
-  const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
-    // eslint-disable-next-line no-console
-    console.log("delete clicked for item", item.id);
-  };
 
   const COLUMNS = [
     {
@@ -321,29 +323,15 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     },
     {
       label: "",
-      renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => {
-        if (!item.pending) {
-          return (
-            <Flex
-              cursor="pointer"
-              justifyContent="flex-end"
-              onClick={handleExpand(item)}
-            >
-              {ids.includes(item.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
-            </Flex>
-          );
-        }
-
-        return (
-          <HStack>
-            <DeleteIcon
-              onClick={handleDelete(item)}
-              cursor="pointer"
-              _hover={{ color: "primary.blue" }}
-            />
-          </HStack>
-        );
-      },
+      renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => (
+          <Flex
+            cursor="pointer"
+            justifyContent="flex-end"
+            onClick={handleExpand(item)}
+          >
+            {ids.includes(item.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          </Flex>
+      ),
     },
   ];
 
@@ -433,18 +421,19 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     ),
   };
 
-  useEffect(() => {
-    function reloadMealRequests() {
-      getUsers({
-        variables: {
-          role: isASP ? "ASP" : "Donor",
-          limit: rowsPerPage,
-          offset: (currentPage - 1) * rowsPerPage,
-        },
-      });
-    }
+  function reloadUsers() {
+    getUsers({
+      variables: {
+        role: isASP ? "ASP" : "Donor",
+        limit: rowsPerPage,
+        offset: (currentPage - 1) * rowsPerPage,
+        name: searchTerm,
+      },
+    });
+  }
 
-    reloadMealRequests();
+  useEffect(() => {
+    reloadUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isASP, rowsPerPage, currentPage, reload]);
 
@@ -470,6 +459,23 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
 
   return (
     <Box mt="24px" width="80%">
+      <InputGroup>
+        <InputLeftElement pointerEvents="none">
+          <Search2Icon color="gray.600"/>
+        </InputLeftElement>
+        <Input 
+          onChange={handleChange} 
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              reloadUsers();
+              // setSearchTerm("");
+            }
+          }}
+          paddingLeft="36px" 
+          placeholder={`Search for ${isASP ? "After School Program" : "Meal Donor"}`} 
+          // value={searchTerm}
+        />
+      </InputGroup>
       <ListView
         columns={COLUMNS}
         rowOptions={ROW_OPTIONS}

@@ -94,4 +94,5 @@ export type GetAllUserVariables = {
   limit: number;
   offset: number;
   role: Role;
+  name: string;
 };

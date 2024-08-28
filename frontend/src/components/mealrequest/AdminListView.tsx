@@ -1,4 +1,4 @@
-import { gql, useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -15,8 +15,18 @@ import {
   MenuItemOption,
   MenuList,
   MenuOptionGroup,
+  Modal, 
+  ModalBody,
+  ModalCloseButton, 
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
   Tag,
   Text,
+  useDisclosure,
+  useToast
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
 import React, { useContext, useEffect, useState } from "react";
@@ -228,6 +238,32 @@ const GET_MEAL_REQUESTS_BY_REQUESTOR_ID = gql`
   }
 `;
 
+const DELETE_MEAL_REQUEST = gql`
+  mutation DeleteMealRequest($mealRequestId: ID!, $requestorId: String!) {
+    deleteMealRequest(
+      mealRequestId: $mealRequestId
+      requestorId: $requestorId
+    ) {
+      mealRequest {
+        id
+      }
+    }
+  }
+`;
+
+const CANCEL_DONATION = gql`
+  mutation CancelDonation($mealRequestId: ID!, $requestorId: String!) {
+    cancelDonation(
+      mealRequestId: $mealRequestId
+      requestorId: $requestorId
+    ) {
+      mealRequest {
+        id
+      }
+    }
+  }
+`;
+
 const Status = ({ status }: { status: string}) => {
   switch(status) {
     case MealStatus.UPCOMING:
@@ -241,12 +277,149 @@ const Status = ({ status }: { status: string}) => {
   }
 }
 
+const UnmatchDeleteModal = ({
+  isOpen,
+  onClose,
+  mealRequestId,
+  isUpcoming,
+  refetch,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  mealRequestId: string;
+  isUpcoming: boolean;
+  refetch: () => void;
+}): React.ReactElement => {
+  const toast = useToast();
+  const [isSubmitLoading, setIsSubmitLoading] = React.useState(false);
+  const [deleteMealRequest] = useMutation<{
+    deleteMealRequest: { mealRequestId: string; requestorId: string; };
+  }>(DELETE_MEAL_REQUEST);
+  const [cancelDonation] = useMutation<{
+    cancelDonation: { mealRequestId: string; requestorId: string; };
+  }>(CANCEL_DONATION);
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  const onUnmatch = async () => {
+    await setIsSubmitLoading(true);
+
+    try {
+      const response = await cancelDonation({
+        variables: {
+          mealRequestId,
+          requestorId: authenticatedUser?.id
+        },
+      });
+
+      if (response.data) {
+        toast({
+          title: "Donation cancelled successfully!",
+          status: "success",
+          isClosable: true,
+        });
+      }
+    } catch (e: unknown) {
+      logPossibleGraphQLError(e, setAuthenticatedUser);
+      toast({
+        title: "Failed to cancel donation. Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+    onClose();
+    await setIsSubmitLoading(false);
+  }
+
+  const onDelete = async () => {
+    await setIsSubmitLoading(true);
+
+    try {
+      const response = await deleteMealRequest({
+        variables: {
+          mealRequestId,
+          requestorId: authenticatedUser?.id
+        },
+      });
+
+      if (response.data) {
+        toast({
+          title: "Deleted meal request successfully!",
+          status: "success",
+          isClosable: true,
+        });
+      }
+    } catch (e: unknown) {
+      logPossibleGraphQLError(e, setAuthenticatedUser);
+      toast({
+        title: "Failed to delete meal request. Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+    onClose();
+    await setIsSubmitLoading(false);
+  };
+
+  return (
+    <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered>
+      <ModalOverlay />
+      <ModalContent p="0.5%">
+        <ModalHeader fontSize="md">{isUpcoming ? "Unmatch?" : "Delete?"}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          {isUpcoming 
+          ? "This action will unpair the meal donor from the ASP meal request.\nThe ASP meal request can now be fulfilled by other meal donors."
+          : "This action will delete the pending meal request from the portal.\nThis means that the meal request will no longer exist."}
+        </ModalBody>
+        <ModalFooter>
+          {isUpcoming
+          ? <ChakraButton
+              width="25%"
+              color="text.white"
+              bgColor="text.red"
+              _hover={{
+                bgColor: "background.darkred",
+              }}
+              onClick={() => {
+                onUnmatch();
+                refetch();
+              }}
+              disabled={isSubmitLoading}
+            >
+              {isSubmitLoading ? <Spinner /> : "Unmatch"}
+            </ChakraButton>
+          : <ChakraButton
+              width="25%"
+              color="text.white"
+              bgColor="text.red"
+              _hover={{
+                bgColor: "background.darkred",
+              }}
+              onClick={() => {
+                onDelete();
+                refetch();
+              }}
+              disabled={isSubmitLoading}
+            >
+              {isSubmitLoading ? <Spinner /> : "Delete"}
+            </ChakraButton>
+          } 
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+
 type AdminListViewProps = { rowsPerPage?: number; donorId?: string; aspId?: string };
 
 const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps) => {
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
     [],
   );
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [data, setData] = useState<{
     nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
   }>();
@@ -254,6 +427,10 @@ const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps)
   const [sort, setSort] = useState<"ASCENDING" | "DESCENDING">("ASCENDING");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  const [mealRequestId, setMealRequestId] = useState<string>("");
+  const [isUpcoming, setIsUpcoming] = useState<boolean>(false);
+  const [reload, setReload] = useState(false);
 
   const handleExpand = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     if (item.pending) return;
@@ -543,6 +720,46 @@ const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps)
                     </Box>
                 ))}
             </Box>
+            {item.status !== MealStatus.FULFILLED && 
+              <Flex alignItems="center">
+                {item.status === MealStatus.UPCOMING
+                ? <ChakraButton
+                width="100%"
+                color="text.red"
+                bgColor="text.white"
+                border="2px solid"
+                borderColor="text.red"
+                _hover={{
+                  bgColor: "gray.gray83",
+                }}
+                onClick={() => {
+                  setMealRequestId(item.meal_request_id);
+                  setIsUpcoming(true);
+                  onOpen();
+                }}
+              >
+                Unmatch
+              </ChakraButton>
+            : <ChakraButton
+                width="100%"
+                color="text.red"
+                bgColor="text.white"
+                border="2px solid"
+                borderColor="text.red"
+                _hover={{
+                  bgColor: "gray.gray83",
+                }}
+                onClick={() => {
+                  setMealRequestId(item.meal_request_id);
+                  setIsUpcoming(false);
+                  onOpen();
+                }}
+              >
+                Delete
+              </ChakraButton>
+            }
+            </Flex>
+            }
         </Flex>
       </Collapse>
     ),
@@ -656,6 +873,15 @@ const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps)
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
+        <UnmatchDeleteModal
+          isOpen={isOpen}
+          onClose={onClose}
+          mealRequestId={mealRequestId}
+          isUpcoming={isUpcoming}
+          refetch={() => {
+            setReload(prev => !prev);
+          }}
+         />
       </Box> 
   );
 };

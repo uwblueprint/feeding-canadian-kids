@@ -382,7 +382,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
               </Box>
             ))}
           </Box>
-          <Box >
+          <Flex alignItems="center" >
             {item.active
             ? <Button
                 width="100%"
@@ -419,7 +419,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
                 Activate
               </Button>
             }
-          </Box>
+          </Flex>
         </Flex>
         {isASP ?
           <Box marginTop="auto" marginLeft="auto" cursor="pointer" textDecoration="underline" onClick={() => handleViewRequests(String(item.id))}>

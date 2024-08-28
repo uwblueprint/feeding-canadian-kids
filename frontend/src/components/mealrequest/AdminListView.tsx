@@ -594,12 +594,8 @@ const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps)
       }
     }
     reloadMealRequests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, sort, currentPage, authenticatedUser]);
-
-  const handleDelete = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
-    // eslint-disable-next-line no-console
-    console.log("delete clicked for item", item.id);
-  };
 
   const COLUMNS = [
     {
@@ -657,29 +653,15 @@ const AdminListView = ({ rowsPerPage = 10, donorId, aspId }: AdminListViewProps)
     },
     {
       label: "",
-      renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => {
-        if (!item.pending) {
-          return (
-            <Flex
-              cursor="pointer"
-              justifyContent="flex-end"
-              onClick={handleExpand(item)}
-            >
-              {ids.includes(item.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
-            </Flex>
-          );
-        }
-
-        return (
-          <HStack>
-            <DeleteIcon
-              onClick={handleDelete(item)}
-              cursor="pointer"
-              _hover={{ color: "primary.blue" }}
-            />
-          </HStack>
-        );
-      },
+      renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => (
+        <Flex
+          cursor="pointer"
+          justifyContent="flex-end"
+          onClick={handleExpand(item)}
+        >
+          {ids.includes(item.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </Flex>
+      ),
     },
   ];
 

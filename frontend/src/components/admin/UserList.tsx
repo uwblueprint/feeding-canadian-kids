@@ -445,6 +445,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     }
 
     reloadMealRequests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isASP, rowsPerPage, currentPage, reload]);
 
   if (redirectTo) {

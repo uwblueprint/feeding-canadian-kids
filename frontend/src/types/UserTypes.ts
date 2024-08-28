@@ -73,13 +73,26 @@ export type OnboardingRequest = {
   status: string;
 } | null;
 
+export type UserData = {
+  id: string;
+  info: UserInfo;
+}
+
 export type GetUserData = {
-  getUserById: {
-    id: string;
-    info: UserInfo;
-  };
+  getUserById: UserData;
 };
 
 export type GetUserVariables = {
   id: string;
+};
+
+export type GetAllUsersData = {
+  getAllUsers: Array<UserData>;
+};
+
+export type GetAllUserVariables = {
+  limit: number;
+  offset: number;
+  role: Role;
+  name: string;
 };

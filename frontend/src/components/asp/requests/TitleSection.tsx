@@ -3,9 +3,10 @@ import React from "react";
 
 interface TitleSectionProps {
   title: string;
+  description?: string;
 }
 
-const TitleSection = ({ title }: TitleSectionProps): React.ReactElement => (
+const TitleSection = ({ title, description }: TitleSectionProps): React.ReactElement => (
   <div>
     <VStack
       spacing={4}
@@ -24,6 +25,17 @@ const TitleSection = ({ title }: TitleSectionProps): React.ReactElement => (
       >
         {title}
       </Text>
+
+      {description && (
+        <Text
+          alignSelf={{ base: "center", lg: "unset" }}
+          variant="desktop-body"
+          textAlign="center"
+          maxWidth="100%"
+        >
+          {description}
+        </Text>
+      )}
     </VStack>
   </div>
 );

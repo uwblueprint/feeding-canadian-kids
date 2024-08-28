@@ -62,7 +62,6 @@ import {
   MealRequest,
   MealRequestsData,
   MealRequestsDonorVariables,
-  MealRequestsVariables,
   MealStatus,
   SortByDateDirection,
 } from "../types/MealRequestTypes";

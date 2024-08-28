@@ -16,7 +16,7 @@ const HeaderButtonsData: HeaderButtonDataType = {
   Admin: [
     {
       name: "Meal Requests",
-      url: Routes.HOME_PAGE,
+      url: Routes.ADMIN_MEAL_REQUESTS_PAGE,
     },
     {
       name: "Onboarding Requests",
@@ -24,7 +24,7 @@ const HeaderButtonsData: HeaderButtonDataType = {
     },
     {
       name: "List of Users",
-      url: Routes.HOME_PAGE,
+      url: Routes.ADMIN_USERS_PAGE,
     },
     {
       name: "Settings",

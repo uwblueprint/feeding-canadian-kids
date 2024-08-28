@@ -42,7 +42,7 @@ import EditMealRequestForm from "../../pages/EditMealRequestForm";
 import {
   MealRequest,
   MealRequestsData,
-  MealRequestsVariables,
+  MealRequestsRequestorVariables,
   MealStatus,
   SortByDateDirection,
 } from "../../types/MealRequestTypes";
@@ -168,7 +168,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
       error: getMealRequestsError,
       data: getMealRequestsData,
     },
-  ] = useLazyQuery<MealRequestsData, MealRequestsVariables>(
+  ] = useLazyQuery<MealRequestsData, MealRequestsRequestorVariables>(
     GET_MEAL_REQUESTS_BY_ID,
     {
       onCompleted: (results) => {

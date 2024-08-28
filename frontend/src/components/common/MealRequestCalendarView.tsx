@@ -28,7 +28,7 @@ import AuthContext from "../../contexts/AuthContext";
 import {
   MealRequest,
   MealRequestsData,
-  MealRequestsVariables,
+  MealRequestsRequestorVariables,
   MealStatus,
 } from "../../types/MealRequestTypes";
 import {
@@ -140,7 +140,7 @@ export const MealRequestCalendarView = ({
       error: getMealRequestsError,
       loading: getMealRequestsLoading,
     },
-  ] = useLazyQuery<MealRequestsData, MealRequestsVariables>(
+  ] = useLazyQuery<MealRequestsData, MealRequestsRequestorVariables>(
     GET_MEAL_REQUESTS_BY_ID,
     {
       onError: (error) => {

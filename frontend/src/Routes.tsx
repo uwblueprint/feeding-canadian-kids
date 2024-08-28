@@ -12,6 +12,8 @@ import SetPassword from "./components/auth/SetPassword";
 import MealDonationForm from "./components/meal_donor/donation_form/MealDonationForm";
 import * as Paths from "./constants/Routes";
 import Dashboard from "./pages/ASPDashboard";
+import AdminMealRequestsPage from "./pages/AdminMealRequestsPage";
+import AdminUsersPage from "./pages/AdminUsersPage";
 import MealDonorCalendar from "./pages/MealDonorCalendar";
 import MealDonorConfirmation from "./pages/MealDonorConfirmation";
 import MealDonorDashboard from "./pages/MealDonorDashboard";
@@ -66,6 +68,12 @@ const Routes = (): React.ReactElement => {
           path={Paths.ONBOARDING_REQUESTS_PAGE}
           element={<OnboardingRequestsPage />}
         />
+        <Route path={Paths.ADMIN_MEAL_REQUESTS_PAGE}>
+          <Route path="donor/:donorId" element={<AdminMealRequestsPage />}/>
+          <Route path="asp/:aspId" element={<AdminMealRequestsPage />}/>
+          <Route path="" element={<AdminMealRequestsPage />}/>
+        </Route>
+        <Route path={Paths.ADMIN_USERS_PAGE} element={<AdminUsersPage />} />
         <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />
       </Route>
       <Route path="*" element={<NotFound />} />

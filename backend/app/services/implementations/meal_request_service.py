@@ -233,6 +233,7 @@ class MealRequestService(IMealRequestService):
                 )
 
             meal_request.donation_info = None
+            meal_request.status = MealStatus.OPEN.value
 
             meal_request_dto = meal_request.to_dto()  # does validation
 

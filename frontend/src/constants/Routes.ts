@@ -14,6 +14,10 @@ export const CREATE_MEAL_REQUEST_PAGE = "/request/scheduling";
 
 export const ONBOARDING_REQUESTS_PAGE = "/admin/onboarding";
 
+export const ADMIN_MEAL_REQUESTS_PAGE = "/admin/meal_requests";
+
+export const ADMIN_USERS_PAGE = "/admin/users";
+
 export const ASP_DASHBOARD_PAGE = "/asp/dashboard";
 
 export const MEAL_DONOR_DASHBOARD_PAGE = "/meal_donor/dashboard";

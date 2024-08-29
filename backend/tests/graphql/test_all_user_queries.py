@@ -184,6 +184,52 @@ def test_get_user_by_id(user_setup):
     assert user_result["info"] == MOCK_INFO2_CAMEL
 
 
+def test_all_users_fiter_by_email(user_setup):
+    user_1, user_2, user_3 = user_setup
+    executed = graphql_schema.execute(
+        f"""
+        {{
+        getAllUsers(email: "{user_3.info.email}") {{
+            id
+            info {{
+                email
+                organizationAddress
+                organizationName
+                organizationDesc
+                organizationCoordinates
+                role
+                roleInfo {{
+                    aspInfo {{
+                        numKids
+                    }}
+                    donorInfo {{
+                        type
+                        tags
+                    }}
+                }}
+                primaryContact {{
+                    name
+                    phone
+                    email
+                }}
+                initialOnsiteContacts {{
+                    name
+                    phone
+                    email
+                }}
+                active
+            }}
+        }}
+        }}
+        """
+    )
+
+    assert executed.errors is None
+    assert len(executed.data["getAllUsers"]) == 1
+    user_result = executed.data["getAllUsers"][0]
+    assert user_result["id"] == str(user_3.id)
+    assert user_result["info"] == MOCK_INFO3_CAMEL
+
 # Note: mongomock does not currently support $geoNear queries, so cannot test
 # https://github.com/mongomock/mongomock/blob/develop/Missing_Features.rst
 # def test_get_asp_near_location(user_setup):

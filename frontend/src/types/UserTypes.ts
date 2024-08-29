@@ -96,4 +96,5 @@ export type GetAllUserVariables = {
   offset: number;
   role: Role;
   name: string;
+  email: string;
 };

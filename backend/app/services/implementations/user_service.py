@@ -1,5 +1,6 @@
 from datetime import datetime, timezone, timedelta
 from decimal import Decimal
+from typing import Union
 import firebase_admin.auth
 from ...models.user_info import UserInfo
 
@@ -138,14 +139,17 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self, offset, limit, role, name):
+    def get_users(self, offset, limit, role, name: Union[str, None], email : Union[str, None]):
         user_dtos = []
         filteredUsers = User.objects()
         if role:
             filteredUsers = filteredUsers.filter(info__role=role)
 
         if name:
-            filteredUsers = filteredUsers.filter(info__organization_name__iregex=name)
+            filteredUsers = filteredUsers.filter(info__organization_name__icontains=name)
+
+        if email:
+            filteredUsers = filteredUsers.filter(info__email__icontains=email)
 
         for user in filteredUsers.skip(offset).limit(limit):
             user_dtos.append(

@@ -62,8 +62,8 @@ const GetTitleSection = ({ isASP, setIsASP, isWebView }: GetTitleSectionProps): 
         }
         description={
           isASP
-            ? "Here is the list of After School Programs"
-            : "Here is the list of Meal Donors"
+            ? ""
+            : ""
         }
       />
     </Flex>

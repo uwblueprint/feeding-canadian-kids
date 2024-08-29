@@ -370,8 +370,8 @@ const UnmatchDeleteModal = ({
         <ModalCloseButton />
         <ModalBody>
           {isUpcoming 
-          ? "This action will unpair the meal donor from the ASP meal request.\nThe ASP meal request can now be fulfilled by other meal donors."
-          : "This action will delete the pending meal request from the portal.\nThis means that the meal request will no longer exist."}
+          ? "This action will unpair the meal donor from the ASP meal request.\nThe ASP meal request can now be fulfilled by other meal donors. Make sure to inform the ASP and Meal Donor manually as no notification is sent to them!!"
+          : "This action will delete the pending meal request from the portal.\nThis means that the meal request will no longer exist. Make sure to inform the ASP manually as no notification is sent to them!"}
         </ModalBody>
         <ModalFooter>
           {isUpcoming

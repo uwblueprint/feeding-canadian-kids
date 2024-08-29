@@ -38,8 +38,8 @@ import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import ListView from "../common/ListView";
 
 const GET_ALL_USERS = gql`
-  query GetAllUsers($limit: Int, $offset: Int, $role: String, $name: String) {
-    getAllUsers(limit: $limit, offset: $offset, role: $role, name: $name) {
+  query GetAllUsers($limit: Int, $offset: Int, $role: String, $name: String, $email: String) {
+    getAllUsers(limit: $limit, offset: $offset, role: $role, name: $name, email: $email) {
       id
       info {
         email
@@ -424,13 +424,24 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   };
 
   function reloadUsers() {
-    getUsers({
-      variables: {
+
+    const searchVariables : GetAllUserVariables = {
         role: isASP ? "ASP" : "Donor",
         limit: rowsPerPage,
         offset: (currentPage - 1) * rowsPerPage,
-        name: searchTerm,
-      },
+        name: "",
+        email: "",
+    }
+    
+    // If it's an email, put the email as a search term, else the name
+    if (searchTerm.indexOf("@") !== -1) {
+      searchVariables.email = searchTerm;
+    }else{
+      searchVariables.name = searchTerm;
+    }
+
+    getUsers({
+      variables: searchVariables
     });
   }
 
@@ -470,12 +481,10 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               reloadUsers();
-              // setSearchTerm("");
             }
           }}
           paddingLeft="36px" 
-          placeholder={`Search for ${isASP ? "After School Program" : "Meal Donor"}`} 
-          // value={searchTerm}
+          placeholder={`Search for ${isASP ? "After School Program" : "Meal Donor"} by name or by email`} 
         />
       </InputGroup>
       <ListView

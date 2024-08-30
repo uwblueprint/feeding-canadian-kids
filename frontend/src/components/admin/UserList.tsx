@@ -1,4 +1,4 @@
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useLazyQuery, useMutation } from "@apollo/client";
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon, Search2Icon } from "@chakra-ui/icons";
 import { 
   Box, 
@@ -130,6 +130,7 @@ const ActivateDeactivateModal = ({
             status: "success",
             isClosable: true,
           });
+          refetch();
         }
       } catch (e: unknown) {
         logPossibleGraphQLError(e, setAuthenticatedUser);
@@ -161,6 +162,7 @@ const ActivateDeactivateModal = ({
             status: "success",
             isClosable: true,
           });
+          refetch();
         }
       } catch (e: unknown) {
         logPossibleGraphQLError(e, setAuthenticatedUser);
@@ -185,7 +187,6 @@ const ActivateDeactivateModal = ({
             {isActive 
             ? "Deactivating the user means they will no longer be in the system. "
             : "Activating the user means they will be in the system. "}
-            Your changes will not be saved if you leave this page.
           </ModalBody>
           <ModalFooter>
             {isActive
@@ -198,7 +199,6 @@ const ActivateDeactivateModal = ({
                 }}
                 onClick={() => {
                   onDeactivate();
-                  refetch();
                 }}
                 disabled={isSubmitLoading}
               >
@@ -208,7 +208,6 @@ const ActivateDeactivateModal = ({
                 width="25%"
                 onClick={() => {
                   onActivate();
-                  refetch();
                 }}
                 disabled={isSubmitLoading}
               >
@@ -233,7 +232,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   const { setAuthenticatedUser } = useContext(AuthContext);
   const [userId, setUserId] = useState<string>("");
   const [isActive, setIsActive] = useState<boolean>(false);
-  const [reload, setReload] = useState(false);
+  const [shouldReloadUsers, setReloadUsers] = useState(true);
   const [redirectTo, setRedirectTo] = useState<string>();
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -450,7 +449,6 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   };
 
   function reloadUsers() {
-
     const searchVariables : GetAllUserVariables = {
         role: isASP ? "ASP" : "Donor",
         limit: rowsPerPage,
@@ -467,14 +465,18 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     }
 
     getUsers({
-      variables: searchVariables
+      variables: searchVariables,
+      fetchPolicy: shouldReloadUsers ? "network-only" : "cache-first",
     });
   }
 
   useEffect(() => {
-    reloadUsers();
+    if(shouldReloadUsers) {
+      reloadUsers();
+      setReloadUsers(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isASP, rowsPerPage, currentPage, reload]);
+  }, [isASP, rowsPerPage, currentPage, shouldReloadUsers]);
 
   if (redirectTo) {
     return <Navigate to={redirectTo}/>;
@@ -528,7 +530,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
         userId={userId}
         isActive={isActive}
         refetch={() => {
-          setReload(prev => !prev);
+          setReloadUsers(true);
         }}
       />
     </Box>

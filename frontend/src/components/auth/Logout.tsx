@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { Button } from "@chakra-ui/react";
+import { Button, Spinner } from "@chakra-ui/react";
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +20,9 @@ const Logout = (): React.ReactElement => {
 
   const navigate = useNavigate();
 
-  const [logout] = useMutation<{ logout: { success: boolean } }>(LOGOUT);
+  const [logout,
+    {loading: logoutLoading}
+  ] = useMutation<{ logout: { success: boolean } }>(LOGOUT);
 
   const onLogOutClick = async () => {
     const success = await authAPIClient.logout(
@@ -45,8 +47,9 @@ const Logout = (): React.ReactElement => {
     borderRadius="6px"
     _hover={{ color: "text.white", bgColor: "primary.green" }}
       onClick={onLogOutClick}
+      isDisabled={logoutLoading}
     >
-      Log Out
+        {logoutLoading ? <Spinner /> : "Log Out"}
     </Button>
   );
 };

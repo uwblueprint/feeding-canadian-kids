@@ -58,6 +58,11 @@ const GET_ALL_USERS = gql`
         }
         active
         involvedMealRequests
+        roleInfo {
+          aspInfo {
+            numKids
+          }
+        }
       }
     }
   }
@@ -267,12 +272,13 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
           ): TABLE_LIBRARY_TYPES.TableNode => ({
             id: userData.id,
             name: userData.info?.organizationName,
+            description: userData.info?.organizationDesc,
             address: userData.info?.organizationAddress,
             email: userData.info?.email,
-            description: userData.info?.organizationDesc,
             primary_contact: userData.info?.primaryContact,
             onsite_staff: userData.info?.initialOnsiteContacts,
             active: userData.info?.active,
+            num_kids: userData.info?.roleInfo?.aspInfo?.numKids ?? 0,
             _hasContent: false,
             nodes: null,
             involvedMealRequests: userData.info?.involvedMealRequests ?? 0
@@ -351,10 +357,30 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
           width="100%"
         >
           <Box flex={1} p="8px">
+            <Text variant="mobile-button-bold">Name</Text>
+            <Text variant="mobile-caption-2" mb="12px">
+              {item.name}
+            </Text>
             <Text variant="mobile-button-bold">Description</Text>
             <Text variant="mobile-caption-2" mb="12px">
               {item.description}
             </Text>
+            <Text variant="mobile-button-bold">Login Email</Text>
+            <Text variant="mobile-caption-2" mb="12px">
+              {item.email}
+            </Text>
+            <Text variant="mobile-button-bold">Address</Text>
+            <Text variant="mobile-caption-2" mb="12px">
+              {item.address}
+            </Text>
+            {isASP ? 
+            <>
+            <Text variant="mobile-button-bold">Num Kids</Text>
+            <Text variant="mobile-caption-2" mb="12px">
+              {item.num_kids}
+            </Text>
+            </>
+             : null}
           </Box>
           <Box flex={1} p="8px">
             <Text variant="mobile-button-bold">Primary Contact</Text>
@@ -372,7 +398,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
               </Box>
             ))}
           </Box>
-          <Flex alignItems="center" >
+          <Flex alignItems="end" >
             {item.active
             ? <Button
                 width="100%"

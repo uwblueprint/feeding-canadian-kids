@@ -233,15 +233,22 @@ class UserService(IUserService):
 
     def update_user_by_id(self, user_id, update_user_dto):
         try:
+            # We do not allow the user to edit this involved meal requests, so we set it from the old info here
+            old_user = User.objects(id=user_id).first()
+            if not old_user:
+                raise Exception("user_id {user_id} not found".format(user_id=user_id))
+
+            update_user_dto.info.involved_meal_requests = (
+                old_user.info.involved_meal_requests
+            )
             update_user_dto = self.update_user_coordinates(update_user_dto)
+
             old_user = User.objects(id=user_id).modify(
                 new=False,
                 auth_id=update_user_dto.auth_id,
                 info=update_user_dto.info,
             )
-
-            if not old_user:
-                raise Exception("user_id {user_id} not found".format(user_id=user_id))
+            old_user.save()
 
             try:
                 firebase_admin.auth.update_user(
@@ -465,6 +472,7 @@ class UserService(IUserService):
                 # To debug queries like these, use MongoDB Compass.
                 now = datetime.now(timezone.utc)
                 future_cutoff = now + timedelta(weeks=12)
+                # TODO: Make sure user is not deactivated!
                 pipeline += [
                     {
                         "$lookup": {
@@ -506,7 +514,6 @@ class UserService(IUserService):
                             "$nor": [
                                 {"meal_requests": {"$exists": False}},
                                 {"meal_requests": {"$size": 0}},
-                                {"meal_requests": {"$size": 1}},
                             ]
                         }
                     },

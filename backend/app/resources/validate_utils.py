@@ -76,8 +76,16 @@ def validate_coordinates(coordinates, error_list):
     return error_list
 
 
+def validate_involved_meal_requests(involved_meal_requests, error_list):
+    if not isinstance(involved_meal_requests, int):
+        error_list.append("The info.involved_meal_requests supplied is not a int.")
+    elif involved_meal_requests < 0:
+        error_list.append("The info.involved_meal_requests is negative")
+    return error_list
+
+
 def validate_userinfo(userinfo, error_list):
-    userinfo_fields = [
+    userinfo_required_fields = [
         "email",
         "organization_address",
         "organization_name",
@@ -92,7 +100,7 @@ def validate_userinfo(userinfo, error_list):
         error_list.append("The info supplied is not a dict.")
         return error_list
 
-    for field in userinfo_fields:
+    for field in userinfo_required_fields:
         if field not in userinfo and (
             field != "role_info" or userinfo["role"] != UserInfoRole.ADMIN.value
         ):
@@ -116,7 +124,11 @@ def validate_userinfo(userinfo, error_list):
             error_list.append("The field info.active supplied is not a boolean.")
         elif key == "organization_coordinates":
             error_list = validate_coordinates(val, error_list)
-        elif type(val) is not str and key != "active":
+        elif key == "involved_meal_requests":
+            error_list = validate_involved_meal_requests(val, error_list)
+        elif (
+            type(val) is not str and key != "active" and key != "involved_meal_requests"
+        ):
             error_list.append(f"The field info.{key} supplied is not a string.")
         elif val == "":
             error_list.append(

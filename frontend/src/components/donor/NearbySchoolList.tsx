@@ -124,7 +124,7 @@ const NearbySchoolList = ({
                             }}
                             type="button"
                           >
-                            View meals needed 🡒
+                            View meals needed
                           </button>
                         </Text>
                       </Flex>

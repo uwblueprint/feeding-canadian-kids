@@ -21,7 +21,7 @@ export function useGetDefaultPageForUser() {
   }
 
   if (isAdmin) {
-    return Routes.ONBOARDING_REQUESTS_PAGE;
+    return Routes.ADMIN_MEAL_REQUESTS_PAGE;
   }
 
   return Routes.ASP_DASHBOARD_PAGE;

@@ -58,6 +58,7 @@ export type UserInfo = {
   primaryContact: Contact;
   initialOnsiteContacts: Array<Contact>;
   active?: boolean;
+  involvedMealRequests?: number;
 } | null;
 
 export type ASPDistance = {

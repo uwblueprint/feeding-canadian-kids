@@ -51,6 +51,7 @@ export type UserInfo = {
   primaryContact: Contact;
   onsiteContacts: Array<Contact>;
   active?: boolean;
+  involvedMealRequests?: number;
 } | null;
 
 export type OnboardingRequest = {

@@ -52,3 +52,4 @@ class UserInfo(mg.EmbeddedDocument):
     active = mg.BooleanField(default=True)
 
     meta = {"allow_inheritance": True}
+    involved_meal_requests = mg.IntField(default=0)

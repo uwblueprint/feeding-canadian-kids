@@ -437,7 +437,6 @@ const Settings = (): React.ReactElement => {
               type="email"
               value={primaryContact.email}
               placeholder={PLACEHOLDER_WEB_EXAMPLE_EMAIL}
-              disabled
               onChange={(e) =>
                 setPrimaryContact({
                   ...primaryContact,
@@ -778,7 +777,7 @@ const Settings = (): React.ReactElement => {
         });
       } else {
         toast({
-          title: "Failed to create account. Please try again.",
+          title: "Failed to update settings. Please try again.",
           status: "error",
           isClosable: true,
         });

@@ -57,6 +57,7 @@ const GET_ALL_USERS = gql`
           phone
         }
         active
+        involvedMealRequests
       }
     }
   }
@@ -274,6 +275,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
             active: userData.info?.active,
             _hasContent: false,
             nodes: null,
+            involvedMealRequests: userData.info?.involvedMealRequests ?? 0
           }),
         ),
       });
@@ -300,9 +302,9 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
       ),
     },
     {
-      label: "# of Donations Made",
+      label: isASP ? "# Created Meal Requests" : "# Committed Meal Requests",
       renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => (
-        <Text variant="desktop-xs">TODO</Text>
+        <Text variant="desktop-xs">{item.involvedMealRequests}</Text>
       ),
     },
     {

@@ -435,7 +435,7 @@ const ASPCardDisplay = ({
       </Flex>
       {onboardingRequests.length === 0 && (
         <Center h="100px">
-          <Text fontSize="24">No meal requests to display</Text>
+          <Text fontSize="24">No onboarding requests to display</Text>
         </Center>
       )}
     </Flex>

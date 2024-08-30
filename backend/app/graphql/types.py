@@ -61,6 +61,7 @@ class UserInfo(graphene.ObjectType):
     primary_contact = graphene.Field(Contact)
     initial_onsite_contacts = graphene.List(Contact)
     active = graphene.Boolean()
+    involved_meal_requests = graphene.Int()
 
 
 class ContactInput(graphene.InputObjectType):

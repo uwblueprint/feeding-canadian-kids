@@ -63,6 +63,7 @@ def test_create_onboarding_request(should_delete=True):
                         }
                 }"""
     result = graphql_schema.execute(mutation_string)
+    assert result.errors is None
     onboarding_request_result = result.data["createOnboardingRequest"][
         "onboardingRequest"
     ]

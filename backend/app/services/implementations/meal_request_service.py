@@ -84,6 +84,9 @@ class MealRequestService(IMealRequestService):
             for meal_request in meal_requests:
                 meal_request.save()
 
+            requestor.info.involved_meal_requests += len(meal_requests)
+            requestor.save()
+
             return list(
                 map(lambda request: request.to_serializable_dict(), meal_requests)
             )
@@ -214,6 +217,8 @@ class MealRequestService(IMealRequestService):
 
                 meal_request_dtos.append(meal_request.to_dto())
                 meal_request.save()
+            donor.info.involved_meal_requests += 1
+            donor.save()
 
             return meal_request_dtos
 
@@ -232,11 +237,14 @@ class MealRequestService(IMealRequestService):
                     f'Meal request "{meal_request_id}" does not have a donation'
                 )
 
+            donor = User.objects(id=meal_request.donation_info.donor.id).first()
+            donor.info.involved_meal_requests -= 1
+            donor.save()
+
             meal_request.donation_info = None
             meal_request.status = MealStatus.OPEN.value
 
             meal_request_dto = meal_request.to_dto()  # does validation
-
             meal_request.save()
 
             return meal_request_dto
@@ -250,6 +258,10 @@ class MealRequestService(IMealRequestService):
             meal_request: MealRequest = MealRequest.objects(id=meal_request_id).first()
             if not meal_request:
                 raise Exception(f'Meal request "{meal_request_id}" not found')
+
+            requestor = User.objects(id=meal_request.requestor.id).first()
+            requestor.info.involved_meal_requests -= 1
+            requestor.save()
 
             meal_request.delete()
 

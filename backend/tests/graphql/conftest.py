@@ -77,6 +77,8 @@ def user_setup():
 def meal_request_setup(user_setup):
     requestor, donor, _ = user_setup
     meal_request = MealRequest(requestor=requestor, **MOCK_MEALREQUEST1_SNAKE).save()
+    requestor.info.involved_meal_requests = 1
+    requestor.save()
 
     yield requestor, donor, meal_request
 

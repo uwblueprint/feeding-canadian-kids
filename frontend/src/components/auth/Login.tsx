@@ -7,6 +7,7 @@ import {
   FormLabel,
   HStack,
   Input,
+  Spinner,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -67,18 +68,27 @@ const Login = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
-  const [login] = useMutation<{ login: LoginData }>(LOGIN);
+  const [login, 
+    { loading: loginLoading, error: loginError },
+  ] = useMutation<{ login: LoginData }>(LOGIN);
+
 
   const onLogInClick = async () => {
     let user: AuthenticatedUser | null = null;
     try {
       user = await authAPIClient.login(email, password, "", login);
-      setError(false);
+      setErrorMessage(undefined);
     } catch (e: unknown) {
-      logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);
-      setError(true);
+      const errorCasted = e as ApolloError
+      logPossibleGraphQLError(errorCasted, setAuthenticatedUser);
+      if ((errorCasted?.message ?? "").indexOf("Failed to sign-in") !== -1) {
+        setErrorMessage("Invalid email or password, please try again!")
+      }
+      else {
+        setErrorMessage("An unexpected error occurred, please try again!")
+      }
     }
     setAuthenticatedUser(user);
   };
@@ -116,14 +126,14 @@ const Login = (): React.ReactElement => {
         >
           Log in to account
         </Text>
-        {error ? (
+        {errorMessage ? (
           <Text
             pb={5}
             textAlign="center"
             variant={{ base: "mobile-caption", md: "desktop-caption" }}
             color="secondary.critical"
           >
-            The email or password you entered is incorrect. Please try again.
+            {errorMessage}
           </Text>
         ) : (
           <Text
@@ -136,7 +146,7 @@ const Login = (): React.ReactElement => {
         )}
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
           <Box>
-            <FormControl pb={5} isRequired isInvalid={error}>
+            <FormControl pb={5} isRequired isInvalid={errorMessage !== undefined}>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -154,7 +164,7 @@ const Login = (): React.ReactElement => {
             </FormControl>
           </Box>
           <Box>
-            <FormControl pb={2} isRequired isInvalid={error}>
+            <FormControl pb={2} isRequired isInvalid={errorMessage !== undefined}>
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -188,6 +198,7 @@ const Login = (): React.ReactElement => {
             pt={1}
             pb={1}
             backgroundColor="primary.blue"
+            disabled={loginLoading}
           >
             <Text
               variant={{
@@ -196,7 +207,17 @@ const Login = (): React.ReactElement => {
               }}
               color="text.white"
             >
-              Log in
+          {loginLoading ? (
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="primary.green"
+              size="lg"
+            />
+          ) : (
+            "Login"
+          )}
             </Text>
           </Button>
           <HStack>

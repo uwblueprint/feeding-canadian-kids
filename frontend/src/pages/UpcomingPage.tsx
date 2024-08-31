@@ -333,7 +333,7 @@ const UpcomingPage = (): React.ReactElement => {
                 minute: "numeric",
                 hour12: true,
               })}`,
-              date: mealRequest.dropOffDatetime,
+              date: mealRequest.dropOffDatetime + "Z",
               extendedProps: { mealRequest },
               backgroundColor: "#3BA948",
               borderColor: "#3BA948",

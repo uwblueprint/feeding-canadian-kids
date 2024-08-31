@@ -471,12 +471,17 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   }
 
   useEffect(() => {
+    reloadUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isASP, rowsPerPage, currentPage]);
+
+  useEffect(() => {
     if(shouldReloadUsers) {
       reloadUsers();
       setReloadUsers(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isASP, rowsPerPage, currentPage, shouldReloadUsers]);
+  }, [shouldReloadUsers]);
 
   if (redirectTo) {
     return <Navigate to={redirectTo}/>;

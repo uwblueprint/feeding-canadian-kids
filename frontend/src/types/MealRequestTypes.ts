@@ -3,12 +3,11 @@ import { Contact, OnsiteContact, Requestor } from "./UserTypes";
 type MealInfo = {
   portions: number;
   dietaryRestrictions: string;
-  mealSuggestions: string;
 };
 
 type DonationInfo = {
   donor: Requestor;
-  commitmentDate: Date;
+  commitmentDate: string;
   mealDescription: string;
   additionalInfo: string;
   donorOnsiteContacts: Array<OnsiteContact>;

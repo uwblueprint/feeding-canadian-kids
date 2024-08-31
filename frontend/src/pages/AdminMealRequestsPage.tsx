@@ -24,8 +24,8 @@ const GET_USER = gql`
 const AdminMealRequestsPage = (): React.ReactElement => {
     const { donorId, aspId } = useParams<{donorId: string, aspId: string}>();
 
-    const [title, setTitle] = useState<string>("All Meal Requests");
-    const [description, setDescription] = useState<string>("Here is a table of all the meal requests");
+    const [title, setTitle] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
 
     const { data: donorData } = useQuery<GetUserData, GetUserVariables>(GET_USER, {
         variables: { id: donorId || "" },
@@ -46,6 +46,9 @@ const AdminMealRequestsPage = (): React.ReactElement => {
             const name = aspData.getUserById?.info?.organizationName;
             setTitle(`Meal Requests for ${name}`);
             setDescription(`Here is a table of all the meal requests for ${name}`);
+        } else {
+            setTitle("All Meal Requests");
+            setDescription("Here is a table of all the meal requests");
         }
     }, [donorId, aspId, donorData, aspData]);
 

@@ -230,6 +230,7 @@ def test_all_users_fiter_by_email(user_setup):
     assert user_result["id"] == str(user_3.id)
     assert user_result["info"] == MOCK_INFO3_CAMEL
 
+
 # Note: mongomock does not currently support $geoNear queries, so cannot test
 # https://github.com/mongomock/mongomock/blob/develop/Missing_Features.rst
 # def test_get_asp_near_location(user_setup):

@@ -139,14 +139,18 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self, offset, limit, role, name: Union[str, None], email : Union[str, None]):
+    def get_users(
+        self, offset, limit, role, name: Union[str, None], email: Union[str, None]
+    ):
         user_dtos = []
         filteredUsers = User.objects()
         if role:
             filteredUsers = filteredUsers.filter(info__role=role)
 
         if name:
-            filteredUsers = filteredUsers.filter(info__organization_name__icontains=name)
+            filteredUsers = filteredUsers.filter(
+                info__organization_name__icontains=name
+            )
 
         if email:
             filteredUsers = filteredUsers.filter(info__email__icontains=email)

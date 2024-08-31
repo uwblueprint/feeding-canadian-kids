@@ -75,7 +75,14 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
-    def get_users(self, offset: int, limit: int, role: UserInfoRole, name: Union[str, None], email : Union[str, None]):
+    def get_users(
+        self,
+        offset: int,
+        limit: int,
+        role: UserInfoRole,
+        name: Union[str, None],
+        email: Union[str, None],
+    ):
         """
         Get all users (possibly paginated in the future)
 

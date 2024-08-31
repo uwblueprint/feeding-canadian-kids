@@ -26,9 +26,12 @@ import {
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
 import React, { useContext, useEffect, useState } from "react";
-import { BsFilter } from "react-icons/bs";
+import { BsFilter, BsReplyAll } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 
+import { useNavigate } from "react-router-dom";
+
+import { ADMIN_MEAL_REQUESTS_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import {
   MealRequest,
@@ -478,6 +481,7 @@ const AdminListView = ({
   const [mealRequestId, setMealRequestId] = useState<string>("");
   const [isUpcoming, setIsUpcoming] = useState<boolean>(false);
   const [shouldReload, setShouldReload] = useState(false);
+  const navigate = useNavigate();
 
   const handleExpand = (item: TABLE_LIBRARY_TYPES.TableNode) => () => {
     if (item.pending) return;
@@ -631,7 +635,6 @@ const AdminListView = ({
 
   useEffect(() => {
     if (shouldReload) {
-      // console.log("Doing a reload! ", shouldReload);
       reloadMealRequests();
       setShouldReload(false);
     }
@@ -641,7 +644,7 @@ const AdminListView = ({
   useEffect(() => {
     reloadMealRequests();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, sort, currentPage, authenticatedUser]);
+  }, [filter, sort, currentPage, authenticatedUser, aspId, donorId]);
 
   const COLUMNS = [
     {
@@ -887,6 +890,31 @@ const AdminListView = ({
   return (
     <Box mt="24px" width="80%">
       <Flex gap="10px" marginBottom="20px" justifyContent="flex-end">
+        {aspId || donorId ? 
+        <Menu>
+          <MenuButton
+            as={ChakraButton}
+            _hover={{ backgroundColor: "gray.200" }}
+            padding="6px 10px"
+            borderRadius="3px"
+            fontSize="14px"
+            border="solid 1px #E2E8F0"
+            boxShadow="lg"
+            backgroundColor="white"
+            color="black"
+            minWidth="75px"
+            onClick={() => {
+              navigate(ADMIN_MEAL_REQUESTS_PAGE, { replace: false } );
+            }}
+          >
+            <Flex gap="2px">
+              <BsReplyAll />
+              <Text>
+                View All Meal Requests
+              </Text>
+            </Flex>
+          </MenuButton>
+        </Menu> : null}
         <Menu>
           <MenuButton
             as={ChakraButton}

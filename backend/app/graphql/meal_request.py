@@ -241,6 +241,7 @@ class CancelDonation(Mutation):
     meal_request = graphene.Field(MealRequestResponse)
 
     @requires_role("Donor")
+    @secure_requestor_id
     def mutate(self, info, meal_request_id, requestor_id):
         user = services["user_service"]
         requestor_auth_id = user.get_auth_id_by_user_id(requestor_id)
@@ -352,7 +353,6 @@ class MealRequestQueries(QueryList):
         ids=graphene.List(graphene.ID),
     )
 
-    @secure_requestor_id
     @requires_role("Admin")
     def resolve_getMealRequests(
         self,

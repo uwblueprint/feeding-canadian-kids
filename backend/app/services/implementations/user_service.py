@@ -328,6 +328,12 @@ class UserService(IUserService):
             self.logger.error(f"Failed to activate user. Reason = {e}")
             raise e
 
+    def is_user_activated(self, user_id) -> bool:
+        user = User.objects(id=user_id).first()
+        if not user:
+            return False
+        return user.info.active
+
     def deactivate_user_by_id(self, user_id):
         try:
             user = User.objects(id=user_id).first()
@@ -480,9 +486,15 @@ class UserService(IUserService):
                 # To debug queries like these, use MongoDB Compass.
                 now = datetime.now(timezone.utc)
                 future_cutoff = now + timedelta(weeks=12)
-                # TODO: Make sure user is not deactivated!
                 pipeline += [
                     {
+                        # Match only active ASPs
+                        "$match": {
+                            "info.active": { "$ne": False }
+                        }
+                    },
+                    {
+                        # make sure that they have some meal requests
                         "$lookup": {
                             "from": "meal_requests",
                             "localField": "_id",
@@ -491,6 +503,7 @@ class UserService(IUserService):
                         }
                     },
                     {
+                        # the meal requests should be open and within a certain time period
                         "$addFields": {
                             "meal_requests": {
                                 "$filter": {

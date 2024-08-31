@@ -86,6 +86,9 @@ const Login = (): React.ReactElement => {
       if ((errorCasted?.message ?? "").indexOf("Failed to sign-in") !== -1) {
         setErrorMessage("Invalid email or password, please try again!")
       }
+      else if ((errorCasted?.message ?? "").indexOf("is not activated") !== -1) {
+        setErrorMessage("Your account has been deactivated. Please contact FCK!")
+      }
       else {
         setErrorMessage("An unexpected error occurred, please try again!")
       }

@@ -35,6 +35,10 @@ def BaseLogin(method_name):
                 id=auth_dto.id,
                 info=auth_dto.info,
             )
+
+            if not services["user_service"].is_user_activated(auth_dto.id):
+                raise Exception("User is not activated! Please contact FCK.")
+
             return Login(registered_user=registered_user)
 
     return LoginMutation

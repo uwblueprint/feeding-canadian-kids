@@ -127,6 +127,13 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
+    def is_user_activated(self, user_id : str) -> bool:
+        """
+        Check if a user is activated
+        """
+        pass
+
+    @abstractmethod
     def activate_user_by_id(self, user_id):
         """
         Activate a user

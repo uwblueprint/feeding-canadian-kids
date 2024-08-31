@@ -185,8 +185,8 @@ const ActivateDeactivateModal = ({
           <ModalCloseButton />
           <ModalBody>
             {isActive 
-            ? "Deactivating the user means they will no longer be in the system. "
-            : "Activating the user means they will be in the system. "}
+            ? "Deactivating the user means they will not be able to login and use the platform. Make sure to manually remove them from any meal requests and delete any meal requests they have made in the past."
+            : "Activating the user means they will be able to login and use the platform."}
           </ModalBody>
           <ModalFooter>
             {isActive

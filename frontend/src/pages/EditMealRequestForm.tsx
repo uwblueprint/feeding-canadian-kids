@@ -377,7 +377,7 @@ const EditMealRequestForm = ({
         throw new GraphQLError("Failed to update meal donation information.");
       }
       setLoading(false);
-      onClose(data.updateMealDonation.mealRequest);
+      onClose(data.updateMealRequestDonation.mealRequest);
     } catch (e: unknown) {
       // eslint-disable-next-line no-console
       logPossibleGraphQLError(e as ApolloError, setAuthenticatedUser);

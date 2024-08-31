@@ -8,6 +8,8 @@ Ensures that the the user is either an admin or logged in as the requestor id th
 
 
 import traceback
+
+
 def secure_requestor_id(resolver):
     @wraps(resolver)
     def wrapper(parent, info, **kwargs):
@@ -19,13 +21,17 @@ def secure_requestor_id(resolver):
         print("user_id", user_id)
         if not user_id:
             print(traceback.format_exc())
-            raise RuntimeError("You are not authorized to make this request. No user id provided!")
-            
+            raise RuntimeError(
+                "You are not authorized to make this request. No user id provided!"
+            )
+
         if (not is_admin and not authorized) or not user_id:
             raise ClientError("You are not authorized to make this request.")
 
         if not services["user_service"].is_user_activated(user_id=user_id):
-            raise ClientError("You are not authorized to make this request. Your user has been deactivated. Please contact FCK.")
+            raise ClientError(
+                "You are not authorized to make this request. Your user has been deactivated. Please contact FCK."
+            )
 
         return resolver(parent, info, **kwargs)
 

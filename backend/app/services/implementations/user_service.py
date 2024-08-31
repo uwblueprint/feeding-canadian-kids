@@ -489,9 +489,7 @@ class UserService(IUserService):
                 pipeline += [
                     {
                         # Match only active ASPs
-                        "$match": {
-                            "info.active": { "$ne": False }
-                        }
+                        "$match": {"info.active": {"$ne": False}}
                     },
                     {
                         # make sure that they have some meal requests

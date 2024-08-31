@@ -1,5 +1,6 @@
 import { Contact, OnsiteContact, Requestor } from "./UserTypes";
 
+
 type MealInfo = {
   portions: number;
   dietaryRestrictions: string;
@@ -77,5 +78,5 @@ export type MealRequestsData = {
   getMealRequestsByIds: Array<MealRequest>;
   getMealRequestsByDonorId: Array<MealRequest>;
   updateMealRequest: UpdateMealRequestType;
-  updateMealDonation: UpdateMealRequestType;
+  updateMealRequestDonation: UpdateMealRequestType;
 };

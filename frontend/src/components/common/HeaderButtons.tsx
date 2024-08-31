@@ -33,7 +33,7 @@ const HeaderButtonsData: HeaderButtonDataType = {
   ],
   Donor: [
     {
-      name: "Schools",
+      name: "Donate",
       url: Routes.YOUR_MATCHES_PAGE,
     },
     {

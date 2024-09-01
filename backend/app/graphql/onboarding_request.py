@@ -114,7 +114,7 @@ class ApproveOnboardingRequest(Mutation):
 
     onboarding_request = graphene.Field(OnboardingRequest)
 
-    # @requires_role("Admin")
+    @requires_role("Admin")
     def mutate(self, info, id):
         onboarding_request_dto = services[
             "onboarding_request_service"
@@ -135,8 +135,7 @@ class RejectOnboardingRequest(Mutation):
 
     onboarding_request = graphene.Field(OnboardingRequest)
 
-    # TODO: Remove this after creating the first admin account!
-    # @requires_role("Admin")
+    @requires_role("Admin")
     def mutate(self, info, id):
         onboarding_request_dto = services[
             "onboarding_request_service"

@@ -44,4 +44,5 @@ jobs:
           googleApiKey: "${{ secrets.DEV_GOOGLE_API_KEY }}"
           adminCCEmail: "${{ secrets.DEV_ADMIN_CC_EMAIL }}"
           flaskConfig: "${{ secrets.DEV_FLASK_CONFIG }}"
+          frontendUrl: "${{ vars.FRONTEND_URL }}"
           sourceBranch: "main"

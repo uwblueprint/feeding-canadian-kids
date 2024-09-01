@@ -50,7 +50,6 @@ def validate_role_info(role, role_info, role_info_str, error_list):
                 )
             elif field == "num_kids" and role_info["num_kids"] < 0:
                 error_list.append("num_kids must be greater than or equal to zero.")
-    # TODO: Add donor info validation once meal donor schema is finalized
     return error_list
 
 

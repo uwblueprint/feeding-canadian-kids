@@ -45,6 +45,8 @@ inputs:
     required: true
   flaskConfig:
     required: true
+  frontendUrl:
+    required: true
   sourceBranch:
     required: false
     default: main
@@ -95,6 +97,7 @@ runs:
         config MAILER_REFRESH_TOKEN "${{ inputs.mailerRefreshToken }}"
         config PREVIEW_DEPLOY true
         config FLASK_CONFIG "${{ inputs.flaskConfig }}"
+        config FRONTEND_URL "${{ inputs.frontendUrl }}"
       shell: bash
     - name: Push to Heroku
       run: git push heroku `git subtree split --prefix backend "${{ inputs.sourceBranch }}"`:refs/heads/main --force

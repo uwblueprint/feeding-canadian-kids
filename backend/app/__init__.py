@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 import sentry_sdk
 import os
 import re
+from app.utilities.get_fe_url import get_fe_url
 import firebase_admin
 
 from flask import Flask
@@ -41,6 +42,7 @@ required_env_vars = [
     "MAILER_USER",
     "MG_DB_NAME",
     "MG_DATABASE_URL",
+    "FRONTEND_URL",
 ]
 
 
@@ -97,9 +99,7 @@ def create_app(config_name):
         view_func=GraphQLView.as_view(
             "graphql",
             schema=graphql_schema,
-            # TODO: renable this 
-            # graphiql=False if config_name == "production" else True,
-            graphiql=True,
+            graphiql=False if config_name == "production" else True,
             validation_rules=(
                 # We can't turn this off since for some reason the Apollo Client needs this to make any queries
                 # DisableIntrospection,
@@ -115,7 +115,8 @@ def create_app(config_name):
         re.compile(r"^https:\/\/feeding-canadian-kids-staging--pr.*\.web\.app$"),
         "https://feeding-canadian-kids-prod.firebaseapp.com",
         "https://feeding-canadian-kids-prod.web.app",
-        "https://mealpairingplatform.feedingcanadiankids.org"
+        "https://mealpairingplatform.feedingcanadiankids.org",
+        get_fe_url(),
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
     app.config["SCHEDULER_API_ENABLED"] = True

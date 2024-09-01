@@ -1,3 +1,4 @@
+from app.utilities.get_fe_url import get_fe_url
 from .email_service import EmailService
 import firebase_admin.auth
 
@@ -112,9 +113,7 @@ class AuthService(IAuthService):
         try:
             set_password_link = firebase_admin.auth.generate_password_reset_link(
                 email,
-                firebase_admin.auth.ActionCodeSettings(
-                    "https://feeding-canadian-kids-staging.web.app"
-                ),
+                firebase_admin.auth.ActionCodeSettings(get_fe_url()),
             )
 
             email_body = EmailService.read_email_template(
@@ -169,9 +168,7 @@ class AuthService(IAuthService):
         try:
             verification_link = firebase_admin.auth.generate_email_verification_link(
                 email,
-                firebase_admin.auth.ActionCodeSettings(
-                    "https://feeding-canadian-kids-staging.web.app"
-                ),
+                firebase_admin.auth.ActionCodeSettings(get_fe_url()),
             )
             email_body = EmailService.read_email_template(
                 "email_templates/verification_email.html"
@@ -194,7 +191,7 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            url = "https://feeding-canadian-kids-staging.web.app"
+            url = get_fe_url()
             set_password_link = "{url}/{ObjectID}/set-password".format(
                 url=url, ObjectID=objectID
             )

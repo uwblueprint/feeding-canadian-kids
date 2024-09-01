@@ -1,3 +1,4 @@
+from app.utilities.get_fe_url import get_fe_url
 from .email_service import EmailService
 
 from ..interfaces.auth_service import IAuthService
@@ -45,7 +46,7 @@ class MockAuthService(IAuthService):
         try:
             user = self.user_service.get_user_by_email(email)
 
-            url = "https://feeding-canadian-kids-staging.web.app"
+            url = get_fe_url()
             set_password_link = "{url}/{ObjectID}/reset-password".format(
                 url=url, ObjectID=user.id
             )
@@ -117,7 +118,7 @@ class MockAuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            url = "https://feeding-canadian-kids-staging.web.app"
+            url = get_fe_url()
             set_password_link = "{url}/{ObjectID}/set-password".format(
                 url=url, ObjectID=objectID
             )

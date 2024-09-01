@@ -114,7 +114,7 @@ class ApproveOnboardingRequest(Mutation):
 
     onboarding_request = graphene.Field(OnboardingRequest)
 
-    @requires_role("Admin")
+    # @requires_role("Admin")
     def mutate(self, info, id):
         onboarding_request_dto = services[
             "onboarding_request_service"

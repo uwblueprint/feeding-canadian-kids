@@ -43,4 +43,5 @@ jobs:
           geocodingApiKey: "${{ vars.GEOCODING_API_KEY }}"
           googleApiKey: "${{ secrets.GOOGLE_API_KEY }}"
           adminCCEmail: "${{ vars.ADMIN_CC_EMAIL }}"
+          flaskConfig: "${{ vars.FLASK_CONFIG }}"
           sourceBranch: "main"

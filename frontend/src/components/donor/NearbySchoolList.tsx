@@ -86,14 +86,13 @@ const NearbySchoolList = ({
                   <Flex
                     alignItems="center"
                     justifyItems="center"
-                    marginRight="1vw"
                   >
                     <Image
-                      src="/classroom.png"
+                      src="/classroom_compressed.jpg"
                       alt={school?.info?.organizationName}
                       borderRadius="full"
-                      w={{ base: "10vh", sm: "20vh" }}
-                      h={{ base: "10vh", sm: "20vh" }}
+                      w={{ base: "10vh", sm: "13vh" }}
+                      h={{ base: "10vh", sm: "13vh" }}
                       objectFit="contain"
                     />
                   </Flex>

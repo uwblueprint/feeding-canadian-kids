@@ -161,7 +161,7 @@ const SchoolSidebar = ({ aspId, distance }: SchoolSidebarProps) => {
       />
       <Flex marginBottom="30px">
         <Image
-          src="https://images.squarespace-cdn.com/content/v1/5dc5d641498834108f7c46a5/6384d8a2-9c31-4ae6-a287-256643f2271e/responsiveclassroom.png?format=1500w"
+          src="/classroom_compressed.jpg"
           alt={schoolInfo?.organizationName}
           borderRadius="full"
           objectFit="contain"

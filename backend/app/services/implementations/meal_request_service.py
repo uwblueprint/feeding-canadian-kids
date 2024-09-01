@@ -238,7 +238,9 @@ class MealRequestService(IMealRequestService):
                 )
 
             donor = User.objects(id=meal_request.donation_info.donor.id).first()
-            donor.info.involved_meal_requests = max(donor.info.involved_meal_requests -  1, 0)
+            donor.info.involved_meal_requests = max(
+                donor.info.involved_meal_requests - 1, 0
+            )
             donor.save()
 
             meal_request.donation_info = None
@@ -260,7 +262,9 @@ class MealRequestService(IMealRequestService):
                 raise Exception(f'Meal request "{meal_request_id}" not found')
 
             requestor = User.objects(id=meal_request.requestor.id).first()
-            requestor.info.involved_meal_requests = max(requestor.info.involved_meal_requests -  1, 0)
+            requestor.info.involved_meal_requests = max(
+                requestor.info.involved_meal_requests - 1, 0
+            )
             requestor.save()
 
             meal_request.delete()

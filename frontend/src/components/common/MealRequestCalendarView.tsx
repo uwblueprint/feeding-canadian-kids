@@ -332,6 +332,7 @@ export const MealRequestCalendarView = ({
               icon: "fc-icon-chevron-left",
               click() {
                 const prevMonth = new Date(date);
+                prevMonth.setDate(1);
                 prevMonth.setMonth(prevMonth.getMonth() - 1);
                 setDate(prevMonth);
               },
@@ -340,6 +341,7 @@ export const MealRequestCalendarView = ({
               icon: "fc-icon-chevron-right",
               click() {
                 const nextMonth = new Date(date);
+                nextMonth.setDate(1);
                 nextMonth.setMonth(nextMonth.getMonth() + 1);
                 setDate(nextMonth);
               },

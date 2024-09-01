@@ -97,7 +97,7 @@ class MealRequest(mg.Document):
                 continue
             expanded_contacts.append(contact.to_serializable_dict())
         return expanded_contacts
-        
+
     def to_serializable_dict(self):
         """
         Returns a dict representation of the document that is JSON serializable
@@ -111,7 +111,9 @@ class MealRequest(mg.Document):
         meal_request_dict["onsite_contacts"] = contacts
 
         if self.donation_info and self.donation_info.donor_onsite_contacts:
-            contacts = self._get_expanded_contacts_list(self.donation_info.donor_onsite_contacts)
+            contacts = self._get_expanded_contacts_list(
+                self.donation_info.donor_onsite_contacts
+            )
             meal_request_dict["donation_info"]["donor_onsite_contacts"] = contacts
 
         return meal_request_dict

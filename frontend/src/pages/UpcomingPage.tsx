@@ -114,9 +114,21 @@ const GET_MEAL_REQUESTS_BY_ID = gql`
         donor {
           info {
             organizationName
+            primaryContact {
+              name
+              email
+              phone
+            }
           }
         }
+        donorOnsiteContacts {
+          name
+          email
+          phone
+        }
+        commitmentDate
         mealDescription
+        additionalInfo
       }
     }
   }
@@ -159,7 +171,7 @@ function formatDate(inputDate: string): string {
   return date.toLocaleDateString("en-US", options);
 }
 
-export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
+export const UpcomingCard = ({ event, setShouldReload }: { event: UpcomingEvent, setShouldReload : (_: boolean) => void}) => {
   const { mealRequest } = event.extendedProps;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [
@@ -173,17 +185,14 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "800px",
-      }}
-    >
+    <div>
       {currentlyEditingMealRequestId ? (
         <EditMealRequestForm
           open={isEditModalOpen}
-          onClose={() => {
+          onClose={(newMealRequest) => {
             setIsEditModalOpen(false);
             setCurrentlyEditingMealRequestId(undefined);
+            setShouldReload(true);
           }}
           mealRequestId={currentlyEditingMealRequestId}
           isEditDonation
@@ -197,7 +206,7 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
           justifyContent="space-around"
           alignItems="center"
         >
-          <VStack padding={10}>
+          <VStack padding={1}>
             <Text fontSize="md">
               {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -226,7 +235,21 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
               Edit My Donation
             </ChakraButton>
           </VStack>
-          <VStack alignItems="left" padding={6}>
+
+          <VStack alignItems="left" padding={6} alignSelf="start">
+            <HStack alignItems="top">
+              <IoPersonOutline />
+              <VStack alignItems="left">
+                <Text fontSize="xs">
+                  <strong>
+                    ASP Name:
+                    <br />
+                  </strong>
+                  {mealRequest?.requestor.info?.organizationName}
+                </Text>
+              </VStack>
+            </HStack>
+
             <HStack alignItems="top">
               <IoLocationOutline />
               <VStack alignItems="left">
@@ -240,19 +263,30 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
               </VStack>
             </HStack>
 
+            <HStack alignItems="top" gap={0}>
+              <IoPersonOutline />
+              <VStack alignItems="left" gap={0} spacing={0}>
+                <Text variant="mobile-button-bold">ASP Primary Contact</Text>
+                <Text fontSize="xs">{mealRequest?.requestor.info?.primaryContact.name}</Text>
+                <Text fontSize="xs">{mealRequest?.requestor.info?.primaryContact.email}</Text>
+                <Text fontSize="xs">{mealRequest?.requestor.info?.primaryContact.name}</Text>
+              </VStack>
+            </HStack>
+
             <HStack alignItems="top">
               <IoPersonOutline />
-              <VStack alignItems="left">
+              <VStack alignItems="left" gap={0} spacing={1}>
                 <Text fontSize="xs">
                   <strong>ASP Onsite Staff:</strong>
                 </Text>
                 {mealRequest?.onsiteContacts.map((staffMember) => (
-                  <>
-                    <Text fontSize="xs">{staffMember.name}</Text>
-                    <Text fontSize="xs">{staffMember.email}</Text>
-                    <Text fontSize="xs">{staffMember.phone}</Text>
-                  </>
+                <VStack alignItems="left" gap={0} spacing={0} key={staffMember.name + staffMember.email}>
+                  <Text fontSize="xs">{staffMember.name}</Text>
+                  <Text fontSize="xs">{staffMember.email}</Text>
+                  <Text fontSize="xs">{staffMember.phone}</Text>
+                  </VStack>
                 ))}
+
               </VStack>
             </HStack>
 
@@ -273,6 +307,54 @@ export const UpcomingCard = ({ event }: { event: UpcomingEvent }) => {
                   <strong>Delivery Notes:</strong>
                   <br />
                   {mealRequest?.deliveryInstructions}
+                </Text>
+              </VStack>
+            </HStack>
+          </VStack>
+
+          <VStack padding={6} alignItems="left" justifyContent="start" alignSelf="start">
+            <HStack alignItems="top" gap={0}>
+              <IoPersonOutline />
+              <VStack alignItems="left" gap={0} spacing={0}>
+                <Text variant="mobile-button-bold">Your Primary Contact</Text>
+                <Text fontSize="xs">{mealRequest?.donationInfo?.donor?.info?.primaryContact?.name}</Text>
+                <Text fontSize="xs">{mealRequest?.donationInfo?.donor?.info?.primaryContact?.email}</Text>
+                <Text fontSize="xs">{mealRequest?.donationInfo?.donor?.info?.primaryContact?.phone}</Text>
+              </VStack>
+            </HStack>
+
+            <HStack alignItems="top">
+              <IoPersonOutline />
+              <VStack alignItems="left" gap={0} spacing={1}>
+                <Text fontSize="xs">
+                  <strong>Your Onsite Staff:</strong>
+                </Text>
+                {mealRequest?.donationInfo?.donorOnsiteContacts?.map((staffMember) => (
+                <VStack alignItems="left" gap={0} spacing={0} key={staffMember.name + staffMember.email}>
+                  <Text fontSize="xs">{staffMember.name}</Text>
+                  <Text fontSize="xs">{staffMember.email}</Text>
+                  <Text fontSize="xs">{staffMember.phone}</Text>
+                  </VStack>
+                ))}
+              </VStack>
+            </HStack>
+            <HStack alignItems="top">
+              <EmailIcon />
+              <VStack alignItems="left">
+                <Text fontSize="xs">
+                  <strong>Your meal description</strong>
+                  <br />
+                  {mealRequest?.donationInfo.mealDescription}
+                </Text>
+              </VStack>
+            </HStack>
+            <HStack alignItems="top">
+              <EmailIcon />
+              <VStack alignItems="left">
+                <Text fontSize="xs">
+                  <strong>Your additional information</strong>
+                  <br />
+                  {mealRequest?.donationInfo?.additionalInfo}
                 </Text>
               </VStack>
             </HStack>
@@ -300,6 +382,7 @@ const UpcomingPage = (): React.ReactElement => {
 
   const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [shouldReload, setShouldReload] = useState(false);
 
   const [
     upcomingMealRequests,
@@ -442,6 +525,15 @@ const UpcomingPage = (): React.ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
+  useEffect(() => {
+    if (shouldReload) {
+      reloadCompletedMealRequests();
+      reloadUpcomingMealRequests();
+      setShouldReload(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldReload]);
+
   if (!authenticatedUser) {
     return <Navigate replace to={LOGIN_PAGE} />;
   }
@@ -543,7 +635,7 @@ const UpcomingPage = (): React.ReactElement => {
               <>
                 <Stack direction="column">
                   {upcomingMealRequests?.map((event) => (
-                    <UpcomingCard event={event} key={event.id} />
+                    <UpcomingCard event={event} key={event.id} setShouldReload={setShouldReload}/>
                   ))}
                 </Stack>
                 <HStack>

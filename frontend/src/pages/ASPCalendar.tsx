@@ -277,7 +277,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                       <Td>
                         <Text>
                           {
-                            selectedMealRequest.requestor.info
+                            selectedMealRequest?.requestor?.info
                               ?.organizationAddress
                           }
                         </Text>
@@ -376,6 +376,32 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                       </Tr>
                     ) : null}
                   </Table>
+                  <Box position="absolute" bottom={2} right={2}>
+                    <HStack spacing={2}>
+                      <Button
+                        variant="link"
+                        height="20px"
+                        fontSize="14px"
+                        textColor="black"
+                        fontWeight="normal"
+                        _hover={{ textDecoration: "underline" }}
+                        onClick={handleEdit(selectedMealRequest)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="link"
+                        height="20px"
+                        fontSize="14px"
+                        textColor="red"
+                        fontWeight="normal"
+                        _hover={{ textDecoration: "underline" }}
+                        onClick={handleDelete(selectedMealRequest)}
+                      >
+                        Delete
+                      </Button>
+                    </HStack>
+                  </Box>
                 </Card>
               ) : (
                 <Card padding={8} width="100%" variant="outline">

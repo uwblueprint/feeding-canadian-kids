@@ -102,6 +102,11 @@ const UPDATE_MEAL_REQUEST = gql`
           portions
           dietaryRestrictions
         }
+        requestor {
+          info {
+            organizationAddress
+          }
+        }
         onsiteContacts {
           id
           name
@@ -150,6 +155,11 @@ const UPDATE_MEAL_DONATION = gql`
           name
           email
           phone
+        }
+        requestor {
+          info {
+            organizationAddress
+          }
         }
         donationInfo {
           donor {

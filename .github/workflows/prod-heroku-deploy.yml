@@ -2,19 +2,11 @@ name: "Prod: Deploy backend"
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - "backend/**"
   push:
-      branches:
-        - "shahanneda/prod-deploy"
-  pull_request:
     branches:
-      - "main" 
+      - main
     paths:
-      - ".github/workflows/prod-heroku-deploy.yaml"
+      - "backend/**"
 
 jobs:
   deploy:

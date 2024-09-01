@@ -2,22 +2,11 @@ name: "Prod: Deploy frontend"
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - "frontend/**"
-  # pull_request:
-  #   paths:
-  #     - "frontend/**"
   push:
-      branches:
-        - "shahanneda/prod-deploy"
-  pull_request:
     branches:
-      - "main" 
+      - main
     paths:
-      - ".github/workflows/prod-firebase-deploy.yaml"
+      - "frontend/**"
 
 jobs:
   build_and_deploy:

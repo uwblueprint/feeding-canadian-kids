@@ -57,7 +57,7 @@ const NearbySchoolList = ({
             location and have open meal requests within the next 3 months.
           </Text>
         </Flex>
-        <Flex flex="1" padding="0 7vw" flexDirection="column">
+        <Flex flex="1" padding="0 7vw" flexDirection="column" key = "">
           <Box
             display="flex"
             flexDirection="column"
@@ -86,14 +86,13 @@ const NearbySchoolList = ({
                   <Flex
                     alignItems="center"
                     justifyItems="center"
-                    marginRight="1vw"
                   >
                     <Image
                       src="/classroom.png"
                       alt={school?.info?.organizationName}
                       borderRadius="full"
-                      w={{ base: "10vh", sm: "20vh" }}
-                      h={{ base: "10vh", sm: "20vh" }}
+                      w={{ base: "10vh", sm: "13vh" }}
+                      h={{ base: "10vh", sm: "13vh" }}
                       objectFit="contain"
                     />
                   </Flex>

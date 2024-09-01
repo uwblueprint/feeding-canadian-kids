@@ -393,7 +393,8 @@ const UpcomingPage = (): React.ReactElement => {
     nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
   }>();
 
-  const rowsPerPage = 10;
+  const ROWS_PER_PAGE_UPCOMING = 3;
+  const ROWS_PER_PAGE_COMPLETED = 10;
 
   const [
     getUpcomingMealRequests,
@@ -455,7 +456,7 @@ const UpcomingPage = (): React.ReactElement => {
       variables: {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         donorId: authenticatedUser!.id,
-        limit: 3,
+        limit: ROWS_PER_PAGE_UPCOMING,
         offset,
         sortByDateDirection,
         minDropOffDate: formattedTime,
@@ -472,8 +473,8 @@ const UpcomingPage = (): React.ReactElement => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         donorId: authenticatedUser!.id,
         sortByDateDirection,
-        limit: rowsPerPage,
-        offset: (currentPage - 1) * rowsPerPage,
+        limit: ROWS_PER_PAGE_COMPLETED,
+        offset: (currentPage - 1) * ROWS_PER_PAGE_COMPLETED,
         status: [MealStatus.UPCOMING, MealStatus.FULFILLED],
         maxDropOffDate: yesterday.toISOString().split("T")[0],
       },
@@ -514,7 +515,7 @@ const UpcomingPage = (): React.ReactElement => {
     if (shouldReload) {
       reloadCompletedMealRequests();
       reloadUpcomingMealRequests();
-      setShouldReload(false)
+      setShouldReload(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldReload]);
@@ -628,23 +629,28 @@ const UpcomingPage = (): React.ReactElement => {
                     leftIcon={<ChevronLeftIcon />}
                     colorScheme="black"
                     variant="ghost"
+                    disabled={offset === 0}
                     onClick={() => {
                       if (offset > 0) {
-                        setOffset(offset - 3);
+                        setOffset(offset - ROWS_PER_PAGE_UPCOMING);
                       }
                     }}
                   />
-                  <Text>{offset / 3 + 1}</Text>
+                  <Text>{offset / ROWS_PER_PAGE_UPCOMING + 1}</Text>
                   <Button
                     rightIcon={<ChevronRightIcon />}
                     colorScheme="black"
                     variant="ghost"
+                    disabled={
+                      upcomingMealRequests &&
+                      upcomingMealRequests.length < ROWS_PER_PAGE_UPCOMING
+                    }
                     onClick={() => {
                       if (
                         upcomingMealRequests &&
-                        upcomingMealRequests.length >= offset
+                        upcomingMealRequests.length === ROWS_PER_PAGE_UPCOMING // If we have a full page of results
                       ) {
-                        setOffset(offset + 3);
+                        setOffset(offset + ROWS_PER_PAGE_UPCOMING);
                       }
                     }}
                   />

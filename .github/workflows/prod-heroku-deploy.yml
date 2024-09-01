@@ -1,12 +1,13 @@
 name: "Prod: Deploy backend"
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "backend/**"
+# We have disabled automatic dispatch, since we want to deploy prod manually
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - "backend/**"
 
 jobs:
   deploy:

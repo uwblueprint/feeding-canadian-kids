@@ -1,0 +1,54 @@
+name: "Prod: Deploy backend"
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "backend/**"
+  push:
+      branches:
+        - "shahanneda/prod-deploy"
+  pull_request:
+    branches:
+      - "main" 
+    paths:
+      - ".github/workflows/prod-heroku-deploy.yaml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/heroku-deploy
+        with:
+          email: "${{ vars.HEROKU_EMAIL }}"
+          apiKey: "${{ secrets.HEROKU_API_KEY }}"
+          appName: "${{ vars.HEROKU_PROJECT_ID }}"
+          databaseName: "${{ vars.MG_DB_NAME }}"
+          databaseUrl: "${{ secrets.MG_DATABASE_URL }}"
+          firebaseApiKey: "${{ secrets.FIREBASE_WEB_API_KEY }}"
+          firebaseAuthProviderX509CertUrl: "${{ vars.FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL }}"
+          firebaseAuthUri: "${{ vars.FIREBASE_SVC_ACCOUNT_AUTH_URI }}"
+          firebaseRequestUri: "${{ vars.FIREBASE_REQUEST_URI }}"
+          firebaseBucket: "${{ vars.FIREBASE_STORAGE_DEFAULT_BUCKET }}"
+          firebaseClientX509CertUrl: "${{ vars.FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL }}"
+          firebaseProject: "${{ vars.FIREBASE_PROJECT_ID }}"
+          firebasePrivateKey: "${{ secrets.FIREBASE_SVC_ACCOUNT_PRIVATE_KEY }}"
+          firebaseClientId: "${{ vars.FIREBASE_SVC_ACCOUNT_CLIENT_ID }}"
+          firebasePrivateKeyId: "${{ secrets.FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_ID }}"
+          firebaseAccountTokenUri: "${{ vars.FIREBASE_SVC_ACCOUNT_TOKEN_URI }}"
+          firebaseEmail: "${{ vars.FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL }}"
+          mailerUser: "${{ vars.MAILER_USER }}"
+          mailerId: "${{ vars.MAILER_CLIENT_ID }}"
+          mailerSecret: "${{ secrets.MAILER_CLIENT_SECRET }}"
+          mailerRefreshToken: "${{ vars.MAILER_REFRESH_TOKEN }}"
+          useGoogleApi: "${{ vars.USE_GOOGLE_API }}"
+          geocodingApiKey: "${{ vars.GEOCODING_API_KEY }}"
+          googleApiKey: "${{ secrets.GOOGLE_API_KEY }}"
+          adminCCEmail: "${{ vars.ADMIN_CC_EMAIL }}"
+          sourceBranch: "main"

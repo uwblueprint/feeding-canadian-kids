@@ -379,7 +379,6 @@ const OnsiteContactSection = ({
 }: OnsiteContactSectionProps): React.ReactElement => {
   const isWebView = useIsWebView();
 
-  const [showCreateModal, setShowCreateModal] = useState(false);
 
   if (isWebView) {
     return (
@@ -554,10 +553,7 @@ const OnsiteContactSection = ({
                   email: "",
                 },
               ]);
-              return;
             }
-
-            setShowCreateModal(true);
           }}
         >
           + Add another contact

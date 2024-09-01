@@ -89,6 +89,15 @@ class MealRequest(mg.Document):
                             f"onsite contact {contact.id} not found or not associated with the donor organization"
                         )
 
+    def _get_expanded_contacts_list(self, contacts):
+        expanded_contacts = []
+        for contact in contacts:
+            # If a contact is deleted, it won't have the `to_serializable_dict` method, so we won't add it to the results
+            if not hasattr(contact, "to_serializable_dict"):
+                continue
+            expanded_contacts.append(contact.to_serializable_dict())
+        return expanded_contacts
+        
     def to_serializable_dict(self):
         """
         Returns a dict representation of the document that is JSON serializable
@@ -98,15 +107,11 @@ class MealRequest(mg.Document):
         meal_request_dict = self.to_mongo().to_dict()
         id = meal_request_dict.pop("_id", None)
         meal_request_dict["id"] = str(id)
-
-        contacts = [contact.to_serializable_dict() for contact in self.onsite_contacts]
+        contacts = self._get_expanded_contacts_list(self.onsite_contacts)
         meal_request_dict["onsite_contacts"] = contacts
 
         if self.donation_info and self.donation_info.donor_onsite_contacts:
-            contacts = [
-                contact.to_serializable_dict()
-                for contact in self.donation_info.donor_onsite_contacts
-            ]
+            contacts = self._get_expanded_contacts_list(self.donation_info.donor_onsite_contacts)
             meal_request_dict["donation_info"]["donor_onsite_contacts"] = contacts
 
         return meal_request_dict

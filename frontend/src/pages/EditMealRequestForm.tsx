@@ -268,27 +268,29 @@ const EditMealRequestForm = ({
 
   // For validation
   const validateData = () => {
-    if (
-      numberOfMeals <= 0 ||
-      onsiteContacts.length === 0 ||
-      onsiteContacts.some(
-        (contact) =>
-          !contact ||
-          contact.name === "" ||
-          contact.email === "" ||
-          contact.phone === "",
-      )
-    ) {
-      setAttemptedSubmit(true);
-      return false;
-    }
-
     if (isEditDonation) {
       if (mealDescription === "") {
         setAttemptedSubmit(true);
         return false;
       }
-    }
+      if (mealDonorOnsiteContacts.length < 0) {
+        setAttemptedSubmit(true);
+        return false;
+      }
+    } else  if (
+        numberOfMeals <= 0 ||
+        onsiteContacts.length < 0 ||
+        onsiteContacts.some(
+          (contact) =>
+            !contact ||
+            contact.name === "" ||
+            contact.email === "" ||
+            contact.phone === "",
+        )
+      ) {
+        setAttemptedSubmit(true);
+        return false;
+      }
 
     setAttemptedSubmit(false);
     return true;
@@ -426,12 +428,10 @@ const EditMealRequestForm = ({
                     Food Description
                   </FormLabel>
                   <FormHelperText fontSize="xs" my={2}>
-                    Please describe a typical meal you can provide (this can be
-                    modified later)
+                    Please describe a typical meal you can provide:
                   </FormHelperText>
                   <Input
-                    // TODO should we change this placeholder?
-                    placeholder="Ex. 40 mac and cheeses with 9 gluten free ones. Also will donate 30 bags of cheetos."
+                    placeholder="Ex. Will be bringing 5 large cheese pizza's."
                     value={mealDescription}
                     onChange={(e) => setMealDescription(e.target.value)}
                     ref={initialFocusRef}

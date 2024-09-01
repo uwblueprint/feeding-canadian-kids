@@ -45,7 +45,7 @@ required_env_vars = [
 
 def create_app(config_name):
     print("Environment is", config_name)
-    if config_name != "testing":
+    if config_name != "testing" and config_name != "development":
         sentry_sdk.init(
             dsn="https://85a9bf2fc71b287cc4e60cb9f918f034@o4507682847850496.ingest.us.sentry.io/4507801405227008",
             # Set traces_sample_rate to 1.0 to capture 100%

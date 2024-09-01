@@ -8,6 +8,8 @@ name: "Prod: Deploy backend"
 #       - main
 #     paths:
 #       - "backend/**"
+on:
+  workflow_dispatch:
 
 jobs:
   deploy:

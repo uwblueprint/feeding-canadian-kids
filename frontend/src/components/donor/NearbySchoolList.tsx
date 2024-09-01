@@ -69,7 +69,7 @@ const NearbySchoolList = ({
             width="100%"
           >
             {schools.length === 0 ? (
-              <Center height="100vh">  
+              <Center height="100vh">
                 <Text>No schools available</Text>
               </Center>
             ) : (
@@ -139,6 +139,7 @@ const NearbySchoolList = ({
               leftIcon={<ChevronLeftIcon />}
               colorScheme="black"
               variant="ghost"
+              disabled={offset === 0}
               onClick={() => {
                 if (offset > 0) {
                   setOffset(offset - 3);
@@ -150,6 +151,7 @@ const NearbySchoolList = ({
               rightIcon={<ChevronRightIcon />}
               colorScheme="black"
               variant="ghost"
+              disabled={schools && schools.length < YOUR_MATCHES_PER_PAGE_LIMIT}
               onClick={() => {
                 if (schools.length >= YOUR_MATCHES_PER_PAGE_LIMIT) {
                   setOffset(offset + 3);

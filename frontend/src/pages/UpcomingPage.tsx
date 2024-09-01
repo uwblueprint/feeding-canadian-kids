@@ -66,6 +66,7 @@ import {
   SortByDateDirection,
 } from "../types/MealRequestTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
+import { convertMealRequestsToTableNodes } from "../utils/convertMealRequestsToTableNodes";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByDonorId(
@@ -440,26 +441,10 @@ const UpcomingPage = (): React.ReactElement => {
     {
       onCompleted: (results) => {
         setCompletedMealRequests({
-          nodes: results.getMealRequestsByDonorId?.map(
-            (
-              mealRequest: MealRequest,
-              index: number,
-            ): TABLE_LIBRARY_TYPES.TableNode => ({
-              id: index,
-              meal_request_id: mealRequest.id,
-              date_requested: new Date(mealRequest.dropOffDatetime + "Z"),
-              time_requested: new Date(mealRequest.dropOffDatetime + "Z"),
-              asp_name: mealRequest.requestor.info?.organizationName,
-              num_meals: mealRequest.mealInfo?.portions,
-              donation_address: mealRequest.requestor.info?.organizationAddress,
-              dietary_restrictions: mealRequest.mealInfo.dietaryRestrictions,
-              contact_info: "TODO: donor primaryContact", // mealRequest.donationInfo.primaryContact
-              onsite_contact: mealRequest.onsiteContacts,
-              meal_description: mealRequest.donationInfo?.mealDescription,
-              _hasContent: false,
-              nodes: null,
-            }),
-          ),
+          nodes: 
+          convertMealRequestsToTableNodes(
+           results.getMealRequestsByDonorId
+          )
         });
       },
     },

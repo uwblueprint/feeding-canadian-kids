@@ -4,6 +4,7 @@ import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/t
 import React, { useEffect, useState } from "react";
 
 import { Contact } from "../../types/UserTypes";
+import { formatDateTimeFully } from "../../utils/convertMealRequestsToTableNodes";
 import ListView from "../common/ListView";
 
 type MealDonorListViewProps = {
@@ -102,33 +103,89 @@ const MealDonorListView = ({
           borderBottom="1px solid"
           borderColor="gray.400"
         >
-          <Flex flexDir="column" flex={1} p="8px">
-            <Text variant="mobile-caption-bold">Donation Address</Text>
-            <Text variant="mobile-caption-2" mb="12px">
-              {item.donation_address}
+          <Box flex={1} p="8px">
+            <Text variant="mobile-button-bold">Time Requested</Text>
+            <Text variant="mobile-caption-2">
+              {formatDateTimeFully(item.date_requested)}
             </Text>
-            <Text variant="mobile-caption-bold">Dietary Restrictions</Text>
+
+            <Text variant="mobile-button-bold">Dietary Restrictions</Text>
             <Text variant="mobile-caption-2">{item.dietary_restrictions}</Text>
-          </Flex>
-          <Flex flexDir="column" flex={1} p="8px">
-            <Text variant="mobile-caption-bold">ASP Onsite Staff</Text>
-            {item.onsite_contact.map((staff: Contact) => (
-              <Box key={staff.email} mb="8px">
-                <Text variant="mobile-caption-2">{staff.name}</Text>
-                <Text variant="mobile-caption-2">{staff.email}</Text>
-                <Text variant="mobile-caption-2">{staff.phone}</Text>
+
+            <Text variant="mobile-button-bold">Meal Donation Location</Text>
+            <Text variant="mobile-caption-2">{item.location}</Text>
+
+            <Text variant="mobile-button-bold"> Delivery Instructions </Text>
+            <Text variant="mobile-caption-2">{item.delivery_instructions}</Text>
+
+            <Text variant="mobile-button-bold">Number of meals</Text>
+            <Text variant="mobile-caption-2">{item.num_meals}</Text>
+          </Box>
+          <Box flex={1} p="8px">
+            <Text variant="mobile-button-bold">ASP Name</Text>
+            <Text variant="mobile-caption-2">{item.asp_name}</Text>
+            <Text variant="mobile-button-bold">ASP Primary Contact</Text>
+            <Box key={item.asp_primary_contact.id} mb="8px">
+              <Text variant="mobile-caption-2">
+                {item.asp_primary_contact.name}
+              </Text>
+              <Text variant="mobile-caption-2">
+                {item.asp_primary_contact.email}
+              </Text>
+              <Text variant="mobile-caption-2">
+                {item.asp_primary_contact.phone}
+              </Text>
+            </Box>
+            <Text variant="mobile-button-bold">Onsite ASP Contacts</Text>
+            {item.asp_onsite_contacts?.map((contact: Contact) => (
+              <Box key={contact.email} mb="8px">
+                <Text variant="mobile-caption-2">{contact.name}</Text>
+                <Text variant="mobile-caption-2">{contact.email}</Text>
+                <Text variant="mobile-caption-2">{contact.phone}</Text>
               </Box>
             ))}
+          </Box>
+
+          {item.has_donor ? (
+            <Box flex={1} p="8px">
+              <Text variant="mobile-button-bold">Your Primary Contact</Text>
+              <Box key={item.donor_primary_contact.id} mb="8px">
+                <Text variant="mobile-caption-2">
+                  {item.donor_primary_contact.name}
+                </Text>
+                <Text variant="mobile-caption-2">
+                  {item.donor_primary_contact.email}
+                </Text>
+                <Text variant="mobile-caption-2">
+                  {item.donor_primary_contact.phone}
+                </Text>
+              </Box>
+              <Text variant="mobile-button-bold">Your Onsite Contacts</Text>
+              {item.donor_onsite_contacts?.map((contact: Contact) => (
+                <Box key={contact.email} mb="8px">
+                  <Text variant="mobile-caption-2">{contact.name}</Text>
+                  <Text variant="mobile-caption-2">{contact.email}</Text>
+                  <Text variant="mobile-caption-2">{contact.phone}</Text>
+                </Box>
+              ))}
+
+              <Text variant="mobile-button-bold">Commitment Date</Text>
+              <Text variant="mobile-caption-2">
+                {formatDateTimeFully(item.commitment_date)}
+              </Text>
+              <Text variant="mobile-button-bold">Your Meal Description</Text>
+              <Text variant="mobile-caption-2">
+                {formatDateTimeFully(item.donation_meal_description)}
+              </Text>
+              <Text variant="mobile-button-bold">
+                Your Additional Information{" "}
+              </Text>
+              <Text variant="mobile-caption-2">
+                {formatDateTimeFully(item.additional_donation_info)}
+              </Text>
+            </Box>
+          ) : null}
           </Flex>
-          <Flex flexDir="column" flex={1} p="8px">
-            <Text variant="mobile-caption-bold">My Contact Info</Text>
-            <Text variant="mobile-caption-2" mb="12px">
-              {item.contact_info}
-            </Text>
-            <Text variant="mobile-caption-bold">Meal Description:</Text>
-            <Text variant="mobile-caption-2">{item.meal_description}</Text>
-          </Flex>
-        </Flex>
       </Collapse>
     ),
   };

@@ -389,17 +389,6 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                       >
                         Edit
                       </Button>
-                      <Button
-                        variant="link"
-                        height="20px"
-                        fontSize="14px"
-                        textColor="red"
-                        fontWeight="normal"
-                        _hover={{ textDecoration: "underline" }}
-                        onClick={handleDelete(selectedMealRequest)}
-                      >
-                        Delete
-                      </Button>
                     </HStack>
                   </Box>
                 </Card>

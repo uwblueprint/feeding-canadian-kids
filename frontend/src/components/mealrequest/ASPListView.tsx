@@ -48,6 +48,7 @@ import {
 } from "../../types/MealRequestTypes";
 import { Contact } from "../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
+import { Status } from "../../utils/convertMealRequestsToTableNodes";
 import ListView from "../common/ListView";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
@@ -198,6 +199,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
               meal_donor_notes: mealRequest.donationInfo?.additionalInfo,
               delivery_instructions: mealRequest.deliveryInstructions,
               pending: mealRequest.status === MealStatus.OPEN,
+              status: mealRequest.status,
               _hasContent: false,
               nodes: null,
             }),
@@ -321,22 +323,36 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
       ),
     },
     {
+      label: "Status",
+      renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => (
+        <Status status={item.status} />
+      ),
+    },
+    {
       label: "",
       renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => {
-        if (!item.pending) {
-          return (
-            <Flex
+        if (item.status === MealStatus.FULFILLED) {
+            return (<Flex
               cursor="pointer"
               justifyContent="flex-end"
               onClick={handleExpand(item)}
             >
+              <HStack />
+            </Flex>)
+        }
+
+        if (item.status === MealStatus.UPCOMING) {
+          return (
+            <Flex
+              cursor="pointer"
+              justifyContent="flex-end"
+            >
               <HStack>
                 {ids.includes(item.id) ? (
-                  <ChevronUpIcon />
+                  <ChevronUpIcon onClick={handleExpand(item)} />
                 ) : (
-                  <ChevronDownIcon />
+                  <ChevronDownIcon  onClick={handleExpand(item)} />
                 )}
-
                 <EditIcon
                   onClick={handleEdit(item)}
                   cursor="pointer"

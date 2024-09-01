@@ -111,6 +111,9 @@ def create_app(config_name):
         "https://feeding-canadian-kids-staging.firebaseapp.com",
         "https://feeding-canadian-kids-staging.web.app",
         re.compile(r"^https:\/\/feeding-canadian-kids-staging--pr.*\.web\.app$"),
+        "https://feeding-canadian-kids-prod.firebaseapp.com",
+        "https://feeding-canadian-kids-prod.web.app",
+        "https://mealpairingplatform.feedingcanadiankids.org"
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
     app.config["SCHEDULER_API_ENABLED"] = True

@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloLink, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { ChakraProvider } from "@chakra-ui/react";
@@ -89,7 +89,7 @@ const authLink = setContext(async (_, { headers }) => {
 const removeTypenameLink = removeTypenameFromVariables();
 
 const apolloClient = new ApolloClient({
-  link: removeTypenameLink.concat(authLink).concat(link),
+  link: ApolloLink.from([removeTypenameLink, authLink, link]),
   cache: new InMemoryCache({
     typePolicies: {
       MealRequestResponse: {

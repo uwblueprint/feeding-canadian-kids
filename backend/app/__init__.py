@@ -8,6 +8,7 @@ from flask import Flask
 from flask_cors import CORS
 from .graphql.view import GraphQLView
 from logging.config import dictConfig
+from graphene.validation import depth_limit_validator
 
 from .config import app_config
 from .graphql import schema as graphql_schema
@@ -96,7 +97,12 @@ def create_app(config_name):
         view_func=GraphQLView.as_view(
             "graphql",
             schema=graphql_schema,
-            graphiql=True,
+            graphiql=False if config_name == "production" else True,
+            validation_rules=(
+                # We can't turn this off since for some reason the Apollo Client needs this to make any queries
+                # DisableIntrospection,
+                depth_limit_validator(max_depth=20),
+            ),
         ),
     )
 

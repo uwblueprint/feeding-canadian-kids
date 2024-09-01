@@ -163,7 +163,7 @@ def test_create_meal_request_fails_invalid_onsite_contact(
 def test_update_meal_request_donation(meal_request_setup, onsite_contact_setup):
     _, donor, meal_request = meal_request_setup
 
-    test_commit_to_meal_request(meal_request_setup)
+    test_commit_to_meal_request(meal_request_setup, onsite_contact_setup)
     (
         _,
         donor,
@@ -310,8 +310,14 @@ def test_create_meal_request_fails_repeat_date(
 
 
 # Happy path: A donor commits to fulfilling one meal request
-def test_commit_to_meal_request(meal_request_setup):
+def test_commit_to_meal_request(meal_request_setup, onsite_contact_setup):
     asp, donor, meal_request = meal_request_setup
+    (
+        asp,
+        donor,
+        [asp_onsite_contact, asp_onsite_contact2],
+        [donor_onsite_contact, donor_onsite_contact2],
+    ) = onsite_contact_setup
 
     mutation = f"""
     mutation testCommitToMealRequest {{
@@ -320,7 +326,7 @@ def test_commit_to_meal_request(meal_request_setup):
         mealRequestIds: ["{str(meal_request.id)}"],
         mealDescription: "Pizza",
         additionalInfo: "No nuts",
-        donorOnsiteContacts: []
+        donorOnsiteContacts: ["{str(donor_onsite_contact.id)}"]
       )
       {{
         mealRequests {{
@@ -407,6 +413,7 @@ def test_commit_to_meal_request(meal_request_setup):
         f"Dropoff Time: {meal_request.drop_off_datetime.replace('T', ' ')}"
         in donor_email["body"]
     )
+    assert donor_email["cc"] == [donor_onsite_contact.email]
 
     assert requestor_email["subject"] == "Your meal request has been fulfilled!"
     assert requestor_email["to"] == meal_request.requestor.info.email
@@ -669,11 +676,11 @@ def test_get_meal_request_by_requestor_id(meal_request_setup):
     assert result["id"] == str(meal_request.id)
 
 
-def test_cancel_donation_as_admin(meal_request_setup, user_setup):
+def test_cancel_donation_as_admin(meal_request_setup, user_setup, onsite_contact_setup):
     _, _, meal_request = meal_request_setup
     requestor, donor, admin = user_setup
 
-    test_commit_to_meal_request(meal_request_setup)
+    test_commit_to_meal_request(meal_request_setup, onsite_contact_setup)
 
     mutation = f"""
     mutation testCancelDonation {{
@@ -892,9 +899,11 @@ def test_delete_meal_request_as_asp(meal_request_setup):
     assert MealRequest.objects(id=meal_request.id).first() is None
 
 
-def test_delete_meal_request_as_non_admin_fails_if_donor(meal_request_setup):
+def test_delete_meal_request_as_non_admin_fails_if_donor(
+    meal_request_setup, onsite_contact_setup
+):
     asp, meal_donor, meal_request = meal_request_setup
-    test_commit_to_meal_request(meal_request_setup)
+    test_commit_to_meal_request(meal_request_setup, onsite_contact_setup)
 
     mutation = f"""
     mutation testDeleteMealRequest {{

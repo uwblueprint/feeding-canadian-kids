@@ -1,5 +1,6 @@
 import base64
 from email.mime.text import MIMEText
+from typing import List
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from ..interfaces.email_service import IEmailService
@@ -42,15 +43,18 @@ class EmailService(IEmailService):
         else:
             self.sender = sender_email
 
-    def send_email(self, to, subject, body):
+    def send_email(self, to, subject, body, cc: List[str]):
         message = MIMEText(body, "html")
         message["from"] = self.sender
         message["to"] = to
         message["subject"] = subject
 
         # If we have an ADMIN CC email, cc any sent emails to that email address
-        if os.getenv("ADMIN_CC_EMAIL"):
-            message["cc"] = os.getenv("ADMIN_CC_EMAIL")
+        admin_cc_email = os.getenv("ADMIN_CC_EMAIL")
+        if admin_cc_email:
+            cc.append(admin_cc_email)
+
+        message["cc"] = ",".join(cc)
 
         email = {"raw": base64.urlsafe_b64encode(message.as_string().encode()).decode()}
         try:

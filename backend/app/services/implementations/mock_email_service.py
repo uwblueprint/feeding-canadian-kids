@@ -9,6 +9,7 @@ class MockEmailType(TypedDict):
     to: str
     subject: str
     body: str
+    cc: List[str]
 
 
 class MockEmailService(IEmailService):
@@ -31,12 +32,13 @@ class MockEmailService(IEmailService):
         self.emails_sent: List[MockEmailType] = []
         MockEmailService.instance = self
 
-    def send_email(self, to, subject, body):
+    def send_email(self, to, subject, body, cc: List[str]):
         message: MockEmailType = {
             "from_": self.sender,
             "to": to,
             "subject": subject,
             "body": body,
+            "cc": cc,
         }
         print(
             f"MockEmailService: Sent email to {message['to']} from {message['from_']} with subject '{message['subject']}'"

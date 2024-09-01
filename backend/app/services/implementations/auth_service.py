@@ -120,7 +120,9 @@ class AuthService(IAuthService):
             email_body = EmailService.read_email_template(
                 "email_templates/reset_password.html"
             ).format(reset_link=set_password_link)
-            self.email_service.send_email(email, "FCK Reset Password Link", email_body)
+            self.email_service.send_email(
+                email, "FCK Reset Password Link", email_body, []
+            )
 
         except Exception as e:
             reason = getattr(e, "message", None)
@@ -174,7 +176,7 @@ class AuthService(IAuthService):
             email_body = EmailService.read_email_template(
                 "email_templates/verification_email.html"
             ).format(verification_link=verification_link)
-            self.email_service.send_email(email, "Verify your email", email_body)
+            self.email_service.send_email(email, "Verify your email", email_body, [])
         except Exception as e:
             self.logger.error(
                 "Failed to generate email verification link for user "
@@ -202,7 +204,7 @@ class AuthService(IAuthService):
             ).format(set_password_link=set_password_link)
 
             self.email_service.send_email(
-                email, "Onboarding request approved. Set Password", email_body
+                email, "Onboarding request approved. Set Password", email_body, []
             )
 
         except Exception as e:
@@ -221,11 +223,11 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
-            email_body = EmailService.EmailService.read_email_template(
+            email_body = EmailService.read_email_template(
                 "email_templates/onboarding_request_rejected.html"
             )
             self.email_service.send_email(
-                email, "Onboarding request rejected", email_body
+                email, "Onboarding request rejected", email_body, []
             )
 
         except Exception as e:

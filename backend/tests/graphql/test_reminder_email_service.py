@@ -4,15 +4,27 @@ from app.services.interfaces.reminder_email_service import IReminderEmailService
 from datetime import datetime, timedelta, timezone
 
 
-def test_meal_yesterday(reminder_email_setup, user_setup, meal_request_setup):
+def test_meal_yesterday(
+    reminder_email_setup, user_setup, meal_request_setup, onsite_contact_setup
+):
     _, _, meal_request = meal_request_setup
+    (
+        asp,
+        donor,
+        [asp_onsite_contact, asp_onsite_contact2],
+        [donor_onsite_contact, donor_onsite_contact2],
+    ) = onsite_contact_setup
+
     users = user_setup
     reminder_email_service: IReminderEmailService = reminder_email_setup  # type: ignore
 
     dropoff_time = (
         datetime.now(timezone.utc) - timedelta(days=1) - timedelta(minutes=20)
     )
+
     meal_request.drop_off_datetime = dropoff_time
+    meal_request.onsite_contacts = [asp_onsite_contact.id, asp_onsite_contact2.id]
+
     meal_request.save()
 
     requestor_email, donor_email = get_emails_and_check_destinations(
@@ -21,6 +33,10 @@ def test_meal_yesterday(reminder_email_setup, user_setup, meal_request_setup):
 
     assert "We hope you enjoyed your requested meal!" in requestor_email["body"]
     assert requestor_email["subject"] == "We hope you enjoyed your meal!"
+    assert requestor_email["cc"] == [
+        asp_onsite_contact.email,
+        asp_onsite_contact2.email,
+    ]
 
     assert "Your meal request was supplied yesterday." in donor_email["body"]
     assert donor_email["subject"] == "Thank you again for your meal donation!"

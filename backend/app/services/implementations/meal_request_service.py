@@ -3,6 +3,10 @@ from typing import List
 from app.utilities.format_onsite_contacts import (
     get_meal_request_snippet,
 )
+from app.utilities.get_onsite_contact_emails import (
+    get_meal_request_asp_onsite_contact_emails,
+    get_meal_request_donor_onsite_contact_emails,
+)
 
 from .email_service import EmailService
 from ...models.meal_request import MealInfo, MealRequest
@@ -169,7 +173,7 @@ class MealRequestService(IMealRequestService):
     def commit_to_meal_request(
         self,
         donor_id: str,
-        meal_request_ids: [str],
+        meal_request_ids: List[str],
         meal_description: str,
         additional_info: str,
         donor_onsite_contacts: List[str],
@@ -444,7 +448,10 @@ class MealRequestService(IMealRequestService):
                 meal_request_snippet=get_meal_request_snippet(meal_request),
             )
             self.email_service.send_email(
-                email, "Thank you for committing to a meal request!", email_body
+                email,
+                "Thank you for committing to a meal request!",
+                email_body,
+                get_meal_request_donor_onsite_contact_emails(meal_request),
             )
 
         except Exception as e:
@@ -469,7 +476,10 @@ class MealRequestService(IMealRequestService):
                 meal_request_snippet=get_meal_request_snippet(meal_request),
             )
             self.email_service.send_email(
-                email, "Your meal request has been fulfilled!", email_body
+                email,
+                "Your meal request has been fulfilled!",
+                email_body,
+                get_meal_request_asp_onsite_contact_emails(meal_request),
             )
         except Exception as e:
             self.logger.error(

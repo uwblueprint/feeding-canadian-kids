@@ -1,5 +1,10 @@
+from typing import List
 from app.utilities.format_onsite_contacts import (
     get_meal_request_snippet,
+)
+from app.utilities.get_onsite_contact_emails import (
+    get_meal_request_asp_onsite_contact_emails,
+    get_meal_request_donor_onsite_contact_emails,
 )
 from ...services.interfaces.reminder_email_service import IReminderEmailService
 from ...services.interfaces.email_service import IEmailService
@@ -51,13 +56,18 @@ class ReminderEmailService(IReminderEmailService):
         return meal_requests
 
     def send_email(
-        self, email, meal_request: MealRequest, template_file_path, subject_line
+        self,
+        email,
+        meal_request: MealRequest,
+        template_file_path,
+        subject_line,
+        cc: List[str],
     ):
         try:
             email_body = EmailService.read_email_template(template_file_path).format(
                 meal_request_snippet=get_meal_request_snippet(meal_request),
             )
-            self.email_service.send_email(email, subject_line, email_body)
+            self.email_service.send_email(email, subject_line, email_body, cc)
         except Exception as e:
             self.logger.error(
                 f"Failed to send reminder email for meal request one meal away for user {meal_request.id if meal_request else ''} {email}"
@@ -80,6 +90,7 @@ class ReminderEmailService(IReminderEmailService):
                 meal_request,
                 template_file_paths["requestor"],
                 subject_lines["requestor"],
+                get_meal_request_asp_onsite_contact_emails(meal_request),
             )
             if hasattr(meal_request, "donation_info") and meal_request.donation_info:
                 donor_id = meal_request.donation_info.donor.id
@@ -90,6 +101,7 @@ class ReminderEmailService(IReminderEmailService):
                     meal_request,
                     template_file_paths["donor"],
                     subject_lines["donor"],
+                    get_meal_request_donor_onsite_contact_emails(meal_request),
                 )
 
     def send_regularly_scheduled_emails(self):

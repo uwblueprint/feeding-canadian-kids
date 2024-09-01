@@ -57,7 +57,7 @@ const NearbySchoolList = ({
             location and have open meal requests within the next 3 months.
           </Text>
         </Flex>
-        <Flex flex="1" padding="0 7vw" flexDirection="column" key = "">
+        <Flex flex="1" padding="0 7vw" flexDirection="column">
           <Box
             display="flex"
             flexDirection="column"

@@ -88,7 +88,7 @@ const NearbySchoolList = ({
                     justifyItems="center"
                   >
                     <Image
-                      src="/classroom.png"
+                      src="/classroom_compressed.jpg"
                       alt={school?.info?.organizationName}
                       borderRadius="full"
                       w={{ base: "10vh", sm: "13vh" }}

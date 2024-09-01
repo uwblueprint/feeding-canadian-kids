@@ -97,7 +97,9 @@ def create_app(config_name):
         view_func=GraphQLView.as_view(
             "graphql",
             schema=graphql_schema,
-            graphiql=False if config_name == "production" else True,
+            # TODO: renable this 
+            # graphiql=False if config_name == "production" else True,
+            graphiql=True,
             validation_rules=(
                 # We can't turn this off since for some reason the Apollo Client needs this to make any queries
                 # DisableIntrospection,

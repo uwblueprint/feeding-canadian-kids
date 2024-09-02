@@ -101,8 +101,7 @@ const MealDonorConfirmation = ( ): React.ReactElement => {
                 </Text>
                 <Text>
                   Thank you {organizationName} for contributing to {schoolInfo?.organizationName}&apos;s
-                  mission to provide hot meals to kids! We&apos;ve got over{" "}
-                  <b>80 hungry kiddos</b> here, and your generosity has seriously made
+                  mission to provide hot meals to kids! We&apos;ve got many hungry kiddos here, and your generosity has seriously made
                   a huge difference in their lives. You didn&apos;t just fill their
                   tummies; you put smiles on their faces. Thanks a million for being
                   awesome and helping us out – we truly appreciate it!
@@ -140,8 +139,8 @@ const MealDonorConfirmation = ( ): React.ReactElement => {
               </Text>
               <Text>
                 Thank you Swiss Chalet Ottawa for contributing to Care Kid&apos;s
-                mission to provide hot meals to kids! We&apos;ve got over{" "}
-                <b>80 hungry kiddos</b> here, and your generosity has seriously made
+                mission to provide hot meals to kids! We&apos;ve got 
+                many hungry kiddos here, and your generosity has seriously made
                 a huge difference in their lives. You didn&apos;t just fill their
                 tummies; you put smiles on their faces. Thanks a million for being
                 awesome and helping us out – we truly appreciate it!

@@ -10,6 +10,7 @@ import {
   Link,
   Radio,
   RadioGroup,
+  Spinner,
   Stack,
   Text,
   Textarea,
@@ -113,7 +114,7 @@ const Join = (): React.ReactElement => {
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const isWebView = useIsWebView();
-  const [signup] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
+  const [signup, {loading : signUpLoading}] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
     SIGNUP,
   );
   const toast = useToast();
@@ -589,7 +590,7 @@ const Join = (): React.ReactElement => {
         variant={{ base: "mobile-button-bold", lg: "desktop-button-bold" }}
         color="white"
         bgColor="primary.blue"
-        disabled={attemptedSubmit && !isRequestValid()}
+        disabled={(attemptedSubmit && !isRequestValid()) || signUpLoading}
         _hover={{ bgColor: "primary.blue" }}
         _disabled={{
           bgColor: "#CCCCCC !important",
@@ -599,7 +600,7 @@ const Join = (): React.ReactElement => {
         borderRadius="6px"
         onClick={handleSubmit}
       >
-        Create Account
+        {signUpLoading ? <Spinner /> : "Create Account"} 
       </Button>
       <Text
         color="text.subtitle"

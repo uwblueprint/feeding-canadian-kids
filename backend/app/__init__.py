@@ -48,6 +48,7 @@ required_env_vars = [
 
 def create_app(config_name):
     print("Environment is", config_name)
+    frontend_url = get_fe_url()
     if config_name != "testing" and config_name != "development":
         sentry_sdk.init(
             dsn="https://85a9bf2fc71b287cc4e60cb9f918f034@o4507682847850496.ingest.us.sentry.io/4507801405227008",
@@ -59,7 +60,9 @@ def create_app(config_name):
             # We recommend adjusting this value in production.
             profiles_sample_rate=1.0,
             # Config name is either development or testing or production
-            environment=config_name,
+            environment="staging"
+            if frontend_url.find("staging") != -1
+            else "production",
             send_default_pii=True,
         )
     dictConfig(
@@ -116,6 +119,7 @@ def create_app(config_name):
         "https://feeding-canadian-kids-prod.firebaseapp.com",
         "https://feeding-canadian-kids-prod.web.app",
         "https://mealpairingplatform.feedingcanadiankids.org",
+        "https://api.mealpairingplatform.feedingcanadiankids.org",
         get_fe_url(),
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True

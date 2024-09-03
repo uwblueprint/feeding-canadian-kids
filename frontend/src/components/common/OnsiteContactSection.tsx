@@ -37,6 +37,10 @@ type OnsiteTextInputRowProps = {
   minimumRowCount?: number;
 };
 
+type OnsiteTextInputRowPropsWithMax = OnsiteTextInputRowProps & {
+  maximumRowCount?: number;
+};
+
 const OnsiteTextInputRow = ({
   onsiteInfo,
   setOnsiteInfo,
@@ -121,7 +125,8 @@ const MobileOnsiteTextInputRow = ({
   index,
   attemptedSubmit,
   minimumRowCount = 1,
-}: OnsiteTextInputRowProps): React.ReactElement => (
+  maximumRowCount = 10,
+}: OnsiteTextInputRowPropsWithMax): React.ReactElement => (
   <Flex flexDir="column" gap="8px" key={index}>
     <Flex flexDir="row" justifyContent="space-between">
       <FormControl isRequired={index < minimumRowCount}>
@@ -145,7 +150,8 @@ const MobileOnsiteTextInputRow = ({
     </Flex>
     {index === 0 && (
       <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
-        *Must add at least 1 onsite staff. Maximum is 10.
+        *Must add at least {minimumRowCount} onsite staff. Maximum is{" "}
+        {maximumRowCount}.
       </Text>
     )}
     <FormControl
@@ -198,13 +204,17 @@ const MobileOnsiteTextInputRow = ({
   </Flex>
 );
 
-type onsiteContactDropdownProps = {
+type OnsiteContactDropdownProps = {
   onsiteInfo: Array<Contact>;
   setOnsiteInfo: React.Dispatch<React.SetStateAction<Contact[]>>;
   availableStaff: Array<Contact>;
   index: number;
   attemptedSubmit: boolean;
   minimumRowCount?: number;
+};
+
+type OnsiteContactDropdownPropsWithMax = OnsiteContactDropdownProps & {
+  maximumRowCount?: number;
 };
 
 const OnsiteDropdownInputRow = ({
@@ -214,7 +224,7 @@ const OnsiteDropdownInputRow = ({
   index,
   attemptedSubmit,
   minimumRowCount = 1,
-}: onsiteContactDropdownProps): React.ReactElement => (
+}: OnsiteContactDropdownProps): React.ReactElement => (
   // Choose the name from a dropdown of available staff, and then fill in the rest of the info based on that
 
   <Tr h="58px">
@@ -289,7 +299,8 @@ const MobileOnsiteDropdownInputRow = ({
   index,
   attemptedSubmit,
   minimumRowCount = 1,
-}: onsiteContactDropdownProps): React.ReactElement => (
+  maximumRowCount = 10,
+}: OnsiteContactDropdownPropsWithMax): React.ReactElement => (
   <Flex flexDir="column" gap="8px" key={index}>
     <Flex flexDir="row" justifyContent="space-between">
       <FormControl isRequired={index < minimumRowCount}>
@@ -313,7 +324,8 @@ const MobileOnsiteDropdownInputRow = ({
     </Flex>
     {index === 0 && (
       <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
-        *Must add at least 1 onsite staff. Maximum is 10.
+        *Must add at least {minimumRowCount} onsite staff. Maximum is{" "}
+        {maximumRowCount}.
       </Text>
     )}
     <FormControl
@@ -378,7 +390,6 @@ const OnsiteContactSection = ({
   maximumRowCount = 10,
 }: OnsiteContactSectionProps): React.ReactElement => {
   const isWebView = useIsWebView();
-
 
   if (isWebView) {
     return (
@@ -537,23 +548,21 @@ const OnsiteContactSection = ({
           />
         ),
       )}
-      {onsiteInfo.length < 10 && (
+      {onsiteInfo.length < maximumRowCount && (
         <Text
           variant="mobile-body-bold"
           color="primary.blue"
           cursor="pointer"
           w="fit-content"
           onClick={() => {
-            if (dropdown) {
-              setOnsiteInfo([
-                ...onsiteInfo,
-                {
-                  name: "",
-                  phone: "",
-                  email: "",
-                },
-              ]);
-            }
+            setOnsiteInfo([
+              ...onsiteInfo,
+              {
+                name: "",
+                phone: "",
+                email: "",
+              },
+            ]);
           }}
         >
           + Add another contact

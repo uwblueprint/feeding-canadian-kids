@@ -55,7 +55,7 @@ const PLACEHOLDER_MOBILE_EXAMPLE_FULL_NAME = "Full Name (Jane Doe)";
 const PLACEHOLDER_MOBILE_EXAMPLE_EMAIL = "Email (example@domain.com)";
 const PLACEHOLDER_MOBILE_EXAMPLE_PHONE_NUMBER = "Phone Number (111-222-3333)";
 const PLACEHOLDER_MOBILE_EXAMPLE_ORG_NAME = "Name of organization";
-const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address of organization";
+const PLACEHOLDER_MOBILE_EXAMPLE_ADDRESS = "Address and city of organization";
 const PLACEHOLDER_MOBILE_EXAMPLE_NUM_KIDS = "Number of kids";
 const PLACEHOLDER_MOBILE_EXAMPLE_DESCRIPTION = "Description of organization";
 

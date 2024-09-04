@@ -40,7 +40,7 @@ const Dashboard = (): React.ReactElement => {
       <Text variant="desktop-caption" mb="20px">
         Use this page to see your upcoming food deliveries
       </Text>
-      <Tabs defaultIndex={0} w="100%">
+      <Tabs defaultIndex={0} w="100%" minWidth="400px" overflow="scroll">
         <Flex flexDir="row" justifyContent="space-between">
           <TabList>
             <Tab gap="8px">

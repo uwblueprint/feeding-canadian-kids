@@ -12,7 +12,18 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+
+type PageNavigationState = { tabIndex: number }
+
+function getTabIndex(state: unknown) : number {
+  if (!state) return 0; // Makes sure it's not null
+  if (typeof state !== "object") return 0;
+  if (typeof (state as PageNavigationState).tabIndex !== "number") return 0;
+  return (state as PageNavigationState).tabIndex;
+}
 
 /**
  * A three-step form with tabs at the top.
@@ -26,6 +37,7 @@ const ThreeStepForm = ({
   panel1,
   panel2,
   panel3,
+  shouldGoBackToStep1,
 }: {
   header1: string;
   header2: string;
@@ -33,19 +45,38 @@ const ThreeStepForm = ({
   panel1: React.ReactElement;
   panel2: React.ReactElement;
   panel3: React.ReactElement;
+  shouldGoBackToStep1: (currentStep : number) => boolean;
 }): React.ReactElement => {
   const fontSize = useBreakpointValue({ base: "12px", sm: "16px", md: "20px" });
+  const { state, pathname, search  } = useLocation(); 
 
   const [tabIndex, setTabIndex] = useState(0);
+  const navigate = useNavigate();
+
+  // Get state:
+  useEffect(() => {
+    let newTabIndex = getTabIndex(state);
+
+    if (shouldGoBackToStep1(newTabIndex)) {
+      newTabIndex = 0;
+      navigate(pathname + search, { state: { tabIndex: 0 } });
+      window.history.replaceState({}, '', '')
+    }
+
+    setTabIndex(newTabIndex);
+  }, [navigate, pathname, search, shouldGoBackToStep1, state])
 
   const handleNext = () => {
     const thisTab = tabIndex;
     setTabIndex((prevIndex) => prevIndex + 1);
+    navigate(pathname + search, { state: { tabIndex: thisTab + 1 } });
   };
+
 
   const handleBack = () => {
     const thisTab = tabIndex;
     setTabIndex((prevIndex) => prevIndex - 1);
+    navigate(pathname + search, { state: { tabIndex: thisTab - 1 } });
   };
 
   return (

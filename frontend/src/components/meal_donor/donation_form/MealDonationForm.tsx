@@ -30,6 +30,11 @@ const MealDonationForm = (): React.ReactElement => {
   ]);
 
   // Step 2: Meal details
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const idsParam = searchParams.get("ids");
+  const aspId = searchParams.get("aspId");
+
   const [mealDescription, setMealDescription] = useState<string>("");
   const [additionalInfo, setAdditionalInfo] = useState<string>("");
 
@@ -62,10 +67,6 @@ const MealDonationForm = (): React.ReactElement => {
   };
 
   const requestorId = authenticatedUser?.id || "";
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const idsParam = searchParams.get("ids");
-  const aspId = searchParams.get("aspId");
   // Split the idsParam by dot to get an array of ids
   const ids = idsParam ? idsParam.split(",") : [];
 
@@ -158,6 +159,15 @@ const MealDonationForm = (): React.ReactElement => {
           header1="Contact Information"
           header2="Meal Details"
           header3="Review & Submit"
+          shouldGoBackToStep1={(currentStep) => {
+            if (currentStep > 0 && (onsiteContacts.length === 0 || onsiteContacts[0].name === "")) {
+              return true;
+            }
+            if (currentStep > 1 && mealDescription === "") {
+              return true;
+            }
+            return false
+          }}
           panel1={
             <MealDonationFormContactInfo
               onsiteContact={onsiteContacts}

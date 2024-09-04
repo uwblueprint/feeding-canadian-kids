@@ -321,13 +321,9 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                       <Td>
                         <Text fontSize="15px">
                           {" "}
-                          <strong>Meal Description:</strong>{" "}
+                          <strong>Dietary Restrictions:</strong>{" "}
                         </Text>
-                        {selectedMealRequest.mealInfo.portions}{" "}
-                        {selectedMealRequest.mealInfo.dietaryRestrictions}{" "}
-                        {selectedMealRequest.mealInfo.portions === 1
-                          ? "meal"
-                          : "meals"}
+                        {selectedMealRequest.mealInfo.dietaryRestrictions}
                       </Td>
                     </Tr>
 

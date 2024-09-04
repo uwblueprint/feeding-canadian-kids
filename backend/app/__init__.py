@@ -62,7 +62,7 @@ def create_app(config_name):
             # Config name is either development or testing or production
             environment="staging"
             if frontend_url.find("staging") != -1
-            else "production",
+            else config_name,
             send_default_pii=True,
         )
     dictConfig(

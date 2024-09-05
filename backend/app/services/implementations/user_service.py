@@ -246,9 +246,7 @@ class UserService(IUserService):
             if not old_user:
                 raise Exception("user_id {user_id} not found".format(user_id=user_id))
 
-            update_user_dto.info.involved_meal_requests = (
-                old_user.info.involved_meal_requests
-            )
+            update_user_dto.info.involved_meal_requests = old_user.info.involved_meal_requests
             update_user_dto = self.update_user_coordinates(update_user_dto)
 
             old_user = User.objects(id=user_id).modify(

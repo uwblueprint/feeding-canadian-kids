@@ -46,7 +46,7 @@ const ListView = ({ columns, rowOptions, data, loading, requestType, currentPage
         --data-table-library_grid-template-columns: repeat(${columns.length - 1}, minmax(0, 1fr)) 88px;
 
         overflow: auto;
-        min-width: 500px;
+        min-width: 900px;
   
         .animate {
           grid-column: 1 / -1;
@@ -98,7 +98,7 @@ const ListView = ({ columns, rowOptions, data, loading, requestType, currentPage
         bgColor="gray.50"
         borderLeft="2px solid"
         borderColor="gray.gray83"
-        minWidth="500px"
+        minWidth="900px"
         overflow="auto"
       >
         <Text variant="desktop-body-bold">{requestType}</Text>
@@ -127,8 +127,9 @@ const ListView = ({ columns, rowOptions, data, loading, requestType, currentPage
         gap="16px"
         color="#4A5568"
         justifyContent="right"
-        minWidth="500px"
-        overflow="scroll"
+        minWidth="900px"
+        overflowX="auto"
+        overflowY="hidden"
       >
         <Text fontSize="14px">Page: {currentPage}</Text>
         {currentPage === 1 ? (

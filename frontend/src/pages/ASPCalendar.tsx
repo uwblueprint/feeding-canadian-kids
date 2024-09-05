@@ -194,8 +194,8 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
             onClose={(meal_request) => {
               setIsEditModalOpen(false);
               setCurrentlyEditingMealRequestId(undefined);
-              setShouldRefetchData(true);
               if (meal_request !== undefined) {
+                setShouldRefetchData(true);
                 setSelectedMealRequest(meal_request);
               }
             }}

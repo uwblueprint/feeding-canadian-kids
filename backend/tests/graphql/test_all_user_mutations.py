@@ -89,9 +89,8 @@ def test_update_user_by_id(user_setup, mocker):
     assert db_user.info.email == "test4@organization.com"
     assert db_user.info.organization_address == "170 University Ave W"
 
-    # Check that involved_meal_requests is not changed since its backend driven 
+    # Check that involved_meal_requests is not changed since its backend driven
     assert db_user.info.involved_meal_requests == initial_involved_meal_requests
-
 
     assert user_result4["info"] == MOCK_INFO4_CAMEL
 

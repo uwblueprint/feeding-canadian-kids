@@ -521,10 +521,12 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
       {currentlyEditingMealRequestId ? (
         <EditMealRequestForm
           open={isEditModalOpen}
-          onClose={() => {
+          onClose={(newMealRequest) => {
             setIsEditModalOpen(false);
             setCurrentlyEditingMealRequestId(undefined);
-            reloadMealRequests();
+            if(newMealRequest !== undefined) {
+              reloadMealRequests();
+            }
           }}
           mealRequestId={currentlyEditingMealRequestId}
           isEditDonation={false}

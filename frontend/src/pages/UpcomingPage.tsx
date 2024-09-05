@@ -193,7 +193,9 @@ export const UpcomingCard = ({ event, setShouldReload }: { event: UpcomingEvent,
           onClose={(newMealRequest) => {
             setIsEditModalOpen(false);
             setCurrentlyEditingMealRequestId(undefined);
-            setShouldReload(true);
+            if(newMealRequest !== undefined) {
+              setShouldReload(true);
+            }
           }}
           mealRequestId={currentlyEditingMealRequestId}
           isEditDonation

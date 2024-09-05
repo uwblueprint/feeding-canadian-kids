@@ -50,6 +50,6 @@ class UserInfo(mg.EmbeddedDocument):
     initial_onsite_contacts = mg.EmbeddedDocumentListField(Contact, required=False)
 
     active = mg.BooleanField(default=True)
+    involved_meal_requests = mg.IntField(default=0)
 
     meta = {"allow_inheritance": True}
-    involved_meal_requests = mg.IntField(default=0)

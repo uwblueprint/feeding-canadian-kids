@@ -1,4 +1,5 @@
 from app.graphql import schema as graphql_schema
+from app.models.user import User
 from tests.graphql.mock_test_data import (
     MOCK_INFO1_CAMEL,
     MOCK_INFO3_CAMEL,
@@ -14,6 +15,11 @@ def test_update_user_by_id(user_setup, mocker):
         "firebase_admin.auth.update_user",
         return_value=None,
     )
+
+    user_object = User.objects(id=user_1.id).first()
+    initial_involved_meal_requests = 5
+    user_object.info.involved_meal_requests = initial_involved_meal_requests
+    user_object.save()
 
     update_to_user_4_info = graphql_schema.execute(
         f"""mutation testUpdateUserById {{
@@ -77,6 +83,16 @@ def test_update_user_by_id(user_setup, mocker):
     MOCK_INFO4_CAMEL = deepcopy(MOCK_INFO3_CAMEL)
     MOCK_INFO4_CAMEL["email"] = "test4@organization.com"
     MOCK_INFO4_CAMEL["active"] = False
+
+    db_user = User.objects(id=user_1.id).first()
+
+    assert db_user.info.email == "test4@organization.com"
+    assert db_user.info.organization_address == "170 University Ave W"
+
+    # Check that involved_meal_requests is not changed since its backend driven 
+    assert db_user.info.involved_meal_requests == initial_involved_meal_requests
+
+
     assert user_result4["info"] == MOCK_INFO4_CAMEL
 
     update_to_user_1_info = graphql_schema.execute(

@@ -243,16 +243,21 @@ class UserService(IUserService):
         try:
             # We do not allow the user to edit this involved meal requests, so we set it from the old info here
             old_user = User.objects(id=user_id).first()
+            number_of_involved_meal_requests = old_user.info.involved_meal_requests
             if not old_user:
                 raise Exception("user_id {user_id} not found".format(user_id=user_id))
 
-            update_user_dto.info.involved_meal_requests = old_user.info.involved_meal_requests
             update_user_dto = self.update_user_coordinates(update_user_dto)
 
             old_user = User.objects(id=user_id).modify(
                 new=False,
                 auth_id=update_user_dto.auth_id,
                 info=update_user_dto.info,
+            )
+            # We have to manually set the involved meal requests here to the old value,
+            # since mongoengine will set the value to the default of 0 if don't provide it
+            old_user.modify(
+                info__involved_meal_requests=number_of_involved_meal_requests
             )
             old_user.save()
 
@@ -266,6 +271,7 @@ class UserService(IUserService):
                     User.objects(id=user_id).modify(
                         auth_id=old_user.auth_id,
                         info=old_user.info,
+                        info__involved_meal_requests=number_of_involved_meal_requests,
                     )
                 except Exception as mongo_error:
                     reason = getattr(mongo_error, "message", None)

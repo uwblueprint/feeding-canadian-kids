@@ -7,6 +7,7 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  Spinner,
   Text,
   VStack,
   useToast,
@@ -279,7 +280,7 @@ const SetPassword = (): React.ReactElement => {
             pt={1}
             pb={1}
             backgroundColor="primary.blue"
-            disabled={!!onboardingError || dataStatus()}
+            disabled={!!onboardingError || dataStatus() || registerLoading}
           >
             <Text
               variant={{
@@ -288,7 +289,7 @@ const SetPassword = (): React.ReactElement => {
               }}
               color="white"
             >
-              {registerLoading ? "Loading..." : "Confirm"}
+              {registerLoading ? <Spinner /> : "Confirm"}
             </Text>
           </Button>
         </VStack>

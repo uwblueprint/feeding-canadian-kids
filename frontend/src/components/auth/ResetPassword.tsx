@@ -7,6 +7,7 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  Spinner,
   Text,
   VStack,
   useToast,
@@ -217,7 +218,7 @@ const ResetPassword = (): React.ReactElement => {
             pt={1}
             pb={1}
             backgroundColor="primary.blue"
-            disabled={!!getUserError}
+            disabled={!!getUserError || resetPasswordLoading}
           >
             <Text
               variant={{
@@ -226,7 +227,7 @@ const ResetPassword = (): React.ReactElement => {
               }}
               color="white"
             >
-              {resetPasswordLoading ? "Loading..." : "Reset"}
+              {resetPasswordLoading ? <Spinner /> : "Reset"}
             </Text>
           </Button>
         </VStack>

@@ -185,6 +185,12 @@ export const UpcomingCard = ({ event, setShouldReload }: { event: UpcomingEvent,
     setCurrentlyEditingMealRequestId(meal?.id);
   };
 
+  const startDate = new Date(mealRequest!.dropOffDatetime + "Z") ?? null;
+  const endDate = new Date(mealRequest!.dropOffDatetime + "Z") ?? null;
+  if (startDate) {
+    endDate.setHours(endDate.getHours() + 1);
+  }
+
   return (
     <div>
       {currentlyEditingMealRequestId ? (
@@ -217,14 +223,19 @@ export const UpcomingCard = ({ event, setShouldReload }: { event: UpcomingEvent,
               }
             </Text>
             <Text fontSize="20px">
-              {new Date(
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                mealRequest!.dropOffDatetime + "Z",
-              ).toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "numeric",
-                hour12: true,
-              }) ?? ""}
+              {startDate
+                ? startDate.toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  }) +
+                  " - " +
+                  endDate.toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })
+                : ""}
             </Text>
             <HStack>
               <IoRestaurant height={20} width={20} />

@@ -173,46 +173,53 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     GET_MEAL_REQUESTS_BY_ID,
     {
       onCompleted: (results) => {
-        setData({
+        // Get the time requested plus one hour
+        const newData = {
           nodes: results.getMealRequestsByRequestorId?.map(
             (
               mealRequest: MealRequest,
               index: number,
-            ): TABLE_LIBRARY_TYPES.TableNode => ({
-              id: index,
-              meal_request_id: mealRequest.id,
-              date_requested: new Date(mealRequest.dropOffDatetime + "Z"),
-              time_requested: new Date(mealRequest.dropOffDatetime + "Z"),
-              donor_name:
-                mealRequest.donationInfo?.donor.info?.organizationName,
-              num_meals: mealRequest.mealInfo?.portions,
-              primary_contact:
-                mealRequest.donationInfo?.donor?.info?.primaryContact ?? null,
-              onsite_contacts: mealRequest.onsiteContacts,
-              donor_onsite_contacts:
-                mealRequest.donationInfo?.donorOnsiteContacts ?? [],
-              delivery_notes: mealRequest.deliveryInstructions,
-              dietary_restrictions:
-                mealRequest.mealInfo?.dietaryRestrictions ?? "",
+            ): TABLE_LIBRARY_TYPES.TableNode => {
+              const startDate = new Date(mealRequest.dropOffDatetime + "Z");
+              const endDate = new Date(startDate);
+              endDate.setHours(endDate.getHours() + 1);
 
-              meal_description: mealRequest.donationInfo?.mealDescription,
-              meal_donor_notes: mealRequest.donationInfo?.additionalInfo,
-              delivery_instructions: mealRequest.deliveryInstructions,
-              pending: mealRequest.status === MealStatus.OPEN,
-              status: mealRequest.status,
-              _hasContent: false,
-              nodes: null,
-            }),
+              return {
+                id: index,
+                meal_request_id: mealRequest.id,
+                date_requested: new Date(mealRequest.dropOffDatetime + "Z"),
+                time_requested_start: startDate,
+                time_requested_end: endDate,
+                donor_name:
+                  mealRequest.donationInfo?.donor.info?.organizationName,
+                num_meals: mealRequest.mealInfo?.portions,
+                primary_contact:
+                  mealRequest.donationInfo?.donor?.info?.primaryContact ?? null,
+                onsite_contacts: mealRequest.onsiteContacts,
+                donor_onsite_contacts:
+                  mealRequest.donationInfo?.donorOnsiteContacts ?? [],
+                delivery_notes: mealRequest.deliveryInstructions,
+                dietary_restrictions:
+                  mealRequest.mealInfo?.dietaryRestrictions ?? "",
+
+                meal_description: mealRequest.donationInfo?.mealDescription,
+                meal_donor_notes: mealRequest.donationInfo?.additionalInfo,
+                delivery_instructions: mealRequest.deliveryInstructions,
+                pending: mealRequest.status === MealStatus.OPEN,
+                status: mealRequest.status,
+                _hasContent: false,
+                nodes: null,
+              };
+            },
           ),
-        });
+        };
+        setData(newData);
       },
     },
   );
 
-  const [
-    itemToDelete,
-    setItemToDelete,
-  ] = useState<TABLE_LIBRARY_TYPES.TableNode | null>(null);
+  const [itemToDelete, setItemToDelete] =
+    useState<TABLE_LIBRARY_TYPES.TableNode | null>(null);
 
   function reloadMealRequests(
     fetchPolicy: WatchQueryFetchPolicy = "cache-first",
@@ -297,10 +304,15 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
       label: "Time Requested",
       renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => (
         <Text variant="desktop-xs">
-          {item.time_requested.toLocaleTimeString("en-US", {
+          {item.time_requested_start.toLocaleTimeString("en-US", {
             hour: "2-digit",
             minute: "2-digit",
-          })}
+          }) +
+            " - " +
+            item.time_requested_end.toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
         </Text>
       ),
     },
@@ -524,7 +536,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
           onClose={(newMealRequest) => {
             setIsEditModalOpen(false);
             setCurrentlyEditingMealRequestId(undefined);
-            if(newMealRequest !== undefined) {
+            if (newMealRequest !== undefined) {
               reloadMealRequests();
             }
           }}

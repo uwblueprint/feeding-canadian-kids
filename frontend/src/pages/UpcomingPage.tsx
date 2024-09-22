@@ -184,8 +184,10 @@ export const UpcomingCard = ({ event, setShouldReload }: { event: UpcomingEvent,
     setIsEditModalOpen(true);
     setCurrentlyEditingMealRequestId(meal?.id);
   };
-
+ 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const startDate = new Date(mealRequest!.dropOffDatetime + "Z") ?? null;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const endDate = new Date(mealRequest!.dropOffDatetime + "Z") ?? null;
   if (startDate) {
     endDate.setHours(endDate.getHours() + 1);

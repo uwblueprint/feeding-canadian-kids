@@ -53,14 +53,23 @@ const MealDonorListView = ({
     },
     {
       label: "Time Requested",
-      renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => (
-        <Text variant="desktop-xs">
-          {item.time_requested.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </Text>
-      ),
+      renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => {
+        const endDate = new Date(item.time_requested);
+        endDate.setHours(endDate.getHours() + 1);
+        return (
+          <Text variant="desktop-xs">
+            {item.time_requested.toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }) +
+              " - " +
+              endDate.toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+          </Text>
+        );
+      },
     },
     {
       label: "ASP Name",
@@ -185,7 +194,7 @@ const MealDonorListView = ({
               </Text>
             </Box>
           ) : null}
-          </Flex>
+        </Flex>
       </Collapse>
     ),
   };

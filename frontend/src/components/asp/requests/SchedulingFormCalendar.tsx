@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Center,
+  Flex,
   FormControl,
   FormLabel,
   Grid,
@@ -26,7 +27,9 @@ type SchedulingFormCalendarProps = {
   handleNext: () => void;
 };
 
-const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProps> = ({
+const SchedulingFormCalendar: React.FunctionComponent<
+  SchedulingFormCalendarProps
+> = ({
   scheduledDropOffTime,
   setScheduledDropOffTime,
   dates,
@@ -78,6 +81,12 @@ const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProp
     );
   };
 
+  // scheduledDropOffTimeEnd is 1 hour later than scheduledDropOffTime
+  const scheduledDropOffTimeEnd = new Date(
+    new Date().toDateString() + " " + scheduledDropOffTime,
+  );
+  scheduledDropOffTimeEnd.setHours(scheduledDropOffTimeEnd.getHours() + 1);
+
   return (
     <Grid
       templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(3, 1fr)" }}
@@ -128,7 +137,7 @@ const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProp
             </Center>
           </GridItem>
 
-          <GridItem colSpan={1}>
+          <GridItem colSpan={{ base: 1, sm: 2 }}>
             <FormControl
               isInvalid={attemptedSubmit && scheduledDropOffTime === ""}
               isRequired
@@ -136,15 +145,25 @@ const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProp
               <FormLabel variant="form-label-bold">
                 Scheduled drop-off time
               </FormLabel>
-              <Input
-                required
-                height={{ base: "2rem", md: "3rem" }}
-                size="xs"
-                onChange={(e) => setScheduledDropOffTime(e.target.value)}
-                type="time"
-                placeholder="Select a time"
-                width={{ base: "100%", md: "100%" }}
-              />
+              <Flex direction="row" align="center">
+                <Input
+                  required
+                  height={{ base: "2rem", md: "3rem" }}
+                  size="xs"
+                  onChange={(e) => setScheduledDropOffTime(e.target.value)}
+                  type="time"
+                  placeholder="Select a time"
+                  flex="1"
+                />
+                <Text marginLeft="1rem" flex="1">
+                  {scheduledDropOffTime &&
+                    " - " +
+                      scheduledDropOffTimeEnd.toLocaleTimeString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                </Text>
+              </Flex>
             </FormControl>
           </GridItem>
         </SimpleGrid>

@@ -32,51 +32,56 @@ const MealDeliveryDetails: React.FunctionComponent<MealDeliveryDetailsProps> = (
         </HStack>
       </Stack>
       <Stack overflowY="auto" maxHeight="260px" gap="0.8rem">
-        {mealRequestsInformation?.map((request: MealRequest) => (
-          <Box
-            bg="#F4F4F4E5"
-            maxW="350px"
-            borderRadius="md"
-            paddingX="15px"
-            paddingY="15px"
-            key={request.id}
-          >
-            <HStack>
-              <Stack w="50%">
-                <Text fontSize="xs" lineHeight="15px">
-                  {new Date(request.dropOffDatetime + "Z").toLocaleDateString(
-                    undefined,
-                    {
+        {mealRequestsInformation?.map((request: MealRequest) => {
+          const startDate = new Date(request.dropOffDatetime + "Z");
+          const endDate = new Date(request.dropOffDatetime + "Z");
+          endDate.setHours(endDate.getHours() + 1);
+          return (
+            <Box
+              bg="#F4F4F4E5"
+              maxW="350px"
+              borderRadius="md"
+              paddingX="15px"
+              paddingY="15px"
+              key={request.id}
+            >
+              <HStack>
+                <Stack w="50%">
+                  <Text fontSize="xs" lineHeight="15px">
+                    {startDate.toLocaleDateString(undefined, {
                       month: "long",
                       day: "numeric",
-                    },
-                  )}
-                </Text>
-                <Text fontWeight="semibold" fontSize="s" lineHeight="15px">
-                  {request.mealInfo.portions} Meals
-                </Text>
-                <Text lineHeight="20px" fontSize="xs">
-                  {new Date(request.dropOffDatetime + "Z").toLocaleTimeString(
-                    "en-US",
-                    {
+                    })}
+                  </Text>
+                  <Text fontWeight="semibold" fontSize="s" lineHeight="15px">
+                    {request.mealInfo.portions} Meals
+                  </Text>
+                  <Text lineHeight="20px" fontSize="xs">
+                    {startDate.toLocaleTimeString("en-US", {
                       hour: "numeric",
                       minute: "numeric",
                       hour12: true,
-                    },
-                  )}
-                </Text>
-              </Stack>
-              <Stack
-                w="50%"
-                fontSize={{ base: "2xs", md: "xs" }}
-                lineHeight="15px"
-              >
-                <Text>Acommodations:</Text>
-                <Text>{request.mealInfo.dietaryRestrictions}</Text>
-              </Stack>
-            </HStack>
-          </Box>
-        ))}
+                    }) +
+                      " - " +
+                      endDate.toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "numeric",
+                        hour12: true,
+                      })}
+                  </Text>
+                </Stack>
+                <Stack
+                  w="50%"
+                  fontSize={{ base: "2xs", md: "xs" }}
+                  lineHeight="15px"
+                >
+                  <Text>Acommodations:</Text>
+                  <Text>{request.mealInfo.dietaryRestrictions}</Text>
+                </Stack>
+              </HStack>
+            </Box>
+          );
+        })}
       </Stack>
     </Stack>
   );

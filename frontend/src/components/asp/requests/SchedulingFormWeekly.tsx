@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Flex,
   Grid,
   GridItem,
   Input,
@@ -206,23 +207,28 @@ const SchedulingFormWeekly: React.FunctionComponent<
           </Box>
 
           <Box>
-            <Text
-              color={
-                scheduledDropOffTime === "" && attemptedSubmit ? "red" : "black"
-              }
-              as="b"
-            >
-              Scheduled drop-off time*
-            </Text>
-            <Input
-              required
-              height={{ base: "2rem", md: "3rem" }}
-              size="xs"
-              onChange={(e) => setScheduledDropOffTime(e.target.value)}
-              type="time"
-              placeholder="Select a time"
-              width={{ base: "100%", md: "100%" }}
-            />
+            <Flex direction="row" justifyContent="space-between">
+              <Text
+                color={
+                  scheduledDropOffTime === "" && attemptedSubmit
+                    ? "red"
+                    : "black"
+                }
+                as="b"
+              >
+                Scheduled drop-off time*
+              </Text>
+              <Input
+                required
+                height={{ base: "2rem", md: "3rem" }}
+                size="xs"
+                onChange={(e) => setScheduledDropOffTime(e.target.value)}
+                type="time"
+                placeholder="Select a time"
+                width={{ base: "100%", md: "100%" }}
+              />
+              <Text fontSize="xs">HH:MM AM/PM</Text>
+            </Flex>
           </Box>
         </SimpleGrid>
 

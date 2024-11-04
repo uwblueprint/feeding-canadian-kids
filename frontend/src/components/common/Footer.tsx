@@ -16,6 +16,19 @@ import { TwitterIcon } from "../../assets/icons/TwitterSquare";
 import Logo from "../../assets/logo.png";
 import useIsWebView from "../../utils/useIsWebView";
 
+const TermsOfUse = () => (
+  <Text
+    as="a"
+    href="https://docs.google.com/document/d/1x1O9uNSVD5WU_hRBPIaaI0gULEp4yYnsJoR6L8XEBvM/edit?usp=sharing"
+    target="_blank"
+    color="blue.500"
+    textDecoration="underline"
+    _hover={{ color: "blue.600" }}
+>
+    Terms of Use
+  </Text>
+);
+
 const Footer = () => {
   const isWebView = useIsWebView();
 
@@ -34,11 +47,12 @@ const Footer = () => {
           <Divider orientation="vertical" borderWidth="1.5px" />
         </Stack>
         <Stack padding="1% 4% 1% 4%">
+
           <Text fontSize="14px" color="#647488" align="center">
             Feeding Canadian Kids is a registered Canadian charity. We feed
             underserved Canadian kids a nutritious dinner to fill their tummies
             so they sleep well, leading to success in school and healthy
-            futures. Registered Charity Number: 783404882RR0001
+            futures. Registered Charity Number: 783404882RR0001 - <TermsOfUse />
           </Text>
         </Stack>
         <Stack justifyContent="center">
@@ -88,7 +102,8 @@ const Footer = () => {
       <Stack direction="column" h="15%" padding="25px 48px">
         <VStack direction="column" padding="1% 4% 1% 4%">
           <Text fontSize="14px" color="#647488" align="center">
-            Feeding Canadian Kids registered Charity Number: 783404882RR0001
+            Feeding Canadian Kids registered Charity Number: 783404882RR0001 -{" "}
+            <TermsOfUse />
           </Text>
         </VStack>
         <VStack>

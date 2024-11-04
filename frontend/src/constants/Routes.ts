@@ -1,3 +1,7 @@
+
+export const TERMS_OF_USE_URL =
+  "https://docs.google.com/document/d/1x1O9uNSVD5WU_hRBPIaaI0gULEp4yYnsJoR6L8XEBvM/edit?usp=sharing";
+
 export const HOME_PAGE = "/";
 
 export const LOGIN_PAGE = "/login";

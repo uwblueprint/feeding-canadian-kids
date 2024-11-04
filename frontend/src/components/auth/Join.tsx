@@ -25,6 +25,7 @@ import {
   ASP_DASHBOARD_PAGE,
   HOME_PAGE,
   JOIN_SUCCESS_PAGE,
+  TERMS_OF_USE_URL,
 } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import {
@@ -607,11 +608,10 @@ const Join = (): React.ReactElement => {
         variant={{ base: "mobile-xs", lg: "desktop-xs" }}
       >
         {"By selecting Create Account, you agree to FCK's "}
-        {/* TODO: replace HOME_PAGE with actual terms & conditions route */}
         <Link
           color="primary.blue"
           textDecoration="underline"
-          href={HOME_PAGE}
+          href={TERMS_OF_USE_URL}
           isExternal
         >
           Terms & Conditions

@@ -14,12 +14,14 @@ import { InstagramIcon } from "../../assets/icons/Instagram";
 import { LinkedinIcon } from "../../assets/icons/LinkedIn";
 import { TwitterIcon } from "../../assets/icons/TwitterSquare";
 import Logo from "../../assets/logo.png";
+import { TERMS_OF_USE_URL } from "../../constants/Routes";
 import useIsWebView from "../../utils/useIsWebView";
+
 
 const TermsOfUse = () => (
   <Text
     as="a"
-    href="https://docs.google.com/document/d/1x1O9uNSVD5WU_hRBPIaaI0gULEp4yYnsJoR6L8XEBvM/edit?usp=sharing"
+    href={TERMS_OF_USE_URL}
     target="_blank"
     color="blue.500"
     textDecoration="underline"

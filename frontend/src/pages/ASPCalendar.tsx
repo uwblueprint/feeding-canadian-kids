@@ -42,7 +42,7 @@ import EditMealRequestForm from "./EditMealRequestForm";
 import { MealRequestCalendarView } from "../components/common/MealRequestCalendarView";
 import { CREATE_MEAL_REQUEST_PAGE, LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
-import { MealRequest } from "../types/MealRequestTypes";
+import { MealRequest, MealStatus } from "../types/MealRequestTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 
 const DELETE_MEAL_REQUEST = gql`
@@ -234,7 +234,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
               <Box textAlign="center" marginBottom={4}>
                 {selectedMealRequest.donationInfo ? (
                   <Text fontSize="20px" as="b">
-                    Upcoming Delivery
+                    { selectedMealRequest.status === MealStatus.UPCOMING ? "Upcoming Delivery" : "Fulfilled Meal" }
                   </Text>
                 ) : (
                   <Text fontSize="20px" as="b">
@@ -373,6 +373,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                     ) : null}
                   </Table>
                   <Box position="absolute" bottom={2} right={2}>
+                    {selectedMealRequest.status !== MealStatus.FULFILLED ? 
                     <HStack spacing={2}>
                       <Button
                         variant="link"
@@ -386,6 +387,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                         Edit
                       </Button>
                     </HStack>
+                    : null}
                   </Box>
                 </Card>
               ) : (

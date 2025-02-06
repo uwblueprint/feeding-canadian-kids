@@ -234,8 +234,16 @@ export const MealRequestCalendarView = ({
   const getEventColor = (mealRequest: MealRequest) => {
     if (pageContext === "asp") {
       if (mealRequest.donationInfo) {
+        if (mealRequest.status === MealStatus.FULFILLED) {
+          // return "#2e8438";
+          return "#C6F6D5";
+        }
+        if (mealRequest.status === MealStatus.UPCOMING) {
+          return "#D5C4EC"
+        }
+
         return mealRequest.id === selectedMealRequests[0]
-          ? "#2e8438"
+          ? "#C6F6D5"
           : "#3BA948";
       }
 
@@ -266,7 +274,7 @@ export const MealRequestCalendarView = ({
             mealRequest,
           },
           backgroundColor: getEventColor(mealRequest),
-          textColor: mealRequest.donationInfo ? "white" : "black",
+          textColor: "black",
           display: "block",
         };
       },

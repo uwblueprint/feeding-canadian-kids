@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { GraphQLError } from "graphql";
 import React, { useContext, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 
 import LargerBackgroundImage from "../../assets/largerbackground.png";
 import {
@@ -94,7 +94,9 @@ const SIGNUP = gql`
 `;
 
 const Join = (): React.ReactElement => {
-  const [role, setRole] = useState<Role>("ASP");
+  const [searchParams] = useSearchParams();
+  const defaultRole = (searchParams.get("role") as Role) || "ASP";
+  const [role, setRole] = useState<Role>(defaultRole);
   const [email, setEmail] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [organizationDesc, setOrganizationDesc] = useState("");
@@ -125,6 +127,7 @@ const Join = (): React.ReactElement => {
   if (authenticatedUser) {
     return <Navigate replace to={ASP_DASHBOARD_PAGE} />;
   }
+  
 
   const getTitleSection = (): React.ReactElement => (
     <>
@@ -159,7 +162,13 @@ const Join = (): React.ReactElement => {
           Type of user
         </FormLabel>
         <RadioGroup
-          onChange={(radioVal) => setRole(radioVal as Role)}
+          onChange={(radioVal) => {
+            setRole(radioVal as Role);
+            // Update URL when role changes
+            const newSearchParams = new URLSearchParams(searchParams);
+            newSearchParams.set("role", radioVal);
+            window.history.replaceState(null, '', `?${newSearchParams.toString()}`);
+          }}
           value={role}
         >
           <Stack direction={{ base: "column", lg: "row" }}>
@@ -474,6 +483,7 @@ const Join = (): React.ReactElement => {
       navigate(JOIN_SUCCESS_PAGE);
     } catch (e: unknown) {
       if (
+
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         e?.graphQLErrors &&

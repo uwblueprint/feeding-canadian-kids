@@ -27,9 +27,7 @@ type SchedulingFormCalendarProps = {
   handleNext: () => void;
 };
 
-const SchedulingFormCalendar: React.FunctionComponent<
-  SchedulingFormCalendarProps
-> = ({
+const SchedulingFormCalendar: React.FunctionComponent<SchedulingFormCalendarProps> = ({
   scheduledDropOffTime,
   setScheduledDropOffTime,
   dates,
@@ -99,7 +97,8 @@ const SchedulingFormCalendar: React.FunctionComponent<
         <Text as="b">Edit Date Manually</Text>
         <Text>
           You can select or deselect the dates on which you would like to
-          receive meal donations. Selected dates will be highlighted.
+          receive meal donations. Selected dates will be highlighted. Please
+          note that the drop off time will be the same for all selected dates.
         </Text>
       </GridItem>
 

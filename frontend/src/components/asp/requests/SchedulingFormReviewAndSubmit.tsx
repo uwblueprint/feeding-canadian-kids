@@ -329,12 +329,6 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
           </Flex>
         </Flex>
       </GridItem>
-      <GridItem colSpan={{ base: 1, md: 3 }}>
-        <Text color="gray.600" fontStyle="italic">
-          Please note that once you press submit, you will need to contact
-          administrators in order to cancel the donation.
-        </Text>
-      </GridItem>
       {/* Next button that is right aligned */}
       <GridItem
         colSpan={{ base: 1, md: 3 }}

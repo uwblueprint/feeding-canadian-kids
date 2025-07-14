@@ -48,7 +48,7 @@ const NearbySchoolList = ({
           padding="0 10vw"
         >
           <Text fontSize="lg" as="b" marginTop="20px">
-            Your After School Program Matches
+            Your Local After School Program Matches
           </Text>
 
           <Text>

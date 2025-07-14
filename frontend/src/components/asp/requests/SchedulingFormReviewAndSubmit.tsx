@@ -1,15 +1,11 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import {
-  Box,
   Button,
   Flex,
   FormControl,
   FormLabel,
   Grid,
   GridItem,
-  Input,
-  Select,
-  SimpleGrid,
   Spacer,
   Spinner,
   Table,
@@ -17,7 +13,6 @@ import {
   Tbody,
   Td,
   Text,
-  Textarea,
   Th,
   Thead,
   Tr,
@@ -25,12 +20,11 @@ import {
 } from "@chakra-ui/react";
 import { FormatDateOptions } from "@fullcalendar/core";
 import React, { useContext, useState } from "react";
-import { Value } from "react-multi-date-picker";
 import { useNavigate } from "react-router-dom";
 
 import { ASP_DASHBOARD_PAGE } from "../../../constants/Routes";
 import AuthContext from "../../../contexts/AuthContext";
-import { Contact, OnsiteContact } from "../../../types/UserTypes";
+import { OnsiteContact } from "../../../types/UserTypes";
 import { ErrorMessage } from "../../../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
 import { convertTimeToUtc } from "../../../utils/convertTimeToUTC";
@@ -104,7 +98,6 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
   const navigate = useNavigate();
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const apolloClient = useApolloClient();
-
 
   // Datetimes is a list of javascript dates with the correct date and time.
   // The "mealRequestDates" only is dates without the time, so we need to add the time to it.
@@ -336,7 +329,12 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
           </Flex>
         </Flex>
       </GridItem>
-
+      <GridItem colSpan={{ base: 1, md: 3 }}>
+        <Text color="gray.600" fontStyle="italic">
+          Please note that once you press submit, you will need to contact
+          administrators in order to cancel the donation.
+        </Text>
+      </GridItem>
       {/* Next button that is right aligned */}
       <GridItem
         colSpan={{ base: 1, md: 3 }}

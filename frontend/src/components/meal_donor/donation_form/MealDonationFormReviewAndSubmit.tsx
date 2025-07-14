@@ -1,6 +1,5 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import {
-  Box,
   Button,
   Divider,
   Flex,
@@ -8,8 +7,6 @@ import {
   FormLabel,
   Grid,
   GridItem,
-  Input,
-  Select,
   SimpleGrid,
   Spacer,
   Spinner,
@@ -19,28 +16,23 @@ import {
   Tbody,
   Td,
   Text,
-  Textarea,
   Th,
   Thead,
   Tr,
   useToast,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
-import { Value } from "react-multi-date-picker";
 import { useNavigate } from "react-router-dom";
 
 import MealDeliveryDetails from "./MealDeliveryDetails";
 
-
 import * as Routes from "../../../constants/Routes";
-import { MEAL_DONOR_DASHBOARD_PAGE } from "../../../constants/Routes";
 import AuthContext from "../../../contexts/AuthContext";
 import { MealRequest } from "../../../types/MealRequestTypes";
 import { Contact, OnsiteContact } from "../../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../../utils/GraphQLUtils";
 import { useGetDefaultPageForUser } from "../../../utils/useGetDefaultPageForUser";
 import useIsMealDonor from "../../../utils/useIsMealDonor";
-import OnsiteContactSection from "../../common/OnsiteContactSection";
 
 // Create the GraphQL mutation
 const COMMIT_TO_MEAL_REQUEST = gql`
@@ -132,13 +124,12 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
         });
 
         if (isMealDonor) {
-          apolloClient.cache.evict({ fieldName: "getMealRequestsByRequestorId" });
+          apolloClient.cache.evict({
+            fieldName: "getMealRequestsByRequestorId",
+          });
           apolloClient.cache.evict({ fieldName: "getMealRequestsByDonorId" });
-          navigate(
-            `${Routes.MEAL_DONOR_CONFIRMATION_PAGE}?aspId=${aspId}`,
-          );
-        }
-        else {
+          navigate(`${Routes.MEAL_DONOR_CONFIRMATION_PAGE}?aspId=${aspId}`);
+        } else {
           navigate(defaultPage);
         }
       }
@@ -171,7 +162,15 @@ const MealDonationFormReviewAndSubmit: React.FunctionComponent<MealDonationFormR
             <Text fontSize="2xl" as="b">
               Step 3
             </Text>
-
+            <Text
+              color="gray.600"
+              fontStyle="italic"
+              fontSize="xs"
+              marginY="1rem"
+            >
+              Please note that once you press submit, you will need to contact
+              the administrators to cancel the donation.
+            </Text>
             <FormControl>
               <FormLabel variant="form-label-bold">
                 Primary Contact Name

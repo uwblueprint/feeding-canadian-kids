@@ -58,9 +58,9 @@ def create_app(config_name):
             # We recommend adjusting this value in production.
             profiles_sample_rate=1.0,
             # Config name is either development or testing or production
-            environment="staging"
-            if frontend_url.find("staging") != -1
-            else config_name,
+            environment=(
+                "staging" if frontend_url.find("staging") != -1 else config_name
+            ),
             send_default_pii=True,
         )
     dictConfig(

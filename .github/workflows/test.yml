@@ -20,7 +20,7 @@ jobs:
     environment: staging
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Filter changed files
         uses: dorny/paths-filter@v2
@@ -34,7 +34,7 @@ jobs:
 
       - name: Set up Node.js
         if: steps.changes.outputs.frontend == 'true'
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: "20.9.0"
           cache: "yarn"

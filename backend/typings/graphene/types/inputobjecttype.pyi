@@ -14,6 +14,7 @@ class InputObjectTypeOptions(BaseOptions):
 class InputObjectTypeContainer(dict, BaseType):
     class Meta:
         abstract: bool
+
     def __init__(self, *args, **kwargs) -> None: ...
     def __init_subclass__(cls, *args, **kwargs) -> None: ...
 

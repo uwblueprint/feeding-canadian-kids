@@ -1,6 +1,5 @@
 import { Center, Spinner, useToast } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
-import type { Value } from "react-multi-date-picker";
 import { Navigate } from "react-router-dom";
 
 import SchedulingFormCalendar from "./SchedulingFormCalendar";
@@ -96,7 +95,7 @@ const CreateMealRequest = (): React.ReactElement => {
         <TitleSection
           title="Create a meal request"
           description="Tell us a little bit about your requirements and we'll connect
-          you with a meal donor. This program aims to support kids age 6 to 12."
+          you with a meal donor. This program aims to support youth ages 6 to 29."
         />
         <Center>
           <Spinner />
@@ -110,7 +109,7 @@ const CreateMealRequest = (): React.ReactElement => {
         title="Create Meal Request"
         description="
           Tell us a little bit about your requirements and we'll connect
-          you with a meal donor. This program aims to support kids age 6 to 12."
+          you with a meal donor. This program aims to support youth ages 6 to 29."
       />
 
       <ThreeStepForm

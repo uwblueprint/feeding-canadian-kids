@@ -48,13 +48,13 @@ const NearbySchoolList = ({
           padding="0 10vw"
         >
           <Text fontSize="lg" as="b" marginTop="20px">
-            Your School Matches
+            Your After School Program Matches
           </Text>
 
           <Text>
-            Partner with a school in your community that aligns with your
-            donation preferences. These schools are within 100 km of your
-            location and have open meal requests within the next 3 months.
+            Partner with an after school program in your community that aligns
+            with your donation preferences. These schools are local to you and
+            have open meal requests within the next 3 months.
           </Text>
         </Flex>
         <Flex flex="1" padding="0 7vw" flexDirection="column">
@@ -83,10 +83,7 @@ const NearbySchoolList = ({
                   direction={{ base: "column", sm: "row" }}
                   width="100%"
                 >
-                  <Flex
-                    alignItems="center"
-                    justifyItems="center"
-                  >
+                  <Flex alignItems="center" justifyItems="center">
                     <Image
                       src="/classroom_compressed.jpg"
                       alt={school?.info?.organizationName}

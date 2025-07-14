@@ -1,22 +1,19 @@
-from datetime import datetime, timezone
-import sentry_sdk
 import os
 import re
-from app.utilities.get_fe_url import get_fe_url
-import firebase_admin
-
-from flask import Flask
-from flask_cors import CORS
-from .graphql.view import GraphQLView
+from datetime import datetime, timezone
 from logging.config import dictConfig
+
+import firebase_admin
+import sentry_sdk
+from app.utilities.get_fe_url import get_fe_url
+from flask import Flask
+from flask_apscheduler import APScheduler
+from flask_cors import CORS
 from graphene.validation import depth_limit_validator
 
 from .config import app_config
 from .graphql import schema as graphql_schema
-
-
-from flask_apscheduler import APScheduler
-
+from .graphql.view import GraphQLView
 
 required_env_vars = [
     "FIREBASE_WEB_API_KEY",
@@ -34,7 +31,8 @@ required_env_vars = [
     "GOOGLE_API_KEY",
     "GEOCODING_API_KEY",
     "USE_GOOGLE_API",
-    "FLASK_CONFIG" "FLASK_APP",
+    "FLASK_CONFIG",
+    "FLASK_APP",
     "PYTHONUNBUFFERED",
     "MAILER_CLIENT_SECRET",
     "MAILER_CLIENT_ID",
@@ -163,7 +161,7 @@ def create_app(config_name):
         {"storageBucket": os.getenv("FIREBASE_STORAGE_DEFAULT_BUCKET")},
     )
 
-    from . import models, graphql
+    from . import graphql, models
 
     models.init_app(app)
     services = graphql.init_app(app)

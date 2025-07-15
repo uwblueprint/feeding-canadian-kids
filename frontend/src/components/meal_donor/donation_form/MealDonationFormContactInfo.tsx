@@ -1,27 +1,19 @@
 import {
-  Box,
   Button,
-  Center,
   Divider,
   Flex,
   Grid,
   GridItem,
-  HStack,
   SimpleGrid,
-  Spacer,
-  Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { validate } from "json-schema";
 import React, { useState } from "react";
-import { IoLocationOutline } from "react-icons/io5";
-import { useLocation } from "react-router-dom";
 
 import MealDeliveryDetails from "./MealDeliveryDetails";
 
 import { MealRequest } from "../../../types/MealRequestTypes";
-import { AuthenticatedUser, Contact } from "../../../types/UserTypes";
+import { Contact } from "../../../types/UserTypes";
 import OnsiteContactSection from "../../common/OnsiteContactSection";
 
 type MealDonationFormContactInfoProps = {
@@ -84,6 +76,7 @@ const MealDonationFormContactInfo: React.FunctionComponent<MealDonationFormConta
                   onsiteInfo={onsiteContact}
                   setOnsiteInfo={setOnsiteContact}
                   attemptedSubmit={attemptedSubmit}
+                  userRole="Donor"
                   availableStaff={availableStaff}
                   dropdown
                 />

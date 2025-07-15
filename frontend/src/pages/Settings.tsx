@@ -8,7 +8,7 @@ create should be working
 work on other pages as well
 
 */
-import { ApolloError, gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
+import { ApolloError, gql, useApolloClient, useMutation } from "@apollo/client";
 import {
   Button,
   Center,
@@ -23,7 +23,6 @@ import {
   Textarea,
   useToast,
 } from "@chakra-ui/react";
-import { create } from "domain";
 import { GraphQLError } from "graphql";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -167,9 +166,8 @@ const FORGOT_PASSWORD = gql`
     forgotPassword(email: $email) {
       success
     }
-  }    
+  }
 `;
-
 
 const Settings = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -240,11 +238,10 @@ const Settings = (): React.ReactElement => {
   const [createOnsiteContact] = useMutation(CREATE_ONSITE_CONTACT);
   const [updateOnsiteContact] = useMutation(UPDATE_ONSITE_CONTACT);
   const [deleteOnsiteContact] = useMutation(DELETE_ONSITE_CONTACT);
-  const [
-    forgotPassword,
-    { loading: forgotPasswordLoading },
-  ] = useMutation(FORGOT_PASSWORD);
-  
+  const [forgotPassword, { loading: forgotPasswordLoading }] = useMutation(
+    FORGOT_PASSWORD,
+  );
+
   const apolloClient = useApolloClient();
 
   // OnsiteContact query
@@ -300,7 +297,7 @@ const Settings = (): React.ReactElement => {
     return false;
   };
 
-  const onClickResetPassword = async() => {
+  const onClickResetPassword = async () => {
     await forgotPassword({ variables: { email: userInfo?.email } });
 
     toast({
@@ -308,7 +305,6 @@ const Settings = (): React.ReactElement => {
       status: "success",
       isClosable: true,
     });
-
   };
 
   const getTitleSection = (): React.ReactElement => (
@@ -884,6 +880,7 @@ const Settings = (): React.ReactElement => {
             onsiteInfo={onsiteContacts}
             setOnsiteInfo={setOnsiteContacts}
             attemptedSubmit={attemptedSubmit}
+            userRole={userInfo?.role || "ASP"}
           />
           {getSaveSection()}
         </Flex>

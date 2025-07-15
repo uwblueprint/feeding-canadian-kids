@@ -189,6 +189,7 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
               attemptedSubmit={attemptedSubmit}
               availableStaff={availableStaff}
               dropdown
+              userRole="ASP"
             />
           </Flex>
         </Flex>

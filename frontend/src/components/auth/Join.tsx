@@ -16,14 +16,12 @@ import {
   Textarea,
   useToast,
 } from "@chakra-ui/react";
-import { GraphQLError } from "graphql";
 import React, { useContext, useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 
 import LargerBackgroundImage from "../../assets/largerbackground.png";
 import {
   ASP_DASHBOARD_PAGE,
-  HOME_PAGE,
   JOIN_SUCCESS_PAGE,
   TERMS_OF_USE_URL,
 } from "../../constants/Routes";
@@ -117,9 +115,9 @@ const Join = (): React.ReactElement => {
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const isWebView = useIsWebView();
-  const [signup, {loading : signUpLoading}] = useMutation<{ createOnboardingRequest: OnboardingRequest }>(
-    SIGNUP,
-  );
+  const [signup, { loading: signUpLoading }] = useMutation<{
+    createOnboardingRequest: OnboardingRequest;
+  }>(SIGNUP);
   const toast = useToast();
   const navigate = useNavigate();
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -127,7 +125,6 @@ const Join = (): React.ReactElement => {
   if (authenticatedUser) {
     return <Navigate replace to={ASP_DASHBOARD_PAGE} />;
   }
-  
 
   const getTitleSection = (): React.ReactElement => (
     <>
@@ -167,7 +164,11 @@ const Join = (): React.ReactElement => {
             // Update URL when role changes
             const newSearchParams = new URLSearchParams(searchParams);
             newSearchParams.set("role", radioVal);
-            window.history.replaceState(null, '', `?${newSearchParams.toString()}`);
+            window.history.replaceState(
+              null,
+              "",
+              `?${newSearchParams.toString()}`,
+            );
           }}
           value={role}
         >
@@ -483,7 +484,6 @@ const Join = (): React.ReactElement => {
       navigate(JOIN_SUCCESS_PAGE);
     } catch (e: unknown) {
       if (
-
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         e?.graphQLErrors &&
@@ -611,7 +611,7 @@ const Join = (): React.ReactElement => {
         borderRadius="6px"
         onClick={handleSubmit}
       >
-        {signUpLoading ? <Spinner /> : "Create Account"} 
+        {signUpLoading ? <Spinner /> : "Create Account"}
       </Button>
       <Text
         color="text.subtitle"
@@ -677,6 +677,7 @@ const Join = (): React.ReactElement => {
           setOnsiteInfo={setOnsiteInfo}
           attemptedSubmit={attemptedSubmit}
           minimumRowCount={1}
+          userRole={role}
         />
         {getSubmitSection()}
       </Flex>

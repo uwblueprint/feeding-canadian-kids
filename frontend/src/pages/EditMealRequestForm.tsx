@@ -1,14 +1,7 @@
-import {
-  ApolloError,
-  gql,
-  useApolloClient,
-  useMutation,
-  useQuery,
-} from "@apollo/client";
+import { ApolloError, gql, useApolloClient, useMutation } from "@apollo/client";
 import {
   Button,
   Divider,
-  Flex,
   FormControl,
   FormHelperText,
   FormLabel,
@@ -19,9 +12,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalOverlay,
-  NumberInput,
   Text,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { GraphQLError } from "graphql";
@@ -191,7 +182,7 @@ const EditMealRequestForm = ({
   isEditDonation,
 }: {
   open: boolean;
-  onClose: (meal_request : MealRequest | undefined) => void;
+  onClose: (meal_request: MealRequest | undefined) => void;
   mealRequestId: string;
   isEditDonation: boolean;
 }) => {
@@ -273,8 +264,12 @@ const EditMealRequestForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestorId, mealRequestId, apolloClient]);
 
-  const [updateMealRequest] = useMutation<MealRequestsData>(UPDATE_MEAL_REQUEST);
-  const [updateMealDonation] = useMutation<MealRequestsData>(UPDATE_MEAL_DONATION);
+  const [updateMealRequest] = useMutation<MealRequestsData>(
+    UPDATE_MEAL_REQUEST,
+  );
+  const [updateMealDonation] = useMutation<MealRequestsData>(
+    UPDATE_MEAL_DONATION,
+  );
 
   // For validation
   const validateData = () => {
@@ -287,20 +282,20 @@ const EditMealRequestForm = ({
         setAttemptedSubmit(true);
         return false;
       }
-    } else  if (
-        numberOfMeals <= 0 ||
-        onsiteContacts.length < 0 ||
-        onsiteContacts.some(
-          (contact) =>
-            !contact ||
-            contact.name === "" ||
-            contact.email === "" ||
-            contact.phone === "",
-        )
-      ) {
-        setAttemptedSubmit(true);
-        return false;
-      }
+    } else if (
+      numberOfMeals <= 0 ||
+      onsiteContacts.length < 0 ||
+      onsiteContacts.some(
+        (contact) =>
+          !contact ||
+          contact.name === "" ||
+          contact.email === "" ||
+          contact.phone === "",
+      )
+    ) {
+      setAttemptedSubmit(true);
+      return false;
+    }
 
     setAttemptedSubmit(false);
     return true;
@@ -405,7 +400,11 @@ const EditMealRequestForm = ({
 
   if (isEditDonation) {
     return (
-      <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={() => onClose(undefined)}>
+      <Modal
+        initialFocusRef={initialFocusRef}
+        isOpen={open}
+        onClose={() => onClose(undefined)}
+      >
         <ModalOverlay />
         <ModalContent
           maxWidth={{ base: "100%", md: "900px" }}
@@ -474,11 +473,16 @@ const EditMealRequestForm = ({
                   attemptedSubmit={attemptedSubmit}
                   availableStaff={availableOnsiteContacts}
                   dropdown
+                  userRole="Donor"
                 />
               </ModalBody>
 
               <ModalFooter>
-                <Button onClick={() => onClose(undefined)} mr={3} variant="outline">
+                <Button
+                  onClick={() => onClose(undefined)}
+                  mr={3}
+                  variant="outline"
+                >
                   Cancel
                 </Button>
                 <Button
@@ -499,7 +503,11 @@ const EditMealRequestForm = ({
   }
 
   return (
-    <Modal initialFocusRef={initialFocusRef} isOpen={open} onClose={() => onClose(undefined)}>
+    <Modal
+      initialFocusRef={initialFocusRef}
+      isOpen={open}
+      onClose={() => onClose(undefined)}
+    >
       <ModalOverlay />
       <ModalContent
         maxWidth={{ base: "100%", md: "900px" }}
@@ -598,11 +606,16 @@ const EditMealRequestForm = ({
                 attemptedSubmit={attemptedSubmit}
                 availableStaff={availableOnsiteContacts}
                 dropdown
+                userRole="ASP"
               />
             </ModalBody>
 
             <ModalFooter>
-              <Button onClick={() => onClose(undefined)} mr={3} variant="outline">
+              <Button
+                onClick={() => onClose(undefined)}
+                mr={3}
+                variant="outline"
+              >
                 Cancel
               </Button>
               <Button

@@ -1,33 +1,31 @@
-import { gql, useApolloClient, useLazyQuery, useMutation } from "@apollo/client";
-import { ChevronDownIcon, ChevronUpIcon, DeleteIcon, Search2Icon } from "@chakra-ui/icons";
-import { 
-  Box, 
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { ChevronDownIcon, ChevronUpIcon, Search2Icon } from "@chakra-ui/icons";
+import {
+  Box,
   Button,
-  Collapse, 
-  Flex, 
-  HStack, 
-  Input, 
+  Collapse,
+  Flex,
+  Input,
   InputGroup,
-  InputLeftElement, 
-  Modal, 
+  InputLeftElement,
+  Modal,
   ModalBody,
-  ModalCloseButton, 
+  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Spinner, 
-  Tag, 
-  Text, 
-  useDisclosure ,
-  useToast
+  Spinner,
+  Tag,
+  Text,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 import AuthContext from "../../contexts/AuthContext";
-
 import {
   Contact,
   GetAllUserVariables,
@@ -38,8 +36,20 @@ import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
 import ListView from "../common/ListView";
 
 const GET_ALL_USERS = gql`
-  query GetAllUsers($limit: Int, $offset: Int, $role: String, $name: String, $email: String) {
-    getAllUsers(limit: $limit, offset: $offset, role: $role, name: $name, email: $email) {
+  query GetAllUsers(
+    $limit: Int
+    $offset: Int
+    $role: String
+    $name: String
+    $email: String
+  ) {
+    getAllUsers(
+      limit: $limit
+      offset: $offset
+      role: $role
+      name: $name
+      email: $email
+    ) {
       id
       info {
         email
@@ -91,134 +101,137 @@ const DEACTIVATE_USER = gql`
 type UserListProps = { isASP: boolean; rowsPerPage?: number };
 
 const ActivateDeactivateModal = ({
-    isOpen,
-    onClose,
-    userId,
-    isActive,
-    refetch,
-  }: {
-    isOpen: boolean;
-    onClose: () => void;
-    userId: string;
-    isActive: boolean;
-    refetch: () => void;
-  }): React.ReactElement => {
-    const toast = useToast();
-    const [isSubmitLoading, setIsSubmitLoading] = React.useState(false);
-    const [activateUserById] = useMutation<{
-      activateUserById: { id: string; requestorId: string; };
-    }>(ACTIVATE_USER);
-    const [deactivateUserById] = useMutation<{
-      deactivateUserById: { id: string; requestorId: string; };
-    }>(DEACTIVATE_USER);
-    const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
-  
-    const onActivate = async () => {
-      await setIsSubmitLoading(true);
-  
-      try {
-        const response = await activateUserById({
-          variables: {
-            id: userId,
-            requestorId: authenticatedUser?.id
-          },
-        });
-  
-        if (response.data) {
-          toast({
-            title: "Activation Successful!",
-            status: "success",
-            isClosable: true,
-          });
-          refetch();
-        }
-      } catch (e: unknown) {
-        logPossibleGraphQLError(e, setAuthenticatedUser);
+  isOpen,
+  onClose,
+  userId,
+  isActive,
+  refetch,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  userId: string;
+  isActive: boolean;
+  refetch: () => void;
+}): React.ReactElement => {
+  const toast = useToast();
+  const [isSubmitLoading, setIsSubmitLoading] = React.useState(false);
+  const [activateUserById] = useMutation<{
+    activateUserById: { id: string; requestorId: string };
+  }>(ACTIVATE_USER);
+  const [deactivateUserById] = useMutation<{
+    deactivateUserById: { id: string; requestorId: string };
+  }>(DEACTIVATE_USER);
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  const onActivate = async () => {
+    await setIsSubmitLoading(true);
+
+    try {
+      const response = await activateUserById({
+        variables: {
+          id: userId,
+          requestorId: authenticatedUser?.id,
+        },
+      });
+
+      if (response.data) {
         toast({
-          title: "Failed to activate. Please try again.",
-          status: "error",
+          title: "Activation Successful!",
+          status: "success",
           isClosable: true,
         });
+        refetch();
       }
-
-      onClose();
-      await setIsSubmitLoading(false);
+    } catch (e: unknown) {
+      logPossibleGraphQLError(e, setAuthenticatedUser);
+      toast({
+        title: "Failed to activate. Please try again.",
+        status: "error",
+        isClosable: true,
+      });
     }
 
-    const onDeactivate = async () => {
-      await setIsSubmitLoading(true);
-  
-      try {
-        const response = await deactivateUserById({
-          variables: {
-            id: userId,
-            requestorId: authenticatedUser?.id
-          },
-        });
-  
-        if (response.data) {
-          toast({
-            title: "Deactivation Successful!",
-            status: "success",
-            isClosable: true,
-          });
-          refetch();
-        }
-      } catch (e: unknown) {
-        logPossibleGraphQLError(e, setAuthenticatedUser);
+    onClose();
+    await setIsSubmitLoading(false);
+  };
+
+  const onDeactivate = async () => {
+    await setIsSubmitLoading(true);
+
+    try {
+      const response = await deactivateUserById({
+        variables: {
+          id: userId,
+          requestorId: authenticatedUser?.id,
+        },
+      });
+
+      if (response.data) {
         toast({
-          title: "Failed to deactivate. Please try again.",
-          status: "error",
+          title: "Deactivation Successful!",
+          status: "success",
           isClosable: true,
         });
+        refetch();
       }
-  
-      onClose();
-      await setIsSubmitLoading(false);
-    };
-  
-    return (
-      <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered>
-        <ModalOverlay />
-        <ModalContent p="0.5%">
-          <ModalHeader fontSize="md">{isActive ? "Deactivate?" : "Activate?"}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {isActive 
+    } catch (e: unknown) {
+      logPossibleGraphQLError(e, setAuthenticatedUser);
+      toast({
+        title: "Failed to deactivate. Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+    onClose();
+    await setIsSubmitLoading(false);
+  };
+
+  return (
+    <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered>
+      <ModalOverlay />
+      <ModalContent p="0.5%">
+        <ModalHeader fontSize="md">
+          {isActive ? "Deactivate?" : "Activate?"}
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          {isActive
             ? "Deactivating the user means they will not be able to login and use the platform. Make sure to manually remove them from any meal requests and delete any meal requests they have made in the past."
             : "Activating the user means they will be able to login and use the platform."}
-          </ModalBody>
-          <ModalFooter>
-            {isActive
-            ? <Button
-                width="25%"
-                color="text.white"
-                bgColor="text.red"
-                _hover={{
-                  bgColor: "background.darkred",
-                }}
-                onClick={() => {
-                  onDeactivate();
-                }}
-                disabled={isSubmitLoading}
-              >
-                {isSubmitLoading ? <Spinner /> : "Deactivate"}
-              </Button>
-            : <Button
-                width="25%"
-                onClick={() => {
-                  onActivate();
-                }}
-                disabled={isSubmitLoading}
-              >
-                {isSubmitLoading ? <Spinner /> : "Activate"}
-              </Button>
-            } 
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    );
-  };
+        </ModalBody>
+        <ModalFooter>
+          {isActive ? (
+            <Button
+              width="25%"
+              color="text.white"
+              bgColor="text.red"
+              _hover={{
+                bgColor: "background.darkred",
+              }}
+              onClick={() => {
+                onDeactivate();
+              }}
+              disabled={isSubmitLoading}
+            >
+              {isSubmitLoading ? <Spinner /> : "Deactivate"}
+            </Button>
+          ) : (
+            <Button
+              width="25%"
+              onClick={() => {
+                onActivate();
+              }}
+              disabled={isSubmitLoading}
+            >
+              {isSubmitLoading ? <Spinner /> : "Activate"}
+            </Button>
+          )}
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
 
 const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   const [ids, setIds] = React.useState<Array<TABLE_LIBRARY_TYPES.Identifier>>(
@@ -248,15 +261,15 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
 
   const handleViewDonations = (donorId: string) => {
     setRedirectTo(`/admin/meal_requests/donor/${donorId}`);
-  }
+  };
 
   const handleViewRequests = (donorId: string) => {
     setRedirectTo(`/admin/meal_requests/asp/${donorId}`);
-  }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-  }
+  };
 
   const [
     getUsers,
@@ -280,7 +293,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
             num_kids: userData.info?.roleInfo?.aspInfo?.numKids ?? 0,
             _hasContent: false,
             nodes: null,
-            involvedMealRequests: userData.info?.involvedMealRequests ?? 0
+            involvedMealRequests: userData.info?.involvedMealRequests ?? 0,
           }),
         ),
       });
@@ -331,136 +344,156 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     {
       label: "",
       renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => (
-          <Flex
-            cursor="pointer"
-            justifyContent="flex-end"
-            onClick={handleExpand(item)}
-          >
-            {ids.includes(item.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
-          </Flex>
+        <Flex
+          cursor="pointer"
+          justifyContent="flex-end"
+          onClick={handleExpand(item)}
+        >
+          {ids.includes(item.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </Flex>
       ),
     },
   ];
 
   const ROW_OPTIONS = {
     renderAfterRow: (item: TABLE_LIBRARY_TYPES.TableNode) => (
-      <Collapse className="animate" in={ids.includes(item.id)} >
+      <Collapse className="animate" in={ids.includes(item.id)}>
         <Flex
           p="16px"
           borderBottom="1px solid"
           borderColor="gray.400"
           flexDir="column"
         >
-        <Flex
-          flexDir="row"
-          width="100%"
-        >
-          <Box flex={1} p="8px">
-            <Text variant="mobile-button-bold">Name</Text>
-            <Text variant="mobile-caption-2" mb="12px">
-              {item.name}
-            </Text>
-            <Text variant="mobile-button-bold">Description</Text>
-            <Text variant="mobile-caption-2" mb="12px">
-              {item.description}
-            </Text>
-            <Text variant="mobile-button-bold">Login Email</Text>
-            <Text variant="mobile-caption-2" mb="12px">
-              {item.email}
-            </Text>
-            <Text variant="mobile-button-bold">Address</Text>
-            <Text variant="mobile-caption-2" mb="12px">
-              {item.address}
-            </Text>
-            {isASP ? 
-            <>
-            <Text variant="mobile-button-bold">Num Kids</Text>
-            <Text variant="mobile-caption-2" mb="12px">
-              {item.num_kids}
-            </Text>
-            </>
-             : null}
-          </Box>
-          <Box flex={1} p="8px">
-            <Text variant="mobile-button-bold">Primary Contact</Text>
-            <Text variant="mobile-caption-2">{item.primary_contact.name}</Text>
-            <Text variant="mobile-caption-2">{item.primary_contact.email}</Text>
-            <Text variant="mobile-caption-2">{item.primary_contact.phone}</Text>
-          </Box>
-          <Box flex={1} p="8px">
-            <Text variant="mobile-button-bold">Additional Onsite Staff</Text>
-            {item.onsite_staff.map((staff: Contact) => (
-              <Box key={staff.email} mb="8px">
-                <Text variant="mobile-caption-2">{staff.name}</Text>
-                <Text variant="mobile-caption-2">{staff.email}</Text>
-                <Text variant="mobile-caption-2">{staff.phone}</Text>
-              </Box>
-            ))}
-          </Box>
-          <Flex alignItems="end" >
-            {item.active
-            ? <Button
-                width="100%"
-                color="text.red"
-                bgColor="text.white"
-                border="2px solid"
-                borderColor="text.red"
-                _hover={{
-                  bgColor: "gray.gray83",
-                }}
-                onClick={() => {
-                  setUserId(String(item.id));
-                  setIsActive(true);
-                  onOpen();
-                }}
-              >
-                Deactivate
-              </Button>
-            : <Button
-                width="100%"
-                color="green"
-                bgColor="text.white"
-                border="2px solid"
-                borderColor="green"
-                _hover={{
-                  bgColor: "gray.gray83",
-                }}
-                onClick={() => {
-                  setUserId(String(item.id));
-                  setIsActive(false);
-                  onOpen();
-                }}
-              >
-                Activate
-              </Button>
-            }
+          <Flex flexDir="row" width="100%">
+            <Box flex={1} p="8px">
+              <Text variant="mobile-button-bold">Name</Text>
+              <Text variant="mobile-caption-2" mb="12px">
+                {item.name}
+              </Text>
+              <Text variant="mobile-button-bold">Description</Text>
+              <Text variant="mobile-caption-2" mb="12px">
+                {item.description}
+              </Text>
+              <Text variant="mobile-button-bold">Login Email</Text>
+              <Text variant="mobile-caption-2" mb="12px">
+                {item.email}
+              </Text>
+              <Text variant="mobile-button-bold">Address</Text>
+              <Text variant="mobile-caption-2" mb="12px">
+                {item.address}
+              </Text>
+              {isASP ? (
+                <>
+                  <Text variant="mobile-button-bold">Num Kids</Text>
+                  <Text variant="mobile-caption-2" mb="12px">
+                    {item.num_kids}
+                  </Text>
+                </>
+              ) : null}
+            </Box>
+            <Box flex={1} p="8px">
+              <Text variant="mobile-button-bold">Primary Contact</Text>
+              <Text variant="mobile-caption-2">
+                {item.primary_contact.name}
+              </Text>
+              <Text variant="mobile-caption-2">
+                {item.primary_contact.email}
+              </Text>
+              <Text variant="mobile-caption-2">
+                {item.primary_contact.phone}
+              </Text>
+            </Box>
+            <Box flex={1} p="8px">
+              <Text variant="mobile-button-bold">
+                {isASP ? "Additional Onsite Staff" : "Meal Donor Contacts"}
+              </Text>
+              {item.onsite_staff.map((staff: Contact) => (
+                <Box key={staff.email} mb="8px">
+                  <Text variant="mobile-caption-2">{staff.name}</Text>
+                  <Text variant="mobile-caption-2">{staff.email}</Text>
+                  <Text variant="mobile-caption-2">{staff.phone}</Text>
+                </Box>
+              ))}
+            </Box>
+            <Flex alignItems="end">
+              {item.active ? (
+                <Button
+                  width="100%"
+                  color="text.red"
+                  bgColor="text.white"
+                  border="2px solid"
+                  borderColor="text.red"
+                  _hover={{
+                    bgColor: "gray.gray83",
+                  }}
+                  onClick={() => {
+                    setUserId(String(item.id));
+                    setIsActive(true);
+                    onOpen();
+                  }}
+                >
+                  Deactivate
+                </Button>
+              ) : (
+                <Button
+                  width="100%"
+                  color="green"
+                  bgColor="text.white"
+                  border="2px solid"
+                  borderColor="green"
+                  _hover={{
+                    bgColor: "gray.gray83",
+                  }}
+                  onClick={() => {
+                    setUserId(String(item.id));
+                    setIsActive(false);
+                    onOpen();
+                  }}
+                >
+                  Activate
+                </Button>
+              )}
+            </Flex>
           </Flex>
-        </Flex>
-        {isASP ?
-          <Box marginTop="auto" marginLeft="auto" cursor="pointer" textDecoration="underline" onClick={() => handleViewRequests(String(item.id))}>
-            View their meal requests &rarr;
-          </Box> 
-          : <Box marginTop="auto" marginLeft="auto" cursor="pointer" textDecoration="underline" onClick={() => handleViewDonations(String(item.id))}>
-            View their meal donations &rarr;
-          </Box>}
+          {isASP ? (
+            <Box
+              marginTop="auto"
+              marginLeft="auto"
+              cursor="pointer"
+              textDecoration="underline"
+              onClick={() => handleViewRequests(String(item.id))}
+            >
+              View their meal requests &rarr;
+            </Box>
+          ) : (
+            <Box
+              marginTop="auto"
+              marginLeft="auto"
+              cursor="pointer"
+              textDecoration="underline"
+              onClick={() => handleViewDonations(String(item.id))}
+            >
+              View their meal donations &rarr;
+            </Box>
+          )}
         </Flex>
       </Collapse>
     ),
   };
 
   function reloadUsers() {
-    const searchVariables : GetAllUserVariables = {
-        role: isASP ? "ASP" : "Donor",
-        limit: rowsPerPage,
-        offset: (currentPage - 1) * rowsPerPage,
-        name: "",
-        email: "",
-    }
-    
+    const searchVariables: GetAllUserVariables = {
+      role: isASP ? "ASP" : "Donor",
+      limit: rowsPerPage,
+      offset: (currentPage - 1) * rowsPerPage,
+      name: "",
+      email: "",
+    };
+
     // If it's an email, put the email as a search term, else the name
     if (searchTerm.indexOf("@") !== -1) {
       searchVariables.email = searchTerm;
-    }else{
+    } else {
       searchVariables.name = searchTerm;
     }
 
@@ -476,7 +509,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   }, [isASP, rowsPerPage, currentPage]);
 
   useEffect(() => {
-    if(shouldReloadUsers) {
+    if (shouldReloadUsers) {
       reloadUsers();
       setReloadUsers(false);
     }
@@ -484,7 +517,7 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
   }, [shouldReloadUsers]);
 
   if (redirectTo) {
-    return <Navigate to={redirectTo}/>;
+    return <Navigate to={redirectTo} />;
   }
 
   if (getUsersError) {
@@ -507,17 +540,19 @@ const UserList = ({ isASP, rowsPerPage = 10 }: UserListProps) => {
     <Box mt="24px" width="80%">
       <InputGroup>
         <InputLeftElement pointerEvents="none">
-          <Search2Icon color="gray.600"/>
+          <Search2Icon color="gray.600" />
         </InputLeftElement>
-        <Input 
-          onChange={handleChange} 
+        <Input
+          onChange={handleChange}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               reloadUsers();
             }
           }}
-          paddingLeft="36px" 
-          placeholder={`Search for ${isASP ? "After School Program" : "Meal Donor"} by name or by email`} 
+          paddingLeft="36px"
+          placeholder={`Search for ${
+            isASP ? "After School Program" : "Meal Donor"
+          } by name or by email`}
         />
       </InputGroup>
       <ListView

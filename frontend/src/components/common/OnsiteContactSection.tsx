@@ -15,9 +15,9 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React from "react";
 
-import { Contact, OnsiteContact } from "../../types/UserTypes";
+import { Contact, OnsiteContact, Role } from "../../types/UserTypes";
 import { isValidEmail } from "../../utils/ValidationUtils";
 import useIsWebView from "../../utils/useIsWebView";
 
@@ -39,6 +39,7 @@ type OnsiteTextInputRowProps = {
 
 type OnsiteTextInputRowPropsWithMax = OnsiteTextInputRowProps & {
   maximumRowCount?: number;
+  userRole?: Role;
 };
 
 const OnsiteTextInputRow = ({
@@ -123,6 +124,7 @@ const MobileOnsiteTextInputRow = ({
   onsiteInfo,
   setOnsiteInfo,
   index,
+  userRole,
   attemptedSubmit,
   minimumRowCount = 1,
   maximumRowCount = 10,
@@ -131,7 +133,9 @@ const MobileOnsiteTextInputRow = ({
     <Flex flexDir="row" justifyContent="space-between">
       <FormControl isRequired={index < minimumRowCount}>
         <FormLabel variant="mobile-form-label-bold">
-          {`Additional Onsite Staff (${index + 1})`}
+          {`Additional ${
+            userRole === "Donor" ? "meal donor contact(s)" : "onsite staff"
+          } (${index + 1})`}
         </FormLabel>
       </FormControl>
       {onsiteInfo.length > minimumRowCount && (
@@ -150,8 +154,9 @@ const MobileOnsiteTextInputRow = ({
     </Flex>
     {index === 0 && (
       <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
-        *Must add at least {minimumRowCount} onsite staff. Maximum is{" "}
-        {maximumRowCount}.
+        *Must add at least {minimumRowCount}{" "}
+        {userRole === "Donor" ? "meal donor contact(s)" : "onsite staff"}.
+        Maximum is {maximumRowCount}.
       </Text>
     )}
     <FormControl
@@ -215,6 +220,7 @@ type OnsiteContactDropdownProps = {
 
 type OnsiteContactDropdownPropsWithMax = OnsiteContactDropdownProps & {
   maximumRowCount?: number;
+  userRole?: Role;
 };
 
 const OnsiteDropdownInputRow = ({
@@ -297,6 +303,7 @@ const MobileOnsiteDropdownInputRow = ({
   setOnsiteInfo,
   availableStaff,
   index,
+  userRole,
   attemptedSubmit,
   minimumRowCount = 1,
   maximumRowCount = 10,
@@ -305,7 +312,9 @@ const MobileOnsiteDropdownInputRow = ({
     <Flex flexDir="row" justifyContent="space-between">
       <FormControl isRequired={index < minimumRowCount}>
         <FormLabel variant="mobile-form-label-bold">
-          {`Additional Onsite Staff (${index + 1})`}
+          {`Additional ${
+            userRole === "Donor" ? "meal donor contact(s)" : "onsite staff"
+          } (${index + 1})`}
         </FormLabel>
       </FormControl>
       {onsiteInfo.length > minimumRowCount && (
@@ -324,8 +333,9 @@ const MobileOnsiteDropdownInputRow = ({
     </Flex>
     {index === 0 && (
       <Text color="text.subtitle" variant="desktop-xs" mt="-16px">
-        *Must add at least {minimumRowCount} onsite staff. Maximum is{" "}
-        {maximumRowCount}.
+        *Must add at least {minimumRowCount}{" "}
+        {userRole === "Donor" ? "meal donor contact(s)" : "onsite staff"}.
+        Maximum is {maximumRowCount}.
       </Text>
     )}
     <FormControl
@@ -374,6 +384,7 @@ type OnsiteContactSectionProps = {
   onsiteInfo: Array<OnsiteContact>;
   setOnsiteInfo: React.Dispatch<React.SetStateAction<OnsiteContact[]>>;
   attemptedSubmit: boolean;
+  userRole: Role;
   availableStaff?: Array<OnsiteContact>;
   dropdown?: boolean;
   minimumRowCount?: number;
@@ -384,12 +395,15 @@ const OnsiteContactSection = ({
   onsiteInfo,
   setOnsiteInfo,
   attemptedSubmit,
+  userRole,
   availableStaff = [],
   dropdown = false,
   minimumRowCount = 1,
   maximumRowCount = 10,
 }: OnsiteContactSectionProps): React.ReactElement => {
   const isWebView = useIsWebView();
+  const roleLabel =
+    userRole === "Donor" ? "meal donor contact(s)" : "onsite staff";
 
   if (isWebView) {
     return (
@@ -397,17 +411,17 @@ const OnsiteContactSection = ({
         <Flex flexDir="column" gap="8px">
           <FormControl isRequired={minimumRowCount > 0}>
             <FormLabel variant="form-label-bold">
-              {dropdown ? "Select onsite staff" : "Additional onsite staff"}
+              {dropdown ? `Select ${roleLabel}` : `Additional ${roleLabel}`}{" "}
             </FormLabel>
           </FormControl>
           {minimumRowCount > 0 ? (
             <Text color="text.subtitle" variant="desktop-xs" mt="-12px">
-              *Must add at least {minimumRowCount} onsite staff. Maximum is{" "}
-              {maximumRowCount}.
+              *Must add at least {minimumRowCount} {roleLabel}. Maximum is{" "}
+              {maximumRowCount} {roleLabel}.
             </Text>
           ) : (
             <Text color="text.subtitle" variant="desktop-xs" mt="-12px">
-              *Maximum is {maximumRowCount} onsite staff.
+              *Maximum is {maximumRowCount} {roleLabel}.
             </Text>
           )}
         </Flex>
@@ -517,6 +531,7 @@ const OnsiteContactSection = ({
             key={index}
             onsiteInfo={onsiteInfo}
             setOnsiteInfo={setOnsiteInfo}
+            userRole={userRole}
             availableStaff={
               /* Remove previously selected staff from dropdown */
               availableStaff.filter(
@@ -543,6 +558,7 @@ const OnsiteContactSection = ({
             onsiteInfo={onsiteInfo}
             setOnsiteInfo={setOnsiteInfo}
             index={index}
+            userRole={userRole}
             attemptedSubmit={attemptedSubmit}
             minimumRowCount={minimumRowCount}
           />

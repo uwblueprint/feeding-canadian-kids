@@ -1,38 +1,18 @@
-import { gql, useLazyQuery, useQuery } from "@apollo/client";
-import {
-  Box,
-  Button as ChakraButton,
-  Flex,
-  Image,
-  Text,
-  Wrap,
-} from "@chakra-ui/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import FullCalendar from "@fullcalendar/react";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { gql, useQuery } from "@apollo/client";
+import { Flex, Image, Text } from "@chakra-ui/react";
+import React, { useContext } from "react";
 import {
   IoArrowBackCircleOutline,
   IoLocationOutline,
   IoPersonOutline,
 } from "react-icons/io5";
-import { PiForkKnifeFill } from "react-icons/pi";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { isCallSignatureDeclaration } from "typescript";
 
-import EditMealRequestForm from "./EditMealRequestForm";
-
-import BackgroundImage from "../assets/background.png";
-import RefreshCredentials from "../components/auth/RefreshCredentials";
-import LoadingSpinner from "../components/common/LoadingSpinner";
 import { MealRequestCalendarView } from "../components/common/MealRequestCalendarView";
 import * as Routes from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
-import {
-  MealRequest,
-  MealRequestsData,
-  MealStatus,
-} from "../types/MealRequestTypes";
-import { ASPDistance, GetUserData, GetUserVariables } from "../types/UserTypes";
+import { MealStatus } from "../types/MealRequestTypes";
+import { GetUserData, GetUserVariables } from "../types/UserTypes";
 import { ErrorMessage } from "../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
 import { useGetDefaultPageForUser } from "../utils/useGetDefaultPageForUser";
@@ -227,7 +207,9 @@ const MealDonorCalendar = (): React.ReactElement => {
   const handleNext = (selectedMealRequests: Array<string>) => {
     // Do something with selectedMealRequests
     navigate(
-      `${Routes.MEAL_DONOR_FORM_PAGE}?ids=${selectedMealRequests.join(",")}&aspId=${aspId}`,
+      `${Routes.MEAL_DONOR_FORM_PAGE}?ids=${selectedMealRequests.join(
+        ",",
+      )}&aspId=${aspId}`,
     );
   };
   return (

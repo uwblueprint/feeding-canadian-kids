@@ -7,7 +7,6 @@ import ForgotPassword from "./components/auth/ForgotPassword";
 import Join from "./components/auth/Join";
 import JoinSuccess from "./components/auth/JoinSuccess";
 import Login from "./components/auth/Login";
-import ResetPassword from "./components/auth/ResetPassword";
 import SetPassword from "./components/auth/SetPassword";
 import MealDonationForm from "./components/meal_donor/donation_form/MealDonationForm";
 import * as Paths from "./constants/Routes";
@@ -16,7 +15,6 @@ import AdminMealRequestsPage from "./pages/AdminMealRequestsPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import MealDonorCalendar from "./pages/MealDonorCalendar";
 import MealDonorConfirmation from "./pages/MealDonorConfirmation";
-import MealDonorDashboard from "./pages/MealDonorDashboard";
 import NotFound from "./pages/NotFound";
 import OnboardingRequestsPage from "./pages/OnboardingRequestsPage";
 import Settings from "./pages/Settings";
@@ -69,9 +67,9 @@ const Routes = (): React.ReactElement => {
           element={<OnboardingRequestsPage />}
         />
         <Route path={Paths.ADMIN_MEAL_REQUESTS_PAGE}>
-          <Route path="donor/:donorId" element={<AdminMealRequestsPage />}/>
-          <Route path="asp/:aspId" element={<AdminMealRequestsPage />}/>
-          <Route path="" element={<AdminMealRequestsPage />}/>
+          <Route path="donor/:donorId" element={<AdminMealRequestsPage />} />
+          <Route path="asp/:aspId" element={<AdminMealRequestsPage />} />
+          <Route path="" element={<AdminMealRequestsPage />} />
         </Route>
         <Route path={Paths.ADMIN_USERS_PAGE} element={<AdminUsersPage />} />
         <Route path={Paths.SETTINGS_PAGE} element={<Settings />} />

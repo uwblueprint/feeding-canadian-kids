@@ -3,27 +3,16 @@ import {
   Box,
   Button as ChakraButton,
   Flex,
-  Image,
   Stack,
   Text,
-  Wrap,
-  background,
 } from "@chakra-ui/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-  IoArrowBackCircleOutline,
-  IoLocationOutline,
-  IoPersonOutline,
-} from "react-icons/io5";
 import { PiForkKnifeFill } from "react-icons/pi";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { isCallSignatureDeclaration } from "typescript";
 
 import LoadingSpinner from "./LoadingSpinner";
 
-import * as Routes from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import {
   MealRequest,
@@ -31,14 +20,7 @@ import {
   MealRequestsRequestorVariables,
   MealStatus,
 } from "../../types/MealRequestTypes";
-import {
-  ASPDistance,
-  GetUserData,
-  GetUserVariables,
-} from "../../types/UserTypes";
-import { ErrorMessage } from "../../utils/ErrorUtils";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
-import BackgroundImage from "../assets/background.png";
 
 const GET_MEAL_REQUESTS_BY_ID = gql`
   query GetMealRequestsByRequestorId(
@@ -239,7 +221,7 @@ export const MealRequestCalendarView = ({
           return "#C6F6D5";
         }
         if (mealRequest.status === MealStatus.UPCOMING) {
-          return "#D5C4EC"
+          return "#D5C4EC";
         }
 
         return mealRequest.id === selectedMealRequests[0]

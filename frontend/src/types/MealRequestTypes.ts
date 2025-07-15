@@ -1,5 +1,4 @@
-import { Contact, OnsiteContact, Requestor } from "./UserTypes";
-
+import { OnsiteContact, Requestor } from "./UserTypes";
 
 type MealInfo = {
   portions: number;
@@ -67,9 +66,9 @@ export type MealRequestsDonorVariables = {
   sortByDateDirection?: SortByDateDirection;
 };
 
-type UpdateMealRequestType =  {
-  mealRequest : MealRequest
-}
+type UpdateMealRequestType = {
+  mealRequest: MealRequest;
+};
 
 export type MealRequestsData = {
   getMealRequestsByRequestorId: Array<MealRequest>;

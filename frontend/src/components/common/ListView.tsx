@@ -1,13 +1,5 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@chakra-ui/icons";
-import {
-  Box,
-  Center,
-  Button as ChakraButton,
-  Text,
-} from "@chakra-ui/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { Box, Center, Text } from "@chakra-ui/react";
 import {
   DEFAULT_OPTIONS,
   getTheme,
@@ -19,31 +11,44 @@ import React from "react";
 
 import LoadingSpinner from "./LoadingSpinner";
 
-type ListViewProps = { 
-    columns: {
-        label: string;
-        renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => JSX.Element;
-    }[]; 
-    rowOptions: {
-        renderAfterRow: (item: TABLE_LIBRARY_TYPES.TableNode) => JSX.Element;
-    }; 
-    data: {
-      nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
-    } | undefined;
-    loading: boolean; 
-    requestType: string; 
-    currentPage: number;
-    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-    rowsPerPage?: number 
+type ListViewProps = {
+  columns: {
+    label: string;
+    renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => JSX.Element;
+  }[];
+  rowOptions: {
+    renderAfterRow: (item: TABLE_LIBRARY_TYPES.TableNode) => JSX.Element;
+  };
+  data:
+    | {
+        nodes: TABLE_LIBRARY_TYPES.TableNode[] | undefined;
+      }
+    | undefined;
+  loading: boolean;
+  requestType: string;
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  rowsPerPage?: number;
 };
 
-const ListView = ({ columns, rowOptions, data, loading, requestType, currentPage, setCurrentPage, rowsPerPage = 10 }: ListViewProps) => {
+const ListView = ({
+  columns,
+  rowOptions,
+  data,
+  loading,
+  requestType,
+  currentPage,
+  setCurrentPage,
+  rowsPerPage = 10,
+}: ListViewProps) => {
   const chakraTheme = getTheme(DEFAULT_OPTIONS);
   const customTheme = {
     Table: `
         margin: 0 !important;
         width: 100%;
-        --data-table-library_grid-template-columns: repeat(${columns.length - 1}, minmax(0, 1fr)) 88px;
+        --data-table-library_grid-template-columns: repeat(${
+          columns.length - 1
+        }, minmax(0, 1fr)) 88px;
 
         overflow: auto;
         min-width: 900px;

@@ -29,7 +29,6 @@ import {
 import React, { useContext } from "react";
 import { FiFilter } from "react-icons/fi";
 
-import { BanIcon } from "../assets/icons/BanIcon";
 import { ChildIcon } from "../assets/icons/ChildIcon";
 import { InformationIcon } from "../assets/icons/InformationIcon";
 import { LocationIcon } from "../assets/icons/LocationIcon";

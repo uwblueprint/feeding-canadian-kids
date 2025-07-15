@@ -6,7 +6,10 @@ interface TitleSectionProps {
   description?: string;
 }
 
-const TitleSection = ({ title, description }: TitleSectionProps): React.ReactElement => (
+const TitleSection = ({
+  title,
+  description,
+}: TitleSectionProps): React.ReactElement => (
   <div>
     <VStack
       spacing={4}

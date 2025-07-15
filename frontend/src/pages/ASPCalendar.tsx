@@ -12,21 +12,14 @@ import {
   Divider,
   HStack,
   Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
   Table,
-  Tabs,
   Td,
   Text,
   Tr,
-  Wrap,
   useDisclosure,
-  useMediaQuery,
   useToast,
 } from "@chakra-ui/react";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { GiMeal } from "react-icons/gi";
 import {
   IoInformationCircleOutline,
@@ -35,12 +28,12 @@ import {
   IoPersonOutline,
 } from "react-icons/io5";
 import { PiHourglass } from "react-icons/pi";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import EditMealRequestForm from "./EditMealRequestForm";
 
 import { MealRequestCalendarView } from "../components/common/MealRequestCalendarView";
-import { CREATE_MEAL_REQUEST_PAGE, LOGIN_PAGE } from "../constants/Routes";
+import { LOGIN_PAGE } from "../constants/Routes";
 import AuthContext from "../contexts/AuthContext";
 import { MealRequest, MealStatus } from "../types/MealRequestTypes";
 import { logPossibleGraphQLError } from "../utils/GraphQLUtils";
@@ -234,7 +227,9 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
               <Box textAlign="center" marginBottom={4}>
                 {selectedMealRequest.donationInfo ? (
                   <Text fontSize="20px" as="b">
-                    { selectedMealRequest.status === MealStatus.UPCOMING ? "Upcoming Delivery" : "Fulfilled Meal" }
+                    {selectedMealRequest.status === MealStatus.UPCOMING
+                      ? "Upcoming Delivery"
+                      : "Fulfilled Meal"}
                   </Text>
                 ) : (
                   <Text fontSize="20px" as="b">
@@ -373,21 +368,21 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                     ) : null}
                   </Table>
                   <Box position="absolute" bottom={2} right={2}>
-                    {selectedMealRequest.status !== MealStatus.FULFILLED ? 
-                    <HStack spacing={2}>
-                      <Button
-                        variant="link"
-                        height="20px"
-                        fontSize="14px"
-                        textColor="black"
-                        fontWeight="normal"
-                        _hover={{ textDecoration: "underline" }}
-                        onClick={handleEdit(selectedMealRequest)}
-                      >
-                        Edit
-                      </Button>
-                    </HStack>
-                    : null}
+                    {selectedMealRequest.status !== MealStatus.FULFILLED ? (
+                      <HStack spacing={2}>
+                        <Button
+                          variant="link"
+                          height="20px"
+                          fontSize="14px"
+                          textColor="black"
+                          fontWeight="normal"
+                          _hover={{ textDecoration: "underline" }}
+                          onClick={handleEdit(selectedMealRequest)}
+                        >
+                          Edit
+                        </Button>
+                      </HStack>
+                    ) : null}
                   </Box>
                 </Card>
               ) : (

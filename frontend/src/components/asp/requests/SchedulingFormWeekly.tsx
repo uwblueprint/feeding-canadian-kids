@@ -27,9 +27,7 @@ type SchedulingFormWeeklyProps = {
   handleNext: () => void;
 };
 
-const SchedulingFormWeekly: React.FunctionComponent<
-  SchedulingFormWeeklyProps
-> = ({
+const SchedulingFormWeekly: React.FunctionComponent<SchedulingFormWeeklyProps> = ({
   donationFrequency,
   setDonationFrequency,
   weekdayButtonStates,
@@ -47,9 +45,8 @@ const SchedulingFormWeekly: React.FunctionComponent<
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
-  const numberOfChosenDays = weekdayButtonStates.filter(
-    (state) => state,
-  ).length;
+  const numberOfChosenDays = weekdayButtonStates.filter((state) => state)
+    .length;
 
   // Turn button to solid variant when clicked
   const handleClick = (index: number) => {

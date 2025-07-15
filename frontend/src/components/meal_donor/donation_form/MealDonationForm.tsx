@@ -1,6 +1,5 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
-import { Center, Spinner, useToast } from "@chakra-ui/react";
-import { error } from "console";
+import { gql, useQuery } from "@apollo/client";
+import { Center, useToast } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
@@ -160,13 +159,16 @@ const MealDonationForm = (): React.ReactElement => {
           header2="Meal Details"
           header3="Review & Submit"
           shouldGoBackToStep1={(currentStep) => {
-            if (currentStep > 0 && (onsiteContacts.length === 0 || onsiteContacts[0].name === "")) {
+            if (
+              currentStep > 0 &&
+              (onsiteContacts.length === 0 || onsiteContacts[0].name === "")
+            ) {
               return true;
             }
             if (currentStep > 1 && mealDescription === "") {
               return true;
             }
-            return false
+            return false;
           }}
           panel1={
             <MealDonationFormContactInfo

@@ -1,4 +1,4 @@
-import React, { useMemo, useReducer, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 
 import Routes from "./Routes";

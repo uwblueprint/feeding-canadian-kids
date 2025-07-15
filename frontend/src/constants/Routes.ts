@@ -1,4 +1,3 @@
-
 export const TERMS_OF_USE_URL =
   "https://docs.google.com/document/d/1x1O9uNSVD5WU_hRBPIaaI0gULEp4yYnsJoR6L8XEBvM/edit?usp=sharing";
 
@@ -32,7 +31,7 @@ export const MEAL_DONOR_FORM_PAGE = "/meal_donor/donate/";
 
 export const MEAL_DONOR_UPCOMING_PAGE = "/meal_donor/upcoming";
 
-export const MEAL_DONOR_CONFIRMATION_PAGE = "/meal_donor/confirmation"
+export const MEAL_DONOR_CONFIRMATION_PAGE = "/meal_donor/confirmation";
 
 export const YOUR_MATCHES_PAGE = "/meal_donor/matches";
 

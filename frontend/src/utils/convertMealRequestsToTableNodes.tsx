@@ -1,10 +1,8 @@
 import { Tag } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
-
 import React from "react";
 
 import { MealRequest, MealStatus } from "../types/MealRequestTypes";
-
 
 export const convertMealRequestsToTableNodes = (
   mealRequests: MealRequest[] | undefined,
@@ -52,7 +50,6 @@ export const convertMealRequestsToTableNodes = (
   );
 };
 
-
 export const formatDateTimeFully = (date: Date): string => {
   return date.toLocaleString("en-US", {
     weekday: "long",
@@ -64,7 +61,6 @@ export const formatDateTimeFully = (date: Date): string => {
     timeZoneName: "short",
   });
 };
-
 
 export const Status = ({ status }: { status: string }) => {
   switch (status) {

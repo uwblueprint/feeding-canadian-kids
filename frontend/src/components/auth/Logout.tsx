@@ -20,9 +20,9 @@ const Logout = (): React.ReactElement => {
 
   const navigate = useNavigate();
 
-  const [logout,
-    {loading: logoutLoading}
-  ] = useMutation<{ logout: { success: boolean } }>(LOGOUT);
+  const [logout, { loading: logoutLoading }] = useMutation<{
+    logout: { success: boolean };
+  }>(LOGOUT);
 
   const onLogOutClick = async () => {
     const success = await authAPIClient.logout(
@@ -37,19 +37,19 @@ const Logout = (): React.ReactElement => {
 
   return (
     <Button
-    width="190px"
-    height="45px"
-    variant="desktop-button-bold"
-    color="primary.green"
-    bgColor="background.white"
-    border="1px solid"
-    borderColor="primary.green"
-    borderRadius="6px"
-    _hover={{ color: "text.white", bgColor: "primary.green" }}
+      width="190px"
+      height="45px"
+      variant="desktop-button-bold"
+      color="primary.green"
+      bgColor="background.white"
+      border="1px solid"
+      borderColor="primary.green"
+      borderRadius="6px"
+      _hover={{ color: "text.white", bgColor: "primary.green" }}
       onClick={onLogOutClick}
       isDisabled={logoutLoading}
     >
-        {logoutLoading ? <Spinner /> : "Log Out"}
+      {logoutLoading ? <Spinner /> : "Log Out"}
     </Button>
   );
 };

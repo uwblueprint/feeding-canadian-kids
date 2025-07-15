@@ -19,15 +19,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { HeaderButtonsData } from "./HeaderButtons";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import greenGear from "../../assets/greenGear.svg";
 import Logo from "../../assets/logo.png";
-import whiteGear from "../../assets/whiteGear.svg";
-import {
-  ASP_DASHBOARD_PAGE,
-  HOME_PAGE,
-  LOGIN_PAGE,
-  SETTINGS_PAGE,
-} from "../../constants/Routes";
+import { LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { UserInfo } from "../../types/UserTypes";
 import { useGetDefaultPageForUser } from "../../utils/useGetDefaultPageForUser";

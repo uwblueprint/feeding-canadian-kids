@@ -17,7 +17,6 @@ import { Link, Navigate } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import BackgroundImage from "../../assets/background.png";
 import {
-  ASP_DASHBOARD_PAGE,
   FORGOT_PASSWORD_PAGE,
   HOME_PAGE,
   JOIN_PAGE,
@@ -68,12 +67,13 @@ const Login = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(
+    undefined,
+  );
 
-  const [login, 
-    { loading: loginLoading, error: loginError },
-  ] = useMutation<{ login: LoginData }>(LOGIN);
-
+  const [login, { loading: loginLoading, error: loginError }] = useMutation<{
+    login: LoginData;
+  }>(LOGIN);
 
   const onLogInClick = async () => {
     let user: AuthenticatedUser | null = null;
@@ -81,16 +81,18 @@ const Login = (): React.ReactElement => {
       user = await authAPIClient.login(email, password, "", login);
       setErrorMessage(undefined);
     } catch (e: unknown) {
-      const errorCasted = e as ApolloError
+      const errorCasted = e as ApolloError;
       logPossibleGraphQLError(errorCasted, setAuthenticatedUser);
       if ((errorCasted?.message ?? "").indexOf("Failed to sign-in") !== -1) {
-        setErrorMessage("Invalid email or password, please try again!")
-      }
-      else if ((errorCasted?.message ?? "").indexOf("is not activated") !== -1) {
-        setErrorMessage("Your account has been deactivated. Please contact FCK!")
-      }
-      else {
-        setErrorMessage("An unexpected error occurred, please try again!")
+        setErrorMessage("Invalid email or password, please try again!");
+      } else if (
+        (errorCasted?.message ?? "").indexOf("is not activated") !== -1
+      ) {
+        setErrorMessage(
+          "Your account has been deactivated. Please contact FCK!",
+        );
+      } else {
+        setErrorMessage("An unexpected error occurred, please try again!");
       }
     }
     setAuthenticatedUser(user);
@@ -149,7 +151,11 @@ const Login = (): React.ReactElement => {
         )}
         <Flex width="100%" justifyContent="flexStart" flexDirection="column">
           <Box>
-            <FormControl pb={5} isRequired isInvalid={errorMessage !== undefined}>
+            <FormControl
+              pb={5}
+              isRequired
+              isInvalid={errorMessage !== undefined}
+            >
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -167,7 +173,11 @@ const Login = (): React.ReactElement => {
             </FormControl>
           </Box>
           <Box>
-            <FormControl pb={2} isRequired isInvalid={errorMessage !== undefined}>
+            <FormControl
+              pb={2}
+              isRequired
+              isInvalid={errorMessage !== undefined}
+            >
               <FormLabel
                 variant={{
                   base: "mobile-form-label-bold",
@@ -210,17 +220,17 @@ const Login = (): React.ReactElement => {
               }}
               color="text.white"
             >
-          {loginLoading ? (
-            <Spinner
-              thickness="4px"
-              speed="0.65s"
-              emptyColor="gray.200"
-              color="primary.green"
-              size="lg"
-            />
-          ) : (
-            "Login"
-          )}
+              {loginLoading ? (
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="primary.green"
+                  size="lg"
+                />
+              ) : (
+                "Login"
+              )}
             </Text>
           </Button>
           <HStack>

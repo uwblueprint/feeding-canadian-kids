@@ -117,10 +117,13 @@ const CreateMealRequest = (): React.ReactElement => {
         header2="Meal donation information"
         header3="Review & submit"
         shouldGoBackToStep1={(currentStep) => {
-          if(currentStep > 0 && mealRequestDates.length === 0) {
+          if (currentStep > 0 && mealRequestDates.length === 0) {
             return true;
           }
-          if(currentStep > 1 && (onsiteContact.length === 0 || onsiteContact[0].name === "")) {
+          if (
+            currentStep > 1 &&
+            (onsiteContact.length === 0 || onsiteContact[0].name === "")
+          ) {
             return true;
           }
 

@@ -17,7 +17,6 @@ import Logo from "../../assets/logo.png";
 import { TERMS_OF_USE_URL } from "../../constants/Routes";
 import useIsWebView from "../../utils/useIsWebView";
 
-
 const TermsOfUse = () => (
   <Text
     as="a"
@@ -26,7 +25,7 @@ const TermsOfUse = () => (
     color="blue.500"
     textDecoration="underline"
     _hover={{ color: "blue.600" }}
->
+  >
     Terms of Use
   </Text>
 );
@@ -49,7 +48,6 @@ const Footer = () => {
           <Divider orientation="vertical" borderWidth="1.5px" />
         </Stack>
         <Stack padding="1% 4% 1% 4%">
-
           <Text fontSize="14px" color="#647488" align="center">
             Feeding Canadian Kids is a registered Canadian charity. We feed
             underserved Canadian kids a nutritious dinner to fill their tummies

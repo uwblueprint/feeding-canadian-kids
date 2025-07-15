@@ -59,7 +59,7 @@ const Dashboard = (): React.ReactElement => {
 
         <TabPanels>
           <TabPanel defaultChecked>
-            <ASPCalendar authId={authenticatedUser.id}/>
+            <ASPCalendar authId={authenticatedUser.id} />
           </TabPanel>
           <TabPanel p="0">
             <ASPListView authId={authenticatedUser.id} />

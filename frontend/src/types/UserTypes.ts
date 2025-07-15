@@ -77,7 +77,7 @@ export type OnboardingRequest = {
 export type UserData = {
   id: string;
   info: UserInfo;
-}
+};
 
 export type GetUserData = {
   getUserById: UserData;

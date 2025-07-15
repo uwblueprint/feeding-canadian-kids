@@ -1,11 +1,10 @@
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
-import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button as ChakraButton,
   Collapse,
   Flex,
-  HStack,
   Menu,
   MenuButton,
   MenuItemOption,
@@ -19,7 +18,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  Tag,
   Text,
   useDisclosure,
   useToast,
@@ -28,13 +26,11 @@ import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/t
 import React, { useContext, useEffect, useState } from "react";
 import { BsFilter, BsReplyAll } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
-
 import { useNavigate } from "react-router-dom";
 
 import { ADMIN_MEAL_REQUESTS_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import {
-  MealRequest,
   MealRequestsData,
   MealRequestsDonorVariables,
   MealRequestsRequestorVariables,
@@ -43,7 +39,11 @@ import {
 } from "../../types/MealRequestTypes";
 import { Contact } from "../../types/UserTypes";
 import { logPossibleGraphQLError } from "../../utils/GraphQLUtils";
-import { Status, convertMealRequestsToTableNodes, formatDateTimeFully } from "../../utils/convertMealRequestsToTableNodes";
+import {
+  Status,
+  convertMealRequestsToTableNodes,
+  formatDateTimeFully,
+} from "../../utils/convertMealRequestsToTableNodes";
 import ListView from "../common/ListView";
 
 const GET_MEAL_REQUESTS = gql`
@@ -278,7 +278,6 @@ const CANCEL_DONATION = gql`
     }
   }
 `;
-
 
 const UnmatchDeleteModal = ({
   isOpen,
@@ -806,31 +805,30 @@ const AdminListView = ({
   return (
     <Box mt="24px" width="80%">
       <Flex gap="10px" marginBottom="20px" justifyContent="flex-end">
-        {aspId || donorId ? 
-        <Menu>
-          <MenuButton
-            as={ChakraButton}
-            _hover={{ backgroundColor: "gray.200" }}
-            padding="6px 10px"
-            borderRadius="3px"
-            fontSize="14px"
-            border="solid 1px #E2E8F0"
-            boxShadow="lg"
-            backgroundColor="white"
-            color="black"
-            minWidth="75px"
-            onClick={() => {
-              navigate(ADMIN_MEAL_REQUESTS_PAGE, { replace: false } );
-            }}
-          >
-            <Flex gap="2px">
-              <BsReplyAll />
-              <Text>
-                View All Meal Requests
-              </Text>
-            </Flex>
-          </MenuButton>
-        </Menu> : null}
+        {aspId || donorId ? (
+          <Menu>
+            <MenuButton
+              as={ChakraButton}
+              _hover={{ backgroundColor: "gray.200" }}
+              padding="6px 10px"
+              borderRadius="3px"
+              fontSize="14px"
+              border="solid 1px #E2E8F0"
+              boxShadow="lg"
+              backgroundColor="white"
+              color="black"
+              minWidth="75px"
+              onClick={() => {
+                navigate(ADMIN_MEAL_REQUESTS_PAGE, { replace: false });
+              }}
+            >
+              <Flex gap="2px">
+                <BsReplyAll />
+                <Text>View All Meal Requests</Text>
+              </Flex>
+            </MenuButton>
+          </Menu>
+        ) : null}
         <Menu>
           <MenuButton
             as={ChakraButton}

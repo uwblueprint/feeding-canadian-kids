@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
-import { UseToastOptions, useMediaQuery } from "@chakra-ui/react";
-import { useContext, useState } from "react";
+import { UseToastOptions } from "@chakra-ui/react";
+import { useContext } from "react";
 
 import { logPossibleGraphQLError } from "./GraphQLUtils";
 

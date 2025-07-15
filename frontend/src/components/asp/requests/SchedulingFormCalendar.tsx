@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Center,
   Flex,
@@ -8,15 +7,14 @@ import {
   Grid,
   GridItem,
   Input,
-  Select,
   SimpleGrid,
   Spacer,
   Text,
   useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import DatePicker, { Calendar } from "react-multi-date-picker";
 import type { Value } from "react-multi-date-picker";
+import { Calendar } from "react-multi-date-picker";
 
 type SchedulingFormCalendarProps = {
   scheduledDropOffTime: string;

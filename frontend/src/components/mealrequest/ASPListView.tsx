@@ -33,7 +33,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import * as TABLE_LIBRARY_TYPES from "@table-library/react-table-library/types/table";
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BsFilter } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 
@@ -218,8 +218,10 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
     },
   );
 
-  const [itemToDelete, setItemToDelete] =
-    useState<TABLE_LIBRARY_TYPES.TableNode | null>(null);
+  const [
+    itemToDelete,
+    setItemToDelete,
+  ] = useState<TABLE_LIBRARY_TYPES.TableNode | null>(null);
 
   function reloadMealRequests(
     fetchPolicy: WatchQueryFetchPolicy = "cache-first",
@@ -344,26 +346,25 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
       label: "",
       renderCell: (item: TABLE_LIBRARY_TYPES.TableNode) => {
         if (item.status === MealStatus.FULFILLED) {
-            return (<Flex
+          return (
+            <Flex
               cursor="pointer"
               justifyContent="flex-end"
               onClick={handleExpand(item)}
             >
               <HStack />
-            </Flex>)
+            </Flex>
+          );
         }
 
         if (item.status === MealStatus.UPCOMING) {
           return (
-            <Flex
-              cursor="pointer"
-              justifyContent="flex-end"
-            >
+            <Flex cursor="pointer" justifyContent="flex-end">
               <HStack>
                 {ids.includes(item.id) ? (
                   <ChevronUpIcon onClick={handleExpand(item)} />
                 ) : (
-                  <ChevronDownIcon  onClick={handleExpand(item)} />
+                  <ChevronDownIcon onClick={handleExpand(item)} />
                 )}
                 <EditIcon
                   onClick={handleEdit(item)}

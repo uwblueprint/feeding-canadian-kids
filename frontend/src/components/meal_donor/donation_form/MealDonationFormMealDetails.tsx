@@ -1,29 +1,22 @@
 import {
-  Box,
   Button,
-  Center,
   Divider,
   Flex,
   FormControl,
   FormLabel,
   Grid,
   GridItem,
-  HStack,
   Input,
   SimpleGrid,
   Spacer,
-  Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { IoLocationOutline } from "react-icons/io5";
-import { useLocation } from "react-router-dom";
 
 import MealDeliveryDetails from "./MealDeliveryDetails";
 
 import { MealRequest } from "../../../types/MealRequestTypes";
-import { AuthenticatedUser, Contact } from "../../../types/UserTypes";
 
 type MealDonationFormMealDetailsProps = {
   mealDescription: string;

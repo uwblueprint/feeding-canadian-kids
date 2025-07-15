@@ -1,4 +1,9 @@
-import { ApolloClient, ApolloLink, ApolloProvider, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  ApolloProvider,
+  InMemoryCache,
+} from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { ChakraProvider } from "@chakra-ui/react";

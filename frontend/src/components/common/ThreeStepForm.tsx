@@ -15,10 +15,9 @@ import {
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+type PageNavigationState = { tabIndex: number };
 
-type PageNavigationState = { tabIndex: number }
-
-function getTabIndex(state: unknown) : number {
+function getTabIndex(state: unknown): number {
   if (!state) return 0; // Makes sure it's not null
   if (typeof state !== "object") return 0;
   if (typeof (state as PageNavigationState).tabIndex !== "number") return 0;
@@ -45,10 +44,10 @@ const ThreeStepForm = ({
   panel1: React.ReactElement;
   panel2: React.ReactElement;
   panel3: React.ReactElement;
-  shouldGoBackToStep1: (currentStep : number) => boolean;
+  shouldGoBackToStep1: (currentStep: number) => boolean;
 }): React.ReactElement => {
   const fontSize = useBreakpointValue({ base: "12px", sm: "16px", md: "20px" });
-  const { state, pathname, search  } = useLocation(); 
+  const { state, pathname, search } = useLocation();
 
   const [tabIndex, setTabIndex] = useState(0);
   const navigate = useNavigate();
@@ -60,18 +59,17 @@ const ThreeStepForm = ({
     if (shouldGoBackToStep1(newTabIndex)) {
       newTabIndex = 0;
       navigate(pathname + search, { state: { tabIndex: 0 } });
-      window.history.replaceState({}, '', '')
+      window.history.replaceState({}, "", "");
     }
 
     setTabIndex(newTabIndex);
-  }, [navigate, pathname, search, shouldGoBackToStep1, state])
+  }, [navigate, pathname, search, shouldGoBackToStep1, state]);
 
   const handleNext = () => {
     const thisTab = tabIndex;
     setTabIndex((prevIndex) => prevIndex + 1);
     navigate(pathname + search, { state: { tabIndex: thisTab + 1 } });
   };
-
 
   const handleBack = () => {
     const thisTab = tabIndex;

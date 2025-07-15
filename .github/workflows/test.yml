@@ -62,4 +62,5 @@ jobs:
           FIREBASE_SVC_ACCOUNT_PRIVATE_KEY: ${{ secrets.FIREBASE_SVC_ACCOUNT_PRIVATE_KEY_STAGING }}
           FIREBASE_STORAGE_DEFAULT_BUCKET: ${{ secrets.FIREBASE_STORAGE_DEFAULT_BUCKET_STAGING }}
           MAILER_USER: ${{ secrets.DEV_MAILER_USER }}
+          FRONTEND_URL: "http://localhost:3000"
         run: python -m pytest

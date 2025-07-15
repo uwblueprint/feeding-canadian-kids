@@ -355,7 +355,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                             {selectedMealRequest.donationInfo.additionalInfo}
                           </Text>
                           <Text fontWeight="semibold">
-                            Donor Onsite Contacts:
+                            Meal Donor Contacts:
                           </Text>
                           {selectedMealRequest?.donationInfo?.donorOnsiteContacts?.map(
                             (staffMember, index) => (

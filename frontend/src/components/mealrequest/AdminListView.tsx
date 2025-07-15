@@ -702,7 +702,7 @@ const AdminListView = ({
                   {item.donor_primary_contact.phone}
                 </Text>
               </Box>
-              <Text variant="mobile-button-bold">Onsite Donor Contacts</Text>
+              <Text variant="mobile-button-bold">Meal Donor Contacts</Text>
               {item.donor_onsite_contacts?.map((contact: Contact) => (
                 <Box key={contact.email} mb="8px">
                   <Text variant="mobile-caption-2">{contact.name}</Text>

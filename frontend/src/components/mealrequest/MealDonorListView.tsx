@@ -169,7 +169,7 @@ const MealDonorListView = ({
                   {item.donor_primary_contact.phone}
                 </Text>
               </Box>
-              <Text variant="mobile-button-bold">Your Onsite Contacts</Text>
+              <Text variant="mobile-button-bold">Your Donor Contacts</Text>
               {item.donor_onsite_contacts?.map((contact: Contact) => (
                 <Box key={contact.email} mb="8px">
                   <Text variant="mobile-caption-2">{contact.name}</Text>

@@ -422,7 +422,7 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
                 {item.primary_contact?.phone ?? ""}
               </Text>
             </Box>
-            <Text variant="mobile-caption-bold">Onsite Contacts</Text>
+            <Text variant="mobile-caption-bold">Meal Donor Contacts</Text>
             {item.donor_onsite_contacts?.map((staff: Contact) => (
               <Box key={staff.email} mb="4px">
                 <Text variant="mobile-caption-2">{staff.name}</Text>

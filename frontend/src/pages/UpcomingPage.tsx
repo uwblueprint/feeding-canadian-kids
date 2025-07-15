@@ -343,7 +343,7 @@ export const UpcomingCard = ({ event, setShouldReload }: { event: UpcomingEvent,
               <IoPersonOutline />
               <VStack alignItems="left" gap={0} spacing={1}>
                 <Text fontSize="xs">
-                  <strong>Your Onsite Staff:</strong>
+                  <strong>Meal Donor Contacts:</strong>
                 </Text>
                 {mealRequest?.donationInfo?.donorOnsiteContacts?.map((staffMember) => (
                 <VStack alignItems="left" gap={0} spacing={0} key={staffMember.name + staffMember.email}>

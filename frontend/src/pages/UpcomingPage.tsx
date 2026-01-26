@@ -313,7 +313,7 @@ export const UpcomingCard = ({
               <EmailIcon />
               <VStack alignItems="left">
                 <Text fontSize="xs">
-                  <strong>Delivery Notes:</strong>
+                  <strong>Delivery and Onsite Instructions:</strong>
                   <br />
                   {mealRequest?.deliveryInstructions}
                 </Text>

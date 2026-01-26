@@ -650,7 +650,9 @@ const AdminListView = ({
             <Text variant="mobile-button-bold">Meal Donation Location</Text>
             <Text variant="mobile-caption-2">{item.location}</Text>
 
-            <Text variant="mobile-button-bold"> Delivery Instructions </Text>
+            <Text variant="mobile-button-bold">
+              Delivery and Onsite Instructions
+            </Text>
             <Text variant="mobile-caption-2">{item.delivery_instructions}</Text>
 
             <Text variant="mobile-button-bold">Number of meals</Text>

@@ -590,10 +590,10 @@ const EditMealRequestForm = ({
                     md: "form-label-bold",
                   }}
                 >
-                  Delivery Notes
+                  Delivery and Onsite Instructions
                 </FormLabel>
                 <Input
-                  placeholder="Ex. Please knock on the door."
+                  placeholder="Drop-off steps, onsite logistics, accessibility needs, tools needed"
                   value={deliveryInstructions}
                   onChange={(e) => setDeliveryInstructions(e.target.value)}
                 />

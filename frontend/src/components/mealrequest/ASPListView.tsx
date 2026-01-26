@@ -468,7 +468,9 @@ const ASPListView = ({ authId, rowsPerPage = 10 }: ASPListViewProps) => {
               </Text>
             </Box>
             <Box flex={1} p="8px" pl={0}>
-              <Text variant="mobile-button-bold">Delivery Instructions</Text>
+              <Text variant="mobile-button-bold">
+                Delivery and Onsite Instructions
+              </Text>
               <Text variant="mobile-caption-2">
                 {item.delivery_instructions}
               </Text>

@@ -265,7 +265,7 @@ const SchedulingFormReviewAndSubmit: React.FunctionComponent<SchedulingFormRevie
           <Flex flexDir="column">
             <FormControl>
               <FormLabel variant="form-label-bold">
-                Delivery Instructions
+                Delivery and Onsite Instructions
               </FormLabel>
               <Text>{deliveryInstructions || "None"}</Text>
             </FormControl>

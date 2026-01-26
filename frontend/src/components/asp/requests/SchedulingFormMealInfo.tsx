@@ -145,7 +145,7 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
           <Flex flexDir="column">
             <FormControl>
               <FormLabel variant="form-label-bold">
-                Delivery Instructions
+                Delivery and Onsite Instructions
               </FormLabel>
               <Textarea
                 size="xs"
@@ -156,7 +156,7 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
                 onChange={(e) => setDeliveryInstructions(e.target.value)}
                 rounded="md"
                 width={{ base: "100%", md: "100%" }}
-                placeholder="Please leave the meals at the front desk"
+                placeholder="Include drop-off steps, onsite logistics (parking/entry), accessibility needs, and any tools needed (e.g., cart)"
                 resize="vertical"
               />
             </FormControl>
@@ -167,8 +167,8 @@ const SchedulingFormMealInfo: React.FunctionComponent<SchedulingFormMealInfoProp
       <GridItem colSpan={1}>
         <Text as="b">Contact Information</Text>
         <Text>
-          Please provide the contact information of the staff who will be
-          helping facilitate the meals
+          Please provide the most direct contact information for delivery day
+          (name, email, direct phone).
         </Text>
       </GridItem>
 

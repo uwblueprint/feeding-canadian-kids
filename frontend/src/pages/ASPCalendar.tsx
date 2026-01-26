@@ -304,7 +304,7 @@ const ASPCalendar = ({ authId }: ASPCalendarProps) => {
                       </Td>
                       <Td>
                         <Text fontSize="15px">
-                          <strong>Delivery Notes:</strong>
+                          <strong>Delivery and Onsite Instructions:</strong>
                         </Text>
                         <Text>{selectedMealRequest.deliveryInstructions}</Text>
                       </Td>
